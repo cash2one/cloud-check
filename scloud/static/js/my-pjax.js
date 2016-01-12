@@ -1,0 +1,46 @@
+function loadingImg() {
+    var colors = ['black']
+    var square = new Sonic({
+
+        width: 100,
+        height: 100,
+
+        stepsPerFrame: 3,
+        trailLength: 1,
+        pointDistance: .01,
+        fps: 30,
+        step: 'fader',
+
+        strokeColor: '#EEA236',
+
+        setup: function() {
+            this._.lineWidth = 8;
+        },
+
+        path: [
+            ['arc', 50, 50, 20, 360, 0]
+        ]
+    });
+    square.play();
+    $("#loading_canvas").html(square.canvas);
+}
+$(function(){
+    loadingImg();
+    $(document).pjax('a[data-pjax]', '#pjax-container', {fx: 'fade', timeout: 9000});
+    
+    $(document).on('submit', 'form[data-pjax]', function(event) {
+        $.pjax.submit(event, '#pjax-container', {fx: 'fade', timeout: 9000});
+    });
+    $.pjax.defaults.timeout = 9000;
+
+    $(document).on('pjax:start', function(xhr, options) {
+        console.log('start');
+        $("#pjax-container").css("opacity", "0.8");
+        $('#loading_canvas').show();
+    });
+    $(document).on('pjax:end', function(xhr, options) {
+        console.log('end');
+        $("#pjax-container").css("opacity", "1");
+        $('#loading_canvas').hide();
+    });
+})

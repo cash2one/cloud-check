@@ -1,0 +1,31 @@
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pjax demo base</title>
+<meta http-equiv="x-pjax-version" content="v123">
+<script type="text/javascript" src="{{ handler.static_url('js/jquery.min.js') }}"></script>
+<script type="text/javascript" src="{{ handler.static_url('js/jquery.pjax.js') }}"></script>
+<script type="text/javascript" src="{{ handler.static_url('js/pjax.js') }}"></script>
+<script type="text/javascript" src="{{ handler.static_url('js/my-pjax.js') }}"></script>
+</head>
+<body>
+    <div id="container">
+        <div class="ui inverted dimmer">
+            <div class="ui medium text loader">Loading</div>
+        </div>
+        <a data-pjax class="ajaxdiv" href="{{ reverse_url('index') }}">index</a>
+</br>
+<a data-pjax class="ajaxdiv" href="{{ reverse_url('main') }}">main</a>
+</br>
+<a data-pjax class="ajaxdiv" href="{{ reverse_url('topic') }}">topic</a>
+</br>
+        <div id="pjax">
+            
+            {% block body %}
+            {% endblock %}
+            <div class="ui clearing"></div>
+        </div>
+    </div>
+</body>
+</html>

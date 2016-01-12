@@ -1,0 +1,22 @@
+<html>
+<head>
+<title>{{ handler }}</title>
+</head>
+<body>
+{% if handler.session.user %}
+welcome {{ handler.session.user.username }}!
+<form action="{{ reverse_url('myapp.views.login.Logout') }}" method="POST">
+<input type="submit" value="注销">
+</form>
+{% else %}
+<form action="{{ reverse_url('myapp.views.login.Login') }}" method="POST">
+<input type="text" name="username">
+<p>
+<input type="password" name="password">
+<p>
+<input type="submit" value="登录">
+</form>
+{% endif %}
+{{ message }}
+</body>
+</html>

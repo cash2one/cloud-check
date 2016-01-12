@@ -1,0 +1,24 @@
+{% extends "admin/base/base.html" %}
+
+{% block main_container %}
+    <div class="wrapper">
+
+      {% include "admin/base/base_head.html" %}
+      <!-- Left side column. contains the logo and sidebar -->
+      {% include "admin/base/base_side.html" %}
+
+      <!-- Content Wrapper. Contains page content -->
+      {% block content %}
+      <div class="content-wrapper">
+      </div><!-- /.content-wrapper -->
+      {% endblock %}
+      {% include "admin/base/base_foot.html" %}
+
+      <!-- Control Sidebar -->
+      {% include "admin/base/base_right_side.html" %}
+      <!-- /.control-sidebar -->
+      <!-- Add the sidebar's background. This div must be placed
+           immediately after the control sidebar -->
+      <div class="control-sidebar-bg"></div>
+    </div><!-- ./wrapper -->
+{% endblock %}

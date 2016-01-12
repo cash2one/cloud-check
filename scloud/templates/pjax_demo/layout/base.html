@@ -1,0 +1,19 @@
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pjax demo base</title>
+<meta http-equiv="x-pjax-version" content="v123">
+<script type="text/javascript" src="{{ handler.static_url('js/jquery.min.js') }}"></script>
+<script type="text/javascript" src="{{ handler.static_url('js/jquery.pjax.js') }}"></script>
+<script type="text/javascript" src="{{ handler.static_url('js/my-pjax-1.js') }}"></script>
+</head>
+<body>
+    <h1>My Site</h1>
+  <div class="container" id="pjax-container">
+    {% block body %}
+    Go to <a href="/main">main page</a>.
+    {% endblock %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<html>
+<head>
+<title>{{ handler }}</title>
+</head>
+<body>
+<form action="{{ reverse_url('myapp.views.check_code.CheckCode') }}" method="POST">
+<input type="text" name="check_code">
+<p>
+<img src="{{ reverse_url('myapp.views.static.CaptchaHandler') }}"/>
+<p>
+<input type="submit" value="提交验证码">
+</form>
+{{ message }}
+</body>
+</html>
