@@ -11,21 +11,22 @@ import urllib2
 import time
 
 
-@url("/", name="index")
-class MainHandler(Handler):
+@url("/index1", name="index1", active="index1")
+class Index1Handler(Handler):
     u'首页'
     def get(self):
         data = {"name": "torweb"}
         # time.sleep(1)
-        return self.render("admin/index.html", **data)
+        return self.render("admin/index1.html", **data)
 
 
-@url("/main", name="main")
-class MainHandler(Handler):
+@url("/index2", name="index2", active="index2")
+class Index2Handler(Handler):
+    u'主页'
     def get(self):
         data = {"name": "main"}
         # time.sleep(1)
-        return self.render("admin/main.html", **data)
+        return self.render("admin/index2.html", **data)
 
 @url("/topic", name="topic")
 class MainHandler(Handler):

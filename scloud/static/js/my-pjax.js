@@ -24,9 +24,16 @@ function loadingImg() {
     square.play();
     $("#loading_canvas").html(square.canvas);
 }
+
 $(function(){
     loadingImg();
     $(document).pjax('a[data-pjax]', '#pjax-container', {fx: 'fade', timeout: 9000});
+    // $(document).pjax('a[data-pjax]', '#pjax-container',
+    //     {
+    //         fx: 'fade',
+    //         timeout: 9000
+    //     }
+    // );
     
     $(document).on('submit', 'form[data-pjax]', function(event) {
         $.pjax.submit(event, '#pjax-container', {fx: 'fade', timeout: 9000});
@@ -39,8 +46,22 @@ $(function(){
         $('#loading_canvas').show();
     });
     $(document).on('pjax:end', function(xhr, options) {
+        // console.log(options);
+        var title = decodeURI(options.getResponseHeader('title'));
+        var origin_title = $(document).find('title').text();
+        var first = origin_title.split(" - ")[0];
+        $(document).find('title').text(first + ' - ' + title);
+        var active = decodeURI(options.getResponseHeader('active'));
+        $(document).find('ul.sidebar-menu').find('li').removeClass('active');
+        $(document).find('ul.sidebar-menu').find('a[name='+active+']').parent().addClass('active');
+
         console.log('end');
         $("#pjax-container").css("opacity", "1");
         $('#loading_canvas').hide();
     });
+    $(document).on('pjax:complete', function() {
+        // alert('complete ... ');
+    });
+
 })
+

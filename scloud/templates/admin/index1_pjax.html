@@ -1,3 +1,4 @@
+
 <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
@@ -434,3 +435,8 @@
           </div><!-- /.row (main row) -->
 
         </section><!-- /.content -->
+        <script type="text/javascript">
+        $.getScript("{{ handler. static_url('default/plugins/morris/morris.min.js') }}");
+        $.getScript("{{ handler.static_url('default/dist/js/pages/dashboard.js') }}");
+        $.getScript("{{ handler.static_url('default/dist/js/demo.js') }}");
+        </script>

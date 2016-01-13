@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{% block title %}小付云平台 - {{ handler }}{% endblock %}</title>
+    <title>{{ CONF('APP_CN') }} - {{ handler }}</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.5 -->
@@ -41,8 +41,6 @@
   <div id="loading_canvas" style="position: absolute; height: 70px; width: 120px; left: 50%; top: 50%; margin-top: -35px; margin-left: -60px; display: none;">
 <!-- <i class="fa fa-spinner fa-spin"></i> -->
 </div>
-    {% block main_container %}{% endblock %}
-
     <!-- jQuery 2.1.4 -->
     <script src="{{ handler. static_url('default/plugins/jQuery/jQuery-2.1.4.min.js') }}"></script>
     <!-- jQuery UI 1.11.4 -->
@@ -55,7 +53,7 @@
     <script src="{{ handler.static_url('default/bootstrap/js/bootstrap.min.js') }}"></script>
     <!-- Morris.js charts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-    <script src="{{ handler. static_url('default/plugins/morris/morris.min.js') }}"></script>
+    <!--script src="{{ handler. static_url('default/plugins/morris/morris.min.js') }}"></script-->
     <!-- Sparkline -->
     <script src="{{ handler. static_url('default/plugins/sparkline/jquery.sparkline.min.js') }}"></script>
     <!-- jvectormap -->
@@ -77,11 +75,12 @@
     <!-- AdminLTE App -->
     <script src="{{ handler.static_url('default/dist/js/app.min.js') }}"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-    <script src="{{ handler.static_url('default/dist/js/pages/dashboard.js') }}"></script>
+    <!--script src="{{ handler.static_url('default/dist/js/pages/dashboard.js') }}"></script-->
     <!-- AdminLTE for demo purposes -->
-    <script src="{{ handler.static_url('default/dist/js/demo.js') }}"></script>
+    <!--script src="{{ handler.static_url('default/dist/js/demo.js') }}"></script-->
     <script src="{{ handler.static_url('js/jquery.pjax.js') }}"></script>
     <script src="{{ handler.static_url('js/sonic.js') }}"></script>
     <script src="{{ handler.static_url('js/my-pjax.js') }}"></script>
+    {% block main_container %}{% endblock %}
   </body>
 </html>

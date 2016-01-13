@@ -1,3 +1,4 @@
+
 <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
@@ -649,3 +650,11 @@
             </div><!-- /.col -->
           </div><!-- /.row -->
         </section><!-- /.content -->
+        <script type="text/javascript">
+        $.getScript("{{ handler.static_url('default/plugins/slimScroll/jquery.slimscroll.min.js') }}");
+        // $.getScript("{{ handler. static_url('default/plugins/morris/morris.min.js') }}");
+        <!-- ChartJS 1.0.1 -->
+        $.getScript("{{ handler.static_url('default/plugins/chartjs/Chart.min.js') }}");
+        $.getScript("{{ handler.static_url('default/dist/js/pages/dashboard2.js') }}");
+        $.getScript("{{ handler.static_url('default/dist/js/demo.js') }}");
+        </script>

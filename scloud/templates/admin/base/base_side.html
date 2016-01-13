@@ -29,8 +29,8 @@
                 <i class="fa fa-dashboard"></i> <span>Dashboard</span> <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
-                <li class="active"><a data-pjax href="/"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-                <li><a data-pjax href="/main"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
+                <li><a data-pjax name="index1" href="/index1"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
+                <li><a data-pjax name="index2" href="/index2"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
               </ul>
             </li>
             <li class="treeview">
@@ -160,3 +160,9 @@
         </section>
         <!-- /.sidebar -->
       </aside>
+<script type="text/javascript">
+$(function(){
+    $(document).find('ul.sidebar-menu').find('li').removeClass('active');
+    $(document).find('ul.sidebar-menu').find('a[name={{ handler.kwargs.get("active", "") }}]').parent().addClass('active');
+});
+</script>
