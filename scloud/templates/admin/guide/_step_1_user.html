@@ -1,0 +1,63 @@
+
+  <!-- Horizontal Form -->
+  <div>
+    <div class="box-header with-border">
+      <h3 class="box-title">xx项目管理授权</h3>
+      <!-- tools box -->
+    </div><!-- /.box-header -->
+    <!-- form start -->
+    <form data-pjax action="/guide/step/1" class="form-horizontal" method="POST">
+    {{ handler.xsrf_form_html() }}
+      <div class="box-body">
+        <div class="form-group">
+          <label for="computer" class="col-sm-2 control-label">管理员用户名</label>
+          <div class="col-sm-6">
+            <select class="form-control select2" style="width: 100%;">
+              <option selected="selected">Alabama</option>
+              <option>Alaska</option>
+              <option>California</option>
+              <option>Delaware</option>
+              <option>Tennessee</option>
+              <option>Texas</option>
+              <option>Washington</option>
+            </select>
+          </div>
+          <label for="computer" class="col-sm-2 control-label"><button class="btn btn-block btn-danger btn-sm">添加</button></label>
+        </div>
+        <div class="form-group">
+          <label for="loadbalance" class="col-sm-2 control-label">项目权限</label>
+          <div class="col-sm-6">
+            <select class="form-control select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
+              <option>xx项目测试环境</option>
+              <option selected="selected">Alaska</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="radio col-sm-offset-2 col-sm-10">
+              <label>
+                <input type="radio" name="use_vpn" id="use_vpn" value="1">
+                需要为此用户开通VPN远程访问，并接受用户安全协议。<a href="#">查看协议</a>
+              </label>
+          </div>
+          <div class="radio col-sm-offset-2 col-sm-10">
+              <label>
+                <input type="radio" name="use_vpn" id="use_vpn" value="0">
+                不需开通VPN，管理员于操作间使用资源
+              </label>
+              
+          </div>
+        </div>
+      </div>
+      <div class="box-footer">
+        <button type="submit" class="btn btn-default">取消</button>
+        <button type="submit" class="btn btn-info pull-right">提交</button>
+      </div><!-- /.box-footer -->
+    </form>
+  </div><!-- /.box -->
+  <script type="text/javascript">
+  $(function(){
+    $(".select2").select2();
+  })
+  </script>
+  

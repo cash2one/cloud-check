@@ -4727,3 +4727,21 @@ table.text-center th {
     white-space: normal!important;
   }
 }
+.input-group .input-group-unit {
+  border-radius: 0;
+  border-color: #d2d6de;
+  background-color: #fff;
+  border: 0px;
+}
+.input-group-unit {
+    color: #555555;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    width: 1%;
+    display: table-cell;
+}

@@ -1,0 +1,157 @@
+
+  <!-- Horizontal Form -->
+  <div class="row">
+    <div class="col-sm-3">
+        <div class="box-body table-responsive no-padding">
+          <table class="table table-hover">
+            <tr>
+              <td colspan="3" class="text-center"><a href="#" class="btn btn-warning btn-xs" onclick="add_res()" role="button">新增变更</a></td>
+            </tr>
+            <tr>
+              <th class="text-center">变更次数</th>
+              <th class="text-center">变更历史</th>
+              <th class="text-center">变更时间</th>
+            </tr>
+            <tr>
+              <td class="text-center">2</td>
+              <td class="text-center"><a data-pjax href="#" onclick="edit_res()">变更资源</a></td>
+              <td class="text-center"><span class="label label-info">2016-01-13</span></td>
+            </tr>
+            <tr>
+              <td class="text-center">1</td>
+              <td class="text-center">创建项目</td>
+              <td class="text-center"><span class="label label-default">2015-12-20</span></td>
+            </tr>
+          </table>
+        </div><!-- /.box-body -->
+    </div>
+    <div class="col-sm-9">
+      <div id="panel_res" class="box box-info box-solid">
+        <div class="box-header with-border">
+          <h3 class="box-title">变更资源</h3>
+          <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="remove"><i   class="fa fa-times"></i></button>
+          </div><!-- /.box-tools -->
+        </div><!-- /.box-header -->
+        <div class="box-body">
+          <!-- form start -->
+            <form data-pjax action="/guide/step/1" class="form-horizontal" method="POST">
+            {{ handler.xsrf_form_html() }}
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="computer" class="col-sm-2 control-label">云主机数量</label>
+                  <div class="col-sm-6 input-group">
+                    <input type="text" class="form-control" id="computer" placeholder="10">
+                    <div class="input-group-unit">台</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="cpu" class="col-sm-2 control-label">CPU总量</label>
+                  <div class="col-sm-6 input-group">
+                    <input type="text" class="form-control" id="cpu" placeholder="4">
+                    <div class="input-group-unit">台</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="cpu" class="col-sm-2 control-label">内存总量</label>
+                  <div class="col-sm-6 input-group">
+                    <input type="text" class="form-control" id="cpu" placeholder="8">
+                    <div class="input-group-unit">GB</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="disk" class="col-sm-2 control-label">云磁盘个数</label>
+                  <div class="col-sm-6 input-group">
+                    <input type="text" class="form-control" id="disk" placeholder="10">
+                    <div class="input-group-unit">个,</div>
+                    <div class="input-group-unit">其中</div>
+                    <input type="text" class="form-control" id="disk_backup" placeholder="10">
+                    <div class="input-group-unit">个需要云盘备份</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="ip" class="col-sm-2 control-label">外部IP数量</label>
+                  <div class="col-sm-6 input-group">
+                    <input type="text" class="form-control" id="ip" placeholder="8">
+                    <div class="input-group-unit">个</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="snapshot" class="col-sm-2 control-label">快照个数</label>
+                  <div class="col-sm-6 input-group">
+                    <input type="text" class="form-control" id="snapshot" placeholder="8">
+                    <div class="input-group-unit">个</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="loadbalance" class="col-sm-2 control-label">应用负载均衡</label>
+                  <div class="col-sm-6 input-group">
+                    <input type="text" class="form-control" id="loadbalance" placeholder="10">
+                    <div class="input-group-unit">个vSERVER</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="loadbalance" class="col-sm-2 control-label">互联网IP</label>
+                  <div class="col-sm-6 input-group">
+                    <select multiple class="form-control">
+                      <option>无需</option>
+                      <option>双线负载均衡</option>
+                      <option>单线（软件园）</option>
+                      <option>单线（移动）</option>
+                    </select>
+                    <div class="input-group-unit">
+                      <div class="radio pull-left">
+                        <label>
+                          <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
+                          需要SSL卸载
+                        </label>
+                      </div>
+                      <div class="radio pull-left">
+                        <label>
+                          <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                          不需要SSL卸载
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="loadbalance" class="col-sm-2 control-label">到期时间</label>
+                  <div class="col-sm-6 input-group">
+                    <input type="text" class="form-control" id="loadbalance" placeholder="10">
+                    <div class="input-group-unit"></div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="loadbalance" class="col-sm-2 control-label">本月费用</label>
+                  <div class="col-sm-6 input-group">
+                    <input type="text" class="form-control" id="loadbalance" placeholder="10">
+                    <div class="input-group-unit">元/月</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="loadbalance" class="col-sm-2 control-label">合计费用</label>
+                  <div class="col-sm-6 input-group">
+                    <input type="text" class="form-control" id="loadbalance" placeholder="10">
+                    <div class="input-group-unit">元</div>
+                  </div>
+                </div>
+              </div><!-- /.box-body -->
+              <div class="box-footer text-center">
+                <button id="submit" type="submit" class="btn btn-info">提交申请</button>
+              </div><!-- /.box-footer -->
+            </form>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div>
+  </div><!-- /.box -->
+  <script type="text/javascript">
+  function add_res(){
+    $('#panel_res').css('display', 'block').removeClass('box-info').addClass('box-warning').find('h3.box-title').text('新增变更');
+    $('#submit').removeClass('btn-info').addClass('btn-warning');
+  }
+  function edit_res(){
+    $('#panel_res').css('display', 'block').removeClass('box-warning').addClass('box-info').find('h3.box-title').text('变更资源');
+    $('#submit').removeClass('btn-warning').addClass('btn-info');
+  }
+  </script>

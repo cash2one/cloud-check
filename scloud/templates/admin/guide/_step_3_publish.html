@@ -1,0 +1,73 @@
+
+  <!-- Horizontal Form -->
+  <div>
+    <!-- form start -->
+    <form data-pjax action="/guide/step/3" class="form-horizontal" method="POST">
+    {{ handler.xsrf_form_html() }}
+      <div class="box-body">
+        <div class="form-group">
+          <label for="computer" class="col-sm-2 control-label">项目选择</label>
+          <div class="col-sm-6">
+            <select class="form-control select2" style="width: 100%;">
+              <option selected="selected">Alabama</option>
+              <option>Alaska</option>
+              <option>California</option>
+              <option>Delaware</option>
+              <option>Tennessee</option>
+              <option>Texas</option>
+              <option>Washington</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="loadbalance" class="col-sm-2 control-label">域名</label>
+          <div class="col-sm-6">
+            <input type="text" class="form-control" id="computer" placeholder="10">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="loadbalance" class="col-sm-2 control-label">互联网端口</label>
+          <div class="col-sm-6">
+            <input type="text" class="form-control" id="computer" placeholder="80">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="loadbalance" class="col-sm-2 control-label">内网地址</label>
+          <div class="col-sm-6">
+            <input type="text" class="form-control" id="computer" placeholder="192.168.3.10">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="loadbalance" class="col-sm-2 control-label">内网端口</label>
+          <div class="col-sm-6">
+            <input type="text" class="form-control" id="computer" placeholder="8080">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="loadbalance" class="col-sm-2 control-label">SSL卸载</label>
+          <div class="radio col-sm-offset-2 col-sm-10">
+              <label>
+                <input type="radio" name="use_vpn" id="use_vpn" value="1">
+                需要
+              </label>
+          </div>
+          <div class="radio col-sm-offset-2 col-sm-10">
+              <label>
+                <input type="radio" name="use_vpn" id="use_vpn" value="0">
+                不需开
+              </label>
+          </div>
+        </div>
+      </div>
+      <div class="box-footer">
+        <button type="submit" class="btn btn-default">取消</button>
+        <button type="submit" class="btn btn-info pull-right">提交</button>
+      </div><!-- /.box-footer -->
+    </form>
+  </div><!-- /.box -->
+  <script type="text/javascript">
+  $(function(){
+    $(".select2").select2();
+  })
+  </script>
+  
