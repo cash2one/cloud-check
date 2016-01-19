@@ -2,28 +2,24 @@
 # -*- coding: utf-8 -*-
 # created: zhangpeng <zhangpeng1@infohold.com.cn>
 
-from scloud.config import CONF, cache, logger
+from scloud.config import logger
 from scloud.celeryapp import celery
 from scloud.models.act import Act_History
-# from scloud.models.project import Pro_Info
+
 from scloud.models.base import DataBaseService
-from sqlalchemy import func, and_, or_, event
-from datetime import datetime
+
+act_actions = {
+    1: u"新增%s数据",
+    2: u"更新%s数据",
+    3: u"删除%s数据",
+}
 
 
 @celery.task
-def task_act_post():
+def task_act_post(act_type=1, table_name="", table_doc=""):
     logger.info("------[celery task post act]------")
     with DataBaseService({}) as svc:
         act = Act_History()
-        act.act_type = 1
-        act.desc = u"添加数据"
+        act.act_type = act_type
+        act.desc = act_actions.get(act_type, u"") % table_doc
         svc.db.add(act)
-
-
-# def act_post(mapper, connect, target):
-#     logger.info("-----[after_insert act_post]------")
-#     logger.info(target.__class__.__name__)
-#     logger.info(target.__doc__)
-#     task_act_post.delay(target)
-# event.listen(Pro_Info, 'after_insert', act_post)

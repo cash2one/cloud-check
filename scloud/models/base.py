@@ -5,21 +5,15 @@
 import simplejson
 import _mysql_exceptions
 from datetime import datetime
-from sqlalchemy import Column, func
-from sqlalchemy.types import Integer, DateTime
-from collections import namedtuple
-from sqlalchemy.ext.declarative import declarative_base
-
-from sqlalchemy import event
-from sqlalchemy import create_engine, MetaData
-from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.exc import DisconnectionError
-from scloud.config import CONF, logger
 from torweb.db import CacheQuery
-
-BaseModel = declarative_base()
-
-IndexMark = namedtuple("IndexMark", ["value", "value_en", "level"])
+from scloud.config import CONF, logger
+from sqlalchemy import event
+from sqlalchemy import Column, func
+from sqlalchemy.exc import DisconnectionError
+from sqlalchemy import create_engine, MetaData
+from sqlalchemy.types import Integer, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 
 db_engine = create_engine(
@@ -91,13 +85,14 @@ class DataBaseService(ModelServiceMixin):
     def db_commit(self):
         self.db.commit()
 
-DBSession = DataBaseService.db_session
+
+BaseModel = declarative_base()
 
 
 class BaseModelMixin(object):
     id = Column(Integer, autoincrement=True, primary_key=True)
     create_time = Column(DateTime, default=func.now())
-    update_time = Column(DateTime, onupdate=func.now())
+    update_time = Column(DateTime, default=func.now(), onupdate=func.now())
 
     json_columns = []
 
@@ -126,13 +121,3 @@ class BaseModelMixin(object):
             for c in self.__table__.columns:
                 data[c.name] = self.dump_column(c.name)
         return data
-
-    # @models_committed.connect_via(app)
-    # def on_models_committed(sender, changes):
-    #     for obj, change in changes:
-    #         if change == 'delete' and hasattr(obj, '__after_delete__'):
-    #             obj.__after_delete__()
-    #         elif change == 'update' and hasattr(obj, '__after_update__'):
-    #             obj.__after_update__()
-    #         elif change == 'insert' and hasattr(obj, '__after_insert__'):
-    #             obj.__after_insert__()

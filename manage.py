@@ -28,6 +28,8 @@ app = make_application(
     url_root=CONF("URL_ROOT"),
     **tornado_settings
 )
+from scloud.async_services.listener import init_listener
+init_listener()
 #setattr(app, '_wsgi', False)
 if options.cmd == "runserver":
     import tcelery
