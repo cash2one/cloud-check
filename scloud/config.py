@@ -6,6 +6,7 @@ import uuid
 import base64
 import logging
 import scloud
+import traceback
 from torweb.config import get_host_ip, CONFIG
 from torweb.urls import Url
 from logging.config import dictConfig
@@ -35,6 +36,12 @@ dictConfig(yaml.load(open(settings_path, 'r')))
 itornado = logging.getLogger("console")
 logger = logging.getLogger("file")
 iError = logging.getLogger("iError")
+
+
+def logThrown():
+    logger.critical(traceback.format_exc())
+    logger.critical('-'*60)
+
 
 static_path = os.path.join(scloud.base_path, "static")
 tornado_settings = {

@@ -19,16 +19,16 @@ redis:
   host: 127.0.0.1
   port: 6379
   expire: 3600
-  prefix: arthas
+  prefix: scloud
   db: 0
 
 db:
   scheme: mysql
-  user: arthas
-  pass: arthas
+  user: scloud
+  pass: scloud
   host: 127.0.0.1
   port: 3306
-  name: arthas
+  name: scloud
   storm: store
   sqlalchemy: session
   connection_string: '{db.scheme}://{db.user}:{db.pass}@{db.host}:{db.port}/{db.name}?charset=utf8'

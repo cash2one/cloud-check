@@ -30,9 +30,9 @@ app = make_application(
 )
 #setattr(app, '_wsgi', False)
 if options.cmd == "runserver":
-    # import tcelery
-    # from cavalier import celeryapp
-    # tcelery.setup_nonblocking_producer(celery_app=celeryapp.celery)
+    import tcelery
+    from scloud import celeryapp
+    tcelery.setup_nonblocking_producer(celery_app=celeryapp.celery)
     run_torweb.run(app, port=CONF("PORT"))
 elif options.cmd == "syncdb":
     logging.info("** start sycndb ... **")
