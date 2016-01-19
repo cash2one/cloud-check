@@ -6,6 +6,7 @@ from collections import namedtuple
 
 IndexMark = namedtuple("IndexMark", ["value", "value_en", "level"])
 
+# use in models
 act_types = {
     0: IndexMark(value=u"未知操作", value_en="unkown operation", level="warning"),
     1: IndexMark(value=u"新增", value_en="insert", level="info"),
@@ -19,4 +20,12 @@ important_types = {
     2: IndexMark(value=u"提醒", value_en="2", level="success"),
     2: IndexMark(value=u"重要", value_en="3", level="warning"),
     3: IndexMark(value=u"紧急", value_en="4", level="danger"),
+}
+
+# use in services
+# scloud/async_services/svc_act.py
+act_actions = {
+    1: u"新增%s数据",
+    2: u"更新%s数据",
+    3: u"删除%s数据",
 }

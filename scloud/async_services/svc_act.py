@@ -2,17 +2,11 @@
 # -*- coding: utf-8 -*-
 # created: zhangpeng <zhangpeng1@infohold.com.cn>
 
+from scloud.const import act_actions
 from scloud.config import logger
 from scloud.celeryapp import celery
 from scloud.models.act import Act_History
-
 from scloud.models.base import DataBaseService
-
-act_actions = {
-    1: u"新增%s数据",
-    2: u"更新%s数据",
-    3: u"删除%s数据",
-}
 
 
 @celery.task
