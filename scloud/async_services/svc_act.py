@@ -15,5 +15,5 @@ def task_act_post(act_type=1, table_name="", table_doc=""):
     with DataBaseService({}) as svc:
         act = Act_History()
         act.act_type = act_type
-        act.desc = act_actions.get(act_type, u"") % table_doc
+        act.desc = act_actions[act_type].value % table_doc
         svc.db.add(act)

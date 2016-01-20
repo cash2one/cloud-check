@@ -3,21 +3,26 @@
 # created: zhangpeng <zhangpeng1@infohold.com.cn>
 
 from scloud.models.base import BaseModel, BaseModelMixin
-from sqlalchemy import Column, func
+from scloud.models.environment import Env_Info
+from sqlalchemy import Column, func, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.types import Unicode, Integer, Float, DateTime
 
 
 class Pro_Info(BaseModel, BaseModelMixin):
-    u"""项目信息表"""
+    u"""项目信息"""
     __tablename__ = "pro_info"
     name = Column(Unicode, default=u'')
     owner_id = Column(Integer, default=0)
-    env_id = Column(Integer, default=0)
+    env_id = Column(Integer, ForeignKey("env_info.id"), default=0)
     desc = Column(Unicode, default=u'')
+    env = relationship("Env_Info", backref="pro_infos")
 
 
 class Pro_Resource_Apply(BaseModel, BaseModelMixin):
+    u"""项目资源申请"""
     __tablename__ = "pro_resource_apply"
+    pro_id = Column(Integer, ForeignKey("pro_info.id"), default=0)
     computer = Column(Integer, default=0)
     cpu = Column(Integer, default=0)
     memory = Column(Integer, default=0)
@@ -35,15 +40,4 @@ class Pro_Resource_Apply(BaseModel, BaseModelMixin):
     fee_current_mouth = Column(Float, default=0.00)
     fee_total = Column(Float, default=0.00)
     fee_desc = Column(Unicode, default=u'')
-
-
-class Pro_Environment(BaseModel, BaseModelMixin):
-    __tablename__ = "pro_environment"
-    name = Column(Unicode, unique=True, default=u'')
-    desc = Column(Unicode, default=u'')
-
-
-class Pro_Internet_Ip_Types(BaseModel, BaseModelMixin):
-    __tablename__ = "pro_internet_ip_types"
-    name = Column(Unicode, unique=True, default=u'')
-    desc = Column(Unicode, default=u'')
+    project = relationship("Pro_Info", backref="pro_resource_applies")

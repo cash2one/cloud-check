@@ -14,11 +14,12 @@
         <!-- Main content -->
         <section class="content">
           <div class="row">
+            {% for pro in result.data %}
             <div class="col-md-3 col-sm-6 col-xs-12">
               <div class="info-box bg-aqua">
                 <span class="info-box-icon"><i class="fa fa-cube"></i></span>
                 <div class="info-box-content">
-                  <span class="info-box-text">Project 2</span>
+                  <span class="info-box-text">{{ pro.name }}</span>
                   <span class="info-box-number">41,410</span>
                   <div class="progress">
                     <div class="progress-bar" style="width: 70%"></div>
@@ -29,6 +30,7 @@
                 </div><!-- /.info-box-content -->
               </div><!-- /.info-box -->
             </div><!-- /.col -->
+            {% endfor %}
             <div class="col-md-3 col-sm-6 col-xs-12">
               <div class="info-box">
                 <span class="info-box-icon bg-yellow"><i class="fa fa-cube"></i></span>

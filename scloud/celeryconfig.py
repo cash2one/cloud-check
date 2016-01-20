@@ -5,8 +5,8 @@
 from celery.schedules import crontab
 
 BROKER_URL = "amqp://"
-# CELERY_RESULT_BACKEND = "amqp"
-CELERY_RESULT_BACKEND = "redis"
+CELERY_RESULT_BACKEND = "amqp"
+# CELERY_RESULT_BACKEND = "redis"
 #BROKER_TRANSPORT_OPTIONS = {"visibility_timeout": 18000}
 
 CELERY_EVENT_SERIALIZER = 'json'
@@ -27,4 +27,5 @@ CELERY_TIMEZONE = 'Asia/Shanghai'
 CELERY_IMPORTS = (
     # 'scloud.tasks',
     'scloud.async_services.svc_act',
+    'scloud.async_services.svc_project',
 )

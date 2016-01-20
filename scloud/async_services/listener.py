@@ -1,6 +1,10 @@
 
 from scloud.config import logger
-from scloud.models.project import Pro_Info
+from scloud.models.project import (Pro_Info, Pro_Resource_Apply)
+from scloud.models.environment import (Env_Info,
+    Env_Resource_Value, Env_Resource_Fee,
+    Env_Internet_Ip_Types)
+from scloud.models.act import Act_Todo
 from sqlalchemy import event
 from scloud.async_services.svc_act import (task_act_post)
 
@@ -33,12 +37,30 @@ def init_listener():
 
 
 def init_after_insert():
+    event.listen(Act_Todo, 'after_insert', act_post)
     event.listen(Pro_Info, 'after_insert', act_post)
+    event.listen(Pro_Resource_Apply, 'after_insert', act_post)
+    event.listen(Env_Info, 'after_insert', act_post)
+    event.listen(Env_Resource_Fee, 'after_insert', act_post)
+    event.listen(Env_Resource_Value, 'after_insert', act_post)
+    event.listen(Env_Internet_Ip_Types, 'after_insert', act_post)
 
 
 def init_after_update():
+    event.listen(Act_Todo, 'after_update', act_update)
     event.listen(Pro_Info, 'after_update', act_update)
+    event.listen(Pro_Resource_Apply, 'after_update', act_post)
+    event.listen(Env_Info, 'after_update', act_post)
+    event.listen(Env_Resource_Fee, 'after_update', act_post)
+    event.listen(Env_Resource_Value, 'after_update', act_post)
+    event.listen(Env_Internet_Ip_Types, 'after_update', act_post)
 
 
 def init_after_delete():
+    event.listen(Act_Todo, 'after_delete', act_delete)
     event.listen(Pro_Info, 'after_delete', act_delete)
+    event.listen(Pro_Resource_Apply, 'after_delete', act_post)
+    event.listen(Env_Info, 'after_delete', act_post)
+    event.listen(Env_Resource_Fee, 'after_delete', act_post)
+    event.listen(Env_Resource_Value, 'after_delete', act_post)
+    event.listen(Env_Internet_Ip_Types, 'after_delete', act_post)

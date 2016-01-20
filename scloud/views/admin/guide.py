@@ -2,22 +2,30 @@
 
 import scloud
 from torweb.urls import url
-from scloud.shortcuts import *
+from scloud.config import logger
 from scloud.handlers import Handler
 import requests
 import urlparse
 import urllib
 import urllib2
+import simplejson
 import time
+from tornado.web import asynchronous
+from tornado import gen
+from scloud.async_services import svc_project
 
 
 @url("/guide", name="guide", active="guide")
 class GuideHandler(Handler):
     u'申请资源'
+    @asynchronous
+    @gen.coroutine
     def get(self):
-        data = {"name": "torweb"}
+        response = yield gen.Task(svc_project.get_project_list.apply_async, args=[])
+        logger.info(response.result)
+        data = {"result": response.result}
         # time.sleep(1)
-        return self.render("admin/guide/index.html", **data)
+        raise gen.Return(self.render("admin/guide/index.html", **data))
 
 
 @url("/guide/step/1", name="guide_step_1", active="guide")

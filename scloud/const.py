@@ -25,7 +25,7 @@ important_types = {
 # use in services
 # scloud/async_services/svc_act.py
 act_actions = {
-    1: u"新增%s数据",
-    2: u"更新%s数据",
-    3: u"删除%s数据",
+    1: IndexMark(value=u"新增%s数据", value_en="", level="success"),
+    2: IndexMark(value=u"更新%s数据", value_en="", level="warning"),
+    3: IndexMark(value=u"删除%s数据", value_en="", level="danger"),
 }

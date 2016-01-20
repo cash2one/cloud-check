@@ -8,6 +8,7 @@ from scloud.models.base import BaseModel, BaseModelMixin
 
 
 class Act_History(BaseModel, BaseModelMixin):
+    u"""数据操作历史表"""
     __tablename__ = "act_history"
     act_type = Column(Integer, default=0)
     desc = Column(Unicode, default=u'')
@@ -15,6 +16,7 @@ class Act_History(BaseModel, BaseModelMixin):
 
 
 class Act_Todo(BaseModel, BaseModelMixin):
+    u"""TODO信息"""
     __tablename__ = "act_todo"
     important = Column(Integer, default=0)
     desc = Column(Unicode, default=u'')
