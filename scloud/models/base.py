@@ -9,6 +9,7 @@ from torweb.db import CacheQuery
 from scloud.config import CONF, logger
 from sqlalchemy import event
 from sqlalchemy import Column, func
+from sqlalchemy.sql import ClauseElement
 from sqlalchemy.exc import DisconnectionError
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.types import Integer, DateTime
@@ -121,3 +122,30 @@ class BaseModelMixin(object):
             for c in self.__table__.columns:
                 data[c.name] = self.dump_column(c.name)
         return data
+
+    @classmethod
+    def get_or_create(cls, **kwargs):
+        with DataBaseService({}) as svc:
+            logger.info("============== [kwargs] ==============")
+            logger.info(kwargs)
+            instance = svc.db.query(cls).filter_by(**kwargs).first()
+            logger.info("============== [instance] ==============")
+            logger.info(instance)
+            if instance:
+                # 已有，无需创建
+                created = False
+            else:
+                # 没有，需新创建
+                params = dict((k, v) for k, v in kwargs.iteritems() if not isinstance(v, ClauseElement))
+                logger.info("============== [kwargs] ==============")
+                logger.info(kwargs)
+                logger.info("============== [params] ==============")
+                logger.info(params)
+                instance_res = cls(**params)
+                svc.db.add(instance_res)
+                svc.db.flush()
+                instance = svc.db.query(cls).filter_by(**kwargs).first()
+                logger.info("instance for create result")
+                logger.info(instance)
+                created = True
+        return instance, created

@@ -28,4 +28,5 @@ CELERY_IMPORTS = (
     # 'scloud.tasks',
     'scloud.async_services.svc_act',
     'scloud.async_services.svc_project',
+    'scloud.async_services.svc_pt_permission',
 )

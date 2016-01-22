@@ -38,8 +38,8 @@ if options.cmd == "runserver":
     run_torweb.run(app, port=CONF("PORT"))
 elif options.cmd == "syncdb":
     logging.info("** start sycndb ... **")
-    from cavalier.models.user import User
+    from scloud.models.user import User
     BaseModel.metadata.create_all(db_engine)
     logging.info("** end sycndb ... **")
 else:
-    run_torweb.show_urls(cavalier)
+    run_torweb.show_urls(scloud)

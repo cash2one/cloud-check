@@ -12,7 +12,25 @@ class Handler(BaseHandler):
     def __str__(self):
         return self.__doc__ or self.__class__.__name__
 
+    def init_messages(self):
+        if "messages" not in self.session:
+            self.session["messages"] = []
+        self.messages = self.session.get("messages", [])
+        self.save_session()
+
+    def add_message(self, content, level="info"):
+        self.session["messages"].append({"level": level, "content": content})
+        self.session["messages_request"] = len(self.session["messages"])
+        self.save_session()
+
+    def get_messages(self):
+        self.messages = self.session["messages"]
+        self.session["messages"] = []
+        self.save_session()
+        return self.messages
+
     def prepare(self):
+        self.init_messages()
         self.pjax = self.request.headers.get("X-PJAX")
 
     def render_to_string(self, template, **kwargs):

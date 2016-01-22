@@ -1,0 +1,98 @@
+
+<!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            {{ handler }}
+            <small>Control panel</small>
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> 权限管理</a></li>
+            <li class="active">操作权限管理</li>
+          </ol>
+        </section>
+        <!-- Main content -->
+        <section class="content">
+          {% include "admin/base/base_messages.html" %}
+          <div class="row">
+            <div id="left_div" class="col-xs-12">
+              <div class="box">
+                <div class="box-header">
+                  <h3 class="box-title">可使用的操作权限列表</h3>
+                  <div class="box-tools">
+                    <form data-pjax action="{{ reverse_url('pt_perm') }}" method="GET">
+                        <div class="input-group" style="width: 300px;">
+                          <input type="text" name="search" class="form-control input-sm pull-right" placeholder="搜索关键字">
+                          <div class="input-group-btn">
+                            <button class="btn btn-sm btn-default"><i class="fa fa-search"></i>查询</button>
+                            <button type="button" class="btn btn-sm btn-warning" onclick="show_right()"><i class="fa fa-plus"></i>添加</button>
+                          </div>
+                        </div>
+                    </form>
+                  </div>
+                </div><!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                  <table class="table table-hover">
+                    <tr>
+                      <th>ID</th>
+                      <th>名称</th>
+                      <th>keyword</th>
+                      <th>keycode</th>
+                      <th>是否可用</th>
+                      <th>操作</th>
+                    </tr>
+                    {% for perm in result.data %}
+                    <tr>
+                      <td>{{ perm.id }}</td>
+                      <td>{{ perm.name }}</td>
+                      <td>{{ perm.keyword }}</td>
+                      <td>{{ perm.keycode }}</td>
+                      <td>{% if perm.is_enable == 1 %}<span class="label label-success">是</span>{% else %}<span class="label label-warning">否</span>{% endif %}</td>
+                      <td><button type="button" class="btn btn-sm btn-warning" onclick="show_right({opt:'edit', perm_id:'{{ perm.id }}'});"><i class="fa fa-edit"></i>修改</button></td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+                </div><!-- /.box-body -->
+              </div><!-- /.box -->
+            </div>
+            <div id="right_div" class="col-xs-5 connectedSortable" style="display:none">
+              {% include "admin/pt_perm/_index_form.html" %}
+            </div>
+          </div><!-- /.row -->
+        </section><!-- /.content -->
+<script type="text/javascript">
+{% if handler.request.method == "POST" %}
+$(function(){
+    init_right();
+})
+{% endif %}
+function init_right(){
+    $('#left_div').removeClass('col-xs-12').addClass('col-xs-7');
+    $('#right_div').css('display', 'block');
+    hide_right();
+}
+function show_right(options){
+    options = options || {}
+    var opt = options.opt || "";
+    if (opt == "edit"){
+        var perm_id = options.perm_id;
+        $("#right_div").load("{{ reverse_url('pt_perm.info') }}?perm_id="+perm_id);
+    }else{
+        $("#right_div").load("{{ reverse_url('pt_perm.info') }}");
+    }
+    if($("#left_div").css("width") == $("#left_div").parent().css("width")){
+        $('#left_div').animateToClass('col-xs-7', 500, function(){
+            $('#right_div').css('display', 'block');
+            $('#right_div').find('.box').slideDown();
+        });
+    }else{
+        $('#right_div').css('display', 'block');
+        // $('#new_pt_perm').slideDown();
+        $('#right_div').find('.box').slideDown();
+    }
+}
+function hide_right(){
+    $('#right_div').slideUp("fast", function(){
+        $('#left_div').animateToClass('col-xs-12', 500);
+    });
+}
+</script>

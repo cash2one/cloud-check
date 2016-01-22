@@ -7,6 +7,7 @@ import base64
 import logging
 import scloud
 import traceback
+from functools import wraps
 from torweb.config import get_host_ip, CONFIG
 from torweb.urls import Url
 from logging.config import dictConfig
@@ -42,6 +43,19 @@ def logThrown():
     logger.critical(traceback.format_exc())
     logger.critical('-'*60)
 
+
+def thrownException(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            data = {
+                "return_code": -100001,
+                "return_message": e.__unicode__(),
+            }
+            return data
+    return wrapper
 
 static_path = os.path.join(scloud.base_path, "static")
 tornado_settings = {
