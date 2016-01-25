@@ -12,6 +12,7 @@ from scloud.models.base import DataBaseService
 @celery.task
 def task_act_post(act_type=1, table_name="", table_doc=""):
     logger.info("------[celery task post act]------")
+    logger.info("------[ act type %s ]------" % act_type)
     with DataBaseService({}) as svc:
         act = Act_History()
         act.act_type = act_type

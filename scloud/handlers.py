@@ -5,7 +5,7 @@
 import urllib
 from torweb.handlers import BaseHandler
 from scloud.shortcuts import env
-from scloud.config import CONF
+from scloud.config import CONF, logger
 
 
 class Handler(BaseHandler):
@@ -30,6 +30,10 @@ class Handler(BaseHandler):
         return self.messages
 
     def prepare(self):
+        logger.info("====================== [http method] ======================")
+        logger.info(self.request.method)
+        logger.info("====================== [args] ======================")
+        logger.info(self.args)
         self.init_messages()
         self.pjax = self.request.headers.get("X-PJAX")
 

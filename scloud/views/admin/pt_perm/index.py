@@ -61,3 +61,23 @@ class PT_Perm_Info_Handler(Handler):
         logger.info("data")
         logger.info(data)
         raise gen.Return(self.render("admin/pt_perm/_index_form.html", **data))
+
+    @asynchronous
+    @gen.coroutine
+    def post(self):
+        perm_id = self.args.get("perm_id", 0)
+        name = self.args.get("name", u"")
+        keyword = self.args.get("keyword", u"")
+        response = yield gen.Task(svc_pt_permission.update_info.apply_async, args=[perm_id, name, keyword])
+        if response.result["return_code"] == 0:
+            self.add_message(u"%s成功!" % act_actions.get(2).value % PT_Perm.__doc__, level="success")
+            data = {"result": {"return_code": 0, "return_message":u"", "data": self.args}}
+        else:
+            self.add_message(u"failure code (%s): %s" % (response1.result["return_code"], response1.result["return_message"]), level="warning")
+            data = {"result": response.result}
+        response = yield gen.Task(
+            svc_pt_permission.get_list.apply_async,
+            args=[]
+        )
+        data = {"result": response.result}
+        raise gen.Return(self.render("admin/pt_perm/index.html", **data))

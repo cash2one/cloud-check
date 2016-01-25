@@ -4,7 +4,7 @@
 
 from scloud.config import logger, thrownException
 from scloud.celeryapp import celery
-from scloud.models.pt_user import PT_Perm
+from scloud.models.pt_user import PT_Role
 from scloud.models.base import DataBaseService
 from sqlalchemy import or_, and_
 
@@ -14,21 +14,21 @@ from sqlalchemy import or_, and_
 def get_list(search=""):
     with DataBaseService({}) as svc:
         or_conditions = or_()
-        or_conditions.append(PT_Perm.name.like("%" + search + "%"))
-        or_conditions.append(PT_Perm.keyword.like("%" + search + "%"))
-        or_conditions.append(PT_Perm.keycode.like("%" + search + "%"))
-        pt_perms = svc.db.query(
-            PT_Perm
+        or_conditions.append(PT_Role.name.like("%" + search + "%"))
+        or_conditions.append(PT_Role.desc.like("%" + search + "%"))
+        or_conditions.append(PT_Role.remark.like("%" + search + "%"))
+        pt_roles = svc.db.query(
+            PT_Role
         ).filter(
             or_conditions
         ).order_by(
-            PT_Perm.id.desc()
+            PT_Role.id.desc()
         ).all()
-        pt_perms = [i.as_dict() for i in pt_perms]
+        pt_roles = [i.as_dict() for i in pt_roles]
         data = {
             "return_code": 0,
             "return_message": u"",
-            "data": pt_perms
+            "data": pt_roles
         }
     return data
 
@@ -37,55 +37,53 @@ def get_list(search=""):
 @thrownException
 def get_info(perm_id):
     with DataBaseService({}) as svc:
-        pt_perm = svc.db.query(
-            PT_Perm
+        pt_role = svc.db.query(
+            PT_Role
         ).filter(
-            PT_Perm.id == perm_id
+            PT_Role.id == perm_id
         ).one()
         data = {
             "return_code": 0,
             "return_message": u"",
-            "data": pt_perm.as_dict()
+            "data": pt_role.as_dict()
         }
     return data
 
 
 @celery.task
 @thrownException
-def get_or_create(name, keyword):
-    perm_info, created = PT_Perm.get_or_create(
+def get_or_create(name, desc=u"", remark=u""):
+    role_info, created = PT_Role.get_or_create(
         name = name,
-        keyword = keyword,
         )
+    role_info.desc = desc
+    role_info.remark = remark
+    with DataBaseService({}) as svc:
+        svc.db.add(role_info)
     data = {
             "return_code": 0,
             "return_message": u"",
-            "data": perm_info.as_dict()
+            "data": role_info.as_dict()
         }
     return data
 
 
 @celery.task
 @thrownException
-def update_info(perm_id, name, keyword):
+def update_info(role_id, name=u"", desc=u"", remark=u""):
     with DataBaseService({}) as svc:
-        perm = svc.db.query(
-            PT_Perm
+        role = svc.db.query(
+            PT_Role
         ).filter(
-            PT_Perm.id == perm_id,
+            PT_Role.id == role_id,
         ).one()
-        perm.name = name
-        perm.keyword = keyword
-        svc.db.add(perm)
-        # .update(
-        #     {
-        #         PT_Perm.name: name,
-        #         PT_Perm.keyword: keyword,
-        #     }
-        # )
+        role.name = name
+        role.desc = desc
+        role.remark = remark
+        svc.db.add(role)
     data = {
             "return_code": 0,
             "return_message": u"",
-            "data": {"is_success": True}
+            "data": role.as_dict()
         }
     return data

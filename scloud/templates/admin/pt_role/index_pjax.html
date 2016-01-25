@@ -1,0 +1,150 @@
+
+<!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            {{ handler }}
+            <small>Control panel</small>
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> 权限管理</a></li>
+            <li class="active">{{ handler }}</li>
+          </ol>
+        </section>
+        <!-- Main content -->
+        <section class="content">
+          {% include "admin/base/base_messages.html" %}
+          <div class="row">
+            <div id="left_div" class="col-xs-12">
+              <div class="box">
+                <div class="box-header">
+                  <h3 class="box-title">可使用的{{ handler }}列表</h3>
+                  <div class="box-tools">
+                    <form data-pjax action="{{ reverse_url('pt_role') }}" method="GET">
+                        <div class="input-group" style="width: 300px;">
+                          <input type="text" name="search" class="form-control input-sm pull-right" placeholder="搜索关键字">
+                          <div class="input-group-btn">
+                            <button class="btn btn-sm btn-default"><i class="fa fa-search"></i>查询</button>
+                            <button type="button" class="btn btn-sm btn-warning" onclick="show_right()"><i class="fa fa-plus"></i>添加</button>
+                          </div>
+                        </div>
+                    </form>
+                  </div>
+                </div><!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                  <table class="table table-hover">
+                    <tr>
+                      <th>ID</th>
+                      <th>名称</th>
+                      <th>是否可用</th>
+                      <th>创建时间</th>
+                      <th>操作</th>
+                    </tr>
+                    {% for role in result.data %}
+                    <tr>
+                      <td>{{ role.id }}</td>
+                      <td>{{ role.name }}</td>
+                      <td>{% if role.is_enable == 1 %}<span class="label label-success">是</span>{% else %}<span class="label label-warning">否</span>{% endif %}</td>
+                      <td>{{ role.create_time }}</td>
+                      <td>
+                        <div class="input-group-btn" style="width:150px">
+                          <button type="button" class="btn btn-sm btn-warning" onclick="show_right({op:'update', role_id:'{{ role.id }}'});"><i class="fa fa-edit"></i>修改</button>
+                          <button type="button" class="btn btn-sm btn-warning" onclick="show_right({op:'select_groups', role_id:'{{ role.id }}', left_div_class:6});"><i class="fa fa-edit"></i>权限组</button>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+                </div><!-- /.box-body -->
+              </div><!-- /.box -->
+            </div>
+            <div id="right_div" class="col-xs-5 connectedSortable" style="display:none">
+              {% include "admin/pt_role/_index_form.html" %}
+            </div>
+          </div><!-- /.row -->
+        </section><!-- /.content -->
+<script type="text/javascript">
+{% if handler.request.method == "POST" %}
+$(function(){
+    init_right();
+})
+{% endif %}
+function init_right(){
+    $('#left_div').removeClass('col-xs-12').addClass('col-xs-7');
+    $('#right_div').css('display', 'block');
+    hide_right();
+}
+function show_right(options){
+    options = options || {}
+    var op = options.op || "";
+    var left_div_width = options.left_div_class || 7;
+    var right_div_width = 12 - left_div_width;
+    
+    console.log(left_div_width);
+    var _left_div_width = parseInt($("#left_div").css("width"));
+    var _parent_div_width = parseInt($("#left_div").parent().css("width"));
+    var _parent_div_per1 = parseInt(parseInt($("#left_div").parent().css("width"))*(left_div_width/12));
+    var _parent_div_per2 = Math.round(parseInt($("#left_div").parent().css("width"))*(left_div_width/12));
+    var _right_div_width = _parent_div_width - _left_div_width;
+    console.log("_left_div_width:" + _left_div_width);
+    console.log("_parent_div_width:" + _parent_div_width);
+    console.log("_parent_div_per1:" + _parent_div_per1);
+    console.log("_parent_div_per2:" + _parent_div_per2);
+    console.log("_right_div_width:" + _right_div_width);
+    if (op == "update"){
+        var role_id = options.role_id;
+        $("#right_div").load("{{ reverse_url('pt_role.info') }}?role_id="+role_id).css("display", "none");
+    }else if (op == "select_groups"){
+        $("#right_div").load("{{ reverse_url('pt_role.group_info') }}?role_id="+role_id).css("display", "none");
+    }else{
+        $("#right_div").load("{{ reverse_url('pt_role.info') }}").css("display", "none");
+    }
+    if($("#left_div").css("width") == $("#left_div").parent().css("width")){
+      $("#right_div").animateToClass('col-xs-'+String(right_div_width), 0, function(){
+        $('#left_div').animateToClass("col-xs-"+String(left_div_width), 500, function(){
+            $('#right_div').fadeIn('fast', function() {
+              // $("#right_div").animateToClass('col-xs-'+String(right_div_width));
+              $('#right_div').find('.box').slideDown();
+            });
+        });
+      });
+    }else if (_left_div_width != _parent_div_per1 && _left_div_width != _parent_div_per2){
+        // 方式1
+        if (_left_div_width > _parent_div_per1){
+            $("#left_div").animateToClass("col-xs-"+String(left_div_width), 200, function(){
+              $("#right_div").fadeIn('fast', function(){
+                $("#right_div").animateToClass("col-xs-"+String(right_div_width));
+              });
+            });
+        }else{
+            $("#right_div").animateToClass("col-xs-"+String(right_div_width), 200, function(){
+              $("#right_div").fadeIn('fast', function(){
+                $("#left_div").animateToClass("col-xs-"+String(left_div_width));
+              });
+            });
+        }
+
+        // 方式2
+        // $('#right_div').fadeOut(0);
+        // // $("#right_div").css("display", "none");
+        // $('#left_div').animateToClass("col-xs-"+String(left_div_width), 500, function(){
+        //     // $("#right_div").animate({width: parseInt($("#left_div").parent().css("width"))*(right_div_width/12)}, 200, function(){
+        //         $('#right_div').find('.box').slideDown("fast", function(){
+        //           $("#right_div").animateToClass('col-xs-'+String(right_div_width), 100, function(){
+        //           $('#right_div').fadeIn("fast");
+        //         });
+        //         });
+        //     // });
+        // });
+    }else{
+        $('#right_div').css('display', 'block');
+        // $("#right_div").animateToClass('col-xs-'+String(right_div_width));
+        // $('#new_pt_role').slideDown();
+        $('#right_div').find('.box').slideDown();
+    }
+}
+function hide_right(){
+    $('#right_div').slideUp("fast", function(){
+        $('#left_div').animateToClass('col-xs-12', 500);
+    });
+}
+</script>

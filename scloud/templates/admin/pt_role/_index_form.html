@@ -1,0 +1,63 @@
+{% set theme = "warning" %}
+{% if result.return_code == 0 %}
+  {% set title = "更新" %}
+  {% set data = result.data %}
+  {% set action_name = handler.kwargs.get("name") %}
+  {% if data.id %}
+    {% set theme = "info" %}
+  {% endif %}
+{% else %}
+  {% set title = "新增" %}
+  {% set data = {} %}
+  {% set action_name = "pt_role" %}
+{% endif %}
+<!-- Horizontal Form -->
+<div class="box box-{{ theme }}">
+  <div class="box-header with-border">
+    <h3 class="box-title">{{ title }}角色</h3>
+    <!-- tools box -->
+    <div class="pull-right box-tools">
+      <button class="btn btn-{{ theme }} btn-sm" data-widget="remove" data-toggle="tooltip" onclick="hide_right();" title="Remove"><i class="fa fa-times"></i></button>
+    </div><!-- /. tools -->
+  </div><!-- /.box-header -->
+  <!-- form start -->
+  <form data-pjax action="{{ reverse_url(action_name) }}" class="form-horizontal" method="POST">
+  {{ handler.xsrf_form_html() }}
+  {% if data.id %}
+    <input type="hidden" name="role_id" value="{{ data.id }}">
+  {% endif %}
+    <div class="box-body">
+      <div class="form-group">
+        <label for="name" class="col-sm-2 control-label">名称</label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control" id="name" name="name" placeholder="请填写项目名称" value="{{ data.name }}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="owner" class="col-sm-2 control-label">说明</label>
+        <div class="col-sm-6">
+        <input type="text" class="form-control" id="desc" name="desc" placeholder="请填写英文关键字" value="{{ data.desc }}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="owner" class="col-sm-2 control-label">注释</label>
+        <div class="col-sm-6">
+        <input type="text" class="form-control" id="remark" name="remark" placeholder="请填写英文关键字" value="{{ data.remark }}">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" id="is_enable" name="is_enable" checked="checked"> 是否可用
+            </label>
+          </div>
+        </div>
+      </div>
+    </div><!-- /.box-body -->
+    <div class="box-footer">
+      <button type="submit" class="btn btn-default">取消</button>
+      <button type="submit" class="btn btn-{{ theme }} pull-right">提交</button>
+    </div><!-- /.box-footer -->
+  </form>
+</div><!-- /.box -->
