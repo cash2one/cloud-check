@@ -1,6 +1,15 @@
+
+<!-- <script src="{{ handler.static_url('default/plugins/iCheck/icheck.min.js') }}"></script> -->
+<script type="text/javascript">
+$(function(){
+  $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+      checkboxClass: 'icheckbox_flat-red',
+      radioClass: 'iradio_flat-green'
+    });
+})
+</script>
 {% set theme = "warning" %}
-{% set action_name = "pt_role" %}
-{% set data = {} %}
+{% set data = result.data %}
 <div class="box box-{{ theme }}">
   <div class="box-header with-border">
     <h3 class="box-title">添加新操作权限</h3>
@@ -12,20 +21,37 @@
   <!-- form start -->
   <form data-pjax action="{{ reverse_url(action_name) }}" class="form-horizontal" method="POST">
   {{ handler.xsrf_form_html() }}
-  {% if data.id %}
-    <input type="hidden" name="perm_id" value="{{ data.id }}">
-  {% endif %}
+    <input type="hidden" name="role_id" value="{{ role_id }}">
     <div class="box-body">
-      <div class="form-group">
-        <label for="owner" class="col-sm-2 control-label">keyword</label>
-        <div class="col-sm-offset-2 col-sm-10">
+      <!-- <div class="form-group">
+        <div class="col-xs-offset-2 col-xs-10">
           <div class="checkbox">
             <label>
               <input type="checkbox" id="is_enable" name="is_enable" checked="checked"> 是否可用
             </label>
           </div>
         </div>
+      </div> -->
+      {% for group in data.sys_groups %}
+      <div class="col-xs-6">
+        <div class="box-header">
+            <div class="box-name">
+                <h4 class="page-header"><i class="fa fa-puzzle-piece"></i> {{ group.name }}</h4>
+            </div>
+            <div class="no-move"></div>
+        </div>
+        <div class="box-body">
+            <div class="form-group row col-xs-12">
+              {% for op in group.ops %}
+              <label class="col-xs-3">
+                <input type="checkbox" name="group_op" class="flat-red" value="{{ group.keycode }}.{{ op.keycode }}"{% if data.role_group_obj.get("%s.%s" % (group.keycode, op.keycode)) %} checked{% endif %}>
+                {{ op.name }}
+              </label>
+              {% endfor %}
+            </div>
+        </div>
       </div>
+      {% endfor %}
     </div><!-- /.box-body -->
     <div class="box-footer">
       <button type="submit" class="btn btn-default">取消</button>

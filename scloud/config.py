@@ -50,6 +50,7 @@ def thrownException(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
+            logThrown()
             data = {
                 "return_code": -100001,
                 "return_message": e.__unicode__(),

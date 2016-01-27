@@ -56,10 +56,10 @@ class PT_Group_Perms(BaseModel, BaseModelMixin):
 # 角色-权限组-操作权限表
 class PT_Role_Group_Ops(BaseModel, BaseModelMixin):
     u"""角色权限管理"""
-    __tablename__ = "pt_user_group_ops"
+    __tablename__ = "pt_role_group_ops"
     role_id = Column(Integer, ForeignKey("pt_role.id"), default=0)
     group_keycode = Column(Integer, ForeignKey("pt_group_perms.id"), default=0)
-    op_keycode = relationship("PT_Role", backref="group_perms")
+    op_keycode = Column(Integer, ForeignKey("pt_group_perms.id"), default=0)
 
 
 # 用户-角色表

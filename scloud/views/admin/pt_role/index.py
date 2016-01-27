@@ -6,7 +6,7 @@ from torweb.urls import url
 from scloud.const import act_actions
 from scloud.config import logger
 from scloud.handlers import Handler
-from scloud.models.pt_user import PT_Role
+from scloud.models.pt_user import PT_Role, PT_Role_Group_Ops
 from tornado.web import asynchronous
 from tornado import gen
 from scloud.async_services import svc_pt_role
@@ -90,13 +90,32 @@ class PT_Role_Group_Info_Handler(Handler):
     @asynchronous
     @gen.coroutine
     def get(self):
-        # role_id = self.args.get("role_id", 0)
-        # response = yield gen.Task(svc_pt_role.get_group_ops.apply_async, args=[role_id])
-        # if response.result["return_code"] == 0:
-        #     data = {"result": response.result, "action_name": "pt_role.info"}
-        # else:
-        #     data = {"result": response.result, "action_name": "pt_role"}
-        # logger.info("data")
-        # logger.info(data)
-        data = {}
+        role_id = self.args.get("role_id", 0)
+        response = yield gen.Task(svc_pt_role.get_role_group_ops.apply_async, args=[role_id])
+        data = {"role_id": role_id, "action_name": "pt_role.group_info"}
+        if response.result["return_code"] == 0:
+            data.update({"result": response.result})
+        logger.info("data")
+        logger.info(data)
         raise gen.Return(self.render("admin/pt_role/_index_group_ops_form.html", **data))
+
+    @asynchronous
+    @gen.coroutine
+    def post(self):
+        role_id = self.args.get("role_id", 0)
+        group_ops = self.get_arguments("group_op")
+        # group_op_list = [(g, op) for g, op in [_str.split(".") for _str in group_ops]]
+        logger.info(group_ops)
+        response1 = yield gen.Task(svc_pt_role.post_role_group_ops.apply_async, args=[role_id, group_ops])
+        response = yield gen.Task(
+            svc_pt_role.get_list.apply_async,
+            args=[]
+        )
+        data = {"result": response.result}
+        if response1.result["return_code"] == 0:
+            data.update(response1.result["data"])
+        logger.info("data")
+        logger.info(data)
+        self.add_message(u"%s成功!" % act_actions.get(2).value % PT_Role_Group_Ops.__doc__, level="success")
+        # data = {}
+        raise gen.Return(self.render("admin/pt_role/index.html", **data))

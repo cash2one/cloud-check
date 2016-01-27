@@ -25,6 +25,16 @@ function loadingImg() {
     $("#loading_canvas").html(square.canvas);
 }
 
+function show_loading(){
+    $("#pjax-container").css("opacity", "0.8");
+    $('#loading_canvas').show();
+}
+
+function hide_loading(){
+    $("#pjax-container").css("opacity", "1");
+    $('#loading_canvas').hide();
+}
+
 $(function(){
     loadingImg();
     $(document).pjax('a[data-pjax]', '#pjax-container', {fx: 'fade', timeout: 9000});
@@ -42,8 +52,9 @@ $(function(){
 
     $(document).on('pjax:start', function(xhr, options) {
         console.log('start');
-        $("#pjax-container").css("opacity", "0.8");
-        $('#loading_canvas').show();
+        show_loading()
+        // $("#pjax-container").css("opacity", "0.8");
+        // $('#loading_canvas').show();
     });
     $(document).on('pjax:end', function(xhr, options) {
         // console.log(options);
@@ -56,8 +67,9 @@ $(function(){
         $(document).find('ul.sidebar-menu').find('a[name='+active+']').parent().addClass('active');
 
         console.log('end');
-        $("#pjax-container").css("opacity", "1");
-        $('#loading_canvas').hide();
+        hide_loading();
+        // $("#pjax-container").css("opacity", "1");
+        // $('#loading_canvas').hide();
     });
     $(document).on('pjax:complete', function() {
         // alert('complete ... ');

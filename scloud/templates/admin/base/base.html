@@ -35,6 +35,7 @@
     <!-- bootstrap wysihtml5 - text editor -->
     <link rel="stylesheet" href="{{ handler.static_url('default/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}">
 
+    <link rel="stylesheet" href="{{ handler.static_url('default/plugins/iCheck/all.css') }}">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -80,7 +81,7 @@
     <script src="{{ handler. static_url('default/plugins/fastclick/fastclick.min.js') }}"></script>
     <!-- Select2 -->
     <script src="{{ handler. static_url('default/plugins/select2/select2.full.min.js') }}"></script>
-
+    <script src="{{ handler.static_url('default/plugins/iCheck/icheck.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ handler.static_url('default/dist/js/app.min.js') }}"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
@@ -90,6 +91,7 @@
     <script src="{{ handler.static_url('js/jquery.pjax.js') }}"></script>
     <script src="{{ handler.static_url('js/sonic.js') }}"></script>
     <script src="{{ handler.static_url('js/my-pjax.js') }}"></script>
+    {% include "admin/base/base_script.html" %}
     {% block main_container %}{% endblock %}
   </body>
 </html>
