@@ -3,17 +3,17 @@
   {% set title = "更新" %}
   {% set data = result.data %}
   {% set theme = "warning" %}
-  {% if data.pt_role %}
-    {% set pt_role = data.pt_role %}
+  {% if data.pt_user %}
+    {% set pt_user = data.pt_user %}
   {% else %}
-    {% set pt_role = {} %}
+    {% set pt_user = {} %}
   {% endif %}
-  {% set action_name = "pt_role.info" %}
+  {% set action_name = "pt_user.info" %}
 {% else %}
   {% set title = "新增" %}
   {% set data = {} %}
-  {% set pt_role = {} %}
-  {% set action_name = "pt_role" %}
+  {% set pt_user = {} %}
+  {% set action_name = "pt_user" %}
 {% endif %}
 <!-- Horizontal Form -->
 <div class="box box-{{ theme }}">
@@ -25,26 +25,21 @@
     </div><!-- /. tools -->
   </div><!-- /.box-header -->
   <!-- form start -->
-  <form data-pjax action="{{ reverse_url(action_name) }}" class="form-horizontal" method="POST" onsubmit="return check_form()">
+  <form data-pjax action="{{ reverse_url(action_name) }}" class="form-horizontal" method="POST" onsubmit="return check_form();">
   {{ handler.xsrf_form_html() }}
-    <input type="hidden" name="role_id" value="{{ pt_role.id }}">
+    <input type="hidden" name="user_id" value="{{ pt_user.id }}">
     <div class="box-body">
       <div class="form-group">
-        <label for="name" class="col-sm-2 control-label">名称</label>
+        <label for="name" class="col-sm-2 control-label">用户名</label>
         <div class="col-sm-6">
-          <input type="text" class="form-control" id="name" name="name" placeholder="请填写项目名称" value="{{ pt_role.name }}">
+          <input type="text" class="form-control" id="username" name="username" placeholder="请填写用户名" value="{{ pt_user.username }}">
         </div>
       </div>
       <div class="form-group">
-        <label for="owner" class="col-sm-2 control-label">说明</label>
+        <label for="owner" class="col-sm-2 control-label">密码</label>
         <div class="col-sm-6">
-        <input type="text" class="form-control" id="desc" name="desc" placeholder="请填写英文关键字" value="{{ pt_role.desc }}">
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="owner" class="col-sm-2 control-label">注释</label>
-        <div class="col-sm-6">
-        <input type="text" class="form-control" id="remark" name="remark" placeholder="请填写英文关键字" value="{{ pt_role.remark }}">
+        <input type="text" class="form-control" id="password" placeholder="请填写默认密码(如：111111)" value="">
+        <input type="hidden" class="form-control" name="password" placeholder="请填写默认密码(如：111111)" value="">
         </div>
       </div>
       <div class="form-group">
@@ -58,14 +53,16 @@
       </div>
     </div><!-- /.box-body -->
     <div class="box-footer">
-      <button type="submit" class="btn btn-default">取消</button>
+      <!-- <button type="submit" class="btn btn-default">取消</button> -->
       <button type="submit" class="btn btn-{{ theme }} pull-right">提交</button>
     </div><!-- /.box-footer -->
   </form>
 </div><!-- /.box -->
 <script type="text/javascript">
 function check_form(){
-  hide_right();
-  return true;
+    var password = $("input[id=password]").val();
+    $("input[name=password]").val(MD5(password));
+    hide_right();
+    return true;
 }
 </script>

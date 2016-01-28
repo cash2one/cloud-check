@@ -60,6 +60,7 @@ class PT_Role_Group_Ops(BaseModel, BaseModelMixin):
     role_id = Column(Integer, ForeignKey("pt_role.id"), default=0)
     group_keycode = Column(Integer, ForeignKey("pt_group_perms.id"), default=0)
     op_keycode = Column(Integer, ForeignKey("pt_group_perms.id"), default=0)
+    role = relationship("PT_Role", backref="group_ops")
 
 
 # 用户-角色表
@@ -68,5 +69,5 @@ class PT_User_Role(BaseModel, BaseModelMixin):
     __tablename__ = "pt_user_role"
     role_id = Column(Integer, ForeignKey("pt_role.id"), default=0)
     user_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
-    role = relationship("PT_Role", backref="users")
-    user = relationship("PT_User", backref="roles")
+    role = relationship("PT_Role", backref="user_roles")
+    user = relationship("PT_User", backref="user_roles")

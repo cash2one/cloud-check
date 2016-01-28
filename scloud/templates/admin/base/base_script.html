@@ -68,4 +68,66 @@ function hide_right(){
         });
     });
 }
+
+
+function confirmBox(options){
+    options = options || {};
+    buttons = options.buttons || [
+            {text:"确定", id:"btn_sure", action:function(){
+                    $("#btn_sure").tLoading();
+                    (options.onConfirm)();
+                }
+            },
+            {text:"取消", id:"btn_cancel", action:function(){
+                    $("#confirmBox").tClose();
+                    if(options.onCancel)(options.onCancel)();
+                }
+            }
+        ];
+    var opts = $.extend({
+        id: "confirmBox",
+        appendTo:"#main",
+        buttons: buttons
+    }, options);
+    $MsgBox(opts).show()
+}
+
+function check_response(response){
+    if (response.return_code == 0){
+        return true;
+    }
+    if (response.return_code == -402 || response.return_code == -401){
+        $("div.modal-dialog").tClose();
+      $MsgBox({
+        message:response.return_message,
+        id: "permission-box",
+        appendTo:$("#main"),
+        buttons:[
+          {text: "确定", action: function(){
+            $("#permission-box").tClose();
+          }}
+        ]
+      }).show();
+      return false;
+    }
+    if (response.return_code == -231030){
+      $("div.modal-dialog").tClose();
+      $MsgBox({
+        message:response.return_message,
+        id: "permission-box",
+        appendTo:$("#main"),
+        buttons:[
+          {text: "确定", action: function(){
+            window.location.reload();
+          }}
+        ]
+      }).show();
+      return false;
+    }
+    else{
+      $MsgBox({message:response.return_message, appendTo:$("#main")}).show();
+      return false;
+    }
+}
+
 </script>

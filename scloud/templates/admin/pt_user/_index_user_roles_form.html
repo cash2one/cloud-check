@@ -12,46 +12,28 @@ $(function(){
 {% set data = result.data %}
 <div class="box box-{{ theme }}">
   <div class="box-header with-border">
-    <h3 class="box-title">添加新操作权限</h3>
+    <h3 class="box-title">用户角色</h3>
     <!-- tools box -->
     <div class="pull-right box-tools">
       <button class="btn btn-{{ theme }} btn-sm" data-widget="remove" data-toggle="tooltip" onclick="hide_right();" title="Remove"><i class="fa fa-times"></i></button>
     </div><!-- /. tools -->
   </div><!-- /.box-header -->
   <!-- form start -->
-  <form data-pjax action="{{ reverse_url(action_name) }}" class="form-horizontal" method="POST" onsubmit="return check_form()">
+  <form data-pjax action="{{ reverse_url(action_name) }}" class="form-horizontal" method="POST" onsubmit="return check_form();">
   {{ handler.xsrf_form_html() }}
-    <input type="hidden" name="role_id" value="{{ role_id }}">
+    <input type="hidden" name="user_id" value="{{ user_id }}">
     <div class="box-body">
-      <!-- <div class="form-group">
+    {% for role in data.roles %}
+      <div class="form-role">
         <div class="col-xs-offset-2 col-xs-10">
           <div class="checkbox">
             <label>
-              <input type="checkbox" id="is_enable" name="is_enable" checked="checked"> 是否可用
+              <input type="checkbox" id="role_id" name="role_id"{% if data.role_obj.get(role.id|string) %} checked="checked"{% endif %} value="{{ role.id }}"> {{ role.name }}
             </label>
           </div>
         </div>
-      </div> -->
-      {% for group in data.sys_groups %}
-      <div class="col-xs-6">
-        <div class="">
-            <div class="box-name">
-                <h4 class="page-header"><i class="fa fa-puzzle-piece"></i> {{ group.name }}</h4>
-            </div>
-            <div class="no-move"></div>
-        </div>
-        <div class="box-body">
-            <div class="form-group row">
-              {% for op in group.ops %}
-              <label class="col-xs-3">
-                <input type="checkbox" name="group_op" class="flat-red" value="{{ group.keycode }}.{{ op.keycode }}"{% if data.role_group_obj.get("%s.%s" % (group.keycode, op.keycode)) %} checked{% endif %}>
-                {{ op.name }}
-              </label>
-              {% endfor %}
-            </div>
-        </div>
       </div>
-      {% endfor %}
+    {% endfor %}
     </div><!-- /.box-body -->
     <div class="box-footer">
       <button type="submit" class="btn btn-default">取消</button>

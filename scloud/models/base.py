@@ -55,7 +55,7 @@ class DataBaseService(ModelServiceMixin):
         sessionmaker(bind=db_engine, query_cls=CacheQuery, expire_on_commit=False, autoflush=False))
     meta_data = MetaData(bind=db_engine)
 
-    def __init__(self, param_dict):
+    def __init__(self, param_dict={}):
         self.param_dict = param_dict
         self.db = None
 

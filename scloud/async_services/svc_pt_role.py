@@ -37,7 +37,6 @@ def get_list(search=""):
 @celery.task
 @thrownException
 def get_info(role_id):
-    from scloud.utils.permission import groups
     with DataBaseService({}) as svc:
         pt_role = svc.db.query(
             PT_Role
@@ -47,7 +46,7 @@ def get_info(role_id):
         data = {
             "return_code": 0,
             "return_message": u"",
-            "data": {"pt_role": pt_role.as_dict(), "groups": groups}
+            "data": {"pt_role": pt_role.as_dict(), "sys_groups": sys_groups}
         }
     return data
 
@@ -153,6 +152,23 @@ def update_info(role_id, name=u"", desc=u"", remark=u""):
     data = {
             "return_code": 0,
             "return_message": u"",
-            "data": role.as_dict()
+            "data": {"pt_role": role.as_dict(), "sys_groups": sys_groups}
+        }
+    return data
+
+
+@celery.task
+@thrownException
+def delete_info(role_id):
+    with DataBaseService({}) as svc:
+        is_success = svc.db.query(
+            PT_Role
+        ).filter(
+            PT_Role.id == role_id,
+        ).delete()
+    data = {
+            "return_code": 0,
+            "return_message": u"",
+            "data": {"is_success": is_success}
         }
     return data

@@ -1,0 +1,24 @@
+{% set theme = "danger" %}
+<!-- Horizontal Form -->
+<div class="box-{{ theme }}">
+  <div>
+    <div style="font-size:15px">确定删除该用户吗？</div>
+    <!-- tools box -->
+  </div><!-- /.box-header -->
+  <!-- form start -->
+  <form data-pjax action="{{ reverse_url('pt_user') }}" class="form-horizontal" method="POST" onsubmit="return check_form();">
+  {{ handler.xsrf_form_html() }}
+    <input type="hidden" name="user_id" value="{{ user_id }}">
+    <input type="hidden" name="_method" value="DELETE">
+    <div class="box-footer" style="border-top: 0">
+      <button type="button" onclick="$('#confirmBox').tClose();" class="btn btn-default">取消</button>
+      <button type="submit" class="btn btn-{{ theme }} pull-right">确定</button>
+    </div><!-- /.box-footer -->
+  </form>
+</div><!-- /.box -->
+<script type="text/javascript">
+function check_form(){
+    $("#confirmBox").tClose();
+    return true;
+}
+</script>

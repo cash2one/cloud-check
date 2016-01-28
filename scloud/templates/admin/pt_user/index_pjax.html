@@ -19,7 +19,7 @@
                 <div class="box-header">
                   <h3 class="box-title">可使用的{{ handler }}列表</h3>
                   <div class="box-tools">
-                    <form data-pjax action="{{ reverse_url('pt_role') }}" method="GET">
+                    <form data-pjax action="{{ reverse_url('pt_user') }}" method="GET">
                         <div class="input-group" style="width: 300px;">
                           <input type="text" name="search" class="form-control input-sm pull-right" hide_column placeholder="搜索关键字">
                           <div class="input-group-btn">
@@ -39,17 +39,17 @@
                       <th hide_column>创建时间</th>
                       <th>操作</th>
                     </tr>
-                    {% for role in result.data %}
+                    {% for user in result.data %}
                     <tr>
-                      <td>{{ role.id }}</td>
-                      <td>{{ role.name }}</td>
-                      <td hide_column>{% if role.is_enable == 1 %}<span class="label label-success">是</span>{% else %}<span class="label label-warning">否</span>{% endif %}</td>
-                      <td hide_column>{{ role.create_time }}</td>
+                      <td>{{ user.id }}</td>
+                      <td>{{ user.username }}</td>
+                      <td hide_column>{% if user.is_enable == 1 %}<span class="label label-success">是</span>{% else %}<span class="label label-warning">否</span>{% endif %}</td>
+                      <td hide_column>{{ user.create_time }}</td>
                       <td>
                         <div class="input-group-btn" style="width:150px">
-                          <button type="button" class="btn btn-sm btn-warning" onclick="load_right({op:'update', role_id:'{{ role.id }}'});show_right();"><i class="fa fa-edit"></i> 修改</button>
-                          <button type="button" class="btn btn-sm btn-danger" onclick="confirm_delete('{{ role.id }}');"><i class="fa fa-edit"></i> 删除</button>
-                          <button type="button" class="btn btn-sm btn-warning" onclick="load_right({op:'select_groups', role_id:'{{ role.id }}'});show_right({left_div_class:4});"><i class="fa fa-edit"></i> 权限组</button>
+                          <button type="button" class="btn btn-sm btn-warning" onclick="load_right({op:'update', user_id:'{{ user.id }}'});show_right();"><i class="fa fa-edit"></i> 修改</button>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirm_delete('{{ user.id }}');"><i class="fa fa-remove"></i> 删除</button>
+                          <button type="button" class="btn btn-sm btn-warning" onclick="load_right({op:'select_roles', user_id:'{{ user.id }}'});show_right({left_div_class:5});"><i class="fa fa-edit"></i> 用户角色</button>
                         </div>
                       </td>
                     </tr>
@@ -59,7 +59,7 @@
               </div><!-- /.box -->
             </div>
             <div id="right_div" class="col-xs-5 connectedSortable" style="display:none">
-              {% include "admin/pt_role/_index_form.html" %}
+              {% include "admin/pt_user/_index_form.html" %}
             </div>
           </div><!-- /.row -->
         </section><!-- /.content -->
@@ -70,21 +70,21 @@ function load_right(options){
   options = options || {};
   var op = options.op || "";
   if (op == "update"){
-      var role_id = options.role_id;
-      $("#right_div").load("{{ reverse_url('pt_role.info') }}?role_id="+role_id).css("display", "none");
-  }else if (op == "select_groups"){
-      var role_id = options.role_id;
+      var user_id = options.user_id;
+      $("#right_div").load("{{ reverse_url('pt_user.info') }}?user_id="+user_id).css("display", "none");
+  }else if (op == "select_roles"){
+      var user_id = options.user_id;
       $("#left_div").find("[hide_column]").css("display", "none");
       // $("#left_div").find("[hide_column]").css("display", "none");
-      $("#right_div").load("{{ reverse_url('pt_role.group_info') }}?role_id="+role_id).css("display", "none");
+      $("#right_div").load("{{ reverse_url('pt_user.role_info') }}?user_id="+user_id).css("display", "none");
   }else{
-      $("#right_div").load("{{ reverse_url('pt_role.info') }}").css("display", "none");
+      $("#right_div").load("{{ reverse_url('pt_user.info') }}").css("display", "none");
   }
   hide_loading();
 }
-function confirm_delete(role_id){
+function confirm_delete(user_id){
   $.ajax({
-    url: '{{ reverse_url('pt_role.delete') }}?role_id='+role_id,
+    url: '{{ reverse_url('pt_user.delete') }}?user_id='+user_id,
     type: 'GET',
     dataType: 'html',
     success: function(response){

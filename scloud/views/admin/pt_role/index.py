@@ -10,22 +10,47 @@ from scloud.models.pt_user import PT_Role, PT_Role_Group_Ops
 from tornado.web import asynchronous
 from tornado import gen
 from scloud.async_services import svc_pt_role
+from pprint import pprint
 
 
 @url("/pt_role", name="pt_role", active="pt_role")
 class PT_Role_Handler(Handler):
     u"""角色组管理"""
-    @asynchronous
     @gen.coroutine
-    def get(self):
+    def genReturn(self):
         search = self.args.get("search", "")
         response = yield gen.Task(svc_pt_role.get_list.apply_async, args=[search])
         data = {"result": response.result}
+        pprint(data)
         raise gen.Return(self.render("admin/pt_role/index.html", **data))
 
     @asynchronous
     @gen.coroutine
+    def get(self):
+        yield gen.Task(self.genReturn)
+
+    @asynchronous
+    @gen.coroutine
     def post(self):
+        method = self.args.get("_method", "")
+        if method == "DELETE":
+            yield gen.Task(self.delete_role)
+        else:
+            yield gen.Task(self.post_role)
+
+    @gen.coroutine
+    def delete_role(self):
+        role_id = self.args.get("role_id", 0)
+        response1 = yield gen.Task(svc_pt_role.delete_info.apply_async, args=[role_id])
+        if response1.result["return_code"] == 0:
+            self.add_message(u"%s成功!" % act_actions.get(3).value % PT_Role.__doc__, level="success")
+        else:
+            self.add_message(u"failure code (%s): %s" % (response1.result["return_code"], response1.result["return_message"]), level="warning")
+        yield gen.Task(self.genReturn)
+
+    @asynchronous
+    @gen.coroutine
+    def post_role(self):
         name = self.args.get("name", "")
         desc = self.args.get("desc", "")
         remark = self.args.get("remark", "")
@@ -59,7 +84,7 @@ class PT_Role_Info_Handler(Handler):
         else:
             data = {"result": response.result, "action_name": "pt_role"}
         logger.info("data")
-        logger.info(data)
+        pprint(data)
         raise gen.Return(self.render("admin/pt_role/_index_form.html", **data))
 
     @asynchronous
@@ -80,7 +105,7 @@ class PT_Role_Info_Handler(Handler):
             svc_pt_role.get_list.apply_async,
             args=[]
         )
-        data = {"result": response.result}
+        data = {"result": response.result, "action_name": "pt_role.info"}
         raise gen.Return(self.render("admin/pt_role/index.html", **data))
 
 
@@ -119,3 +144,14 @@ class PT_Role_Group_Info_Handler(Handler):
         self.add_message(u"%s成功!" % act_actions.get(2).value % PT_Role_Group_Ops.__doc__, level="success")
         # data = {}
         raise gen.Return(self.render("admin/pt_role/index.html", **data))
+
+
+@url("/pt_role/delete", name="pt_role.delete", active="pt_role")
+class PT_role_Delete_Handler(Handler):
+    u"""用户管理"""
+    @asynchronous
+    @gen.coroutine
+    def get(self):
+        role_id = self.args.get("role_id", 0)
+        data = {"role_id": role_id}
+        raise gen.Return(self.render("admin/pt_role/_index_role_delete_form.html", **data))
