@@ -27,20 +27,31 @@
   <body class="hold-transition login-page">
     <div class="login-box">
       <div class="login-logo">
-        <a href="{{ handler.static_url('default/index2.html') }}"><b>{{ CONF('APP_CN') }}</b>SCLOUD</a>
+        <a href="{{ reverse_url('pt_user') }}"><b>{{ CONF('APP_CN') }}</b>SCLOUD</a>
       </div><!-- /.login-logo -->
       <div class="login-box-body">
         <p class="login-box-msg">登录</p>
-        <form action="{{ reverse_url('login') }}" method="post">
+        <form action="{{ reverse_url('login') }}" method="post" onsubmit="return check_form()">
+          {{ handler.xsrf_form_html() }}
           <div class="form-group has-feedback">
-            <input type="username" class="form-control" placeholder="username">
+            <input type="username" name="username" class="form-control" placeholder="username" value="{{ handler.session.get('post_username', '')}}">
             <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
           </div>
+          {% if result %}
+            {% if result.return_code|int in [-100001, -100002] %}
+              <p class="text-red">{{ result.return_message }}</p>
+            {% endif %}
+          {% endif %}
           <div class="form-group has-feedback">
             <input type="password" id="password" class="form-control" placeholder="password">
             <input type="hidden" name="password">
             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
           </div>
+          {% if result %}
+            {% if result.return_code|int in [-100003, -100004] %}
+              <p class="text-red">{{ result.return_message }}</p>
+            {% endif %}
+          {% endif %}
           <div class="row">
             <div class="col-xs-8">
               <div class="checkbox icheck">
@@ -67,6 +78,7 @@
     <script src="{{ handler.static_url('default/bootstrap/js/bootstrap.min.js') }}"></script>
     <!-- iCheck -->
     <script src="{{ handler.static_url('default/plugins/iCheck/icheck.min.js') }}"></script>
+    <script src="{{ handler.static_url('js/echo-strap-0.0.1.js') }}"></script>
     <script>
       $(function () {
         $('input').iCheck({
@@ -75,6 +87,10 @@
           increaseArea: '20%' // optional
         });
       });
+      function check_form(){
+        var password = $('#password').val();
+        $('input[name=password]').val(MD5(password));
+      }
     </script>
   </body>
 </html>

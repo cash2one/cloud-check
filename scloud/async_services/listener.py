@@ -52,10 +52,10 @@ def update_keycode(mapper, connect, target):
     # connect.commit()
 
 
-def init_listener():
-    init_after_insert()
-    init_after_update()
-    init_after_delete()
+# def init_listener():
+#     init_after_insert()
+#     init_after_update()
+#     init_after_delete()
 
 
 def init_after_insert():

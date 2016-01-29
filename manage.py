@@ -28,9 +28,8 @@ app = make_application(
     url_root=CONF("URL_ROOT"),
     **tornado_settings
 )
-from scloud.async_services.listener import init_listener
-init_listener()
-#setattr(app, '_wsgi', False)
+# from scloud.async_services.listener import init_listener
+# init_listener()
 if options.cmd == "runserver":
     import tcelery
     from scloud import celeryapp
@@ -38,8 +37,8 @@ if options.cmd == "runserver":
     run_torweb.run(app, port=CONF("PORT"))
 elif options.cmd == "syncdb":
     logging.info("** start sycndb ... **")
-    from scloud.models.user import User
-    BaseModel.metadata.create_all(db_engine)
+    # from scloud.models.user import User
+    # BaseModel.metadata.create_all(db_engine)
     logging.info("** end sycndb ... **")
 else:
     run_torweb.show_urls(scloud)

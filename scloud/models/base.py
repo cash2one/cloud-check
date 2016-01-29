@@ -15,6 +15,7 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.types import Integer, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
+from tornado_mysql import pools
 
 
 db_engine = create_engine(
@@ -24,6 +25,8 @@ db_engine = create_engine(
     pool_recycle=3600,
     isolation_level='REPEATABLE READ',
 )
+
+MYSQL_POOL = pools.Pool(dict(host='127.0.0.1', port=3306, user='scloud', passwd='scloud', db='scloud'), max_idle_connections=5, max_open_connections=10)
 
 
 def my_on_checkout(dbapi_conn, connection_rec, connection_proxy):

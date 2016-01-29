@@ -11,6 +11,7 @@ import urllib2
 import time
 
 
+@url("/index", name="index", active="index1")
 @url("/index1", name="index1", active="index1")
 class Index1Handler(Handler):
     u'首页'

@@ -8,6 +8,7 @@ import logging
 import scloud
 import traceback
 from functools import wraps
+from tornado.util import ObjectDict
 from torweb.config import get_host_ip, CONFIG
 from torweb.urls import Url
 from logging.config import dictConfig
@@ -51,10 +52,9 @@ def thrownException(func):
             return func(*args, **kwargs)
         except Exception as e:
             logThrown()
-            data = {
-                "return_code": -100001,
-                "return_message": e.__unicode__(),
-            }
+            data = ObjectDict()
+            data.return_code = -100001,
+            data.return_message = e.__unicode__()
             return data
     return wrapper
 

@@ -5,18 +5,20 @@
 from torweb.urls import url
 from scloud.const import act_actions
 from scloud.config import logger
-from scloud.handlers import Handler
+from scloud.handlers import Handler, AuthHandler
 from scloud.models.pt_user import PT_User, PT_User_Role
 from tornado.web import asynchronous
 from tornado import gen
 from scloud.async_services import svc_pt_user
 from pprint import pprint
 from scloud.utils import green
+from scloud.utils.permission import check_perms
 
 
 @url("/pt_user", name="pt_user", active="pt_user")
-class PT_User_Handler(Handler):
+class PT_User_Handler(AuthHandler):
     u"""用户管理"""
+    @check_perms("pro_info.view")
     @gen.coroutine
     def genReturn(self):
         search = self.args.get("search", "")
