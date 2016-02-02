@@ -22,9 +22,13 @@ class LoginHandler(Handler):
         next = self.args.get("next", self.reverse_url('pt_user'))
         svc = LoginService(self.svc.db, self.args)
         result = svc.do_login()
+        logger.info("++++++++++++++++++++ result ++++++++++++++++++++++++")
+        logger.info(result)
         if result.return_code == 0:
             self.session["current_user"] = result.data
+            logger.info("login success!")
             self.save_session()
+            logger.info("login session saved!")
             self.add_message(u"欢迎%s,您已登录成功！" % result.data.username)
             if next:
                 return self.redirect(next)

@@ -57,6 +57,11 @@ def get_role_group_ops(role_id):
     conditions = and_()
     conditions.append(PT_Role_Group_Ops.role_id == role_id)
     with DataBaseService({}) as svc:
+        pt_role = svc.db.query(
+            PT_Role
+        ).filter(
+            PT_Role.id == role_id
+        ).one()
         role_group_ops = svc.db.query(
             PT_Role_Group_Ops
         ).filter(
@@ -76,7 +81,7 @@ def get_role_group_ops(role_id):
         data = {
             "return_code": 0,
             "return_message": u"",
-            "data": {"sys_groups": sys_groups, "role_group_obj": role_group_obj}
+            "data": {"pt_role": pt_role.as_dict(), "sys_groups": sys_groups, "role_group_obj": role_group_obj}
         }
     print data
     return data

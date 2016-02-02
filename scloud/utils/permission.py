@@ -57,7 +57,7 @@ init_group()
 
 class PermissionDefinedError(Exception):
     def __init__(self, perm):
-        self.error = u"""the permission %s is not defined.""" % perm
+        self.error = u"""the permission %s is undefined.""" % perm
 
     def __str__(self):
         return self.error
@@ -65,7 +65,7 @@ class PermissionDefinedError(Exception):
 
 class PermissionError(Exception):
     def __init__(self, perm):
-        self.error = u"""user do not have permission %s""" % perm
+        self.error = u"""current user do not have the permission: %s""" % perm
 
     def __str__(self):
         return self.error
@@ -80,49 +80,51 @@ def check_perms(perms):
             logger.info(sys_permissions)
             need_perms = perms.split(",")
             for perm in need_perms:
+                # try:
                 try:
-                    try:
-                        keycode = sys_permissions[perm]
-                    except KeyError:
-                        raise PermissionDefinedError(perm)
-                    # current_perms = self.current_perms
-                    current_perms = self.current_user.current_perms
-                    logger.info("--------------[current_perms]--------------")
-                    logger.info(self.current_user.current_perms)
-                    try:
-                        current_keycode = current_perms[perm]
-                    except KeyError:
-                        raise PermissionError(perm)
-                    if keycode == current_keycode:
-                        return method(self, *args, **kwargs)
-                    else:
-                        raise PermissionError(perm)
+                    keycode = sys_permissions[perm]
+                except KeyError:
+                    raise PermissionDefinedError(perm)
+                # current_perms = self.current_perms
+                logger.info(self.get_current_user())
+                logger.info(self.current_user)
+                current_perms = self.current_user.current_perms
+                logger.info("--------------[current_perms]--------------")
+                logger.info(self.current_user.current_perms)
+                try:
+                    current_keycode = current_perms[perm]
+                except KeyError:
+                    raise PermissionError(perm)
+                if keycode == current_keycode:
                     return method(self, *args, **kwargs)
-                except PermissionDefinedError as e:
-                    headers = self.request.headers
-                    x_requested_with = headers.get("X-Requested-With", "")
-                    if self.pjax:
-                        raise gen.Return(self.render("admin/error/401.html", content=u"Oops, The permission %s is not defined" % perm))
-                    if x_requested_with == "XMLHttpRequest":
-                        raise gen.Return(self.write(simplejson.dumps({
-                            "return_code": -401,
-                            "return_message": u"Oops, The permission %s is not defined" % perm
-                            })))
-                    else:
-                        raise gen.Return(self.render("admin/error/401.html", content=u"Oops, The permission %s is not defined" % perm))
-                except PermissionError(perm) as e:
-                    logger.error(e)
-                    headers = self.request.headers
-                    x_requested_with = headers.get("X-Requested-With", "")
-                    if self.pjax:
-                        raise gen.Return(self.render("admin/error/401.html", content=u"Oops, The permission %s is not defined" % perm))
-                    if x_requested_with == "XMLHttpRequest":
-                        raise gen.Return(self.write(simplejson.dumps({
-                            "return_code": -402,
-                            "return_message": u"Oops, You don't have the permission %s" % perm
-                            })))
-                    else:
-                        raise gen.Return(self.render("admin/error/401.html", perm=perm))
+                else:
+                    raise PermissionError(perm)
+                return method(self, *args, **kwargs)
+                # except PermissionDefinedError as e:
+                #     headers = self.request.headers
+                #     x_requested_with = headers.get("X-Requested-With", "")
+                #     if self.pjax:
+                #         raise gen.Return(self.render("admin/error/401.html", error_message=u"Oops, The permission %s is not defined" % perm))
+                #     if x_requested_with == "XMLHttpRequest":
+                #         raise gen.Return(self.write(simplejson.dumps({
+                #             "return_code": -401,
+                #             "return_message": u"Oops, The permission %s is not defined" % perm
+                #             })))
+                #     else:
+                #         raise gen.Return(self.render("admin/error/401.html", error_message=u"Oops, The permission %s is not defined" % perm))
+                # except PermissionError as e:
+                #     logger.error(e)
+                #     headers = self.request.headers
+                #     x_requested_with = headers.get("X-Requested-With", "")
+                #     if self.pjax:
+                #         raise gen.Return(self.render("admin/error/401.html", error_message=u"Oops, You don't have the permission %s" % perm))
+                #     if x_requested_with == "XMLHttpRequest":
+                #         raise gen.Return(self.write(simplejson.dumps({
+                #             "return_code": -402,
+                #             "return_message": u"Oops, You don't have the permission %s" % perm
+                #             })))
+                #     else:
+                #         raise gen.Return(self.render("admin/error/401.html", error_message=u"Oops, You don't have the permission %s" % perm))
             return method(self, *args, **kwargs)
         return wrapper
     return func

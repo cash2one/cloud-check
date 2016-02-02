@@ -3,7 +3,7 @@
 import scloud
 from torweb.urls import url
 from scloud.config import logger
-from scloud.handlers import Handler
+from scloud.handlers import Handler, AuthHandler
 import requests
 import urlparse
 import urllib
@@ -12,12 +12,14 @@ import simplejson
 import time
 from tornado.web import asynchronous
 from tornado import gen
+from scloud.utils.permission import check_perms
 from scloud.async_services import svc_project
 
 
 @url("/guide", name="guide", active="guide")
-class GuideHandler(Handler):
+class GuideHandler(AuthHandler):
     u'申请资源'
+    @check_perms('pro_info.view')
     @asynchronous
     @gen.coroutine
     def get(self):

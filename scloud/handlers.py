@@ -7,6 +7,7 @@ import urlparse
 import functools
 import simplejson
 from tornado.web import HTTPError
+from tornado import gen
 from torweb.handlers import BaseHandler
 from scloud.shortcuts import env
 from scloud.config import CONF, logger
@@ -97,7 +98,15 @@ class Handler(BaseHandler):
             template_string = self.render_to_string("%s_pjax.html" % template.split(".html")[0], **kwargs)
         else:
             template_string = self.render_to_string(template, **kwargs)
+        logger.info(kwargs)
         self.write(template_string.strip())
+
+    # @gen.coroutine
+    def get_error_html(self, status_code, **kwargs):
+        logger.info(kwargs)
+        exception = kwargs["exception"]
+        traceback = kwargs["traceback"]
+        self.render("admin/error/500.html", status_code=status_code, exception=exception, traceback=traceback)
 
 
 def authenticated(method):
@@ -172,6 +181,19 @@ class AuthHandler(Handler):
         redirect_url = self.reverse_url("login")
         next = self.request.full_url()
         return "%s?next=%s" % (redirect_url, urllib.quote(next))
+
+    @property
+    def session(self):
+        '''根据session_sid值来获取session对象，或者初始化一个session对象'''
+        session_store = self.application.session_store
+        sid = self.cookies.get('session_id')
+        if session_store.__class__.__name__ == 'RedisSessionStore':
+            if sid is None:
+                _sessionsid = self.application.session_store.generate_sid()
+            else:
+                _sessionsid = sid.value
+            from torweb.sessions import RedisSession
+            return RedisSession(self.application.session_store, _sessionsid)
 
     def expire_session(self):
         from datetime import datetime, timedelta

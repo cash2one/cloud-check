@@ -12,7 +12,7 @@ $(function(){
 {% set data = result.data %}
 <div class="box box-{{ theme }}">
   <div class="box-header with-border">
-    <h3 class="box-title">添加新操作权限</h3>
+    <h3 class="box-title">[{{ data.pt_role.name }}]操作权限</h3>
     <!-- tools box -->
     <div class="pull-right box-tools">
       <button class="btn btn-{{ theme }} btn-sm" data-widget="remove" data-toggle="tooltip" onclick="hide_right();" title="Remove"><i class="fa fa-times"></i></button>

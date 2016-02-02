@@ -5,6 +5,7 @@ from functools import partial, wraps
 
 import tornado.ioloop
 import tornado.web
+from scloud.config import logger
 
 
 EXECUTOR = ThreadPoolExecutor(max_workers=4)
@@ -18,8 +19,13 @@ def unblock(f):
         self = args[0]
 
         def callback(future):
-            self.write(future.result())
-            self.finish()
+            if self._finished:
+                logger.info("+++++++++++++++ future.result() +++++++++++++++")
+                logger.info(future.result())
+                return future.result()
+            else:
+                self.write(future.result())
+                self.finish()
 
         EXECUTOR.submit(
             partial(f, *args, **kwargs)

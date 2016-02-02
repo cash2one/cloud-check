@@ -18,7 +18,7 @@ from scloud.utils.permission import check_perms
 @url("/pt_user", name="pt_user", active="pt_user")
 class PT_User_Handler(AuthHandler):
     u"""用户管理"""
-    @check_perms("pro_info.view")
+    # @check_perms("pro_info.view")
     @gen.coroutine
     def genReturn(self):
         search = self.args.get("search", "")
