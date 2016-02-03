@@ -2,7 +2,7 @@
 <!-- <script src="{{ handler.static_url('default/plugins/iCheck/icheck.min.js') }}"></script> -->
 <script type="text/javascript">
 $(function(){
-  $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+  $('input[type="checkbox"], input[type="radio"].flat-red').iCheck({
       checkboxClass: 'icheckbox_flat-red',
       radioClass: 'iradio_flat-green'
     });
@@ -43,7 +43,7 @@ $(function(){
         <div class="box-body">
             <div class="form-group row">
               {% for op in group.ops %}
-              <label class="col-xs-3">
+              <label style="margin: 5px;">
                 <input type="checkbox" name="group_op" class="flat-red" value="{{ group.keycode }}.{{ op.keycode }}"{% if data.role_group_obj.get("%s.%s" % (group.keycode, op.keycode)) %} checked{% endif %}>
                 {{ op.name }}
               </label>

@@ -4,8 +4,9 @@ import simplejson
 from tornado import gen
 from collections import namedtuple
 from scloud.config import logger, logThrown
-from scloud.models.project import Pro_Info
-from scloud.models.environment import Env_Info
+from scloud.models.pt_user import PT_User, PT_Role
+from scloud.models.project import Pro_Info, Pro_Resource_Apply
+from scloud.models.environment import Env_Info, Env_Internet_Ip_Types, Env_Resource_Fee, Env_Resource_Value
 from tornado.util import ObjectDict
 
 operate = namedtuple("operate", ["name", "keyword", "keycode"])
@@ -23,16 +24,53 @@ OP = {m.__getattribute__(op).keycode: m.__getattribute__(op) for op in OP}
 GROUP = ObjectDict()
 
 sys_groups = [
+
+    _group(
+        name = PT_User.__doc__,
+        keyword = PT_User.__tablename__,
+        keycode = 1001,
+        ops = [op_view, op_insert, op_update, op_delete]
+    ),
+    _group(
+        name = PT_Role.__doc__,
+        keyword = PT_Role.__tablename__,
+        keycode = 1002,
+        ops = [op_view, op_insert, op_update, op_delete]
+    ),
     _group(
         name = Pro_Info.__doc__,
         keyword = Pro_Info.__tablename__,
-        keycode = 1001,
+        keycode = 1101,
+        ops = [op_view, op_insert, op_update, op_delete, op_check]
+    ),
+    _group(
+        name = Pro_Resource_Apply.__doc__,
+        keyword = Pro_Resource_Apply.__tablename__,
+        keycode = 1102,
         ops = [op_view, op_insert, op_update, op_delete, op_check]
     ),
     _group(
         name = Env_Info.__doc__,
-        keyword = Env_Info.__tablename__,  
-        keycode = 1002,
+        keyword = Env_Info.__tablename__,
+        keycode = 1201,
+        ops = [op_view, op_insert, op_update, op_delete]
+    ),
+    _group(
+        name = Env_Internet_Ip_Types.__doc__,
+        keyword = Env_Internet_Ip_Types.__tablename__,
+        keycode = 1202,
+        ops = [op_view, op_insert, op_update, op_delete]
+    ),
+    _group(
+        name = Env_Resource_Fee.__doc__,
+        keyword = Env_Resource_Fee.__tablename__,
+        keycode = 1203,
+        ops = [op_view, op_insert, op_update, op_delete]
+    ),
+    _group(
+        name = Env_Resource_Value.__doc__,
+        keyword = Env_Resource_Value.__tablename__,
+        keycode = 1204,
         ops = [op_view, op_insert, op_update, op_delete]
     ),
 ]
@@ -80,51 +118,50 @@ def check_perms(perms):
             logger.info(sys_permissions)
             need_perms = perms.split(",")
             for perm in need_perms:
-                # try:
                 try:
-                    keycode = sys_permissions[perm]
-                except KeyError:
-                    raise PermissionDefinedError(perm)
-                # current_perms = self.current_perms
-                logger.info(self.get_current_user())
-                logger.info(self.current_user)
-                current_perms = self.current_user.current_perms
-                logger.info("--------------[current_perms]--------------")
-                logger.info(self.current_user.current_perms)
-                try:
-                    current_keycode = current_perms[perm]
-                except KeyError:
-                    raise PermissionError(perm)
-                if keycode == current_keycode:
+                    try:
+                        keycode = sys_permissions[perm]
+                    except KeyError:
+                        raise PermissionDefinedError(perm)
+                    logger.info(self.get_current_user())
+                    logger.info(self.current_user)
+                    current_perms = self.current_user.current_perms
+                    logger.info("--------------[current_perms]--------------")
+                    logger.info(self.current_user.current_perms)
+                    try:
+                        current_keycode = current_perms[perm]
+                    except KeyError:
+                        raise PermissionError(perm)
+                    if keycode == current_keycode:
+                        return method(self, *args, **kwargs)
+                    else:
+                        raise PermissionError(perm)
                     return method(self, *args, **kwargs)
-                else:
-                    raise PermissionError(perm)
-                return method(self, *args, **kwargs)
-                # except PermissionDefinedError as e:
-                #     headers = self.request.headers
-                #     x_requested_with = headers.get("X-Requested-With", "")
-                #     if self.pjax:
-                #         raise gen.Return(self.render("admin/error/401.html", error_message=u"Oops, The permission %s is not defined" % perm))
-                #     if x_requested_with == "XMLHttpRequest":
-                #         raise gen.Return(self.write(simplejson.dumps({
-                #             "return_code": -401,
-                #             "return_message": u"Oops, The permission %s is not defined" % perm
-                #             })))
-                #     else:
-                #         raise gen.Return(self.render("admin/error/401.html", error_message=u"Oops, The permission %s is not defined" % perm))
-                # except PermissionError as e:
-                #     logger.error(e)
-                #     headers = self.request.headers
-                #     x_requested_with = headers.get("X-Requested-With", "")
-                #     if self.pjax:
-                #         raise gen.Return(self.render("admin/error/401.html", error_message=u"Oops, You don't have the permission %s" % perm))
-                #     if x_requested_with == "XMLHttpRequest":
-                #         raise gen.Return(self.write(simplejson.dumps({
-                #             "return_code": -402,
-                #             "return_message": u"Oops, You don't have the permission %s" % perm
-                #             })))
-                #     else:
-                #         raise gen.Return(self.render("admin/error/401.html", error_message=u"Oops, You don't have the permission %s" % perm))
+                except PermissionDefinedError as e:
+                    headers = self.request.headers
+                    x_requested_with = headers.get("X-Requested-With", "")
+                    if self.pjax:
+                        raise gen.Return(self.render("admin/error/403.html", error_message=u"Oops, The permission %s is not defined" % perm))
+                    if x_requested_with == "XMLHttpRequest":
+                        raise gen.Return(self.write(simplejson.dumps({
+                            "return_code": -403,
+                            "return_message": u"Oops, The permission %s is not defined" % perm
+                            })))
+                    else:
+                        raise gen.Return(self.render("admin/error/403.html", error_message=u"Oops, The permission %s is not defined" % perm))
+                except PermissionError as e:
+                    logger.error(e)
+                    headers = self.request.headers
+                    x_requested_with = headers.get("X-Requested-With", "")
+                    if self.pjax:
+                        raise gen.Return(self.render("admin/error/403.html", error_message=e.__unicode__()))
+                    if x_requested_with == "XMLHttpRequest":
+                        raise gen.Return(self.write(simplejson.dumps({
+                            "return_code": -403,
+                            "return_message": u"Oops, You don't have the permission %s" % perm
+                            })))
+                    else:
+                        raise gen.Return(self.render("admin/error/403.html", error_message=u"Oops, You don't have the permission %s" % perm))
             return method(self, *args, **kwargs)
         return wrapper
     return func

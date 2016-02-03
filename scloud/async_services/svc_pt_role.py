@@ -76,7 +76,7 @@ def get_role_group_ops(role_id):
             "%s.%s" % (
                 str(int(d["group_keycode"])), str(int(d["op_keycode"]))
             ): "%s.%s" % (
-                GROUP[int(d["group_keycode"])].keyword, OP[int(d["op_keycode"])].keyword
+                GROUP.get(int(d["group_keycode"])).keyword if GROUP.get(int(d["group_keycode"])) else "", OP[int(d["op_keycode"])].keyword
             ) for d in role_group_ops}
         data = {
             "return_code": 0,
@@ -133,10 +133,15 @@ def get_or_create(name, desc=u"", remark=u""):
     role_info.remark = remark
     with DataBaseService({}) as svc:
         svc.db.add(role_info)
+        # role_res = svc.db.query(
+        #     PT_Role
+        # ).filter(
+        #     PT_Role.id == role_info.id
+        # ).first()
     data = {
             "return_code": 0,
             "return_message": u"",
-            "data": role_info.as_dict()
+            # "data": role_res.as_dict()
         }
     return data
 

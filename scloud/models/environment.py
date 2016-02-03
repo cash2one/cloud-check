@@ -25,7 +25,7 @@ class Env_Internet_Ip_Types(BaseModel, BaseModelMixin):
 
 
 class Env_Resource_Fee(BaseModel, BaseModelMixin):
-    u"""项目资源申请"""
+    u"""环境资源费用配置"""
     __tablename__ = "env_resource_fee"
     env_id = Column(Integer, ForeignKey('env_info.id'), default=0)
     computer = Column(Float, default=0.00)
@@ -42,7 +42,7 @@ class Env_Resource_Fee(BaseModel, BaseModelMixin):
 
 
 class Env_Resource_Value(BaseModel, BaseModelMixin):
-    u"""项目资源申请"""
+    u"""环境资源推荐值（默认值）配置"""
     __tablename__ = "env_resource_value"
     env_id = Column(Integer, ForeignKey('env_info.id'), default=0)
     computer = Column(Integer, default=0)

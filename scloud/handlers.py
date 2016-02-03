@@ -101,12 +101,13 @@ class Handler(BaseHandler):
         logger.info(kwargs)
         self.write(template_string.strip())
 
-    # @gen.coroutine
+    # # @gen.coroutine
     def get_error_html(self, status_code, **kwargs):
-        logger.info(kwargs)
-        exception = kwargs["exception"]
-        traceback = kwargs["traceback"]
-        self.render("admin/error/500.html", status_code=status_code, exception=exception, traceback=traceback)
+        return ""
+    #     logger.info(kwargs)
+    #     exception = kwargs["exception"]
+    #     traceback = kwargs["traceback"]
+    #     self.render("admin/error/500.html", status_code=status_code, exception=exception, traceback=traceback)
 
 
 def authenticated(method):
