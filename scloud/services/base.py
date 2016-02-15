@@ -15,9 +15,9 @@ class BaseService(object):
         result.data = data
         return result
 
-    def failure(self, return_code, return_message):
+    def failure(self, error_obj):
         result = ObjectDict()
-        result.return_code = return_code
-        result.return_message = return_message
+        result.return_code = error_obj.errcode
+        result.return_message = error_obj.errvalue
         result.data = None
         return result

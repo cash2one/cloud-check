@@ -1,0 +1,75 @@
+  <p class="login-box-msg">注册新用户</p>
+  <form action="{{ reverse_url('register') }}" method="post" onsubmit="return check_form()">
+    {{ handler.xsrf_form_html() }}
+    <div class="form-group has-feedback">
+      <input type="text" id="email" name="email" class="form-control" placeholder="邮箱" value="{{ handler.session.get('post_email', '') }}">
+      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+    </div>
+    {% if result %}
+      {% if result.return_code|int in [-100005, -100006] %}
+        <p class="text-red">{{ result.return_message }}</p>
+      {% endif %}
+    {% endif %}
+    <div class="form-group has-feedback">
+      <input type="text" class="form-control" name="mobile" placeholder="常用手机号" data-inputmask="'mask': ['999 9999 9999']" data-mask value="{{ handler.session.get('post_mobile', '')}}">
+      <span class="glyphicon glyphicon-phone form-control-feedback"></span>
+    </div>
+    {% if result %}
+      {% if result.return_code|int in [-100007, -100008] %}
+        <p class="text-red">{{ result.return_message }}</p>
+      {% endif %}
+    {% endif %}
+    <div class="form-group has-feedback">
+      <input type="password" id="password" class="form-control" placeholder="密码" value="">
+      <input type="hidden" name="password" class="form-control" placeholder="密码" value="">
+      <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+    </div>
+    {% if result %}
+      {% if result.return_code|int in [-100003, -100004] %}
+        <p class="text-red">{{ result.return_message }}</p>
+      {% endif %}
+    {% endif %}
+    <div class="form-group has-feedback">
+      <input type="password" id="repeat_password" class="form-control" placeholder="重复密码" value="">
+      <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+    </div>
+    <p class="text-red" for="repeat_password"></p>
+    <div class="row">
+      <div class="col-xs-8">
+        <div class="checkbox icheck">
+          <label>
+            <input type="checkbox" id="agree" name="agree"{% if handler.session.get('post_agree', 0)|int == 1 %} checked="checked" {% endif %}> 同意<a href="#">协议</a>
+          </label>
+          <p class="text-red" for="agree"></p>
+        </div>
+      </div><!-- /.col -->
+      <div class="col-xs-4">
+        <button type="submit" class="btn btn-primary btn-block btn-flat">注册</button>
+      </div><!-- /.col -->
+    </div>
+  </form>
+  <a href="{{ reverse_url('login') }}" class="text-center">已有帐号，直接登录</a>
+<script type="text/javascript">
+// $(function(){
+//   $("#email").inputmask('Regex', { regex: "[a-zA-Z0-9._%-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,4}" });
+// });
+
+function check_form(){
+  $("p.text-red").text("");
+  var checked = $("#agree").prop("checked")==true?"1":"0";
+  $("#agree").val(checked);
+  if (parseInt(checked) == 0){
+    $("p[for=agree]").text("尚未阅读协议？");
+    return false;
+  }
+  var password = $("#password").val();
+  var repeat_password = $("#repeat_password").val();
+  if (password != repeat_password){
+    $("p[for=repeat_password]").text("重复密码不一致");
+    return false;
+  }
+  var password = $('#password').val();
+  $('input[name=password]').val(MD5(password));
+  return true;
+}
+</script>

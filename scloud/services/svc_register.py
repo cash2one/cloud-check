@@ -4,27 +4,29 @@ from datetime import datetime
 from tornado import gen
 from scloud.services.base import BaseService
 from scloud.models.base import MYSQL_POOL
-from scloud.models.pt_user import PT_User
+from scloud.models.pt_user import PT_User, PT_User_Role
 from scloud.config import logger, thrownException
-from sqlalchemy import and_, or_
+from sqlalchemy import and_
 from scloud.utils.permission import GROUP, OP
 from scloud.utils.error_code import ERROR
 
 
-class LoginService(BaseService):
-
+class RegisterService(BaseService):
     @thrownException
-    def do_login(self):
-        username = self.params.get("username", "").strip()
+    def do_register(self):
+        email = self.params.get("email", "").strip()
+        mobile = self.params.get("mobile", "").strip().replace(' ', '')
         password = self.params.get("password", "").strip()
-        if username == "":
-            return self.failure(ERROR.username_empty_err)
+        if email == "":
+            return self.failure(ERROR.email_empty_err)
+        if mobile == "":
+            return self.failure(ERROR.mobile_empty_err)
+        if password == "":
+            return self.failure(ERROR.password_empty_err)
+        instance, created = PT_User.get_or_create(email=email, mobile=mobile, password=password)
+        PT_User_Role.get_or_create(user_id=instance.id, role_id=2)
         conditions = and_()
-        or_conditions = or_()
-        or_conditions.append(PT_User.username == username)
-        or_conditions.append(PT_User.email == username)
-        or_conditions.append(PT_User.mobile == username)
-        conditions.append(or_conditions)
+        conditions.append(PT_User.id == instance.id)
         conditions.append(PT_User.is_enable == 1)
         user_info = self.db.query(
             PT_User
@@ -32,11 +34,6 @@ class LoginService(BaseService):
             conditions
         ).first()
         if user_info:
-            if password == "":
-                return self.failure(ERROR.password_empty_err)
-            if user_info.password != password:
-                return self.failure(ERROR.password_err)
-
             # LOGIN SUCCESS
             user_roles = user_info.user_roles
             current_perms = {}

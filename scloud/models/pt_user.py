@@ -12,6 +12,8 @@ from sqlalchemy.types import Unicode, Integer, DateTime
 class PT_User(BaseModel, BaseModelMixin):
     u"""用户"""
     __tablename__ = "pt_user"
+    email = Column(Unicode, default=u'')
+    mobile = Column(Unicode, default=u'')
     username = Column(Unicode, default=u'')
     password = Column(Unicode, default=u'')
     last_login = Column(DateTime, default=func.now())

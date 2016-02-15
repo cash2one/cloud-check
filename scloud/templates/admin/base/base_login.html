@@ -29,53 +29,17 @@
       <div class="login-logo">
         <a href="{{ reverse_url('pt_user') }}"><b>{{ CONF('APP_CN') }}</b>SCLOUD</a>
       </div><!-- /.login-logo -->
-      <div class="login-box-body">
-        <p class="login-box-msg">登录</p>
-        <form action="{{ reverse_url('login') }}" method="post" onsubmit="return check_form()">
-          {{ handler.xsrf_form_html() }}
-          <div class="form-group has-feedback">
-            <input type="username" name="username" class="form-control" placeholder="username" value="{{ handler.session.get('post_username', '')}}">
-            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-          </div>
-          {% if result %}
-            {% if result.return_code|int in [-100001, -100002] %}
-              <p class="text-red">{{ result.return_message }}</p>
-            {% endif %}
-          {% endif %}
-          <div class="form-group has-feedback">
-            <input type="password" id="password" class="form-control" placeholder="password">
-            <input type="hidden" name="password">
-            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-          </div>
-          {% if result %}
-            {% if result.return_code|int in [-100003, -100004] %}
-              <p class="text-red">{{ result.return_message }}</p>
-            {% endif %}
-          {% endif %}
-          <div class="row">
-            <div class="col-xs-8">
-              <div class="checkbox icheck">
-                <label>
-                  <input type="checkbox"> Remember Me
-                </label>
-              </div>
-            </div><!-- /.col -->
-            <div class="col-xs-4">
-              <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
-            </div><!-- /.col -->
-          </div>
-        </form>
-
-        <!-- <a href="#">I forgot my password</a><br> -->
-        <a href="{{ reverse_url('register') }}" class="text-center">注册新用户</a>
-
-      </div><!-- /.login-box-body -->
+      {% block content %}
+      {% endblock %}
     </div><!-- /.login-box -->
 
     <!-- jQuery 2.1.4 -->
     <script src="{{ handler.static_url('default/plugins/jQuery/jQuery-2.1.4.min.js') }}"></script>
     <!-- Bootstrap 3.3.5 -->
     <script src="{{ handler.static_url('default/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/input-mask/jquery.inputmask.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/input-mask/jquery.inputmask.date.extensions.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/input-mask/jquery.inputmask.extensions.js') }}"></script>
     <!-- iCheck -->
     <script src="{{ handler.static_url('default/plugins/iCheck/icheck.min.js') }}"></script>
     <script src="{{ handler.static_url('js/echo-strap-0.0.1.js') }}"></script>
@@ -86,11 +50,8 @@
           radioClass: 'iradio_square-blue',
           increaseArea: '20%' // optional
         });
+        $("[data-mask]").inputmask();
       });
-      function check_form(){
-        var password = $('#password').val();
-        $('input[name=password]').val(MD5(password));
-      }
     </script>
   </body>
 </html>
