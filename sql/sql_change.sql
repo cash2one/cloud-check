@@ -1,0 +1,267 @@
+/* ------------------ 2016-01-20 ------------------ */
+CREATE TABLE `pt_user` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `email` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '用户名',
+    `mobile` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '用户名',
+    `password` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '登录密码',
+    `last_login` DATETIME NOT NULL DEFAULT  '0000-00-00 00:00:00' COMMENT '上次登录时间',
+    `is_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1' COMMENT '是否可用',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='管理员用户表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+
+CREATE TABLE `pt_group` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `name` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '组名',
+    `keyword` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '关键字',
+    `keycode` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '关键字代码',
+    `is_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1' COMMENT '是否可用',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='管理员用户表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+
+CREATE TABLE `pt_perm` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `name` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '权限名称',
+    `keyword` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '关键字',
+    `keycode` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '关键字代码',
+    `is_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1' COMMENT '是否可用',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='管理员用户表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+
+CREATE TABLE `pt_group_perms` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `group_id` INT(11) NOT NULL DEFAULT '0' COMMENT '分组ID',
+    `perm_id` INT(11) NOT NULL DEFAULT '0' COMMENT '权限ID',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='管理员用户表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+CREATE TABLE `pt_role` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `name` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '描述名称',
+    `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '角色描述',
+    `remark` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '注释',
+    `is_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1' COMMENT '是否可用',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='角色表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+CREATE TABLE `pt_role_group_ops` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `role_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+    `group_keycode` INT(11) NOT NULL DEFAULT '0' COMMENT '分组关键编码',
+    `op_keycode` INT(11) NOT NULL DEFAULT '0' COMMENT '操作关键编码',
+    `is_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1' COMMENT '是否可用',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='角色权限表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+CREATE TABLE `pt_role_groups` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `role_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+    `group_perm_id` INT(11) NOT NULL DEFAULT '0' COMMENT '分组ID',
+    `is_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1' COMMENT '是否可用',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='角色权限表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+CREATE TABLE `pt_user_role` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+    `role_id` INT(11) NOT NULL DEFAULT '0' COMMENT '角色ID',
+    `is_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1' COMMENT '是否可用',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='角色权限表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+/* ------------------ 2016-01-18 ------------------ */
+CREATE TABLE `pro_info` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `name` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '项目名称',
+    `owner` VARCHAR(255) NOT NULL DEFAULT '0' COMMENT '项目负责人',
+    `owner_email` VARCHAR(255) NOT NULL DEFAULT '0' COMMENT '项目负责人',
+    `env_id` INT(11) NOT NULL DEFAULT '0' COMMENT '环境ID',
+    `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '项目描述',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='项目信息表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+CREATE TABLE `env_info` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `name` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '环境名称',
+    `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '环境描述',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='项目环境表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+CREATE TABLE `pro_resource_apply` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `pro_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属项目',
+    `computer` INT(11) NOT NULL DEFAULT '0' COMMENT '云主机数量',
+    `cpu` INT(11) NOT NULL DEFAULT '0' COMMENT 'CPU数量',
+    `memory` INT(11) NOT NULL DEFAULT '0' COMMENT '内存数量',
+    `disk` INT(11) NOT NULL DEFAULT '0' COMMENT '云磁盘数量',
+    `disk_backup` INT(11) NOT NULL DEFAULT '0' COMMENT '云磁盘备份数量',
+    `out_ip` INT(11) NOT NULL DEFAULT '0' COMMENT '外部IP数量',
+    `snapshot` INT(11) NOT NULL DEFAULT '0' COMMENT '快照数量',
+    `loadbalance` INT(11) NOT NULL DEFAULT '0' COMMENT '应用负载均衡数量',
+    `internet_ip` INT(11) NOT NULL DEFAULT '-1' COMMENT '互联网IP',
+    `internet_ip_ssl` INT(11) NOT NULL DEFAULT '-1' COMMENT '互联网IP是否需要SSL卸载',
+    `desc` VARCHAR(512) NOT NULL DEFAULT '创建项目' COMMENT '变更描述',
+    `start_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '启动时间',
+    `period` INT(11) NOT NULL DEFAULT '0' COMMENT '运行期（月）',
+    `due_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '到期时间',
+    `fee_current_mouth` float(11,4) NOT NULL DEFAULT '0.00' COMMENT '本月费用',
+    `fee_total` float(11,4) NOT NULL DEFAULT '0.00' COMMENT '合计费用',
+    `fee_desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '费用产生描述（计算结果给出）',
+    `status` INT(11) NOT NULL DEFAULT '0' COMMENT '资源申请状态 0:提交（待审核），1：已审核（待支付），2已支付（完成）',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='项目资源申请表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+CREATE TABLE `env_resource_fee` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `env_id` INT(11) NOT NULL DEFAULT '0' COMMENT '项目环境ID',
+    `computer_fee` INT(11) NOT NULL DEFAULT '0' COMMENT '云主机单价费用',
+    `cpu_fee` INT(11) NOT NULL DEFAULT '0' COMMENT 'CPU单价费用',
+    `memory_fee` INT(11) NOT NULL DEFAULT '0' COMMENT '内存单价费用',
+    `disk_fee` INT(11) NOT NULL DEFAULT '0' COMMENT '云磁盘单价费用',
+    `disk_backup_fee` INT(11) NOT NULL DEFAULT '0' COMMENT '云磁盘备份单价费用',
+    `out_ip_fee` INT(11) NOT NULL DEFAULT '0' COMMENT '外部IP单价费用',
+    `snapshot_fee` INT(11) NOT NULL DEFAULT '0' COMMENT '快照单价费用',
+    `loadbalance_fee` INT(11) NOT NULL DEFAULT '0' COMMENT '应用负载均衡单价费用',
+    `internet_ip` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '互联网IP类型费用（JSON）',
+    `internet_ip_ssl_fee` INT(11) NOT NULL DEFAULT '0' COMMENT '互联网IP是否需要SSL卸载',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='环境资源单价费用表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+CREATE TABLE `env_resource_value` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `env_id` INT(11) NOT NULL DEFAULT '0' COMMENT '项目环境ID',
+    `computer_val` INT(11) NOT NULL DEFAULT '0' COMMENT '云主机默认推荐值',
+    `cpu_val` INT(11) NOT NULL DEFAULT '0' COMMENT 'CPU默认推荐值',
+    `memory_val` INT(11) NOT NULL DEFAULT '0' COMMENT '内存默认推荐值',
+    `disk_val` INT(11) NOT NULL DEFAULT '0' COMMENT '云磁盘默认推荐值',
+    `disk_backup_val` INT(11) NOT NULL DEFAULT '0' COMMENT '云磁盘备份默认推荐值',
+    `out_ip_val` INT(11) NOT NULL DEFAULT '0' COMMENT '外部IP默认推荐值',
+    `snapshot_val` INT(11) NOT NULL DEFAULT '0' COMMENT '快照默认推荐值',
+    `loadbalance_val` INT(11) NOT NULL DEFAULT '0' COMMENT '应用负载均衡默认推荐值',
+    `internet_ip_val` INT(11) NOT NULL DEFAULT '0' COMMENT '互联网IP类型默认推荐值',
+    `internet_ip_ssl_val` INT(11) NOT NULL DEFAULT '0' COMMENT '互联网IP是否需要SSL卸载默认推荐值',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='环境资源默认值表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+CREATE TABLE `env_internet_ip_types` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `env_id` INT(11) NOT NULL DEFAULT '0' COMMENT '项目环境ID',
+    `name` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '外网IP分类名称',
+    `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '外网IP分类描述',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='环境外网IP分类表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+CREATE TABLE `act_history` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `act_type` INT(11) NOT NULL DEFAULT '0' COMMENT '数据库操作类型 1：添加，2：修改，3：删除，9：其他',
+    `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '数据库操作描述',
+    `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '数据库操作人员',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='数据库操作历史表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+CREATE TABLE `act_todo` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `important` INT(11) NOT NULL DEFAULT '0' COMMENT 'TODO操作紧急程度',
+    `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '数据库操作描述',
+    `from_user_id` INT(11) NOT NULL DEFAULT '0' COMMENT 'TODO操作发起人',
+    `to_user_id` INT(11) NOT NULL DEFAULT '0' COMMENT 'TODO操作人',
+    `status` INT(11) NOT NULL DEFAULT '0' COMMENT 'TODO事件状态 0：新创建，1：进行中，9：已完成',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='TODO信息表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;

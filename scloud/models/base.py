@@ -55,7 +55,7 @@ class ModelServiceMixin(object):
 class DataBaseService(ModelServiceMixin):
     event.listen(db_engine, 'checkout', my_on_checkout)
     db_session = __DB_Session = scoped_session(
-        sessionmaker(bind=db_engine, query_cls=CacheQuery, expire_on_commit=False, autoflush=False))
+        sessionmaker(bind=db_engine, query_cls=CacheQuery, expire_on_commit=False, autoflush=False, autocommit=True))
     meta_data = MetaData(bind=db_engine)
 
     def __init__(self, param_dict={}):
@@ -68,9 +68,11 @@ class DataBaseService(ModelServiceMixin):
     def __enter__(self):
         logger.info("====[ENTER]====")
         self._db_init()
+        self.db.begin()
         return self
 
     def __exit__(self, *args):
+        logger.info(args)
         logger.info("====[EXIT]====")
         if isinstance(args[1], Exception):
             self.db.rollback()

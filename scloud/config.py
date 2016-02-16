@@ -13,6 +13,7 @@ from torweb.config import get_host_ip, CONFIG
 from torweb.urls import Url
 from logging.config import dictConfig
 from logging.handlers import TimedRotatingFileHandler
+from scloud.utils.error_code import ERROR
 
 
 CONFIG_NAME = "prd.yaml"
@@ -51,9 +52,29 @@ def thrownException(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
+            logger.info(args)
+            logger.info(kwargs)
+            logger.info("====[EXIT]====")
+            svc = args[0]
+            # from code import interact
+            # interact(local=locals())
+            if isinstance(e, Exception):
+                svc.db.rollback()
+                logger.info("====[ROLLBACK]====")
+            else:
+                svc.db.commit()
+                # svc.db.flush()
+                logger.info("====[COMMIT]====")
+            svc.db.remove()
+            svc.db.close()
+            logger.info("====[CLOSE]====")
+            # svc = args[0]
+            # svc.db.close()
+            # svc.db.remove()
+            # logger.info(svc.db)
             logThrown()
             data = ObjectDict()
-            data.return_code = -100001,
+            data.return_code = ERROR.system_err.errcode
             data.return_message = e.__unicode__()
             return data
     return wrapper

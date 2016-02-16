@@ -13,6 +13,7 @@ from scloud.shortcuts import env
 from scloud.config import CONF, logger
 from scloud.models.base import DataBaseService
 from scloud.async_services.svc_act import task_post_action
+from sqlalchemy.exc import SQLAlchemyError
 
 
 class HandlerMeta(type):
@@ -26,6 +27,7 @@ class HandlerMeta(type):
             if method in dct:
                 # 检查url地址中的不合法参数，防跨域调用js
                 # 检查函数运行时错误，遇到错误直接抛出
+                # dct[method] = check_exception(dct[method])
                 pass
         return type.__new__(mcs, name, bases, dct)
 
@@ -47,6 +49,7 @@ class Handler(BaseHandler):
         self.session["messages"].append({"level": level, "content": content})
         self.session["messages_request"] = len(self.session["messages"])
         self.save_session()
+        # logger.info(self.session)
 
     def post_action(self, content="", level="info"):
         current_user = self.session.get("current_user")
@@ -63,14 +66,30 @@ class Handler(BaseHandler):
         return self.messages
 
     def on_finish(self):
-        logger.info("====================== [http method (%s)] ======================" % self.request.method)
+        logger.info("====[EXIT]====")
+        try:
+            self.svc.db.commit()
+            # self.db.flush()
+            logger.info("====[COMMIT]====")
+        except SQLAlchemyError:
+            self.svc.db.rollback()
+            logger.info("====[ROLLBACK]====")
         self.svc.db.remove()
         self.svc.db.close()
+        logger.info("====[CLOSE]====")
+        # logger.info(self.svc.db.is_active)
+        # logger.info("====================== [http method (%s)] ======================" % self.request.method)
+        # self.svc.db.is_active
+        # self.svc.db.remove()
+        # self.svc.db.close()
+        # logger.info(self.svc.db)
+        # logger.info(self.svc.db.is_active)
         logger.info("====================== [finish] ======================")
 
     def prepare(self):
         self.svc = DataBaseService()
         self.svc._db_init()
+        # self.db = self.svc.db
         logger.info("====================== [http method] ======================")
         logger.info(self.request.method)
         logger.info("====================== [args] ======================")
@@ -79,6 +98,12 @@ class Handler(BaseHandler):
         self.pjax = self.request.headers.get("X-PJAX")
 
     def render_to_string(self, template, **kwargs):
+        if self.pjax:
+            title = self.__doc__ or self.__class__.__name__
+            title = title.encode("utf-8")
+            self.set_header("title", urllib.quote(title))
+            self.set_header("active", self.kwargs.get("active", ""))
+            template = "%s_pjax.html" % template.split(".html")[0]
         tmpl = env.get_template(template)
         kwargs.update({
             "CONF": CONF,
@@ -90,14 +115,7 @@ class Handler(BaseHandler):
         return template_string
 
     def render(self, template, **kwargs):
-        if self.pjax:
-            title = self.__doc__ or self.__class__.__name__
-            title = title.encode("utf-8")
-            self.set_header("title", urllib.quote(title))
-            self.set_header("active", self.kwargs.get("active", ""))
-            template_string = self.render_to_string("%s_pjax.html" % template.split(".html")[0], **kwargs)
-        else:
-            template_string = self.render_to_string(template, **kwargs)
+        template_string = self.render_to_string(template, **kwargs)
         logger.info(kwargs)
         self.write(template_string.strip())
 
@@ -166,8 +184,8 @@ class AuthHandler(Handler):
     # self.current_perms = None
 
     def prepare(self):
-        super(AuthHandler, self).prepare()
         self.expire_session()
+        super(AuthHandler, self).prepare()
 
     def get_current_user(self):
         current_user = self.session.get("current_user", None)
@@ -183,18 +201,18 @@ class AuthHandler(Handler):
         next = self.request.full_url()
         return "%s?next=%s" % (redirect_url, urllib.quote(next))
 
-    @property
-    def session(self):
-        '''根据session_sid值来获取session对象，或者初始化一个session对象'''
-        session_store = self.application.session_store
-        sid = self.cookies.get('session_id')
-        if session_store.__class__.__name__ == 'RedisSessionStore':
-            if sid is None:
-                _sessionsid = self.application.session_store.generate_sid()
-            else:
-                _sessionsid = sid.value
-            from torweb.sessions import RedisSession
-            return RedisSession(self.application.session_store, _sessionsid)
+    # @property
+    # def session(self):
+    #     '''根据session_sid值来获取session对象，或者初始化一个session对象'''
+    #     session_store = self.application.session_store
+    #     sid = self.cookies.get('session_id')
+    #     if session_store.__class__.__name__ == 'RedisSessionStore':
+    #         if sid is None:
+    #             _sessionsid = self.application.session_store.generate_sid()
+    #         else:
+    #             _sessionsid = sid.value
+    #         from torweb.sessions import RedisSession
+    #         return RedisSession(self.application.session_store, _sessionsid)
 
     def expire_session(self):
         from datetime import datetime, timedelta

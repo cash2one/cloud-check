@@ -13,7 +13,9 @@ class Pro_Info(BaseModel, BaseModelMixin):
     u"""项目信息"""
     __tablename__ = "pro_info"
     name = Column(Unicode, default=u'')
-    owner_id = Column(Integer, default=0)
+    owner = Column(Unicode, default=u'')
+    owner_email = Column(Unicode, default=u'')
+    owner_mobile = Column(Unicode, default=u'')
     env_id = Column(Integer, ForeignKey("env_info.id"), default=0)
     desc = Column(Unicode, default=u'')
     env = relationship("Env_Info", backref="pro_infos")

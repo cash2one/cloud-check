@@ -5,7 +5,7 @@
 from torweb.urls import url
 from scloud.const import act_actions
 from scloud.config import logger
-from scloud.handlers import Handler
+from scloud.handlers import Handler, AuthHandler
 from scloud.models.pt_user import PT_Role, PT_Role_Group_Ops
 from tornado.web import asynchronous
 from tornado import gen
@@ -14,7 +14,7 @@ from pprint import pprint
 
 
 @url("/pt_role", name="pt_role", active="pt_role")
-class PT_Role_Handler(Handler):
+class PT_Role_Handler(AuthHandler):
     u"""角色组管理"""
     @gen.coroutine
     def genReturn(self):
@@ -72,7 +72,7 @@ class PT_Role_Handler(Handler):
 
 
 @url("/pt_role/info", name="pt_role.info", active="pt_role")
-class PT_Role_Info_Handler(Handler):
+class PT_Role_Info_Handler(AuthHandler):
     u"""角色组管理"""
     @asynchronous
     @gen.coroutine
@@ -110,7 +110,7 @@ class PT_Role_Info_Handler(Handler):
 
 
 @url("/pt_role/groups/info", name="pt_role.group_info", active="pt_role")
-class PT_Role_Group_Info_Handler(Handler):
+class PT_Role_Group_Info_Handler(AuthHandler):
     u"""角色组管理"""
     @asynchronous
     @gen.coroutine
@@ -147,7 +147,7 @@ class PT_Role_Group_Info_Handler(Handler):
 
 
 @url("/pt_role/delete", name="pt_role.delete", active="pt_role")
-class PT_role_Delete_Handler(Handler):
+class PT_role_Delete_Handler(AuthHandler):
     u"""用户管理"""
     @asynchronous
     @gen.coroutine

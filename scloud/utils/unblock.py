@@ -6,6 +6,7 @@ from functools import partial, wraps
 import tornado.ioloop
 import tornado.web
 from scloud.config import logger
+from scloud.utils.error import SystemError
 
 
 EXECUTOR = ThreadPoolExecutor(max_workers=4)
@@ -19,13 +20,19 @@ def unblock(f):
         self = args[0]
 
         def callback(future):
-            if self._finished:
-                logger.info("+++++++++++++++ future.result() +++++++++++++++")
-                logger.info(future.result())
-                return future.result()
-            else:
-                self.write(future.result())
-                self.finish()
+            try:
+                if self._finished:
+                    logger.info("+++++++++++++++ future.result() +++++++++++++++")
+                    logger.info(future.result())
+                    return future.result()
+                else:
+                    self.write(future.result())
+                    self.finish()
+            except Exception as e:
+                if isinstance(e, SystemError):
+                    template_string = self.render_to_string("admin/error/500.html", status_code=500, exception=u"系统错误(%s)" % e.code, traceback=e.message)
+                    self.write(template_string)
+                    self.finish()
 
         EXECUTOR.submit(
             partial(f, *args, **kwargs)

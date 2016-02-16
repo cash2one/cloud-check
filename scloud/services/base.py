@@ -21,3 +21,4 @@ class BaseService(object):
         result.return_message = error_obj.errvalue
         result.data = None
         return result
+

@@ -24,6 +24,7 @@ class PT_Role(BaseModel, BaseModelMixin):
     u"""角色"""
     __tablename__ = "pt_role"
     name = Column(Unicode, default=u'')
+    # email = Column(Unicode, default=u'')
     desc = Column(Unicode, default=u'')
     remark = Column(Unicode, default=u'')
     is_enable = Column(Integer, default=1)

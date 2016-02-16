@@ -114,8 +114,8 @@ def check_perms(perms):
         def wrapper(self, *args, **kwargs):
             logger.info("perms: %s" % perms)
             sys_permissions = get_sys_group_ops()
-            logger.info("--------------[sys_permissions]--------------")
-            logger.info(sys_permissions)
+            # logger.info("--------------[sys_permissions]--------------")
+            # logger.info(sys_permissions)
             need_perms = perms.split(",")
             for perm in need_perms:
                 try:
@@ -123,11 +123,11 @@ def check_perms(perms):
                         keycode = sys_permissions[perm]
                     except KeyError:
                         raise PermissionDefinedError(perm)
-                    logger.info(self.get_current_user())
-                    logger.info(self.current_user)
+                    # logger.info(self.get_current_user())
+                    # logger.info(self.current_user)
                     current_perms = self.current_user.current_perms
-                    logger.info("--------------[current_perms]--------------")
-                    logger.info(self.current_user.current_perms)
+                    # logger.info("--------------[current_perms]--------------")
+                    # logger.info(self.current_user.current_perms)
                     try:
                         current_keycode = current_perms[perm]
                     except KeyError:
@@ -136,6 +136,7 @@ def check_perms(perms):
                         return method(self, *args, **kwargs)
                     else:
                         raise PermissionError(perm)
+                    logger.info("%s check pass!" % perm)
                     return method(self, *args, **kwargs)
                 except PermissionDefinedError as e:
                     headers = self.request.headers
