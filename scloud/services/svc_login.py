@@ -52,7 +52,7 @@ class LoginService(BaseService):
             result = self.success(data=user_info)
             user_info.last_login = datetime.now()
             self.db.add(user_info)
-            self.db.commit()
+            #self.db.commit()
             return result
         else:
             return self.failure(ERROR.username_err)

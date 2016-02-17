@@ -196,9 +196,10 @@ class AuthHandler(Handler):
         #         logger.info(user_role.role)
         return self.session.get("current_user", None)
 
-    def get_login_url(self):
+    def get_login_url(self, next=''):
         redirect_url = self.reverse_url("login")
-        next = self.request.full_url()
+        if not next:
+            next = self.request.full_url()
         return "%s?next=%s" % (redirect_url, urllib.quote(next))
 
     # @property

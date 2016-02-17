@@ -33,6 +33,7 @@
         <p class="login-box-msg">登录</p>
         <form action="{{ reverse_url('login') }}" method="post" onsubmit="return check_form()">
           {{ handler.xsrf_form_html() }}
+          <input type="hidden" name="next" value="{{ handler.args.get('next', '')}}">
           <div class="form-group has-feedback">
             <input type="username" name="username" class="form-control" placeholder="username" value="{{ handler.session.get('post_username', '')}}">
             <span class="glyphicon glyphicon-envelope form-control-feedback"></span>

@@ -5,8 +5,8 @@ from functools import partial, wraps
 
 import tornado.ioloop
 import tornado.web
-from scloud.config import logger
-from scloud.utils.error import SystemError
+from scloud.config import logger, logThrown
+from scloud.utils.error import SystemError, NotFoundError
 
 
 EXECUTOR = ThreadPoolExecutor(max_workers=4)
@@ -29,8 +29,17 @@ def unblock(f):
                     self.write(future.result())
                     self.finish()
             except Exception as e:
+                logThrown()
                 if isinstance(e, SystemError):
                     template_string = self.render_to_string("admin/error/500.html", status_code=500, exception=u"系统错误(%s)" % e.code, traceback=e.message)
+                    self.write(template_string)
+                    self.finish()
+                if isinstance(e, NotFoundError):
+                    template_string = self.render_to_string("admin/error/404.html", status_code=404, exception=u"数据查询异常(%s)" % e.code, traceback=e.message)
+                    self.write(template_string)
+                    self.finish()
+                else:
+                    template_string = self.render_to_string("admin/error/500.html", status_code=500, exception=u"系统错误", traceback=e.__unicode__())
                     self.write(template_string)
                     self.finish()
 

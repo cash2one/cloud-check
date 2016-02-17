@@ -7,13 +7,14 @@
           </h1>
           <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> 项目引导</a></li>
-            <li><a href="#"><i class="fa fa-database"></i> 项目引导</a></li>
+            <li><a href="#"><i class="fa fa-database"></i> {{ pro_info_res.data.name }}</a></li>
             <li class="active">步骤1</li>
           </ol>
         </section>
 
         <!-- Main content -->
         <section class="content">
+          {% include "admin/base/base_messages.html" %}
           {% include "admin/guide/_steps_guide.html" %}
           <div class="row">
             <div class="col-md-12">

@@ -28,6 +28,10 @@
     <link rel="stylesheet" href="{{ handler.static_url('default/plugins/iCheck/flat/blue.css') }}">
     <!-- Morris chart -->
     <link rel="stylesheet" href="{{ handler.static_url('default/plugins/morris/morris.css') }}">
+    <!-- Ion Slider -->
+    <!--link rel="stylesheet" href="{{ handler.static_url('default/plugins/ionslider/ion.rangeSlider.css') }}"-->
+    <!-- ion slider Nice -->
+    <!--link rel="stylesheet" href="{{ handler.static_url('default/plugins/ionslider/ion.rangeSlider.skinNice.css') }}"-->
     <!-- jvectormap -->
     <link rel="stylesheet" href="{{ handler.static_url('default/plugins/jvectormap/jquery-jvectormap-1.2.2.css') }}">
     <!-- Date Picker -->
@@ -91,11 +95,14 @@
     <!--script src="{{ handler.static_url('default/dist/js/pages/dashboard.js') }}"></script-->
     <!-- AdminLTE for demo purposes -->
     <!--script src="{{ handler.static_url('default/dist/js/demo.js') }}"></script-->
+    <!-- Ion Slider -->
+    <!--script src="{{ handler.static_url('default/plugins/ionslider/ion.rangeSlider.min.js') }}"></script-->
     <script src="{{ handler.static_url('js/jquery.pjax.js') }}"></script>
     <script src="{{ handler.static_url('js/sonic.js') }}"></script>
     <script src="{{ handler.static_url('js/my-pjax.js') }}"></script>
     <script src="{{ handler.static_url('js/echo-strap-0.0.1.js') }}"></script>
     {% include "admin/base/base_script.html" %}
+    {% import "admin/base/base_macros.html" as mbase %}
     {% block main_container %}{% endblock %}
   </body>
 </html>

@@ -9,9 +9,22 @@ from scloud.models.project import Pro_Info
 from scloud.config import logger, thrownException
 from sqlalchemy import and_, or_
 from scloud.utils.error_code import ERROR
+from scloud.utils.error import NotFoundError
 
 
 class ProjectService(BaseService):
+
+    @thrownException
+    def get_project(self):
+        logger.info("------[get_project]------")
+        pro_id = self.params.get("pro_id", 0)
+        project = self.db.query(Pro_Info).filter(Pro_Info.id == pro_id).first()
+        if project:
+            res = project.as_dict()
+            logger.info("project: %s" % res)
+            return self.success(data=project)
+        else:
+            return NotFoundError()
 
     @thrownException
     def get_project_list(self):

@@ -20,7 +20,7 @@
               <div class="info-box bg-aqua">
                 <span class="info-box-icon"><i class="fa fa-cube"></i></span>
                 <div class="info-box-content">
-                  <span class="info-box-text">{{ pro.name }}</span>
+                <span class="info-box-text"><a data-pjax style="color: #FFFFFF" href="{{ reverse_url('guide_step_1', pro.id) }}">{{ pro.name }}</a></span>
                   <span class="info-box-number">41,410</span>
                   <div class="progress">
                     <div class="progress-bar" style="width: 70%"></div>
