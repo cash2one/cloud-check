@@ -34,7 +34,7 @@ class ProjectService(BaseService):
         logger.info("project_list %s" % project_list)
         # self.db.commit()
         # self.db.remove()
-        return self.success(data=project_list)
+        return self.success(data=projects)
 
     @thrownException
     def create_project(self):

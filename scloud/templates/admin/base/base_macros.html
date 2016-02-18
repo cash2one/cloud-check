@@ -1,8 +1,9 @@
-{% macro check_post(res, code_list=[]) %}
+{# ------------------ 检查表单状态，提示表单错误信息 ------------------ #}
+{% macro check_post(res, code_list=[]) -%}
 {% if res %}
   {% if res.return_code|int in code_list %}
     <p class="text-red col-sm-offset-2">{{ res.return_message }}</p>
   {% endif %}
 {% endif %}
-{% endmacro %}
+{%- endmacro %}
 

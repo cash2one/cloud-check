@@ -1,4 +1,3 @@
-
 <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
@@ -21,12 +20,22 @@
                 <span class="info-box-icon"><i class="fa fa-cube"></i></span>
                 <div class="info-box-content">
                 <span class="info-box-text"><a data-pjax style="color: #FFFFFF" href="{{ reverse_url('guide_step_1', pro.id) }}">{{ pro.name }}</a></span>
-                  <span class="info-box-number">41,410</span>
+                  {% set applies = pro.pro_resource_applies %}
+                  {% if applies|length > 0 -%}
+                    {% set last_apply = applies[-1] %}
+                    {% set progress_percent = '%.2d%%' % (((last_apply.status+1) / 4) * 100) %}
+                    {% set status_desc = pro_resource_apply_status_types.get(last_apply.status, 0).value %}
+                  {% else %}
+                    {% set last_apply = None %}
+                    {% set progress_percent = '0%' %}
+                    {% set status_desc = '未申请' %}
+                  {%- endif %}
+                  <span class="info-box-number">{{ status_desc }}</span>
                   <div class="progress">
-                    <div class="progress-bar" style="width: 70%"></div>
+                  <div class="progress-bar" style="width: {{ progress_percent }}; min-width:2px;"></div>
                   </div>
                   <span class="progress-description">
-                    项目进展程度：70%
+                  项目进展程度：{{ progress_percent }}
                   </span>
                 </div><!-- /.info-box-content -->
               </div><!-- /.info-box -->

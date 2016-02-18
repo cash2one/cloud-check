@@ -3,6 +3,7 @@
 import scloud
 from torweb.urls import url
 from scloud.config import logger
+from scloud.const import pro_resource_apply_status_types
 from scloud.handlers import Handler, AuthHandler
 import requests
 import urlparse
@@ -31,7 +32,7 @@ class GuideHandler(AuthHandler):
         if result.return_code < 0:
             raise SystemError(result.return_code, result.return_message)
         logger.info(result)
-        return self.render_to_string("admin/guide/index.html", result=result)
+        return self.render_to_string("admin/guide/index.html", result=result, pro_resource_apply_status_types=pro_resource_apply_status_types)
 
     @check_perms('pro_info.insert')
     @unblock

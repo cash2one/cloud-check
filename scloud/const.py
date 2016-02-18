@@ -36,8 +36,8 @@ pro_resource_apply_status_types = {
     -1:ApplyMark(value=u"已撤销", todo_value="待提交", value_en="revoked", level="warning"),
     0: ApplyMark(value=u"已提交", todo_value="待审核", value_en="applied", level="default"),
     1: ApplyMark(value=u"已审核", todo_value="待支付", value_en="checked", level="primary"),
-    2: ApplyMark(value=u"已支付", todo_value="待完成", value_en="payed", level="info"),
-    3: ApplyMark(value=u"已完成", todo_value="待启动", value_en="finished", level="success"),
-    4: ApplyMark(value=u"已启动", todo_value="运行中", value_en="started", level="danger"),
-    5: ApplyMark(value=u"已关闭", todo_value="未运行", value_en="closed", level="warning"),
+    2: ApplyMark(value=u"已支付", todo_value="未启用", value_en="payed", level="info"),
+    3: ApplyMark(value=u"运行中", todo_value="运行中", value_en="started", level="success"),
+    4: ApplyMark(value=u"已关闭", todo_value="未运行", value_en="closed", level="warning"),
 }
+
