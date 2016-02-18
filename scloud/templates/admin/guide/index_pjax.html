@@ -15,22 +15,36 @@
           {% include "admin/base/base_messages.html" %}
           <div class="row">
             {% for pro in result.data %}
+              {% set applies = pro.pro_resource_applies %}
+              {% if applies|length > 0 -%}
+                {% set last_apply = applies[-1] %}
+                {% set apply_status = last_apply.status %}
+                {% set percent_status = apply_status + 1 %}
+                {% if percent_status < 0 %}
+                  {% set percent_status = 0 %}
+                {% endif %}
+              {% else %}
+                {% set last_apply = None %}
+                {% set apply_status = None %}
+                {% set progress_percent = '0%' %}
+                {% set percent_status = 0 %}
+              {%- endif %}
+                {% set progress_percent = '%d%%' % ((percent_status / 4) * 100) %}
+                {% set status_desc = pro_resource_apply_status_types.get(apply_status).value %}
+                {% set todo_status_desc = pro_resource_apply_status_types.get(apply_status).todo_value %}
+                {% set bg_color = pro_resource_apply_status_types.get(apply_status).bg_color %}
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <div class="info-box bg-aqua">
+              <div class="info-box bg-{{ bg_color }}">
                 <span class="info-box-icon"><i class="fa fa-cube"></i></span>
                 <div class="info-box-content">
-                <span class="info-box-text"><a data-pjax style="color: #FFFFFF" href="{{ reverse_url('guide_step_1', pro.id) }}">{{ pro.name }}</a></span>
-                  {% set applies = pro.pro_resource_applies %}
-                  {% if applies|length > 0 -%}
-                    {% set last_apply = applies[-1] %}
-                    {% set progress_percent = '%.2d%%' % (((last_apply.status+1) / 4) * 100) %}
-                    {% set status_desc = pro_resource_apply_status_types.get(last_apply.status, 0).value %}
-                  {% else %}
-                    {% set last_apply = None %}
-                    {% set progress_percent = '0%' %}
-                    {% set status_desc = '未申请' %}
-                  {%- endif %}
-                  <span class="info-box-number">{{ status_desc }}</span>
+                <span class="info-box-text"><a data-pjax style="color: #FFFFFF" href="{{ reverse_url('guide_step_1', pro.id) }}">{{ pro.name }}</a>[{{ pro_resource_apply_status_types.get(apply_status).value }}]</span>
+                  <span class="info-box-number">
+                  {% if apply_status < 0 %}
+                  <a data-pjax style="color: #FFFFFF" href="{{ reverse_url('guide_step_1', pro.id) }}">{{ todo_status_desc }}</a>
+                  {% elif apply_status >= 0 %}
+                  <a data-pjax style="color: #FFFFFF" href="{{ reverse_url('guide_step_2', pro.id) }}">{{ todo_status_desc }}</a>
+                  {% endif %}
+                  </span>
                   <div class="progress">
                   <div class="progress-bar" style="width: {{ progress_percent }}; min-width:2px;"></div>
                   </div>
