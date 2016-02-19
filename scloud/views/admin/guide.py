@@ -3,7 +3,7 @@
 import scloud
 from torweb.urls import url
 from scloud.config import logger
-from scloud.const import pro_resource_apply_status_types
+from scloud.const import pro_resource_apply_status_types, STATUS_RESOURCE
 from scloud.handlers import Handler, AuthHandler
 import requests
 import urlparse
@@ -76,6 +76,7 @@ class GuideStep1Handler(AuthHandler):
             raise pro_info_res
         data = {
             "pro_info_res": pro_info_res,
+            "STATUS_RESOURCE": STATUS_RESOURCE,
         }
         return self.render_to_string("admin/guide/step1.html", **data)
 
@@ -86,7 +87,7 @@ class GuideStep1Handler(AuthHandler):
         svc = ProResourceApplyService(self.svc.db, kw, handler=self)
         pro_svc = ProjectService(self.svc.db, kw)
         pro_info_res = pro_svc.get_project()
-        post_apply_res = svc.apply_pro_resource()
+        post_apply_res = svc.do_apply()
         data = {
             "pro_info_res": pro_info_res,
             "post_apply_res": post_apply_res

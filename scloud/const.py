@@ -3,6 +3,7 @@
 # created: zhangpeng <zhangpeng1@infohold.com.cn>
 
 from collections import namedtuple
+from tornado.util import ObjectDict
 
 IndexMark = namedtuple("IndexMark", ["value", "value_en", "level"])
 ApplyMark = namedtuple("IndexMark", ["value", "todo_value", "value_en", "level", "bg_color"])
@@ -33,17 +34,24 @@ act_actions = {
 
 pro_resource_apply_status_types = {
     # 未申请状态，可修改，可删除，可提交
-    None:ApplyMark(value=u"未申请", todo_value="待提交", value_en="unkown", level="warning", bg_color="yellow"),
-    -2:ApplyMark(value=u"审核未通过", todo_value="待修改", value_en="checked", level="danger", bg_color="red"),
+    None:ApplyMark(value=u"未申请", todo_value="待提交", value_en="unknown", level="warning", bg_color="yellow"),
+    -2:ApplyMark(value=u"审核未通过", todo_value="待修改", value_en="refused", level="danger", bg_color="red"),
     -1:ApplyMark(value=u"已撤销", todo_value="待提交", value_en="revoked", level="warning", bg_color="yellow"),
     # 已提交状态，等待审核、等待缴费
-    0: ApplyMark(value=u"已提交", todo_value="待审核", value_en="applied", level="default", bg_color="teal disabled"),
-    1: ApplyMark(value=u"已审核", todo_value="待支付", value_en="checked", level="primary", bg_color="light-blue"),
+    0: ApplyMark(value=u"已提交", todo_value="待审核", value_en="applied", level="primary", bg_color="teal disabled"),
+    1: ApplyMark(value=u"已审核", todo_value="待支付", value_en="checked", level="info", bg_color="light-blue"),
     # 已支付状态，等待运行
-    2: ApplyMark(value=u"已支付", todo_value="未启用", value_en="payed", level="info", bg_color="aqua"),
-    3: ApplyMark(value=u"运行中", todo_value="运行中", value_en="started", level="success", bg_color="green"),
+    2: ApplyMark(value=u"已支付", todo_value="未启用", value_en="payed", level="success", bg_color="aqua"),
+    3: ApplyMark(value=u"运行中", todo_value="运行中", value_en="started", level="danger", bg_color="red"),
     4: ApplyMark(value=u"已关闭", todo_value="未运行", value_en="closed", level="warning", bg_color="orange"),
 }
 
+STATUS_RESOURCE = ObjectDict()
+def init_status_resource():
+    for k, v in pro_resource_apply_status_types.items():
+        setattr(STATUS_RESOURCE, v.value_en.upper(), k)
+        setattr(STATUS_RESOURCE, v.value_en.lower(), v)
+        STATUS_RESOURCE[k] = v
+init_status_resource()
 
 admin_emails = ["zhangpeng1@infohold.com.cn"]

@@ -11,8 +11,9 @@ from scloud.utils.error_code import ERROR
 from scloud.utils.error import NotFoundError
 from scloud.async_services.svc_mail import sendMail
 from scloud.async_services.svc_act import task_post_pro_res_apply_history
-from scloud.const import admin_emails
+from scloud.const import admin_emails, STATUS_RESOURCE
 
+mail_format = u"项目名[%(pro_name)s]-项目编号[%(pro_id)s]-%(user_name)s %(resource_status)s资源申请"
 
 class ProResourceApplyService(BaseService):
 
@@ -95,7 +96,7 @@ class ProResourceApplyService(BaseService):
         return self.success(data=data)
 
     @thrownException
-    def apply_pro_resource(self):
+    def do_apply(self):
         form_res = self.get_form_data()
         pro_id = self.params.get("pro_id")
         user_id = self.params.get("user_id")
@@ -134,11 +135,20 @@ class ProResourceApplyService(BaseService):
             return self.failure(ERROR.res_computer_empty_err)
         if self.computer == 0:
             return self.failure(ERROR.res_computer_empty_err)
-        first_apply = self.db.query(
-            Pro_Resource_Apply
+        pro_info = self.db.query(
+            Pro_Info
         ).filter(
-            Pro_Resource_Apply.pro_id == pro_id
+            Pro_Info.pro_id == pro_id
         ).first()
+        applies = pro_info.pro_resource_applies
+        if len(applies) > 0:
+            first_apply = applies[0]
+            last_apply = applies[-1]
+            if last_apply.status >= 0:
+                return self.failure(ERROR.res_new_apply_err)
+        else:
+            first_apply = None
+            last_apply = None
         apply = Pro_Resource_Apply()
         apply.pro_id = pro_id
         apply.computer = self.computer
@@ -168,3 +178,25 @@ class ProResourceApplyService(BaseService):
         sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, html)
         task_post_pro_res_apply_history.delay(status=apply.status, content=apply.desc, pro_id=pro_id, res_apply_id=apply.id, user_id=user_id)
         return self.success(data=apply)
+
+    @thrownException
+    def do_revoke(self):
+        res_id = self.params.get("res_id", 0)
+        user_id = self.params.get("user_id", 0)
+        resource = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
+        if not resource:
+            return self.failure(ERROR.not_found_err)
+        if resource.status != 0:
+            return self.failure(ERROR.res_revoke_err)
+        resource.status = STATUS_RESOURCE.REVOKED
+        self.db.add(resource)
+        self.db.flush()
+        mail_title = mail_format % {
+            "pro_name": resource.project.name,
+            "pro_id": resource.project.id,
+            "user_name": resource.user.email or resource.user.mobile,
+            "resource_status": STATUS_RESOURCE.revoked.value
+        }
+        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_title)
+        task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
+        return self.success(data=resource)

@@ -34,7 +34,6 @@ def task_post_action(act_type=1, content=u"", user_id=0):
 @celery.task
 def task_post_pro_res_apply_history(status=0, content=u"", pro_id=0, res_apply_id=0, user_id=0):
     logger.info("------[celery task post action]------")
-    logger.info("------[ act type %s ]------" % act_type)
     with DataBaseService({}) as svc:
         act = Act_Pro_History()
         act.pro_id = pro_id
