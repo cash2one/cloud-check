@@ -80,10 +80,10 @@ class GuideStep1Handler(AuthHandler):
         return self.render_to_string("admin/guide/step1.html", **data)
 
     def post(self, **kwargs):
-        kw = {}
+        kw = {"user_id": self.current_user.id}
         kw.update(self.args)
         kw.update(kwargs)
-        svc = ProResourceApplyService(self.svc.db, kw)
+        svc = ProResourceApplyService(self.svc.db, kw, handler=self)
         pro_svc = ProjectService(self.svc.db, kw)
         pro_info_res = pro_svc.get_project()
         post_apply_res = svc.apply_pro_resource()
@@ -121,3 +121,9 @@ class GuideStep3Handler(AuthHandler):
         data = {"name": "torweb"}
         # time.sleep(1)
         return self.render("admin/guide/step3.html", **data)
+
+
+@url("/demo/mail", name="demo.name")
+class DemoMail(Handler):
+    def get(self):
+        return self.render("admin/mail/mail.html")

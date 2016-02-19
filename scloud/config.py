@@ -55,18 +55,18 @@ def thrownException(func):
             logger.info(args)
             logger.info(kwargs)
             logger.info("====[EXIT]====")
-            svc = args[0]
-            # from code import interact
-            # interact(local=locals())
-            if isinstance(e, Exception):
-                svc.db.rollback()
-                logger.info("====[ROLLBACK]====")
-            else:
-                svc.db.commit()
-                # svc.db.flush()
-                logger.info("====[COMMIT]====")
-            svc.db.remove()
-            svc.db.close()
+            # svc = args[0]
+            # # from code import interact
+            # # interact(local=locals())
+            # if isinstance(e, Exception):
+            #     svc.db.rollback()
+            #     logger.info("====[ROLLBACK]====")
+            # else:
+            #     svc.db.commit()
+            #     # svc.db.flush()
+            #     logger.info("====[COMMIT]====")
+            # svc.db.remove()
+            # svc.db.close()
             logger.info("====[CLOSE]====")
             # svc = args[0]
             # svc.db.close()

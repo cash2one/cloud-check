@@ -9,6 +9,9 @@ from scloud.config import logger, thrownException
 from sqlalchemy import and_, or_
 from scloud.utils.error_code import ERROR
 from scloud.utils.error import NotFoundError
+from scloud.async_services.svc_mail import sendMail
+from scloud.async_services.svc_act import task_post_pro_res_apply_history
+from scloud.const import admin_emails
 
 
 class ProResourceApplyService(BaseService):
@@ -95,8 +98,11 @@ class ProResourceApplyService(BaseService):
     def apply_pro_resource(self):
         form_res = self.get_form_data()
         pro_id = self.params.get("pro_id")
+        user_id = self.params.get("user_id")
         if not pro_id:
             return self.failure(ERROR.not_found_err)
+        if not user_id:
+            return self.failure(ERROR.user_empty_err)
         if isinstance(form_res, dict):
             return form_res
         if self.computer == 0:
@@ -149,8 +155,16 @@ class ProResourceApplyService(BaseService):
         apply.period = self.period
         apply.unit_fee = self.unit_fee
         apply.total_fee = self.total_fee
+        apply.user_id = user_id
         if first_apply:
-            apply.desc = u'变更资源'
+            apply.desc = u'资源调整'
         self.db.add(apply)
         self.db.flush()
+        html = self.render_to_string("admin/mail/pro_info.html", resource_apply=apply)
+        logger.info("<"+"="*60+">")
+        logger.info(html)
+        user_name = apply.user.email or apply.user.mobile
+        mail_title = u"项目名[%s]-项目编号[%s]-%s已提交资源申请".encode("utf-8") % (apply.project.name, apply.pro_id, user_name)
+        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, html)
+        task_post_pro_res_apply_history.delay(status=apply.status, content=apply.desc, pro_id=pro_id, res_apply_id=apply.id, user_id=user_id)
         return self.success(data=apply)

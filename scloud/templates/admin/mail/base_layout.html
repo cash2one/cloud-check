@@ -1,0 +1,14 @@
+{% extends "admin/mail/base.html" %}
+
+{% block body %}
+{% include "admin/mail/base_head.html" %}
+<!-- ============================================================= -->
+<section id="download">
+  {% block tip %}{% endblock %}
+  <div class="row">
+    {% block content %}
+    {% endblock %}
+  </div><!-- /.row -->
+</section>
+<!-- ============================================================= -->
+{% endblock %}

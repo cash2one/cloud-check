@@ -45,3 +45,5 @@ pro_resource_apply_status_types = {
     4: ApplyMark(value=u"已关闭", todo_value="未运行", value_en="closed", level="warning", bg_color="orange"),
 }
 
+
+admin_emails = ["zhangpeng1@infohold.com.cn"]

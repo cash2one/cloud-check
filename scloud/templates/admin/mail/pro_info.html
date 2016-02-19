@@ -1,0 +1,41 @@
+{% extends "admin/mail/base_layout.html" %}
+{% block title %}
+{{ resource_apply.user.email or resource_apply.user.mobile }}提交资源申请
+{% endblock %}
+
+{% block tip %}
+  <div class="callout callout-info lead">
+    <h4>Success!</h4>
+    <p>{{ resource_apply.user.email or resource_apply.user.mobile }}已成功提交资源申请！</p>
+  </div>
+{% endblock %}
+
+{% block content %}
+<div class="col-sm-12">
+  <div class="box box-primary">
+    <div class="box-header with-border">
+    <h3 class="box-title">{{ resource_apply.project.name }} - {{ resource_apply.desc }}</h3>
+      <span class="label label-primary pull-right"><i class="fa fa-cube"></i></span>
+    </div><!-- /.box-header -->
+    <div class="box-body">
+      <p>{{ resource_apply.project.desc }}</p>
+    </div><!-- /.box-body -->
+    <table class="table table-striped">
+      <tr>
+        <th>申请项目</th>
+        <th>申请数量</th>
+      </tr>
+      <tr>
+        <td>CPU:</td>
+        <td>10个</td>
+      </tr>
+    </table>
+    <div class="box-body">
+      <a href="http://almsaeedstudio.com/download/AdminLTE-dist" class="btn btn-primary"><i class="fa fa-eye"></i> 查看详情</a>
+      <a href="http://almsaeedstudio.com/download/AdminLTE-dist" class="btn btn-success"><i class="fa fa-check"></i> 审核通过</a>
+      <a href="http://almsaeedstudio.com/download/AdminLTE-dist" class="btn btn-danger"><i class="fa fa-times"></i> 拒绝申请</a>
+    </div>
+  </div><!-- /.box -->
+</div><!-- /.col -->
+{% endblock %}
+

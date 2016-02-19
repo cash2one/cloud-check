@@ -10,6 +10,7 @@ from scloud.config import logger, thrownException
 from sqlalchemy import and_, or_
 from scloud.utils.error_code import ERROR
 from scloud.utils.error import NotFoundError
+from scloud.const import pro_resource_apply_status_types
 
 
 class ProjectService(BaseService):

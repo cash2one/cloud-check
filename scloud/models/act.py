@@ -7,9 +7,21 @@ from sqlalchemy.types import Unicode, Integer
 from scloud.models.base import BaseModel, BaseModelMixin
 
 
+class Act_Pro_History(BaseModel, BaseModelMixin):
+    u"""数据操作历史表"""
+    __tablename__ = "act_pro_history"
+    pro_id = Column(Integer, default=0)
+    res_apply_id = Column(Integer, default=0)
+    status = Column(Integer, default=0)
+    desc = Column(Unicode, default=u'')
+    user_id = Column(Integer, default=0)
+
+
 class Act_History(BaseModel, BaseModelMixin):
     u"""数据操作历史表"""
     __tablename__ = "act_history"
+    record_id = Column(Integer, default=0)
+    record_table = Column(Unicode, default=u'')
     act_type = Column(Integer, default=0)
     desc = Column(Unicode, default=u'')
     user_id = Column(Integer, default=0)

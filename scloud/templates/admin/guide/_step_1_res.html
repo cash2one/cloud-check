@@ -6,27 +6,22 @@
         <div class="box-body table-responsive no-padding">
           <table class="table table-hover">
             <tr>
-              <td colspan="3" class="text-center"><a href="#" class="btn btn-warning btn-xs" onclick="add_res()" role="button"><i class="fa fa-plus"></i>新增变更</a></td>
+              <td colspan="3" class="text-center"><a href="#" class="btn btn-warning btn-xs" onclick="add_res()" role="button"><i class="fa fa-plus"></i>资源申请</a></td>
             </tr>
             <tr>
-              <th class="text-center">变更次数</th>
-              <th class="text-center">变更历史</th>
-              <th class="text-center">变更时间</th>
+              <th class="text-center">申请次数</th>
+              <th class="text-center">申请历史</th>
+              <th class="text-center">申请时间</th>
             </tr>
-            {% for record in pro_info_res.data.pro_resource_applies %}
+            {% for record in pro_info_res.data.pro_resource_applies[::-1] %}
             <tr>
-              <td class="text-center">{{ record.id }}</td>
+              <td class="text-center">{{ loop.revindex }}</td>
               <td class="text-center"><a data-pjax href="#" onclick="edit_res()">{{ record.desc }}</a></td>
               <td class="text-center"><span class="label label-info">{{ record.create_time.strftime('%Y-%m-%d') }}</span></td>
             </tr>
             {% endfor %}
             <tr>
-              <td class="text-center">2</td>
-              <td class="text-center"><a data-pjax href="#" onclick="edit_res()">变更资源</a></td>
-              <td class="text-center"><span class="label label-info">2016-01-13</span></td>
-            </tr>
-            <tr>
-              <td class="text-center">1</td>
+              <td class="text-center"></td>
               <td class="text-center">创建项目</td>
               <td class="text-center"><span class="label label-default">2015-12-20</span></td>
             </tr>
@@ -34,14 +29,58 @@
         </div><!-- /.box-body -->
     </div>
     <div class="col-sm-9">
-      <div id="panel_res" class="box box-info box-solid">
+      <div id="panel_res" class="box box-{{ apply_global_vars.level }} box-solid">
         <div class="box-header with-border">
-          <h3 class="box-title">变更资源</h3>
+          <h3 class="box-title">资源申请</h3>
           <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="remove"><i   class="fa fa-times"></i></button>
           </div><!-- /.box-tools -->
         </div><!-- /.box-header -->
         <div class="box-body">
+          {% set last_apply = apply_global_vars.last_apply %}
+            {% if last_apply %}
+              {% set computer = last_apply.computer %}
+              {% set cpu = last_apply.cpu %}
+              {% set memory = last_apply.memory %}
+              {% set disk = last_apply.disk %}
+              {% set disk_backup = last_apply.disk_backup %}
+              {% set out_ip = last_apply.out_ip %}
+              {% set snapshot = last_apply.snapshot %}
+              {% set loadbalance = last_apply.loadbalance %}
+              {% set internet_ip = last_apply.internet_ip %}
+              {% set internet_ip_ssl = last_apply.internet_ip_ssl %}
+              {% set start_date = last_apply.start_date %}
+              {% set unit_fee = last_apply.unit_fee %}
+              {% set period = last_apply.period %}
+              {% set total_fee = last_apply.total_fee %}
+            {% else %}
+              {% set computer = handler.args.get('computer', '') %}
+              {% set cpu = handler.args.get('cpu', '') %}
+              {% set memory = handler.args.get('memory', '') %}
+              {% set disk = handler.args.get('disk', '') %}
+              {% set disk_backup = handler.args.get('disk_backup', '') %}
+              {% set out_ip = handler.args.get('out_ip', '') %}
+              {% set snapshot = handler.args.get('snapshot', '') %}
+              {% set loadbalance = handler.args.get('loadbalance', '') %}
+              {% set internet_ip = handler.args.get('internet_ip', '') %}
+              {% set internet_ip_ssl = handler.args.get('internet_ip_ssl', '') %}
+              {% set start_date = handler.args.get('start_date', '') %}
+              {% set unit_fee = handler.args.get('unit_fee', '') %}
+              {% set period = handler.args.get('period', '') %}
+              {% set total_fee = handler.args.get('total_fee', '') %}
+            {% endif %}
+
+            {% if last_apply %}
+              {% if last_apply.status == 0 %}
+              {# <============ 撤销申请 =============> #}
+              {% elif last_apply.status in [-1, -2] %}
+              {# <============ 重新提交申请 =============> #}
+              {# <============ 删除申请 =============> #}
+              {% endif %}
+            {% else %}
+              {# <============ 申请新资源 =============> #}
+              {% set post_action = reverse_url('guide_step_1', pro_info_res.data.id) %}
+            {% endif %}
           <!-- form start -->
             <form data-pjax action="{{ reverse_url('guide_step_1', pro_info_res.data.id) }}" class="form-horizontal" method="POST">
             {{ handler.xsrf_form_html() }}
@@ -51,7 +90,7 @@
                   <div class="form-group">
                     <label for="computer" class="col-sm-2 control-label">云主机数量</label>
                     <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="computer" name="computer" placeholder="10" value="{{ handler.args.get('computer', '') }}">
+                      <input type="text" class="form-control" id="computer" name="computer" placeholder="10" value="{{ computer }}">
                       <div class="input-group-unit">台</div>
                     </div>
                   </div>
@@ -59,7 +98,7 @@
                   <div class="form-group">
                     <label for="cpu" class="col-sm-2 control-label">CPU总量</label>
                     <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="cpu" name="cpu" placeholder="4" value="{{ handler.args.get('cpu', '') }}">
+                      <input type="text" class="form-control" id="cpu" name="cpu" placeholder="4" value="{{ cpu }}">
                       <div class="input-group-unit">台</div>
                     </div>
                   </div>
@@ -67,7 +106,7 @@
                   <div class="form-group">
                     <label for="memory" class="col-sm-2 control-label">内存总量</label>
                     <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="memory" name="memory" placeholder="8" value="{{ handler.args.get('memory', '') }}">
+                      <input type="text" class="form-control" id="memory" name="memory" placeholder="8" value="{{ memory }}">
                       <div class="input-group-unit">GB</div>
                     </div>
                   </div>
@@ -75,10 +114,10 @@
                   <div class="form-group">
                     <label for="disk" class="col-sm-2 control-label">云磁盘个数</label>
                     <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="disk" name="disk" placeholder="10" value="{{ handler.args.get('disk', '') }}">
+                      <input type="text" class="form-control" id="disk" name="disk" placeholder="10" value="{{ disk }}">
                       <div class="input-group-unit">个,</div>
                       <div class="input-group-unit">其中</div>
-                      <input type="text" class="form-control" id="disk_backup" name="disk_backup" placeholder="10" value="{{ handler.args.get('disk_backup', '') }}">
+                      <input type="text" class="form-control" id="disk_backup" name="disk_backup" placeholder="10" value="{{ disk_backup }}">
                       <div class="input-group-unit">个需要云盘备份</div>
                     </div>
                   </div>
@@ -86,7 +125,7 @@
                   <div class="form-group">
                     <label for="ip" class="col-sm-2 control-label">外部IP数量</label>
                     <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="out_ip" name="out_ip" placeholder="8" value="{{ handler.args.get('out_ip', '') }}">
+                      <input type="text" class="form-control" id="out_ip" name="out_ip" placeholder="8" value="{{ out_ip }}">
                       <div class="input-group-unit">个</div>
                     </div>
                   </div>
@@ -94,7 +133,7 @@
                   <div class="form-group">
                     <label for="snapshot" class="col-sm-2 control-label">快照个数</label>
                     <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="snapshot" name="snapshot" placeholder="8" value="{{ handler.args.get('snapshot', '') }}">
+                      <input type="text" class="form-control" id="snapshot" name="snapshot" placeholder="8" value="{{ snapshot }}">
                       <div class="input-group-unit">个</div>
                     </div>
                   </div>
@@ -102,7 +141,7 @@
                   <div class="form-group">
                     <label for="loadbalance" class="col-sm-2 control-label">应用负载均衡</label>
                     <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="loadbalance" name="loadbalance" placeholder="10" value="{{ handler.args.get('loadbalance', '') }}">
+                      <input type="text" class="form-control" id="loadbalance" name="loadbalance" placeholder="10" value="{{ loadbalance }}">
                       <div class="input-group-unit">个vSERVER</div>
                     </div>
                   </div>
@@ -111,21 +150,21 @@
                     <label for="loadbalance" class="col-sm-2 control-label">互联网IP</label>
                     <div class="col-sm-6 input-group">
                       <select multiple class="form-control" id="internet_ip" name="internet_ip">
-                        <option value="0" {% if handler.args.get('internet_ip', '') == "0" %} selected="selected"{% endif %}>无需</option>
-                        <option value="1" {% if handler.args.get('internet_ip', '') == "1" %} selected="selected"{% endif %}>双线负载均衡</option>
-                        <option value="2" {% if handler.args.get('internet_ip', '') == "2" %} selected="selected"{% endif %}>单线（软件园）</option>
-                        <option value="3" {% if handler.args.get('internet_ip', '') == "3" %} selected="selected"{% endif %}>单线（移动）</option>
+                        <option value="0"{% if internet_ip == "0" %} selected="selected"{% endif %}>无需</option>
+                        <option value="1"{% if internet_ip == "1" %} selected="selected"{% endif %}>双线负载均衡</option>
+                        <option value="2"{% if internet_ip == "2" %} selected="selected"{% endif %}>单线（软件园）</option>
+                        <option value="3"{% if internet_ip == "3" %} selected="selected"{% endif %}>单线（移动）</option>
                       </select>
                       <div class="input-group-unit">
                         <div class="radio pull-left">
                           <label>
-                            <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="1"{% if handler.args.get('internet_ip_ssl', '') == "1" %} checked="checked"{% endif %}>
+                            <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="1"{% if internet_ip_ssl == "1" %} checked="checked"{% endif %}>
                             需要SSL卸载
                           </label>
                         </div>
                         <div class="radio pull-left">
                           <label>
-                            <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="0"{% if handler.args.get('internet_ip_ssl', '') == "0" %} checked="checked"{% endif %}>
+                            <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="0"{% if internet_ip_ssl == "0" %} checked="checked"{% endif %}>
                             不需要SSL卸载
                           </label>
                         </div>
@@ -134,10 +173,10 @@
                   </div>
                   {{ mbase.check_post(post_apply_res, [-100048, -100068, -100049, -100069]) }}
                   <div class="form-group">
-                    <label for="start_date" class="col-sm-2 control-label">启动时间</label>
+                    <label for="start_date" class="col-sm-2 control-label">云主机启用时间</label>
                     <div class="col-sm-6 input-group">
                       <div class="input-group">
-                        <input type="text" class="form-control pull-right fa-calendar" id="start_date" name="start_date" value="{{ handler.args.get('start_date', '') }}" readonly>
+                        <input type="text" class="form-control pull-right fa-calendar" id="start_date" name="start_date" value="{{ start_date }}" readonly>
                       </div><!-- /.input group -->
                     </div>
                   </div>
@@ -148,10 +187,10 @@
                   <div class="form-group">
                     <label for="unit_fee" class="col-sm-2 control-label">本月费用</label>
                     <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="unit_fee" name="unit_fee" placeholder="10" value="{{ handler.args.get('unit_fee', '') }}" readonly>
+                      <input type="text" class="form-control" id="unit_fee" name="unit_fee" placeholder="10" value="{{ unit_fee }}" readonly>
                       <div class="input-group-unit">元/月</div>
                       <div class="input-group-unit">X</div>
-                      <input type="text" class="form-control" id="period" name="period" placeholder="12" value="{{ handler.args.get('period', '') }}">
+                      <input type="text" class="form-control" id="period" name="period" placeholder="12" value="{{ period }}">
                       <div class="input-group-unit">月</div>
                     </div>
                   </div>
@@ -159,7 +198,7 @@
                   <div class="form-group">
                     <label for="total_fee" class="col-sm-2 control-label">合计费用</label>
                     <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="total_fee" name="total_fee" placeholder="10" value="{{ handler.args.get('total_fee', '') }}" readonly>
+                      <input type="text" class="form-control" id="total_fee" name="total_fee" placeholder="10" value="{{ total_fee }}" readonly>
                       <div class="input-group-unit">元</div>
                     </div>
                   </div>
@@ -167,7 +206,16 @@
                 </fieldset>
               </div><!-- /.box-body -->
               <div class="box-footer text-center">
+                {% if last_apply %}
+                  {% if last_apply.status == 0 %}
+                  <button id="submit" type="submit" class="btn btn-info">撤销申请</button>
+                  {% elif last_apply.status in [-1, -2] %}
+                  <button id="submit" type="submit" class="btn btn-info">重新提交申请</button>
+                  <button id="submit" type="submit" class="btn btn-info">删除申请</button>
+                  {% endif %}
+                {% else %}
                 <button id="submit" type="submit" class="btn btn-info">提交申请</button>
+                {% endif %}
               </div><!-- /.box-footer -->
             </form>
         </div><!-- /.box-body -->
@@ -177,11 +225,11 @@
   <script type="text/javascript">
   $('.fa-calendar').datepicker({ format: 'yyyy-mm-dd', autoclose: true});
   function add_res(){
-    $('#panel_res').css('display', 'block').removeClass('box-info').addClass('box-warning').find('h3.box-title').text('创建资源');
+    $('#panel_res').css('display', 'block').removeClass('box-info').addClass('box-warning').find('h3.box-title').text('资源申请');
     $('#submit').removeClass('btn-info').addClass('btn-warning');
   }
   function edit_res(){
-    $('#panel_res').css('display', 'block').removeClass('box-warning').addClass('box-info').find('h3.box-title').text('变更资源');
+    $('#panel_res').css('display', 'block').removeClass('box-warning').addClass('box-info').find('h3.box-title').text('资源调整');
     $('#submit').removeClass('btn-warning').addClass('btn-info');
   }
   function check_form(){

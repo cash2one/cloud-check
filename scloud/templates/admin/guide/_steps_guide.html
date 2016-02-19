@@ -1,65 +1,11 @@
 <div class="row">
   <div class="col-md-12">
-    <p><code>.progress</code></p>
+    <p><code>{{ apply_global_vars.status_desc }}</code>{{ apply_global_vars.progress_percent }} Complete ({{ apply_global_vars.todo_status_desc }})</p>
     <div class="progress">
-      <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-        <span class="sr-only">40% Complete (success)</span>
-        40%
+    <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: {{ apply_global_vars.progress_percent }};min-width: 2em;">
+    <span class="sr-only">{{ apply_global_vars.progress_percent }} Complete ({{ apply_global_vars.todo_status_desc }})</span>
+    {{ apply_global_vars.progress_percent }}
       </div>
     </div>
   </div>
-  {#
-  <div class="col-md-3">
-    <!-- Widget: user widget style 1 -->
-    <div class="box box-widget widget-user-2">
-      <!-- Add the bg color to the header using any of the bg-* classes -->
-      <div class="widget-user-header bg-aqua-active">
-        <div class="widget-user-image">
-        <span class="pull-right badge">step 1</span>
-          <!--img class="img-circle" src="{{ handler.static_url('images/guide/servers.jpg') }}" alt="User Avatar"-->
-        </div><!-- /.widget-user-image -->
-        <h3 class="widget-user-username"><a data-pjax style="color:white" href="{{ reverse_url('guide_step_1', pro_info_res.data.id)}}">资源配置</a></h3>
-        <h5 class="widget-user-desc">
-        <span class="pull-right badge">step 1</span>
-        </h5>
-      </div>
-    </div><!-- /.widget-user -->
-  </div><!-- /.col -->
-  <div class="col-md-1">
-  <img src="{{ handler.static_url('images/guide/arrow.png') }}" alt="User Avatar">
-  </div>
-  <div class="col-md-3">
-    <!-- Widget: user widget style 1 -->
-    <div class="box box-widget widget-user-2">
-      <!-- Add the bg color to the header using any of the bg-* classes -->
-      <div class="widget-user-header bg-yellow">
-        <!--div class="widget-user-image">
-          <img class="img-circle" src="{{ handler.static_url('images/guide/pay.jpeg') }}" alt="User Avatar">
-        </div--><!-- /.widget-user-image -->
-        <h3 class="widget-user-username"><a data-pjax style="color:white" href="{{ reverse_url('guide_step_2', pro_info_res.data.id)}}">资源缴费({{ pro_info_res.data.id }})</a></h3>
-        <h5 class="widget-user-desc">
-        <span class="pull-right badge">step 2</span>
-        </h5>
-      </div>
-    </div><!-- /.widget-user -->
-  </div><!-- /.col -->
-  <div class="col-md-1">
-  <img src="{{ handler.static_url('images/guide/arrow.png') }}" alt="User Avatar">
-  </div>
-  <div class="col-md-3">
-    <!-- Widget: user widget style 1 -->
-    <div class="box box-widget widget-user-2">
-      <!-- Add the bg color to the header using any of the bg-* classes -->
-      <div class="widget-user-header bg-green">
-        <!--div class="widget-user-image">
-          <img class="img-circle" src="{{ handler.static_url('images/guide/cloud.jpg') }}" alt="User Avatar">
-        </div--><!-- /.widget-user-image -->
-        <h3 class="widget-user-username"><a data-pjax style="color:white" href="{{ reverse_url('guide_step_3', pro_info_res.data.id)}}">资源服务</a></h3>
-        <h5 class="widget-user-desc">
-        <span class="pull-right badge">step 3</span>
-        </h5>
-      </div>
-    </div><!-- /.widget-user -->
-  </div><!-- /.col -->
-  #}
 </div><!-- /.row -->

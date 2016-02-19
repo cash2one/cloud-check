@@ -17,6 +17,8 @@ class ERROR(object):
     email_err          = error(errcode=-100006, errvalue=u"邮箱错误")
     mobile_empty_err   = error(errcode=-100007, errvalue=u"手机号不能为空")
     mobile_err         = error(errcode=-100008, errvalue=u"手机号错误")
+    user_empty_err     = error(errcode=-100009, errvalue=u"操作用户不能为空")
+    checker_empty_err  = error(errcode=-100010, errvalue=u"审核用户不能为空")
 
     # 创建项目
     pro_name_empty_err        = error(errcode=-100020, errvalue=u"项目名称不能为空")

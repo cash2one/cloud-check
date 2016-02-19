@@ -31,4 +31,5 @@ CELERY_IMPORTS = (
     'scloud.async_services.svc_pt_permission',
     'scloud.async_services.svc_pt_role',
     'scloud.async_services.svc_pt_user',
+    'scloud.async_services.svc_mail',
 )

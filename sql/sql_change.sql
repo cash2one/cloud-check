@@ -169,6 +169,9 @@ CREATE TABLE `pro_resource_apply` (
     `total_fee` float(11,4) NOT NULL DEFAULT '0.00' COMMENT '合计费用',
     `fee_desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '费用产生描述（计算结果给出）',
     `status` INT(11) NOT NULL DEFAULT '0' COMMENT '资源申请状态 0:提交（待审核），1：已审核（待支付），2已支付（完成）',
+    `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '申请人',
+    `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核人',
+    `check_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '审核时间',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
@@ -238,7 +241,25 @@ AUTO_INCREMENT=0;
 
 CREATE TABLE `act_history` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `record_id` INT(11) NOT NULL DEFAULT '0' COMMENT '数据编码',
+    `record_table` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '数据表名',
     `act_type` INT(11) NOT NULL DEFAULT '0' COMMENT '数据库操作类型 1：添加，2：修改，3：删除，9：其他',
+    `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '数据库操作描述',
+    `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '数据库操作人员',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='数据库操作历史表'
+COLLATE='utf8_general_ci'
+ENGINE=MyISAM
+AUTO_INCREMENT=0;
+
+CREATE TABLE `act_pro_history` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `pro_id` INT(11) NOT NULL DEFAULT '0' COMMENT '项目ID',
+    `res_apply_id` INT(11) NOT NULL DEFAULT '0' COMMENT '资源申请ID',
+    `status` INT(11) NOT NULL DEFAULT '0' COMMENT '项目申请状态',
     `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '数据库操作描述',
     `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '数据库操作人员',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
