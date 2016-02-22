@@ -42,7 +42,7 @@
                     {% for user in result.data %}
                     <tr>
                       <td>{{ user.id }}</td>
-                      <td>{{ user.username }}</td>
+                      <td>{{ user.username or user.email or user.mobile }}</td>
                       <td hide_column>{% if user.is_enable == 1 %}<span class="label label-success">是</span>{% else %}<span class="label label-warning">否</span>{% endif %}</td>
                       <td hide_column>{{ user.create_time }}</td>
                       <td>

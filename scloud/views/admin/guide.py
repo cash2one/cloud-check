@@ -61,12 +61,69 @@ class GuideGenerateFeeHandler(AuthHandler):
         return simplejson.dumps(fee_res)
 
 
+class GuideStepGetHandler(AuthHandler):
+    def get_pro_info_res(self, pro_id):
+        kw = {"pro_id": pro_id}
+        svc = ProjectService(self.svc.db, kw)
+        pro_info_res = svc.get_project()
+        if isinstance(pro_info_res, Exception):
+            raise pro_info_res
+        data = {
+            "pro_info_res": pro_info_res,
+            "STATUS_RESOURCE": STATUS_RESOURCE,
+        }
+        return data
+
+
 @url("/guide/(?P<pro_id>\d+)/step/1", name="guide_step_1", active="guide")
-class GuideStep1Handler(AuthHandler):
+@url("/guide/(?P<pro_id>\d+)/step/1/re_apply/(?P<res_id>\d+)", name="guide_step_1.re_apply", active="guide")
+class GuideStep1Handler(GuideStepGetHandler):
     u'资源申请/变更 步骤1'
     @check_perms('pro_resource_apply.view')
     @unblock
     def get(self, **kwargs):
+        data = self.get_pro_info_res(kwargs["pro_id"])
+        return self.render_to_string("admin/guide/step1.html", **data)
+
+    @check_perms('pro_resource_apply.insert, pro_resource_apply.update')
+    @unblock
+    def post(self, **kwargs):
+        return self.guide_step_1(**kwargs)
+
+    def guide_step_1(self, **kwargs):
+        kw = {"user_id": self.current_user.id}
+        kw.update(self.args)
+        kw.update(kwargs)
+        svc = ProResourceApplyService(self.svc.db, kw, handler=self)
+        # pro_svc = ProjectService(self.svc.db, kw)
+        # pro_info_res = pro_svc.get_project()
+        if self.kwargs["name"] == "guide_step_1":
+            post_apply_res = svc.do_apply()
+        else:
+            post_apply_res = svc.do_re_apply()
+        pro_info_data = self.get_pro_info_res(kw["pro_id"])
+        data = {
+            "post_apply_res": post_apply_res
+        }
+        data.update(pro_info_data)
+        if post_apply_res.return_code == 0:
+            self.add_message(u"申请项目资源成功！", level="success")
+            return self.render_to_string("admin/guide/step2.html", **data)
+        else:
+            self.add_message(u"申请项目资源失败！(%s)%s" % (post_apply_res.return_code, post_apply_res.return_message), level="warning")
+            return self.render_to_string("admin/guide/step1.html", **data)
+
+
+@url("/guide/(?P<pro_id>\d+)/step/2", name="guide_step_2", active="guide")
+class GuideStep2Handler(GuideStepGetHandler):
+    u'资源申请/变更 步骤2'
+    @check_perms('pro_resource_apply.view')
+    @unblock
+    def get(self, **kwargs):
+        data = self.get_pro_info_res(kwargs["pro_id"])
+        return self.render("admin/guide/step2.html", **data)
+
+    def post(self, **kwargs):
         kw = {}
         kw.update(self.args)
         kw.update(kwargs)
@@ -78,45 +135,17 @@ class GuideStep1Handler(AuthHandler):
             "pro_info_res": pro_info_res,
             "STATUS_RESOURCE": STATUS_RESOURCE,
         }
-        return self.render_to_string("admin/guide/step1.html", **data)
-
-    def post(self, **kwargs):
-        kw = {"user_id": self.current_user.id}
-        kw.update(self.args)
-        kw.update(kwargs)
-        svc = ProResourceApplyService(self.svc.db, kw, handler=self)
-        pro_svc = ProjectService(self.svc.db, kw)
-        pro_info_res = pro_svc.get_project()
-        post_apply_res = svc.do_apply()
-        data = {
-            "pro_info_res": pro_info_res,
-            "post_apply_res": post_apply_res
-        }
-        if post_apply_res.return_code == 0:
-            self.add_message(u"申请项目资源成功！", level="success")
-            return self.render("admin/guide/step2.html", **data)
-        else:
-            self.add_message(u"申请项目资源失败！(%s)%s" % (post_apply_res.return_code, post_apply_res.return_message), level="warning")
-            return self.render("admin/guide/step1.html", **data)
-
-
-@url("/guide/(?P<pro_id>\d+)/step/2", name="guide_step_2", active="guide")
-class GuideStep2Handler(AuthHandler):
-    u'资源申请/变更 步骤1'
-    def get(self, pro_id):
-        return self.post(pro_id)
-
-    def post(self, pro_id):
-        data = {"name": "torweb"}
-        # time.sleep(1)
         return self.render("admin/guide/step2.html", **data)
 
 
 @url("/guide/(?P<pro_id>\d+)/step/3", name="guide_step_3", active="guide")
-class GuideStep3Handler(AuthHandler):
-    u'资源申请/变更 步骤1'
-    def get(self, pro_id):
-        return self.post(pro_id)
+class GuideStep3Handler(GuideStepGetHandler):
+    u'资源申请/变更 步骤3'
+    @check_perms('pro_resource_apply.view')
+    @unblock
+    def get(self, **kwargs):
+        data = self.get_pro_info_res(kwargs["pro_id"])
+        return self.render("admin/guide/step2.html", **data)
 
     def post(self, pro_id):
         data = {"name": "torweb"}
@@ -124,7 +153,44 @@ class GuideStep3Handler(AuthHandler):
         return self.render("admin/guide/step3.html", **data)
 
 
+@url("/pro/(?P<pro_id>\d+)/resource/(?P<res_id>\d+)/revoke", name="resource_revoke", active="guide")
+class ProResourceRevokeHandler(GuideStepGetHandler):
+    u"""撤销资源申请"""
+    @check_perms('pro_resource_apply.view')
+    @unblock
+    def get(self, **kwargs):
+        svc = ProResourceApplyService(self.svc.db, kwargs)
+        resource_res = svc.get_resource()
+        if isinstance(resource_res, Exception):
+            raise resource_res
+        data = self.get_pro_info_res(kwargs["pro_id"])
+        return self.render_to_string("admin/guide/step1.html", **data)
+    def post(self, **kwargs):
+        kw = {"user_id": self.current_user.id}
+        kw.update(self.args)
+        kw.update(kwargs)
+        svc = ProResourceApplyService(self.svc.db, kw, handler=self)
+        revoke_res = svc.do_revoke()
+        kw.update({"pro_id": revoke_res.data.pro_id if revoke_res.return_code == 0 else 0})
+        pro_svc = ProjectService(self.svc.db, kw, handler=self)
+        pro_info_res = pro_svc.get_project()
+        data = {
+            "pro_info_res": pro_info_res,
+            "post_apply_res": revoke_res
+        }
+        if revoke_res.return_code == 0:
+            self.add_message(u"资源申请已撤销！", level="success")
+            return self.render("admin/guide/step2.html", **data)
+        else:
+            self.add_message(u"资源申请撤销失败！(%s)%s" % (post_apply_res.return_code, post_apply_res.return_message), level="warning")
+            return self.render("admin/guide/step1.html", **data)
+
+
 @url("/demo/mail", name="demo.name")
 class DemoMail(Handler):
+    @unblock
     def get(self):
-        return self.render("admin/mail/mail.html")
+        return self.do_mail()
+
+    def do_mail(self):
+        return self.render_to_string("admin/mail/mail.html")

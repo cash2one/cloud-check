@@ -60,4 +60,4 @@ class Pro_Resource_Apply(BaseModel, BaseModelMixin):
     checker_id = Column(Integer, default=0)
     check_time = Column(DateTime, default='0000-00-00 00:00:00')
     user = relationship("PT_User", backref="pro_resource_applies")
-    project = relationship("Pro_Info", backref=backref("pro_resource_applies"))
+    project = relationship("Pro_Info", backref=backref("pro_resource_applies", order_by="Pro_Resource_Apply.update_time"))

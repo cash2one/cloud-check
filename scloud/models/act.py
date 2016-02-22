@@ -2,19 +2,23 @@
 # -*- coding: utf-8 -*-
 # created: zhangpeng <zhangpeng1@infohold.com.cn>
 
-from sqlalchemy import Column
+from sqlalchemy import Column, ForeignKey
 from sqlalchemy.types import Unicode, Integer
+from sqlalchemy.orm import relationship, backref
 from scloud.models.base import BaseModel, BaseModelMixin
+from scloud.models.project import Pro_Info, Pro_Resource_Apply
 
 
 class Act_Pro_History(BaseModel, BaseModelMixin):
     u"""数据操作历史表"""
     __tablename__ = "act_pro_history"
-    pro_id = Column(Integer, default=0)
-    res_apply_id = Column(Integer, default=0)
+    pro_id = Column(Integer, ForeignKey("pro_info.id"), default=0)
+    res_apply_id = Column(Integer, ForeignKey("pro_resource_apply.id"), default=0)
     status = Column(Integer, default=0)
     desc = Column(Unicode, default=u'')
     user_id = Column(Integer, default=0)
+    pro = relationship("Pro_Info", backref="act_histories")
+    res_apply = relationship("Pro_Resource_Apply", backref="act_histories")
 
 
 class Act_History(BaseModel, BaseModelMixin):

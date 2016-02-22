@@ -9,6 +9,7 @@ import simplejson
 from tornado.web import HTTPError
 from tornado import gen
 from torweb.handlers import BaseHandler
+from torweb.paginator import Paginator, InvalidPage
 from scloud.shortcuts import env
 from scloud.config import CONF, logger
 from scloud.models.base import DataBaseService
@@ -118,6 +119,23 @@ class Handler(BaseHandler):
         template_string = self.render_to_string(template, **kwargs)
         logger.info(kwargs)
         self.write(template_string.strip())
+
+    def getPage(self, objects, numsPerpage=20, total_count=0):
+        try:
+            page_num = int(self.args.get('page', '1'))
+        except ValueError:
+            page_num = 1
+        try:
+            _total_count = total_count or objects.count()
+        except Exception as e:
+            _total_count = total_count or len(objects)
+        paginator = Paginator(objects, numsPerpage, total_count=_total_count)
+        try:
+            page = paginator.page(page_num)
+        except InvalidPage:
+            raise HTTPError(404)
+        if not page: raise HTTPError(404)
+        return page
 
     # # @gen.coroutine
     def get_error_html(self, status_code, **kwargs):

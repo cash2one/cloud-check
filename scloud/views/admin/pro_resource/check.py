@@ -20,24 +20,27 @@ from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
 from scloud.utils.error import SystemError
 from scloud.views.admin.guide import GuideStepGetHandler
+from scloud.const import STATUS_RESOURCE
 
 
-@url("/resource/(?P<res_id>\d+)", name="resource_view", active="guide")
-class ProResourceHandler(AuthHandler):
-    u'资源申请/变更 步骤1'
-    @check_perms('pro_resource_apply.view')
+@url("/pro/resource/check_list", name="resource_check_list", active="resource_check_list")
+class ResourceCheckListHandler(AuthHandler):
+    u'待审核资源'
+    @check_perms('pro_resource_apply.check')
     @unblock
     def get(self, **kwargs):
         kw = {}
         kw.update(self.args)
         kw.update(kwargs)
         svc = ProResourceApplyService(self.svc.db, kw)
-        resource_res = svc.get_resource()
+        resource_res = svc.get_resources_by_status()
         if isinstance(resource_res, Exception):
             raise resource_res
+        page = self.getPage(resource_res.data.resource_list, 3)
         data = {
+            "page": page,
             "resource_res": resource_res,
+            "STATUS_RESOURCE": STATUS_RESOURCE,
+            "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if str(i).isdigit()]
         }
-        return self.render_to_string("admin/pro_resource/index.html", **data)
-
-
+        return self.render_to_string("admin/pro_resource/check_list.html", **data)

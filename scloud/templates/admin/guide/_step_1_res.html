@@ -83,10 +83,11 @@
             {% if last_apply %}
               {% if last_apply.status == 0 %}
               {# <============ 撤销申请 =============> #}
-              {% set post_action = reverse_url('resource_revoke', last_apply.id) %}
+              {% set post_action = reverse_url('resource_revoke', last_apply.pro_id, last_apply.id) %}
               {% elif last_apply.status in [-1, -2] %}
               {% set post_action = "" %}
               {# <============ 重新提交申请 =============> #}
+              {% set post_action = reverse_url('guide_step_1.re_apply', pro_info_res.data.id, last_apply.id) %}
               {# <============ 删除申请 =============> #}
               {% endif %}
             {% else %}
@@ -219,9 +220,9 @@
               </div><!-- /.box-body -->
               <div class="box-footer text-center">
                 {% if last_apply %}
-                  {% if last_apply.status == 0 %}
+                  {% if last_apply.status|int == 0 %}
                   <button id="submit" type="submit" class="btn btn-{{ STATUS_RESOURCE.revoked.level }}">撤销申请</button>
-                  {% elif last_apply.status in [-1, -2] %}
+                  {% elif last_apply.status|int in [-1, -2] %}
                   <button id="submit" type="submit" class="btn btn-{{ STATUS_RESOURCE.applied.level }}">重新提交申请</button>
                   <button id="submit" type="submit" class="btn btn-{{ STATUS_RESOURCE.unknown.level }}">删除申请</button>
                   {% endif %}

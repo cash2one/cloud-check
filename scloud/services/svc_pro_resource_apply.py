@@ -2,11 +2,13 @@
 
 from datetime import datetime
 from tornado import gen
+from tornado.util import ObjectDict
 from scloud.services.base import BaseService
 from scloud.models.base import MYSQL_POOL
 from scloud.models.project import Pro_Info, Pro_Resource_Apply
 from scloud.config import logger, thrownException
 from sqlalchemy import and_, or_
+from sqlalchemy import func
 from scloud.utils.error_code import ERROR
 from scloud.utils.error import NotFoundError
 from scloud.async_services.svc_mail import sendMail
@@ -18,7 +20,15 @@ mail_format = u"项目名[%(pro_name)s]-项目编号[%(pro_id)s]-%(user_name)s %
 class ProResourceApplyService(BaseService):
 
     @thrownException
-    def get_form_data(self):
+    def get_resource(self):
+        res_id = self.params.get("res_id", 0)
+        resource_res = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
+        if not resource_res:
+            return NotFoundError()
+        return self.success(data=resource_res)
+
+    @thrownException
+    def check_form_valid(self):
         try:
             self.computer = int(self.params.get("computer", 0) or 0)
         except:
@@ -79,12 +89,55 @@ class ProResourceApplyService(BaseService):
             self.total_fee = "{:,.2f}".format(float(self.params.get("total_fee") or 0))
         except:
             return self.failure(ERROR.res_total_fee_invalid_err)
-        return True
+        return self.success()
+
+    def check_form_empty(self):
+        if self.computer == 0:
+            return self.failure(ERROR.res_computer_empty_err)
+        if self.cpu == 0:
+            return self.failure(ERROR.res_cpu_empty_err)
+        if self.memory == 0:
+            return self.failure(ERROR.res_memory_empty_err)
+        if self.disk == 0:
+            return self.failure(ERROR.res_disk_empty_err)
+        # if self.disk_backup == 0:
+        #     return self.failure(ERROR.res_disk_backup_empty_err)
+        if self.out_ip == 0:
+            return self.failure(ERROR.res_out_ip_empty_err)
+        if self.snapshot == 0:
+            return self.failure(ERROR.res_snapshot_empty_err)
+        if self.loadbalance == 0:
+            return self.failure(ERROR.res_loadbalance_empty_err)
+        if self.internet_ip == -1:
+            logger.info(self.internet_ip)
+            return self.failure(ERROR.res_internet_ip_empty_err)
+        # if self.internet_ip_ssl == -1:
+        #     return self.failure(ERROR.res_internet_ip_ssl_invalid_err)
+        if self.period == 0:
+            return self.failure(ERROR.res_period_empty_err)
+        return self.success()
+
+    @thrownException
+    def get_resources_by_status(self):
+        res_status = self.params.get("res_status", 0)
+        resource_list = self.db.query(
+            Pro_Resource_Apply
+        ).filter(
+            Pro_Resource_Apply.status == res_status
+        ).order_by(
+            Pro_Resource_Apply.update_time.desc()
+        ).all()
+        status_counts = self.db.query(Pro_Resource_Apply.status, func.count(Pro_Resource_Apply.id)).group_by(Pro_Resource_Apply.status).all()
+        status_counts = dict(status_counts)
+        data = ObjectDict()
+        data.resource_list = resource_list
+        data.status_counts = status_counts
+        return self.success(data=data)
 
     @thrownException
     def generate_fee(self):
         logger.info("------[generate_fee]------")
-        self.get_form_data()
+        self.check_form_valid()
         if self.period == 0:
             return self.failure(ERROR.res_period_empty_err)
         unit_fee = 10
@@ -97,54 +150,30 @@ class ProResourceApplyService(BaseService):
 
     @thrownException
     def do_apply(self):
-        form_res = self.get_form_data()
+        form_valid_res = self.check_form_valid()
+        if form_valid_res.return_code < 0:
+            return form_valid_res
+        form_empty_res = self.check_form_empty()
+        if form_empty_res.return_code < 0:
+            return form_empty_res
         pro_id = self.params.get("pro_id")
         user_id = self.params.get("user_id")
+        logger.info(self.params)
         if not pro_id:
             return self.failure(ERROR.not_found_err)
         if not user_id:
             return self.failure(ERROR.user_empty_err)
-        if isinstance(form_res, dict):
-            return form_res
-        if self.computer == 0:
-            return self.failure(ERROR.res_computer_empty_err)
-        if self.cpu == 0:
-            return self.failure(ERROR.res_cpu_empty_err)
-        if self.memory == 0:
-            return self.failure(ERROR.res_memory_empty_err)
-        if self.disk == 0:
-            return self.failure(ERROR.res_disk_empty_err)
-        if self.disk_backup == 0:
-            return self.failure(ERROR.res_disk_backup_empty_err)
-        if self.out_ip == 0:
-            return self.failure(ERROR.res_out_ip_empty_err)
-        if self.snapshot == 0:
-            return self.failure(ERROR.res_snapshot_empty_err)
-        if self.loadbalance == 0:
-            return self.failure(ERROR.res_loadbalance_empty_err)
-        if self.internet_ip == -1:
-            logger.info(self.internet_ip)
-            return self.failure(ERROR.res_internet_ip_empty_err)
-        if self.internet_ip_ssl == -1:
-            return self.failure(ERROR.res_internet_ip_ssl_invalid_err)
-        if self.period == 0:
-            return self.failure(ERROR.res_period_empty_err)
-        if self.computer == 0:
-            return self.failure(ERROR.res_computer_empty_err)
-        if self.computer == 0:
-            return self.failure(ERROR.res_computer_empty_err)
-        if self.computer == 0:
-            return self.failure(ERROR.res_computer_empty_err)
         pro_info = self.db.query(
             Pro_Info
         ).filter(
-            Pro_Info.pro_id == pro_id
+            Pro_Info.id == pro_id
         ).first()
         applies = pro_info.pro_resource_applies
         if len(applies) > 0:
             first_apply = applies[0]
             last_apply = applies[-1]
-            if last_apply.status >= 0:
+            # 状态为0、1时不能申请新配额
+            if last_apply.status >= 0 and last_apply < 2:
                 return self.failure(ERROR.res_new_apply_err)
         else:
             first_apply = None
@@ -166,6 +195,7 @@ class ProResourceApplyService(BaseService):
         apply.unit_fee = self.unit_fee
         apply.total_fee = self.total_fee
         apply.user_id = user_id
+        apply.status = STATUS_RESOURCE.APPLIED
         if first_apply:
             apply.desc = u'资源调整'
         self.db.add(apply)
@@ -180,14 +210,94 @@ class ProResourceApplyService(BaseService):
         return self.success(data=apply)
 
     @thrownException
+    def do_re_apply(self):
+        form_valid_res = self.check_form_valid()
+        if form_valid_res.return_code < 0:
+            return form_valid_res
+        form_empty_res = self.check_form_empty()
+        if form_empty_res.return_code < 0:
+            return form_empty_res
+        pro_id = self.params.get("pro_id")
+        res_id = self.params.get("res_id")
+        user_id = self.params.get("user_id")
+        if not pro_id:
+            return self.failure(ERROR.not_found_err)
+        if not res_id:
+            return self.failure(ERROR.not_found_err)
+        if not user_id:
+            return self.failure(ERROR.user_empty_err)
+        pro_info = self.db.query(
+            Pro_Info
+        ).filter(
+            Pro_Info.id == pro_id
+        ).first()
+        if not pro_info:
+            return self.failure(ERROR.not_found_err)
+        resource = self.db.query(
+            Pro_Resource_Apply
+        ).filter(
+            Pro_Resource_Apply.id == res_id
+        ).first()
+        if not resource:
+            return self.failure(ERROR.not_found_err)
+        resource.computer = self.computer
+        resource.cpu = self.cpu
+        resource.memory = self.memory
+        resource.disk = self.disk
+        resource.disk_backup = self.disk_backup
+        resource.out_ip = self.out_ip
+        resource.snapshot = self.snapshot
+        resource.loadbalance = self.loadbalance
+        resource.internet_ip = self.internet_ip
+        resource.internet_ip_ssl = self.internet_ip_ssl
+        resource.start_date = self.start_date
+        resource.period = self.period
+        resource.unit_fee = self.unit_fee
+        resource.total_fee = self.total_fee
+        resource.status = STATUS_RESOURCE.APPLIED
+        self.db.flush()
+        mail_title = mail_format % {
+            "pro_name": resource.project.name,
+            "pro_id": resource.project.id,
+            "user_name": resource.user.email or resource.user.mobile,
+            "resource_status": STATUS_RESOURCE.applied.value
+        }
+        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_title)
+        task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
+        return self.success(data=resource)
+
+    @thrownException
     def do_revoke(self):
         res_id = self.params.get("res_id", 0)
         user_id = self.params.get("user_id", 0)
         resource = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
         if not resource:
             return self.failure(ERROR.not_found_err)
+        # 状态不为0（即：不是提交状态），不允许撤销
         if resource.status != 0:
             return self.failure(ERROR.res_revoke_err)
+        resource.status = STATUS_RESOURCE.REVOKED
+        self.db.add(resource)
+        self.db.flush()
+        mail_title = mail_format % {
+            "pro_name": resource.project.name,
+            "pro_id": resource.project.id,
+            "user_name": resource.user.email or resource.user.mobile,
+            "resource_status": STATUS_RESOURCE.revoked.value
+        }
+        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_title)
+        task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
+        return self.success(data=resource)
+
+    def do_delete(self):
+        res_id = self.params.get("res_id", 0)
+        user_id = self.params.get("user_id", 0)
+        resource = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
+        if not resource:
+            return self.failure(ERROR.not_found_err)
+        # 状态只有-1、-2（即：已撤销、申请被拒绝）可以删除
+        if resource.status <= -1:
+            return self.failure(ERROR.res_delete_err)
         resource.status = STATUS_RESOURCE.REVOKED
         self.db.add(resource)
         self.db.flush()
