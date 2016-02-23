@@ -298,15 +298,80 @@ class ProResourceApplyService(BaseService):
         # 状态只有-1、-2（即：已撤销、申请被拒绝）可以删除
         if resource.status <= -1:
             return self.failure(ERROR.res_delete_err)
-        resource.status = STATUS_RESOURCE.REVOKED
-        self.db.add(resource)
+        # resource.status = STATUS_RESOURCE.REVOKED
+        # self.db.add(resource)
+        resource.remove()
         self.db.flush()
         mail_title = mail_format % {
             "pro_name": resource.project.name,
             "pro_id": resource.project.id,
             "user_name": resource.user.email or resource.user.mobile,
-            "resource_status": STATUS_RESOURCE.revoked.value
+            "resource_status": "已删除",
         }
         sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_title)
         task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
         return self.success(data=resource)
+
+    @thrownException
+    def do_resource_action(self):
+        """
+            针对管理员修改资源申请状态
+        """
+        res_ids = self.params.get("res_ids", "")
+        user_id = self.params.get("user_id", 0)
+        action = self.params.get("action", "")
+        actions = [ STATUS_RESOURCE.get(i).value_en for i in STATUS_RESOURCE.keys() if str(i).isdigit() ]
+        if action not in actions:
+            return self.failure(ERROR.res_do_resource_action_err)
+        res_id_list = [int(i) for i in res_ids.split(",") if i.isdigit()]
+        email_list = []
+        tip_messages = []
+        logger.info("<"+"start for"+">")
+        logger.info("< %s >" % res_id_list)
+        for res_id in res_id_list:
+            resource = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
+            if not resource:
+                tip_messages.append({self.failure(ERROR.not_found_err).errvalue: email})
+                continue
+            email = resource.user.email
+            # 状态不为0（即：不是提交状态），不允许撤销
+            previous_status = STATUS_RESOURCE.get(action.upper()) - 1
+
+            logger.info("<"+"#"*60+">")
+            logger.info(resource.status)
+            if resource.status != previous_status:
+                if action == "checked":
+                    tip_messages.append({self.failure(ERROR.res_check_err).errvalue: email})
+                elif action == "payed":
+                    tip_messages.append({self.failure(ERROR.res_pay_err).errvalue: email})
+                elif action == "started":
+                    tip_messages.append({self.failure(ERROR.res_start_err).errvalue: email})
+                elif action == "closed":
+                    tip_messages.append({self.failure(ERROR.res_close_err).errvalue: email})
+                else:
+                    tip_messages.append({self.failure(ERROR.res_do_resource_action_err).errvalue: email})
+                continue
+            resource.status = STATUS_RESOURCE.get(action.upper())
+            logger.info(resource.status)
+            logger.info("<"+"#"*60+">")
+            self.db.add(resource)
+            self.db.flush()
+            email_list.append(email)
+            mail_title = mail_format % {
+                "pro_name": resource.project.name,
+                "pro_id": resource.project.id,
+                "user_name": resource.user.email or resource.user.mobile,
+                "resource_status": STATUS_RESOURCE.revoked.value
+            }
+            tip_messages.append(mail_title);
+
+        # for email in email_list:
+        #     mail_title = mail_format % {
+        #         "pro_name": resource.project.name,
+        #         "pro_id": resource.project.id,
+        #         "user_name": resource.user.email or resource.user.mobile,
+        #         "resource_status": STATUS_RESOURCE.revoked.value
+        #     }
+        #     sendMail.delay("scloud@infohold.com.cn", [email], mail_title, mail_title)
+        #     task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
+        return self.success()

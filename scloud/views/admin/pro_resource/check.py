@@ -44,3 +44,24 @@ class ResourceCheckListHandler(AuthHandler):
             "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if str(i).isdigit()]
         }
         return self.render_to_string("admin/pro_resource/check_list.html", **data)
+
+    @check_perms('pro_resource_apply.check')
+    @unblock
+    def post(self):
+        svc = ProResourceApplyService(self.svc.db, self.args)
+        resource_action_res = svc.do_resource_action()
+        if resource_action_res.return_code == 0:
+            self.add_message("资源已经审核通过")
+        else:
+            self.add_message("资源审核失败:(%s)%s" % (resource_action_res.return_code, resource_action_res.return_message))
+        resource_res = svc.get_resources_by_status()
+        page = self.getPage(resource_res.data.resource_list, 3)
+        data = {
+            "page": page,
+            "resource_res": resource_res,
+            "STATUS_RESOURCE": STATUS_RESOURCE,
+            "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if str(i).isdigit()]
+        }
+        tmpl = self.render_to_string("admin/pro_resource/check_list_pjax.html", **data)
+        return simplejson.dumps(self.success(data=tmpl))
+

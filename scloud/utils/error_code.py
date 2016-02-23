@@ -57,10 +57,17 @@ class ERROR(object):
     res_unit_fee_invalid_err        = error(errcode=-100072, errvalue=u"申请资源费用数据不合法")
     res_total_fee_invalid_err       = error(errcode=-100073, errvalue=u"申请资源总费用数据不合法")
 
-    res_new_apply_err = error(errcode=-100100, errvalue=u"当前状态不允许申请新的资源配额")
-    res_revoke_err = error(errcode=-100101, errvalue=u"当前状态不允许资源撤销")
-    res_delete_err = error(errcode=-100102, errvalue=u"当前状态不允许资源删除")
-    res_re_apply_err = error(errcode=-100103, errvalue=u"当前状态不允许重复申请资源配额")
+    res_do_resource_action_err = error(errcode=-100100, errvalue=u"资源审核操作参数有误")
+    res_new_apply_err = error(errcode=-100101, errvalue=u"当前状态不允许申请新的资源配额")
+    res_revoke_err = error(errcode=-100102, errvalue=u"当前状态不允许资源撤销")
+    res_delete_err = error(errcode=-100103, errvalue=u"当前状态不允许资源删除")
+    res_re_apply_err = error(errcode=-100104, errvalue=u"当前状态不允许重复申请资源配额")
+
+    res_check_err = error(errcode=-100105, errvalue=u"当前状态不允许对申请资源配额进行审核")
+    res_pay_err = error(errcode=-100106, errvalue=u"当前状态不允许对申请资源配额进行支付")
+    res_start_err = error(errcode=-100107, errvalue=u"当前状态不允许对申请资源配额启用")
+    res_close_err = error(errcode=-100108, errvalue=u"当前状态不允许对申请资源配额关闭")
+
 
 
 if __name__ == '__main__':

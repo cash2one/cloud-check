@@ -77,11 +77,11 @@
                     {% include "admin/pro_resource/_check_list_buttons.html" %}  
                   </div>
                   <div class="table-responsive mailbox-messages">
-                    <table class="table table-hover table-striped">
+                    <table class="table table-hover table-striped" id="resource_check_list_table">
                       <tbody>
                         {% for resource in page.object_list %}
                         <tr>
-                          <td><input type="checkbox"></td>
+                          <td><input type="checkbox" value="{{ resource.id }}"></td>
                           <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
                           <td class="mailbox-name"><a href="read-mail.html">{{ resource.user.email or resource.user.mobile }}</a></td>
                           <td class="mailbox-subject"><b>{{ resource.project.name }}</b> - {{ resource.desc }}</td>
@@ -152,10 +152,38 @@
         var res_status = "{{ current_res_status }}";
         $("li[name=res_status_"+res_status+"]").addClass("active");
       }
-      function do_checked(){
-      }
-      function do_refused(){
-      }
-      function do_payed(){
+      function do_resource_action(options){
+        options = options || {};
+        var action = options.action || "";
+        if (action == ""){
+          confirmBox({message: "提交参数有误"});
+        }
+        var checked_values = $getCheckValues("#resource_check_list_table");
+        console.log(checked_values)
+        var params = {
+          _xsrf: $cookie("_xsrf"),
+          res_ids: checked_values.join(","),
+          action: action,
+          _: Math.random()
+        }
+        $.ajax({
+          url: "{{ reverse_url('resource_check_list') }}",
+          type: "POST",
+          dataType: "json",
+          data: params,
+          beforeSend: function(xhr, settings){
+            xhr.setRequestHeader("_xsrf", $cookie('_xsrf'));
+          },
+          success: function(response){
+            if (check_response(response)){
+              $("#pjax-container").html(response.data);
+            }
+          },
+          error: function(xhr, Status){
+            if (Status == "timeout"){
+              do_resource_action({action: action});
+            }
+          }
+        })
       }
     </script>

@@ -8,10 +8,11 @@ import functools
 import simplejson
 from tornado.web import HTTPError
 from tornado import gen
+from tornado.util import ObjectDict
 from torweb.handlers import BaseHandler
 from torweb.paginator import Paginator, InvalidPage
 from scloud.shortcuts import env
-from scloud.config import CONF, logger
+from scloud.config import CONF, logger, logThrown
 from scloud.models.base import DataBaseService
 from scloud.async_services.svc_act import task_post_action
 from sqlalchemy.exc import SQLAlchemyError
@@ -67,17 +68,18 @@ class Handler(BaseHandler):
         return self.messages
 
     def on_finish(self):
-        logger.info("====[EXIT]====")
+        logger.info("\t" + "====[EXIT]====")
         try:
             self.svc.db.commit()
             # self.db.flush()
-            logger.info("====[COMMIT]====")
+            logger.info("\t" + "====[COMMIT]====")
         except SQLAlchemyError:
+            logThrown()
             self.svc.db.rollback()
-            logger.info("====[ROLLBACK]====")
+            logger.info("\t" + "====[ROLLBACK]====")
         self.svc.db.remove()
         self.svc.db.close()
-        logger.info("====[CLOSE]====")
+        logger.info("\t" + "====[CLOSE]====")
         # logger.info(self.svc.db.is_active)
         # logger.info("====================== [http method (%s)] ======================" % self.request.method)
         # self.svc.db.is_active
@@ -85,18 +87,26 @@ class Handler(BaseHandler):
         # self.svc.db.close()
         # logger.info(self.svc.db)
         # logger.info(self.svc.db.is_active)
-        logger.info("====================== [finish] ======================")
+        logger.critical("<" + "="*25 + " [finish] " + "="*25 + ">")
 
     def prepare(self):
+        logger.warning("<" + "="*25 + " [prepare] " + "="*25 + ">")
         self.svc = DataBaseService()
         self.svc._db_init()
         # self.db = self.svc.db
-        logger.info("====================== [http method] ======================")
-        logger.info(self.request.method)
-        logger.info("====================== [args] ======================")
-        logger.info(self.args)
+        logger.info("\t" + "====================== [http method] ======================")
+        logger.info("\t" + self.request.method)
+        logger.info("\t" + "====================== [args] ======================")
+        logger.info("\t %s" % self.args)
         self.init_messages()
         self.pjax = self.request.headers.get("X-PJAX")
+
+    def success(self, data):
+        result = ObjectDict()
+        result.return_code = 0
+        result.return_message = ""
+        result.data = data
+        return result
 
     def render_to_string(self, template, **kwargs):
         if self.pjax:
@@ -112,12 +122,12 @@ class Handler(BaseHandler):
             "request": self.request,
             "reverse_url": self.application.reverse_url
         })
+        # logger.info("\t [render_to_string kwargs]: %s" % kwargs)
         template_string = tmpl.render(**kwargs)
         return template_string
 
     def render(self, template, **kwargs):
         template_string = self.render_to_string(template, **kwargs)
-        logger.info(kwargs)
         self.write(template_string.strip())
 
     def getPage(self, objects, numsPerpage=20, total_count=0):

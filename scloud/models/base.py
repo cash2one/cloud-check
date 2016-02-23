@@ -64,11 +64,12 @@ class DataBaseService(ModelServiceMixin):
 
     def _db_init(self):
         self.db = self.__class__.__DB_Session
+        self.db.begin()
+        logger.info("====[INIT DB, DB.BEGIN]====")
 
     def __enter__(self):
         logger.info("====[ENTER]====")
         self._db_init()
-        self.db.begin()
         return self
 
     def __exit__(self, *args):
