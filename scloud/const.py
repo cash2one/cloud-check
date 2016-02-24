@@ -6,7 +6,7 @@ from collections import namedtuple
 from tornado.util import ObjectDict
 
 IndexMark = namedtuple("IndexMark", ["value", "value_en", "level"])
-ApplyMark = namedtuple("IndexMark", ["value", "todo_value", "value_en", "level", "bg_color"])
+ApplyMark = namedtuple("IndexMark", ["value", "todo_value", "act_value", "value_en", "level", "bg_color"])
 
 # use in models
 act_types = {
@@ -34,16 +34,16 @@ act_actions = {
 
 pro_resource_apply_status_types = {
     # 未申请状态，可修改，可删除，可提交
-    None:ApplyMark(value=u"未申请", todo_value="待提交", value_en="unknown", level="warning", bg_color="yellow"),
-    -2:ApplyMark(value=u"审核未通过", todo_value="待修改", value_en="refused", level="danger", bg_color="red"),
-    -1:ApplyMark(value=u"已撤销", todo_value="待提交", value_en="revoked", level="warning", bg_color="yellow"),
+    None:ApplyMark(value=u"未申请", todo_value="待提交", act_value=u"申请", value_en="unknown", level="warning", bg_color="yellow"),
+    -2:ApplyMark(value=u"审核未通过", todo_value="待修改", act_value=u"拒绝", value_en="refused", level="danger", bg_color="red"),
+    -1:ApplyMark(value=u"已撤销", todo_value="待提交", act_value=u"撤销", value_en="revoked", level="warning", bg_color="yellow"),
     # 已提交状态，等待审核、等待缴费
-    0: ApplyMark(value=u"已提交", todo_value="待审核", value_en="applied", level="primary", bg_color="teal disabled"),
-    1: ApplyMark(value=u"已审核", todo_value="待支付", value_en="checked", level="info", bg_color="light-blue"),
+    0: ApplyMark(value=u"已提交", todo_value="待审核", act_value=u"提交", value_en="applied", level="primary", bg_color="teal disabled"),
+    1: ApplyMark(value=u"已审核", todo_value="待支付", act_value=u"审核", value_en="checked", level="info", bg_color="light-blue"),
     # 已支付状态，等待运行
-    2: ApplyMark(value=u"已支付", todo_value="未启用", value_en="payed", level="success", bg_color="aqua"),
-    3: ApplyMark(value=u"运行中", todo_value="运行中", value_en="started", level="danger", bg_color="red"),
-    4: ApplyMark(value=u"已关闭", todo_value="未运行", value_en="closed", level="warning", bg_color="orange"),
+    2: ApplyMark(value=u"已支付", todo_value="未启用", act_value=u"支付", value_en="payed", level="success", bg_color="aqua"),
+    3: ApplyMark(value=u"运行中", todo_value="运行中", act_value=u"运行", value_en="started", level="danger", bg_color="red"),
+    4: ApplyMark(value=u"已关闭", todo_value="未运行", act_value=u"关闭", value_en="closed", level="warning", bg_color="orange"),
 }
 
 STATUS_RESOURCE = ObjectDict()

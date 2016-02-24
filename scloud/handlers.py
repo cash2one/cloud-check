@@ -116,11 +116,13 @@ class Handler(BaseHandler):
             self.set_header("active", self.kwargs.get("active", ""))
             template = "%s_pjax.html" % template.split(".html")[0]
         tmpl = env.get_template(template)
+        s = "&".join(["%s=%s" % (k, v) for k, v in self.args.items() if k not in ["page", "_pjax"]])
         kwargs.update({
             "CONF": CONF,
             "handler": self,
             "request": self.request,
-            "reverse_url": self.application.reverse_url
+            "reverse_url": self.application.reverse_url,
+            "s": s+"&" if s else ""
         })
         # logger.info("\t [render_to_string kwargs]: %s" % kwargs)
         template_string = tmpl.render(**kwargs)

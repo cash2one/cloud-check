@@ -21,8 +21,22 @@ from scloud.utils.unblock import unblock
 from scloud.utils.error import SystemError
 
 
+class GuideStepGetHandler(AuthHandler):
+    def get_pro_info_res(self, pro_id):
+        kw = {"pro_id": pro_id}
+        svc = ProjectService(self.svc.db, kw)
+        pro_info_res = svc.get_project()
+        if isinstance(pro_info_res, Exception):
+            raise pro_info_res
+        data = {
+            "pro_info_res": pro_info_res,
+            "STATUS_RESOURCE": STATUS_RESOURCE,
+        }
+        return data
+
+
 @url("/guide", name="guide", active="guide")
-class GuideHandler(AuthHandler):
+class GuideHandler(GuideStepGetHandler):
     u'申请资源'
     @check_perms('pro_info.view')
     @unblock
@@ -43,7 +57,8 @@ class GuideHandler(AuthHandler):
         if result.return_code == 0:
             logger.info("return_code:%s" % result.return_code)
             self.add_message(u"项目添加成功", level="success")
-            return self.render_to_string("admin/guide/step1.html", result=result)
+            data = self.get_pro_info_res(result.data.id)
+            return self.render_to_string("admin/guide/step1.html", **data)
         else:
             logger.info("return_code:%s" % result.return_code)
             post_result = result
@@ -59,20 +74,6 @@ class GuideGenerateFeeHandler(AuthHandler):
         fee_res = svc.generate_fee()
         logger.info(fee_res)
         return simplejson.dumps(fee_res)
-
-
-class GuideStepGetHandler(AuthHandler):
-    def get_pro_info_res(self, pro_id):
-        kw = {"pro_id": pro_id}
-        svc = ProjectService(self.svc.db, kw)
-        pro_info_res = svc.get_project()
-        if isinstance(pro_info_res, Exception):
-            raise pro_info_res
-        data = {
-            "pro_info_res": pro_info_res,
-            "STATUS_RESOURCE": STATUS_RESOURCE,
-        }
-        return data
 
 
 @url("/guide/(?P<pro_id>\d+)/step/1", name="guide_step_1", active="guide")
@@ -121,7 +122,7 @@ class GuideStep2Handler(GuideStepGetHandler):
     @unblock
     def get(self, **kwargs):
         data = self.get_pro_info_res(kwargs["pro_id"])
-        return self.render("admin/guide/step2.html", **data)
+        return self.render_to_string("admin/guide/step2.html", **data)
 
     def post(self, **kwargs):
         kw = {}
@@ -145,7 +146,7 @@ class GuideStep3Handler(GuideStepGetHandler):
     @unblock
     def get(self, **kwargs):
         data = self.get_pro_info_res(kwargs["pro_id"])
-        return self.render("admin/guide/step2.html", **data)
+        return self.render_to_string("admin/guide/step2.html", **data)
 
     def post(self, pro_id):
         data = {"name": "torweb"}

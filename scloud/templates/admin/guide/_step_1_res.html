@@ -24,13 +24,16 @@
               <th class="text-center">申请历史</th>
               <th class="text-center">申请时间</th>
             </tr>
-            {% for record in pro_info_res.data.pro_resource_applies[::-1] %}
+            {#% for record in pro_info_res.data.pro_resource_applies[::-1] %#}
+            {% if last_apply %}
+            {% for record in last_apply.act_histories[::-1] %}
             <tr>
               <td class="text-center">{{ loop.revindex }}</td>
-              <td class="text-center"><a data-pjax href="#" onclick="edit_res()">{{ record.desc }}</a></td>
+              <td class="text-center"><a data-pjax href="#" onclick="edit_res()">{{ STATUS_RESOURCE.get(record.status).value }}</a></td>
               <td class="text-center"><span class="label label-info">{{ record.create_time.strftime('%Y-%m-%d') }}</span></td>
             </tr>
             {% endfor %}
+            {% endif %}
             <tr>
               <td class="text-center"></td>
               <td class="text-center">创建项目</td>

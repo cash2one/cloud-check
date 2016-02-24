@@ -7,7 +7,7 @@ from scloud.models.base import BaseModel, BaseModelMixin
 from scloud.models.pt_user import PT_User
 from scloud.models.environment import Env_Info
 from scloud.models.project_mixin import Pro_Info_Mixin
-from sqlalchemy import Column, func, ForeignKey
+from sqlalchemy import Column, func, ForeignKey, ForeignKeyConstraint
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.types import Unicode, Integer, Float, DateTime
 
@@ -55,9 +55,10 @@ class Pro_Resource_Apply(BaseModel, BaseModelMixin):
     total_fee = Column(Float, default=0.00)
     fee_desc = Column(Unicode, default=u'')
     status = Column(Integer, default=0)
-    # user_id = Column(Integer, default=0)
     user_id = Column("user_id", Integer, ForeignKey("pt_user.id"), default=0)
-    checker_id = Column(Integer, default=0)
+    checker_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
     check_time = Column(DateTime, default='0000-00-00 00:00:00')
-    user = relationship("PT_User", backref="pro_resource_applies")
+
+    user = relationship("PT_User", foreign_keys=[user_id], backref="pro_resource_applies")
+    checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_resource_applies")
     project = relationship("Pro_Info", backref=backref("pro_resource_applies", order_by="Pro_Resource_Apply.update_time"))

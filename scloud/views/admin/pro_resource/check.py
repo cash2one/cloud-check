@@ -32,11 +32,12 @@ class ResourceCheckListHandler(AuthHandler):
         kw = {}
         kw.update(self.args)
         kw.update(kwargs)
+        # res_status = self.args.get()
         svc = ProResourceApplyService(self.svc.db, kw)
         resource_res = svc.get_resources_by_status()
         if isinstance(resource_res, Exception):
             raise resource_res
-        page = self.getPage(resource_res.data.resource_list, 3)
+        page = self.getPage(resource_res.data.resource_list, 2)
         data = {
             "page": page,
             "resource_res": resource_res,
@@ -48,14 +49,18 @@ class ResourceCheckListHandler(AuthHandler):
     @check_perms('pro_resource_apply.check')
     @unblock
     def post(self):
-        svc = ProResourceApplyService(self.svc.db, self.args)
+        kw = {"checker_id": self.current_user.id}
+        kw.update(self.args)
+        svc = ProResourceApplyService(self.svc.db, kw, self)
         resource_action_res = svc.do_resource_action()
         if resource_action_res.return_code == 0:
-            self.add_message("资源已经审核通过")
+            messages = resource_action_res.data
+            for message, level in messages:
+                self.add_message(message, level)
         else:
             self.add_message("资源审核失败:(%s)%s" % (resource_action_res.return_code, resource_action_res.return_message))
         resource_res = svc.get_resources_by_status()
-        page = self.getPage(resource_res.data.resource_list, 3)
+        page = self.getPage(resource_res.data.resource_list, 2)
         data = {
             "page": page,
             "resource_res": resource_res,
