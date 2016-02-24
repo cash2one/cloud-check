@@ -2,7 +2,7 @@
 
 import scloud
 from torweb.urls import url
-from scloud.config import logger
+from scloud.config import logger, thrownException
 from scloud.const import pro_resource_apply_status_types, STATUS_RESOURCE
 from scloud.handlers import Handler, AuthHandler
 import requests
@@ -124,19 +124,24 @@ class GuideStep2Handler(GuideStepGetHandler):
         data = self.get_pro_info_res(kwargs["pro_id"])
         return self.render_to_string("admin/guide/step2.html", **data)
 
+@url("/guide/pro/(?P<pro_id>\d+)/payed", name="guide_step_2_payed")
+class GuideStep2PayedHandler(GuideStepGetHandler):
+    u'资源申请/变更 步骤2 完成支付'
+    @check_perms('pro_resource_apply.update')
+    @thrownException
+    @unblock
     def post(self, **kwargs):
         kw = {}
         kw.update(self.args)
         kw.update(kwargs)
-        svc = ProjectService(self.svc.db, kw)
-        pro_info_res = svc.get_project()
-        if isinstance(pro_info_res, Exception):
-            raise pro_info_res
-        data = {
-            "pro_info_res": pro_info_res,
-            "STATUS_RESOURCE": STATUS_RESOURCE,
-        }
-        return self.render("admin/guide/step2.html", **data)
+        svc = ProResourceApplyService(self.svc.db, kw, self)
+        resource_action_res = svc.do_pay()
+        if isinstance(resource_action_res, Exception):
+            raise resource_action_res
+        data = self.get_pro_info_res(kwargs["pro_id"])
+        tmpl = self.render_to_string("admin/guide/step2_pjax.html", **data)
+
+        return simplejson.dumps(self.success(data=tmpl))
 
 
 @url("/guide/(?P<pro_id>\d+)/step/3", name="guide_step_3", active="guide")

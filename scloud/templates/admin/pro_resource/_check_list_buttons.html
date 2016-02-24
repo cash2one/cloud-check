@@ -1,11 +1,11 @@
                     <!-- Check all button -->
                     <button class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i> 全选</button>
                     <div class="btn-group">
-                      {% if current_res_status|int == 0 %}
-                      <button onclick="do_resource_action({action:'checked'});" class="btn btn-sm btn-{{ STATUS_RESOURCE.checked.level }}"><i class="fa fa-check"></i>   审核通过</button>
-                      <button onclick="do_resource_action({action:'refused'});" class="btn btn-sm btn-{{ STATUS_RESOURCE.refused.level }}"><i class="fa fa-times"></i>   拒绝申请</button>
-                      {% elif current_res_status|int == 1 %}
-                      <button onclick="do_resource_action({action:'payed'});" class="btn btn-sm btn-{{ STATUS_RESOURCE.payed.level }}"><i class="fa fa-square-o"></i>   已支付</button>
+                      {% if current_res_status|int == STATUS_RESOURCE.APPLIED %}
+                      <button onclick="do_resource_action({action:'{{ STATUS_RESOURCE.checked.value_en }}'});" class="btn btn-sm btn-{{ STATUS_RESOURCE.checked.level }}"><i class="fa fa-check"></i>   审核通过</button>
+                      <button onclick="do_resource_action({action:'{{ STATUS_RESOURCE.refused.value_en }}'});" class="btn btn-sm btn-{{ STATUS_RESOURCE.refused.level }}"><i class="fa fa-times"></i>   拒绝申请</button>
+                      {% elif current_res_status|int == STATUS_RESOURCE.PAYED %}
+                      <button onclick="do_resource_action({action: '{{ STATUS_RESOURCE.confirmpayed.value_en }}'});" class="btn btn-sm btn-{{ STATUS_RESOURCE.payed.level }}"><i class="fa fa-square-o"></i>   确认支付</button>
                       {% endif %}
                       <!--button class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
                       <button class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button>

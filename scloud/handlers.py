@@ -92,7 +92,10 @@ class Handler(BaseHandler):
     def prepare(self):
         logger.warning("<" + "="*25 + " [prepare] " + "="*25 + ">")
         self.svc = DataBaseService()
-        self.svc._db_init()
+        self.svc.__enter__()
+        # self.svc._db_init()
+        # self.svc.db.begin_nested()
+        # self.svc.db.begin()
         # self.db = self.svc.db
         logger.info("\t" + "====================== [http method] ======================")
         logger.info("\t" + self.request.method)
@@ -100,11 +103,17 @@ class Handler(BaseHandler):
         logger.info("\t %s" % self.args)
         self.init_messages()
         self.pjax = self.request.headers.get("X-PJAX")
+        headers = self.request.headers
+        x_requested_with = headers.get("X-Requested-With", "")
+        self.ajax = x_requested_with == "XMLHttpRequest"
 
     def success(self, data):
+        return self.failure(data=data)
+
+    def failure(self, return_code=0, return_message="", data=None):
         result = ObjectDict()
-        result.return_code = 0
-        result.return_message = ""
+        result.return_code = return_code
+        result.return_message = return_message
         result.data = data
         return result
 

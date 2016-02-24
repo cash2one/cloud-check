@@ -119,7 +119,9 @@ class ProResourceApplyService(BaseService):
 
     @thrownException
     def get_resources_by_status(self):
+        logger.info("\t ==========[ get_resources_by_status ]==========")
         res_status = self.params.get("res_status", 0)
+        logger.info("\t [res_status]: %s" % res_status)
         resource_list = self.db.query(
             Pro_Resource_Apply
         ).filter(
@@ -173,7 +175,8 @@ class ProResourceApplyService(BaseService):
             first_apply = applies[0]
             last_apply = applies[-1]
             # 状态为0、1时不能申请新配额
-            if last_apply.status >= 0 and last_apply < 2:
+            logger.info("\t [last_apply status] %s" % last_apply.status)
+            if last_apply.status >= 0 and last_apply.status < 2:
                 return self.failure(ERROR.res_new_apply_err)
         else:
             first_apply = None
@@ -318,6 +321,36 @@ class ProResourceApplyService(BaseService):
         return self.success(data=resource)
 
     @thrownException
+    def do_pay(self):
+        logger.info("\t [ DO PAY ]")
+        res_id = self.params.get("res_id", 0)
+        user_id = self.params.get("user_id", 0)
+        resource_query = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id)
+        logger.info("\t [QUERY] : %s" % resource_query)
+        resource = resource_query.first()
+        if not resource:
+            # return self.failure(ERROR.not_found_err)
+            return NotFoundError()
+        # 状态不为0（即：不是提交状态），不允许撤销
+        logger.info("\t [resource.status]: %s" % resource.status)
+        logger.info("\t [STATUS_RESOURCE.CHECKED]: %s" % STATUS_RESOURCE.CHECKED)
+        logger.info("\t change to [STATUS_RESOURCE.PAYED]: %s" % STATUS_RESOURCE.PAYED)
+        if resource.status != STATUS_RESOURCE.CHECKED:
+            return self.failure(ERROR.res_pay_err)
+        resource.status = STATUS_RESOURCE.PAYED
+        self.db.add(resource)
+        self.db.flush()
+        mail_content = mail_format % {
+            "pro_name": resource.project.name,
+            "pro_id": resource.project.id,
+            "user_name": resource.user.email or resource.user.mobile,
+            "resource_status": STATUS_RESOURCE.payed.value
+        }
+        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_content, mail_content)
+        task_post_pro_res_apply_history.delay(status=resource.status, content=mail_content, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
+        return self.success(data=resource)
+
+    @thrownException
     def do_resource_action(self):
         """
             针对管理员修改资源申请状态
@@ -326,6 +359,7 @@ class ProResourceApplyService(BaseService):
         checker_id = self.params.get("checker_id", 0)
         action = self.params.get("action", "")
         actions = [ STATUS_RESOURCE.get(i).value_en for i in STATUS_RESOURCE.keys() if str(i).isdigit() ]
+        logger.info("\t [actions] : %s" % actions)
         if action not in actions:
             return self.failure(ERROR.res_do_resource_action_err)
         res_id_list = [int(i) for i in res_ids.split(",") if i.isdigit()]
@@ -350,13 +384,13 @@ class ProResourceApplyService(BaseService):
             logger.info("<"+"#"*60+">")
             logger.info(resource.status)
             if resource.status != previous_status:
-                if action == "checked":
+                if action == STATUS_RESOURCE.checked.value_en:
                     tip_messages.append(_get_message(err=ERROR.res_check_err, level="warning"))
-                elif action == "payed":
-                    tip_messages.append(_get_message(err=ERROR.res_pay_err, level="warning"))
-                elif action == "started":
+                elif action == STATUS_RESOURCE.confirmpayed.value_en:
+                    tip_messages.append(_get_message(err=ERROR.res_confirmpay_err, level="warning"))
+                elif action == STATUS_RESOURCE.started.value_en:
                     tip_messages.append(_get_message(err=ERROR.res_start_err, level="warning"))
-                elif action == "closed":
+                elif action == STATUS_RESOURCE.closed.value_en:
                     tip_messages.append(_get_message(err=ERROR.res_close_err, level="warning"))
                 else:
                     tip_messages.append(_get_message(err=ERROR.res_do_resource_action_err, level="warning"))

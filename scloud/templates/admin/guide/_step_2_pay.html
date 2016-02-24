@@ -1,0 +1,99 @@
+{% from "admin/base/base_macros.html" import check_post with context %}
+{% import "admin/base/base_macros.html" as mbase %}
+{% set last_apply = apply_global_vars.last_apply %}
+  <!-- Horizontal Form -->
+  <div class="row">
+    <div class="col-sm-12">
+      <div id="panel_res" class="box box-{{ apply_global_vars.level }} box-solid">
+        <div class="box-header with-border">
+          <h3 class="box-title">{{ last_apply.project.name }} - {{ last_apply.desc }}</h3>
+          <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="remove"><i   class="fa fa-times"></i></button>
+          </div><!-- /.box-tools -->
+        </div><!-- /.box-header -->
+        <div class="box-body">
+          {% if last_apply %}
+            {# ========== 当前状态为已审核状态，才可以进行支付 ========== #}
+            {% if last_apply.status|int == STATUS_RESOURCE.CHECKED|int %}
+            {% set unit_fee = last_apply.unit_fee %}
+            {% set period = last_apply.period %}
+            {% set total_fee = last_apply.total_fee %}
+            {% set post_action = reverse_url('guide_step_2', pro_info_res.data.id) %}
+          <!-- form start -->
+            <form data-pjax action="{{ post_action }}" class="form-horizontal" method="POST">
+            {{ handler.xsrf_form_html() }}
+              <input type="hidden" name="res_id" value="{{ last_apply.id }}">
+              <input type="hidden" name="action" value="{{ STATUS_RESOURCE.payed.value_en }}">
+              <div class="box-body">
+                <fieldset>
+                  <legend>产生费用</legend>
+                  <div class="form-group">
+                    <label for="unit_fee" class="col-sm-2 control-label">本月费用</label>
+                    <div class="col-sm-6 input-group">
+                      <input type="text" class="form-control" id="unit_fee" name="unit_fee" placeholder="10" value="{{ unit_fee }}" readonly>
+                      <div class="input-group-unit">元/月</div>
+                      <div class="input-group-unit">X</div>
+                      <input type="text" class="form-control" id="period" name="period" placeholder="12" value="{{ period }}" readonly>
+                      <div class="input-group-unit">月</div>
+                    </div>
+                  </div>
+                  {{ mbase.check_post(post_apply_res, [-100051, -100071, -100052, -100072]) }}
+                  <div class="form-group">
+                    <label for="total_fee" class="col-sm-2 control-label">合计费用</label>
+                    <div class="col-sm-6 input-group">
+                      <input type="text" class="form-control" id="total_fee" name="total_fee" placeholder="10" value="{{ total_fee }}" readonly>
+                      <div class="input-group-unit">元</div>
+                    </div>
+                  </div>
+                  {{ mbase.check_post(post_apply_res, [-100053, -100073]) }}
+                </fieldset>
+              </div><!-- /.box-body -->
+              <div class="box-footer text-center">
+                {% if last_apply %}
+                  {% if last_apply.status|int == 1 %}
+                  <button id="btn_do_pay" type="button" onclick="do_pay()" class="btn btn-{{ STATUS_RESOURCE.revoked.level }}">完成支付</button>
+                  {% endif %}
+                {% else %}
+                {% endif %}
+              </div><!-- /.box-footer -->
+            </form>
+            {% elif last_apply.status|int < 1 %}
+            <a data-pjax href="{{ reverse_url('guide_step_1', pro_info_res.data.id) }}" class="btn btn-{{ STATUS_RESOURCE.get(last_apply.status).level }}">返回提交申请</a>
+            {% elif last_apply.status|int > 1 %}
+            <a data-pjax href="{{ reverse_url('guide_step_3', pro_info_res.data.id) }}" class="btn btn-{{ STATUS_RESOURCE.get(last_apply.status).level }}">去填写运行参数</a>
+            {% endif %}
+          {% else %}
+          <a data-pjax href="{{ reverse_url('guide_step_1', pro_info_res.data.id) }}" class="btn btn-{{ STATUS_RESOURCE.unknown.level }}">返回提交申请</a>
+          {% endif %}
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div>
+  </div><!-- /.box -->
+  <script type="text/javascript">
+  function check_form(){
+    return true;
+  }
+  function do_pay(){
+    var params = $("form").serialize();
+    console.log(params)
+    // $("#btn_do_pay").button("loading");
+    $.ajax({
+      url: '{{ reverse_url("guide_step_2_payed", pro_info_res.data.id) }}',
+      type: 'POST',
+      dataType: 'JSON',
+      data: params,
+      success: function(response){
+        $("#btn_do_pay").button("reset");
+        if(check_response(response)){
+          $("#pjax-container").html(response.data);
+        }
+      },
+      error: function(xhr, textStatus){
+        if (textStatus == 'timeout'){
+          do_pay();
+        }
+      },
+      timeout: 3000,
+    })
+  }
+  </script>

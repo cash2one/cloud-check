@@ -3,10 +3,12 @@
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial, wraps
 
+import simplejson
 import tornado.ioloop
 import tornado.web
 from scloud.config import logger, logThrown
 from scloud.utils.error import SystemError, NotFoundError
+from scloud.utils.error_code import ERROR
 
 
 EXECUTOR = ThreadPoolExecutor(max_workers=4)
@@ -26,22 +28,36 @@ def unblock(f):
                     logger.info(future.result())
                     return future.result()
                 else:
+                    # logger.info("+++++++++++++++ future.result() +++++++++++++++")
+                    # logger.info(future.result())
                     self.write(future.result())
                     self.finish()
             except Exception as e:
                 logThrown()
                 if isinstance(e, SystemError):
                     template_string = self.render_to_string("admin/error/500.html", status_code=500, exception=u"系统错误(%s)" % e.code, traceback=e.message)
-                    self.write(template_string)
-                    self.finish()
+                    if self.ajax:
+                        self.write(simplejson.dumps(self.failure(e.code, e.message)))
+                        self.finish()
+                    else:
+                        self.write(template_string)
+                        self.finish()
                 if isinstance(e, NotFoundError):
                     template_string = self.render_to_string("admin/error/404.html", status_code=404, exception=u"数据查询异常(%s)" % e.code, traceback=e.message)
-                    self.write(template_string)
-                    self.finish()
+                    if self.ajax:
+                        self.write(simplejson.dumps(self.failure(e.code, e.message)))
+                        self.finish()
+                    else:
+                        self.write(template_string)
+                        self.finish()
                 else:
                     template_string = self.render_to_string("admin/error/500.html", status_code=500, exception=u"系统错误", traceback=e.__unicode__())
-                    self.write(template_string)
-                    self.finish()
+                    if self.ajax:
+                        self.write(simplejson.dumps(self.failure(ERROR.system_err.errcode, "(%s)%s:%s" % (ERROR.system_err.errcode, ERROR.system_err.errvalue, e.__unicode__()))))
+                        self.finish()
+                    else:
+                        self.write(template_string)
+                        self.finish()
 
         EXECUTOR.submit(
             partial(f, *args, **kwargs)

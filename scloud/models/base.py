@@ -6,7 +6,7 @@ import simplejson
 import _mysql_exceptions
 from datetime import datetime
 from torweb.db import CacheQuery
-from scloud.config import CONF, logger
+from scloud.config import CONF, logger, logThrown
 from sqlalchemy import event
 from sqlalchemy import Column, func
 from sqlalchemy.sql import ClauseElement
@@ -64,12 +64,16 @@ class DataBaseService(ModelServiceMixin):
 
     def _db_init(self):
         self.db = self.__class__.__DB_Session
-        self.db.begin()
+        try:
+            self.db.begin()
+        except:
+            logThrown()
         logger.info("====[INIT DB, DB.BEGIN]====")
 
     def __enter__(self):
         logger.info("====[ENTER]====")
         self._db_init()
+        # self.db.begin()
         return self
 
     def __exit__(self, *args):

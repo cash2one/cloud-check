@@ -92,6 +92,8 @@
               {# <============ 重新提交申请 =============> #}
               {% set post_action = reverse_url('guide_step_1.re_apply', pro_info_res.data.id, last_apply.id) %}
               {# <============ 删除申请 =============> #}
+              {% elif last_apply.status == 1 %}
+              {# <============ 完成支付 =============> #}
               {% endif %}
             {% else %}
               {# <============ 申请新资源 =============> #}
@@ -228,6 +230,8 @@
                   {% elif last_apply.status|int in [-1, -2] %}
                   <button id="submit" type="submit" class="btn btn-{{ STATUS_RESOURCE.applied.level }}">重新提交申请</button>
                   <button id="submit" type="submit" class="btn btn-{{ STATUS_RESOURCE.unknown.level }}">删除申请</button>
+                  {% elif last_apply.status|int == 1 %}
+                  <a data-pjax href="{{ reverse_url('guide_step_2', last_apply.project.id) }}" class="btn btn-{{ STATUS_RESOURCE.payed.level }}">去支付</a>
                   {% endif %}
                 {% else %}
                 <button id="submit" type="submit" class="btn btn-{{ STATUS_RESOURCE.applied.level }}">提交申请</button>

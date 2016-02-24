@@ -167,7 +167,7 @@
           _: Math.random()
         }
         $.ajax({
-          url: "{{ reverse_url('resource_check_list') }}",
+            url: "{{ reverse_url('resource_check_list') }}?res_status={{ handler.args.get('res_status', 0)}}",
           type: "POST",
           dataType: "json",
           data: params,

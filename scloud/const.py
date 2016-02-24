@@ -41,9 +41,10 @@ pro_resource_apply_status_types = {
     0: ApplyMark(value=u"已提交", todo_value="待审核", act_value=u"提交", value_en="applied", level="primary", bg_color="teal disabled"),
     1: ApplyMark(value=u"已审核", todo_value="待支付", act_value=u"审核", value_en="checked", level="info", bg_color="light-blue"),
     # 已支付状态，等待运行
-    2: ApplyMark(value=u"已支付", todo_value="未启用", act_value=u"支付", value_en="payed", level="success", bg_color="aqua"),
-    3: ApplyMark(value=u"运行中", todo_value="运行中", act_value=u"运行", value_en="started", level="danger", bg_color="red"),
-    4: ApplyMark(value=u"已关闭", todo_value="未运行", act_value=u"关闭", value_en="closed", level="warning", bg_color="orange"),
+    2: ApplyMark(value=u"完成支付", todo_value="待确认", act_value=u"支付", value_en="payed", level="success", bg_color="aqua"),
+    3: ApplyMark(value=u"确认完成支付", todo_value="未启用", act_value=u"确认支付", value_en="confirmpayed", level="success", bg_color="aqua"),
+    4: ApplyMark(value=u"运行中", todo_value="运行中", act_value=u"运行", value_en="started", level="danger", bg_color="red"),
+    5: ApplyMark(value=u"已关闭", todo_value="未运行", act_value=u"关闭", value_en="closed", level="warning", bg_color="orange"),
 }
 
 STATUS_RESOURCE = ObjectDict()
