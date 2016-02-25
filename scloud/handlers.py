@@ -77,7 +77,7 @@ class Handler(BaseHandler):
             logThrown()
             self.svc.db.rollback()
             logger.info("\t" + "====[ROLLBACK]====")
-        self.svc.db.remove()
+        # self.svc.db.remove()
         self.svc.db.close()
         logger.info("\t" + "====[CLOSE]====")
         # logger.info(self.svc.db.is_active)
@@ -106,6 +106,8 @@ class Handler(BaseHandler):
         headers = self.request.headers
         x_requested_with = headers.get("X-Requested-With", "")
         self.ajax = x_requested_with == "XMLHttpRequest"
+        if self.pjax:
+            self.ajax = False
 
     def success(self, data):
         return self.failure(data=data)

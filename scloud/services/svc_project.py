@@ -30,7 +30,12 @@ class ProjectService(BaseService):
     @thrownException
     def get_project_list(self):
         logger.info("------[get_project_list]------")
-        projects = self.db.query(Pro_Info).all()
+        user_id = self.handler.current_user.id
+        projects = self.db.query(
+            Pro_Info
+        ).filter(
+            Pro_Info.user_id == user_id
+        ).all()
         project_list = [i.as_dict() for i in projects]
         logger.info("project_list %s" % project_list)
         # self.db.commit()
@@ -40,6 +45,7 @@ class ProjectService(BaseService):
     @thrownException
     def create_project(self):
         name = self.params.get("name", "").strip()
+        user_id = self.handler.current_user.id
         owner = self.params.get("owner", "").strip()
         owner_email = self.params.get("owner_email", "").strip()
         env_id = self.params.get("env_id", "").strip()
@@ -48,12 +54,13 @@ class ProjectService(BaseService):
             return self.failure(ERROR.pro_name_empty_err)
         if not owner:
             return self.failure(ERROR.pro_owner_empty_err)
-        # if not owner_email:
-        #     return self.failure(ERROR.pro_owner_email_empty_err)
+        if not owner_email:
+            return self.failure(ERROR.pro_owner_email_empty_err)
         if not env_id:
             return self.failure(ERROR.pro_env_empty_err)
         project, created = Pro_Info.get_or_create(name=name, owner=owner, env_id=env_id)
         project.owner_email = owner_email
         project.desc = desc
+        project.user_id = user_id
         self.db.add(project)
         return self.success(data=project)

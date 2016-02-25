@@ -126,6 +126,9 @@ CREATE TABLE `pro_info` (
     `owner_email` VARCHAR(255) NOT NULL DEFAULT '0' COMMENT '项目负责人',
     `env_id` INT(11) NOT NULL DEFAULT '0' COMMENT '环境ID',
     `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '项目描述',
+    `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+    `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核者ID',
+    `check_time` INT(11) NOT NULL DEFAULT '0' COMMENT '审核时间',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)

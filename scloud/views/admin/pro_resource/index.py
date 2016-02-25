@@ -31,7 +31,7 @@ class ProResourceHandler(AuthHandler):
         kw = {}
         kw.update(self.args)
         kw.update(kwargs)
-        svc = ProResourceApplyService(self.svc.db, kw)
+        svc = ProResourceApplyService(self, kw)
         resource_res = svc.get_resource()
         if isinstance(resource_res, Exception):
             raise resource_res

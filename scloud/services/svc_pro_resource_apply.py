@@ -17,6 +17,8 @@ from scloud.const import admin_emails, STATUS_RESOURCE
 
 mail_format = u"项目名[%(pro_name)s]-项目编号[%(pro_id)s]-%(user_name)s %(resource_status)s资源申请"
 
+mail_title_format = u"%(user_name)s %(action)s[%(pro_name)s-%(res_desc)s]%(todo_action)s"
+
 class ProResourceApplyService(BaseService):
 
     @thrownException
@@ -203,17 +205,18 @@ class ProResourceApplyService(BaseService):
             apply.desc = u'资源调整'
         self.db.add(apply)
         self.db.flush()
-        html = self.render_to_string("admin/mail/pro_info.html", resource_apply=apply)
+        mail_html = self.render_to_string("admin/mail/pro_resource_apply_to_admin.html", resource_apply=apply, STATUS_RESOURCE=STATUS_RESOURCE)
         logger.info("<"+"="*60+">")
-        logger.info(html)
+        logger.info(mail_html)
         user_name = apply.user.email or apply.user.mobile
-        mail_content = mail_format % {
-            "pro_name": apply.project.name,
-            "pro_id": apply.project.id,
+        mail_title = mail_title_format % {
             "user_name": apply.user.email or apply.user.mobile,
-            "resource_status": STATUS_RESOURCE.applied.value
+            "pro_name": apply.project.name,
+            "res_desc": apply.project.id,
+            "action": u"申请的",
+            "todo_action": u"资源，已提交，请审核",
         }
-        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_content, html)
+        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
         task_post_pro_res_apply_history.delay(status=apply.status, content=apply.desc, pro_id=pro_id, res_apply_id=apply.id, user_id=user_id)
         return self.success(data=apply)
 
@@ -264,14 +267,16 @@ class ProResourceApplyService(BaseService):
         resource.total_fee = self.total_fee
         resource.status = STATUS_RESOURCE.APPLIED
         self.db.flush()
-        mail_content = mail_format % {
-            "pro_name": resource.project.name,
-            "pro_id": resource.project.id,
+        mail_html = self.render_to_string("admin/mail/pro_resource_apply_to_admin.html", resource_apply=resource, STATUS_RESOURCE=STATUS_RESOURCE)
+        mail_title = mail_title_format % {
             "user_name": resource.user.email or resource.user.mobile,
-            "resource_status": STATUS_RESOURCE.applied.value
+            "pro_name": resource.project.name,
+            "res_desc": resource.project.id,
+            "action": u"申请的",
+            "todo_action": u"资源，已重新提交，请审核",
         }
-        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_content, mail_content)
-        task_post_pro_res_apply_history.delay(status=resource.status, content=mail_content, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
+        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
+        task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
         return self.success(data=resource)
 
     @thrownException
@@ -287,14 +292,16 @@ class ProResourceApplyService(BaseService):
         resource.status = STATUS_RESOURCE.REVOKED
         self.db.add(resource)
         self.db.flush()
-        mail_content = mail_format % {
-            "pro_name": resource.project.name,
-            "pro_id": resource.project.id,
+        mail_html = self.render_to_string("admin/mail/pro_resource_apply_to_admin.html", resource_apply=resource, STATUS_RESOURCE=STATUS_RESOURCE)
+        mail_title = mail_title_format % {
             "user_name": resource.user.email or resource.user.mobile,
-            "resource_status": STATUS_RESOURCE.revoked.value
+            "pro_name": resource.project.name,
+            "res_desc": resource.project.id,
+            "action": u"申请的",
+            "todo_action": u"资源，已撤销",
         }
-        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_content, mail_content)
-        task_post_pro_res_apply_history.delay(status=resource.status, content=mail_content, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
+        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
+        task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
         return self.success(data=resource)
 
     def do_delete(self):
@@ -340,14 +347,16 @@ class ProResourceApplyService(BaseService):
         resource.status = STATUS_RESOURCE.PAYED
         self.db.add(resource)
         self.db.flush()
-        mail_content = mail_format % {
-            "pro_name": resource.project.name,
-            "pro_id": resource.project.id,
+        mail_html = self.render_to_string("admin/mail/pro_resource_apply_to_admin.html", resource_apply=resource, STATUS_RESOURCE=STATUS_RESOURCE)
+        mail_title = mail_title_format % {
             "user_name": resource.user.email or resource.user.mobile,
-            "resource_status": STATUS_RESOURCE.payed.value
+            "pro_name": resource.project.name,
+            "res_desc": resource.project.id,
+            "action": u"申请的",
+            "todo_action": u"资源，已完成支付，请确认收款",
         }
-        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_content, mail_content)
-        task_post_pro_res_apply_history.delay(status=resource.status, content=mail_content, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
+        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
+        task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
         return self.success(data=resource)
 
     @thrownException
@@ -401,15 +410,17 @@ class ProResourceApplyService(BaseService):
             # logger.info("<"+"#"*60+">")
             self.db.add(resource)
             self.db.flush()
-            mail_content = mail_format % {
+            mail_html = self.render_to_string("admin/mail/pro_resource_apply.html", resource_apply=resource, STATUS_RESOURCE=STATUS_RESOURCE)
+            mail_title = mail_title_format % {
+                "user_name": resource.user.email or resource.user.mobile,
                 "pro_name": resource.project.name,
-                "pro_id": resource.project.id,
-                "user_name": resource.checker.email or resource.checker.mobile,
-                "resource_status": STATUS_RESOURCE.get(action).value
+                "res_desc": resource.project.id,
+                "action": u"申请的",
+                "todo_action": u"资源，%s，%s" % (STATUS_RESOURCE.get(resource.status).value, STATUS_RESOURCE.get(resource.status).todo_value),
             }
-            email_list.append((email, mail_content))
-            tip_messages.append(_get_message(msg=mail_content))
-            task_post_pro_res_apply_history.delay(status=resource.status, content=mail_content, pro_id=resource.project.id, res_apply_id=resource.id, user_id=checker_id)
+            email_list.append((email, mail_html))
+            tip_messages.append(_get_message(msg=mail_title))
+            task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=checker_id)
 
         email_dict = {}
         for email, mail_content in email_list:

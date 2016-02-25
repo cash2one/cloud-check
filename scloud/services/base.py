@@ -6,10 +6,11 @@ from scloud.config import CONF
 
 
 class BaseService(object):
-    def __init__(self, db, params={}, handler=None):
-        self.db = db
-        self.params = params
+    def __init__(self, handler, params={}):
+        self.db = handler.svc.db
         self.handler = handler
+        self.params = params
+        self.params.update(self.handler.args)
 
     def success(self, data=None):
         result = ObjectDict()
@@ -29,6 +30,7 @@ class BaseService(object):
         tmpl = env.get_template(template)
         kwargs.update({
             "CONF": CONF,
+            "getattr": getattr,
             "handler": self.handler,
             "request": self.handler.request,
             "reverse_url": self.handler.application.reverse_url

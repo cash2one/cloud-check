@@ -24,7 +24,7 @@ from scloud.utils.error import SystemError
 class GuideStepGetHandler(AuthHandler):
     def get_pro_info_res(self, pro_id):
         kw = {"pro_id": pro_id}
-        svc = ProjectService(self.svc.db, kw)
+        svc = ProjectService(self, kw)
         pro_info_res = svc.get_project()
         if isinstance(pro_info_res, Exception):
             raise pro_info_res
@@ -41,7 +41,7 @@ class GuideHandler(GuideStepGetHandler):
     @check_perms('pro_info.view')
     @unblock
     def get(self):
-        svc = ProjectService(self.svc.db, self.args)
+        svc = ProjectService(self)
         result = svc.get_project_list()
         if result.return_code < 0:
             raise SystemError(result.return_code, result.return_message)
@@ -51,7 +51,7 @@ class GuideHandler(GuideStepGetHandler):
     @check_perms('pro_info.insert')
     @unblock
     def post(self):
-        svc = ProjectService(self.svc.db, self.args)
+        svc = ProjectService(self)
         result = svc.create_project()
         logger.info(result)
         if result.return_code == 0:
@@ -70,7 +70,7 @@ class GuideHandler(GuideStepGetHandler):
 class GuideGenerateFeeHandler(AuthHandler):
     @unblock
     def get(self, **kwargs):
-        svc = ProResourceApplyService(self.svc.db, self.args)
+        svc = ProResourceApplyService(self, self.args)
         fee_res = svc.generate_fee()
         logger.info(fee_res)
         return simplejson.dumps(fee_res)
@@ -95,8 +95,8 @@ class GuideStep1Handler(GuideStepGetHandler):
         kw = {"user_id": self.current_user.id}
         kw.update(self.args)
         kw.update(kwargs)
-        svc = ProResourceApplyService(self.svc.db, kw, handler=self)
-        # pro_svc = ProjectService(self.svc.db, kw)
+        svc = ProResourceApplyService(self, kw)
+        # pro_svc = ProjectService(self, kw)
         # pro_info_res = pro_svc.get_project()
         if self.kwargs["name"] == "guide_step_1":
             post_apply_res = svc.do_apply()
@@ -122,6 +122,7 @@ class GuideStep2Handler(GuideStepGetHandler):
     @unblock
     def get(self, **kwargs):
         data = self.get_pro_info_res(kwargs["pro_id"])
+        logger.info("\t [data]: %s" % data)
         return self.render_to_string("admin/guide/step2.html", **data)
 
 @url("/guide/pro/(?P<pro_id>\d+)/payed", name="guide_step_2_payed")
@@ -134,7 +135,7 @@ class GuideStep2PayedHandler(GuideStepGetHandler):
         kw = {}
         kw.update(self.args)
         kw.update(kwargs)
-        svc = ProResourceApplyService(self.svc.db, kw, self)
+        svc = ProResourceApplyService(self, kw)
         resource_action_res = svc.do_pay()
         if isinstance(resource_action_res, Exception):
             raise resource_action_res
@@ -151,7 +152,7 @@ class GuideStep3Handler(GuideStepGetHandler):
     @unblock
     def get(self, **kwargs):
         data = self.get_pro_info_res(kwargs["pro_id"])
-        return self.render_to_string("admin/guide/step2.html", **data)
+        return self.render_to_string("admin/guide/step3.html", **data)
 
     def post(self, pro_id):
         data = {"name": "torweb"}
@@ -165,7 +166,7 @@ class ProResourceRevokeHandler(GuideStepGetHandler):
     @check_perms('pro_resource_apply.view')
     @unblock
     def get(self, **kwargs):
-        svc = ProResourceApplyService(self.svc.db, kwargs)
+        svc = ProResourceApplyService(self, kwargs)
         resource_res = svc.get_resource()
         if isinstance(resource_res, Exception):
             raise resource_res
@@ -175,10 +176,10 @@ class ProResourceRevokeHandler(GuideStepGetHandler):
         kw = {"user_id": self.current_user.id}
         kw.update(self.args)
         kw.update(kwargs)
-        svc = ProResourceApplyService(self.svc.db, kw, handler=self)
+        svc = ProResourceApplyService(self, kw)
         revoke_res = svc.do_revoke()
         kw.update({"pro_id": revoke_res.data.pro_id if revoke_res.return_code == 0 else 0})
-        pro_svc = ProjectService(self.svc.db, kw, handler=self)
+        pro_svc = ProjectService(self, kw)
         pro_info_res = pro_svc.get_project()
         data = {
             "pro_info_res": pro_info_res,
@@ -199,4 +200,12 @@ class DemoMail(Handler):
         return self.do_mail()
 
     def do_mail(self):
-        return self.render_to_string("admin/mail/mail.html")
+        kw = {"res_id": 10}
+        svc = ProResourceApplyService(self, kw)
+        resource_res = svc.get_resource()
+        data = {
+            "resource_apply": resource_res.data,
+            "STATUS_RESOURCE": STATUS_RESOURCE,
+            "getattr": getattr
+        }
+        return self.render_to_string("admin/mail/pro_resource_apply_to_admin.html", **data)

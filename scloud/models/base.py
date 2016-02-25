@@ -57,13 +57,14 @@ class DataBaseService(ModelServiceMixin):
     db_session = __DB_Session = scoped_session(
         sessionmaker(bind=db_engine, query_cls=CacheQuery, expire_on_commit=False, autoflush=False, autocommit=True))
     meta_data = MetaData(bind=db_engine)
+    # db_session = __DB_Session = sessionmaker(bind=db_engine, query_cls=CacheQuery, expire_on_commit=False, autoflush=False, autocommit=True)
 
     def __init__(self, param_dict={}):
         self.param_dict = param_dict
         self.db = None
 
     def _db_init(self):
-        self.db = self.__class__.__DB_Session
+        self.db = self.__class__.__DB_Session()
         try:
             self.db.begin()
         except:
@@ -86,7 +87,7 @@ class DataBaseService(ModelServiceMixin):
             self.db.commit()
             # self.db.flush()
             logger.info("====[COMMIT]====")
-        self.db.remove()
+        # self.db.remove()
         self.db.close()
         logger.info("====[CLOSE]====")
 

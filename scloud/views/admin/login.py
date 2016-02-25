@@ -20,7 +20,7 @@ class LoginHandler(Handler):
     @unblock
     def post(self):
         next = self.args.get("next", self.reverse_url('guide'))
-        svc = LoginService(self.svc.db, self.args)
+        svc = LoginService(self)
         result = svc.do_login()
         logger.info("++++++++++++++++++++ result ++++++++++++++++++++++++")
         logger.info(result)

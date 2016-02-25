@@ -19,7 +19,7 @@ class RegisterHandler(Handler):
     @unblock
     def post(self):
         next = self.args.get("next", self.reverse_url('pt_user'))
-        svc = RegisterService(self.svc.db, self.args)
+        svc = RegisterService(self)
         result = svc.do_register()
         logger.info("++++++++++++++++++++ result ++++++++++++++++++++++++")
         logger.info(result)

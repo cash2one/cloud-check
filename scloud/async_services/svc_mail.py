@@ -33,9 +33,10 @@ def sendMail(FROM,TO,SUBJECT,CONTENT,SERVER="smtp.infohold.com.cn"):
     msg.attach(part1)
     # Send the mail
     server = smtplib.SMTP(SERVER, 25)
+    server.login(FROM, "infohold.com")
     server.sendmail(FROM, TO, msg.as_string())
     server.quit()
 
 
 if __name__ == '__main__':
-    sendMail("scloud@infohold.com.cn", ["zhangpeng1@infohold.com.cn"], "foo test", "\ncontent1")
+    sendMail.delay("scloud@infohold.com.cn", ["zhangpeng820213@gmail.com"], "foo test", "\ncontent1")

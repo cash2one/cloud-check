@@ -33,7 +33,7 @@ class ResourceCheckListHandler(AuthHandler):
         kw.update(self.args)
         kw.update(kwargs)
         # res_status = self.args.get()
-        svc = ProResourceApplyService(self.svc.db, kw)
+        svc = ProResourceApplyService(self, kw)
         resource_res = svc.get_resources_by_status()
         if isinstance(resource_res, Exception):
             raise resource_res
@@ -44,6 +44,7 @@ class ResourceCheckListHandler(AuthHandler):
             "STATUS_RESOURCE": STATUS_RESOURCE,
             "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if str(i).isdigit()]
         }
+        logger.info("\t [page]: %s" % [i.user.email for i in page.object_list])
         return self.render_to_string("admin/pro_resource/check_list.html", **data)
 
     @check_perms('pro_resource_apply.check')
@@ -51,7 +52,7 @@ class ResourceCheckListHandler(AuthHandler):
     def post(self):
         kw = {"checker_id": self.current_user.id}
         kw.update(self.args)
-        svc = ProResourceApplyService(self.svc.db, kw, self)
+        svc = ProResourceApplyService(self, kw)
         resource_action_res = svc.do_resource_action()
         if resource_action_res.return_code == 0:
             messages = resource_action_res.data

@@ -1,0 +1,88 @@
+{% extends "admin/mail/base_layout.html" %}
+{% block title %}
+{{ resource_apply.user.email or resource_apply.user.mobile }}{{ STATUS_RESOURCE.get(resource_apply.status).act_value }}资源申请
+{% endblock %}
+
+{% block tip %}
+<div class="row">
+  <div class="col-sm-12">
+  <div class="callout callout-{{ STATUS_RESOURCE.get(resource_apply.status).level }} lead">
+    <h4>云平台管理员, 您好!</h4>
+    {% if resource_apply.status == STATUS_RESOURCE.REFUSED %}
+    {% elif resource_apply.status == STATUS_RESOURCE.REVOKED %}
+    <p>{{ resource_apply.user.email }}申请的{{ resource_apply.project.name }} - {{ resource_apply.desc }}资源，已撤销！</p>
+    {% elif resource_apply.status == STATUS_RESOURCE.APPLIED %}
+    <p>{{ resource_apply.user.email }}申请的{{ resource_apply.project.name }} - {{ resource_apply.desc }}资源，已提交，请审核！</p>
+    {% elif resource_apply.status == STATUS_RESOURCE.CHECKED %}
+    {% elif resource_apply.status == STATUS_RESOURCE.PAYED %}
+    <p>{{ resource_apply.user.email }}审核通过的{{ resource_apply.project.name }} - {{ resource_apply.desc }}资源，已完成支付，请确认收款！</p>
+    {% elif resource_apply.status == STATUS_RESOURCE.CONFIRMPAYED %}
+    {% endif %}
+  </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-6">
+    <div class="box box-solid box-primary collapsed-box">
+      <div class="box-header with-border">
+        <h3 class="box-title">{{ resource_apply.project.name }} - {{ resource_apply.desc }}</h3>
+        <div class="box-tools">
+          <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+      </div>
+      <div class="box-body no-padding">
+        <p>{{ resource_apply.project.desc }}</p>
+        <table class="table table-striped" id="resource_apply_table">
+          <tr>
+            <th>申请项目</th>
+            <th>申请数量</th>
+          </tr>
+          {% for column in resource_apply.__table__.columns %}
+          {% if column.info.name %}
+          <tr>
+            <td>{{ column.info.name or column.name }}:</td>
+            <td>{{ getattr(resource_apply, column.name) }} {{ column.info.unit }}</td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </table>
+        <!--ul class="nav nav-pills nav-stacked">
+          <li><a href="#"><i class="fa fa-circle-o text-red"></i> Important</a></li>
+          <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> Promotions</a></li>
+          <li><a href="#"><i class="fa fa-circle-o text-light-blue"></i> Social</a></li>
+        </ul-->
+      </div><!-- /.box-body -->
+    </div><!-- /.box -->
+  </div>
+</div>
+<div class="row">
+  <div class="box box-solid">
+    <div class="box-body text-center">
+      <a href="{{ CONF('DOMAIN_HOST') }}{{ reverse_url('resource_check_list') }}?res_status={{ resource_apply.status }}" class="btn btn-primary"><i class="fa fa-eye"></i> 查看详情</a>
+      {% if resource_apply.status == STATUS_RESOURCE.REFUSED %}
+      {% elif resource_apply.status == STATUS_RESOURCE.REVOKED %}
+      {% elif resource_apply.status == STATUS_RESOURCE.APPLIED %}
+        <a href="{{ CONF('DOMAIN_HOST') }}{{ reverse_url('resource_check_list') }}?res_status={{ resource_apply.status }}" class="btn btn-success"><i class="fa fa-check"></i> 审核通过</a>
+        <a href="" class="btn btn-danger"><i class="fa fa-times"></i> 拒绝申请</a>
+      {% elif resource_apply.status == STATUS_RESOURCE.CHECKED %}
+      {% elif resource_apply.status == STATUS_RESOURCE.PAYED %}
+      <a href="{{ CONF('DOMAIN_HOST') }}{{ reverse_url('guide_step_2', resource_apply.project.id) }}" class="btn btn-success"><i class="fa fa-check"></i> 确认收款</a>
+      {% elif resource_apply.status == STATUS_RESOURCE.CONFIRMPAYED %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+function toggleDown(){
+  if($("#resource_apply_table").css("display") != "none"){
+    $("#resource_apply_table").slideUp();
+  }else{
+    $("#resource_apply_table").slideDown();
+  }
+}
+</script>
+{% endblock %}
+
