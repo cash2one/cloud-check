@@ -2,14 +2,20 @@
 
 from tornado.util import ObjectDict
 from scloud.shortcuts import env
-from scloud.config import CONF
+from scloud.config import CONF, logger
 
 
 class BaseService(object):
-    def __init__(self, handler, params={}):
+    def __init__(self, handler, params=None):
         self.db = handler.svc.db
         self.handler = handler
-        self.params = params
+        logger.info("params :%s" % params)
+        if params:
+            self.params = params
+        else:
+            self.params = dict()
+        logger.info("self.params : %s" % self.params)
+        logger.info("handler args :%s" % self.handler.args)
         self.params.update(self.handler.args)
 
     def success(self, data=None):

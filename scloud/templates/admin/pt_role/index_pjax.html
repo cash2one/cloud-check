@@ -69,6 +69,7 @@ function load_right(options){
   $("#left_div").find("[hide_column]").css("display", "");
   options = options || {};
   var op = options.op || "";
+  console.log(options)
   if (op == "update"){
       var role_id = options.role_id;
       $("#right_div").load("{{ reverse_url('pt_role.info') }}?role_id="+role_id).css("display", "none");
@@ -78,7 +79,7 @@ function load_right(options){
       // $("#left_div").find("[hide_column]").css("display", "none");
       $("#right_div").load("{{ reverse_url('pt_role.group_info') }}?role_id="+role_id).css("display", "none");
   }else{
-      $("#right_div").load("{{ reverse_url('pt_role.info') }}").css("display", "none");
+    $("#right_div").load("{{ reverse_url('pt_role.info') }}?_="+Math.random()).css("display", "none");
   }
   hide_loading();
 }

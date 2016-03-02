@@ -9,149 +9,116 @@ from scloud.handlers import Handler, AuthHandler
 from scloud.models.pt_user import PT_Role, PT_Role_Group_Ops
 from tornado.web import asynchronous
 from tornado import gen
+from scloud.utils.unblock import unblock
 from scloud.async_services import svc_pt_role
+from scloud.services.svc_pt_role import PtRoleService
 from pprint import pprint
 
 
 @url("/pt_role", name="pt_role", active="pt_role")
 class PT_Role_Handler(AuthHandler):
     u"""角色组管理"""
-    @gen.coroutine
-    def genReturn(self):
-        search = self.args.get("search", "")
-        response = yield gen.Task(svc_pt_role.get_list.apply_async, args=[search])
-        data = {"result": response.result}
-        pprint(data)
-        raise gen.Return(self.render("admin/pt_role/index.html", **data))
-
-    @asynchronous
-    @gen.coroutine
+    @unblock
     def get(self):
-        yield gen.Task(self.genReturn)
+        return self.get_index_page()
 
-    @asynchronous
-    @gen.coroutine
+    def get_index_page(self):
+        svc = PtRoleService(self)
+        result = svc.get_list()
+        data = {"result": result}
+        return self.render_to_string("admin/pt_role/index.html", **data)
+
+    @unblock
     def post(self):
         method = self.args.get("_method", "")
         if method == "DELETE":
-            yield gen.Task(self.delete_role)
+            return self.delete_role()
         else:
-            yield gen.Task(self.post_role)
+            return self.post_role()
 
-    @gen.coroutine
     def delete_role(self):
-        role_id = self.args.get("role_id", 0)
-        response1 = yield gen.Task(svc_pt_role.delete_info.apply_async, args=[role_id])
-        if response1.result["return_code"] == 0:
+        svc = PtRoleService(self)
+        del_res = svc.delete_info()
+        if del_res.return_code == 0:
             self.add_message(u"%s成功!" % act_actions.get(3).value % PT_Role.__doc__, level="success")
         else:
             self.add_message(u"failure code (%s): %s" % (response1.result["return_code"], response1.result["return_message"]), level="warning")
-        yield gen.Task(self.genReturn)
+        return self.get_index_page()
 
-    @asynchronous
-    @gen.coroutine
     def post_role(self):
-        name = self.args.get("name", "")
-        desc = self.args.get("desc", "")
-        remark = self.args.get("remark", "")
-        response1 = yield gen.Task(
-            svc_pt_role.get_or_create.apply_async,
-            args=[name, desc, remark]
-        )
-        logger.info(response1.result)
-        response = yield gen.Task(
-            svc_pt_role.get_list.apply_async,
-            args=[]
-        )
-        data = {"result": response.result}
-        if response1.result["return_code"] == 0:
+        svc = PtRoleService(self)
+        response1 = svc.get_or_create()
+        if response1.return_code == 0:
             self.add_message(u"%s成功!" % act_actions.get(1).value % PT_Role.__doc__, level="success")
         else:
-            self.add_message(u"failure code (%s): %s" % (response1.result["return_code"], response1.result["return_message"]), level="warning")
-        raise gen.Return(self.render("admin/pt_role/index.html", **data))
+            self.add_message(u"failure code (%s): %s" % (response1.return_code, response1.return_message), level="warning")
+        return self.get_index_page()
 
 
 @url("/pt_role/info", name="pt_role.info", active="pt_role")
 class PT_Role_Info_Handler(AuthHandler):
     u"""角色组管理"""
-    @asynchronous
-    @gen.coroutine
+    @unblock
     def get(self):
-        role_id = self.args.get("role_id", 0)
-        response = yield gen.Task(svc_pt_role.get_info.apply_async, args=[role_id])
-        if response.result["return_code"] == 0:
-            data = {"result": response.result, "action_name": "pt_role.info"}
+        svc = PtRoleService(self)
+        response = svc.get_info()
+        # logger.info(response)
+        if isinstance(response, Exception):
+            data = {"result": response, "action_name": "pt_role"}
         else:
-            data = {"result": response.result, "action_name": "pt_role"}
-        logger.info("data")
-        pprint(data)
-        raise gen.Return(self.render("admin/pt_role/_index_form.html", **data))
+            data = {"result": response, "action_name": "pt_role.info"}
+        return self.render_to_string("admin/pt_role/_index_form.html", **data)
 
-    @asynchronous
-    @gen.coroutine
+    @unblock
     def post(self):
-        role_id = self.args.get("role_id", 0)
-        name = self.args.get("name", u"")
-        desc = self.args.get("desc", u"")
-        remark = self.args.get("remark", u"")
-        response1 = yield gen.Task(svc_pt_role.update_info.apply_async, args=[role_id, name, desc, remark])
-        if response1.result["return_code"] == 0:
+        svc = PtRoleService(self)
+        response1 = svc.update_info()
+        if response1.return_code == 0:
             self.add_message(u"%s成功!" % act_actions.get(2).value % PT_Role.__doc__, level="success")
             data = {"result": {"return_code": 0, "return_message": u"", "data": self.args}}
         else:
-            self.add_message(u"failure code (%s): %s" % (response1.result["return_code"], response1.result["return_message"]), level="warning")
-            data = {"result": response1.result}
-        response = yield gen.Task(
-            svc_pt_role.get_list.apply_async,
-            args=[]
-        )
-        data = {"result": response.result, "action_name": "pt_role.info"}
-        raise gen.Return(self.render("admin/pt_role/index.html", **data))
+            self.add_message(u"failure code (%s): %s" % (response1.return_code, response1.return_message), level="warning")
+            data = {"result": response1}
+
+        response = svc.get_list()
+        data = {"result": response, "action_name": "pt_role.info"}
+        return self.render_to_string("admin/pt_role/index.html", **data)
 
 
 @url("/pt_role/groups/info", name="pt_role.group_info", active="pt_role")
 class PT_Role_Group_Info_Handler(AuthHandler):
     u"""角色组管理"""
-    @asynchronous
-    @gen.coroutine
+    @unblock
     def get(self):
+        svc = PtRoleService(self)
+        response = svc.get_role_group_ops()
         role_id = self.args.get("role_id", 0)
-        response = yield gen.Task(svc_pt_role.get_role_group_ops.apply_async, args=[role_id])
+        #@ response = yield gen.Task(svc_pt_role.get_role_group_ops.apply_async, args=[role_id])
         data = {"role_id": role_id, "action_name": "pt_role.group_info"}
-        if response.result["return_code"] == 0:
-            data.update({"result": response.result})
-        logger.info("data")
-        logger.info(data)
-        raise gen.Return(self.render("admin/pt_role/_index_group_ops_form.html", **data))
+        if response.return_code == 0:
+            data.update({"result": response})
+        return self.render_to_string("admin/pt_role/_index_group_ops_form.html", **data)
 
-    @asynchronous
-    @gen.coroutine
+    @unblock
     def post(self):
-        role_id = self.args.get("role_id", 0)
         group_ops = self.get_arguments("group_op")
-        # group_op_list = [(g, op) for g, op in [_str.split(".") for _str in group_ops]]
+        svc = PtRoleService(self, {"group_ops": group_ops})
+        response1 = svc.post_role_group_ops()
         logger.info(group_ops)
-        response1 = yield gen.Task(svc_pt_role.post_role_group_ops.apply_async, args=[role_id, group_ops])
-        response = yield gen.Task(
-            svc_pt_role.get_list.apply_async,
-            args=[]
-        )
-        data = {"result": response.result}
-        if response1.result["return_code"] == 0:
-            data.update(response1.result["data"])
-        logger.info("data")
-        logger.info(data)
+        response = svc.get_list()
+        data = {"result": response}
+        if response1.return_code == 0:
+            data.update(response1.data)
         self.add_message(u"%s成功!" % act_actions.get(2).value % PT_Role_Group_Ops.__doc__, level="success")
-        # data = {}
-        raise gen.Return(self.render("admin/pt_role/index.html", **data))
+        return self.render_to_string("admin/pt_role/index.html", **data)
 
 
-@url("/pt_role/delete", name="pt_role.delete", active="pt_role")
-class PT_role_Delete_Handler(AuthHandler):
-    u"""用户管理"""
-    @asynchronous
-    @gen.coroutine
-    def get(self):
-        role_id = self.args.get("role_id", 0)
-        data = {"role_id": role_id}
-        raise gen.Return(self.render("admin/pt_role/_index_role_delete_form.html", **data))
+# @url("/pt_role/delete", name="pt_role.delete", active="pt_role")
+# class PT_role_Delete_Handler(AuthHandler):
+#     u"""用户管理"""
+#     @asynchronous
+#     @gen.coroutine
+#     def get(self):
+#         role_id = self.args.get("role_id", 0)
+#         data = {"role_id": role_id}
+#         raise gen.Return(self.render("admin/pt_role/_index_role_delete_form.html", **data))

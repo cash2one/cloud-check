@@ -9,18 +9,21 @@ from scloud.handlers import Handler
 from scloud.models.pt_user import PT_Perm
 from tornado.web import asynchronous
 from tornado import gen
+from scloud.utils.unblock import unblock
 from scloud.async_services import svc_pt_permission
+from scloud.services.svc_pt_perm import PtPermService
 
 
 @url("/pt_perm", name="pt_perm", active="pt_perm")
 class PT_Perm_Handler(Handler):
     u"""操作权限管理"""
-    @asynchronous
-    @gen.coroutine
+    @unblock
     def get(self):
-        search = self.args.get("search", "")
-        response = yield gen.Task(svc_pt_permission.get_list.apply_async, args=[search])
-        data = {"result": response.result}
+        svc = PtPermService(self)
+        perm_res = svc.get_list()
+        # search = self.args.get("search", "")
+        # response = yield gen.Task(svc_pt_permission.get_list.apply_async, args=[search])
+        data = {"result": perm_res}
         raise gen.Return(self.render("admin/pt_perm/index.html", **data))
 
     @asynchronous
