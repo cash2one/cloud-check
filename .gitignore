@@ -4,4 +4,3 @@ meld/
 celery.log
 celerybeat-schedule
 .idea/
-scloud/utils/green.py
