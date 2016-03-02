@@ -113,12 +113,12 @@ class PT_Role_Group_Info_Handler(AuthHandler):
         return self.render_to_string("admin/pt_role/index.html", **data)
 
 
-# @url("/pt_role/delete", name="pt_role.delete", active="pt_role")
-# class PT_role_Delete_Handler(AuthHandler):
-#     u"""用户管理"""
-#     @asynchronous
-#     @gen.coroutine
-#     def get(self):
-#         role_id = self.args.get("role_id", 0)
-#         data = {"role_id": role_id}
-#         raise gen.Return(self.render("admin/pt_role/_index_role_delete_form.html", **data))
+@url("/pt_role/delete", name="pt_role.delete", active="pt_role")
+class PT_role_Delete_Handler(AuthHandler):
+    u"""用户管理"""
+    @asynchronous
+    @gen.coroutine
+    def get(self):
+        role_id = self.args.get("role_id", 0)
+        data = {"role_id": role_id}
+        raise gen.Return(self.render("admin/pt_role/_index_role_delete_form.html", **data))
