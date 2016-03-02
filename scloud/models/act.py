@@ -16,8 +16,9 @@ class Act_Pro_History(BaseModel, BaseModelMixin):
     res_apply_id = Column(Integer, ForeignKey("pro_resource_apply.id"), default=0)
     status = Column(Integer, default=0)
     desc = Column(Unicode, default=u'')
-    user_id = Column(Integer, default=0)
+    user_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
     pro = relationship("Pro_Info", backref="act_histories")
+    user = relationship("PT_User", backref="act_histories")
     res_apply = relationship("Pro_Resource_Apply", backref="act_histories")
 
 

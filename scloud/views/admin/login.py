@@ -19,7 +19,7 @@ class LoginHandler(Handler):
 
     @unblock
     def post(self):
-        next = self.args.get("next", self.reverse_url('guide'))
+        next = self.args.get("next", self.reverse_url('user_profile'))
         svc = LoginService(self)
         result = svc.do_login()
         logger.info("++++++++++++++++++++ result ++++++++++++++++++++++++")
@@ -33,7 +33,7 @@ class LoginHandler(Handler):
             if next:
                 return self.redirect(next)
             else:
-                return self.redirect(self.reverse_url('guide'))
+                return self.redirect(self.reverse_url('user_profile'))
         else:
             self.session["post_username"] = self.args.get("username", u"")
             self.save_session()

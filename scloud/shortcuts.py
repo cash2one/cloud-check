@@ -14,6 +14,8 @@ from torweb.tmpl import get_environment
 from scloud.config import CONF
 
 env = get_environment(scloud.__name__)
+from scloud.utils.filters import Filters
+Filters.init(env)
 
 url = Url(CONF("URL_ROOT"))
 
@@ -36,3 +38,4 @@ def get_cache():
     return cache
 
 cache = get_cache()
+

@@ -48,11 +48,18 @@
       </div><!-- /.col -->
     </div>
   </form>
-  <a href="{{ reverse_url('login') }}" class="text-center">已有帐号，直接登录</a>
+  <a data-pjax href="{{ reverse_url('login') }}" class="text-center">已有帐号，直接登录</a>
 <script type="text/javascript">
 // $(function(){
 //   $("#email").inputmask('Regex', { regex: "[a-zA-Z0-9._%-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,4}" });
 // });
+      $(function () {
+        $('input').iCheck({
+          checkboxClass: 'icheckbox_square-blue',
+          radioClass: 'iradio_square-blue',
+          increaseArea: '20%' // optional
+        });
+      });
 
 function check_form(){
   $("p.text-red").text("");

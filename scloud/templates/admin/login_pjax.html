@@ -1,0 +1,52 @@
+        <p class="login-box-msg">登录</p>
+        <form action="{{ reverse_url('login') }}" method="post" onsubmit="return check_form()">
+          {{ handler.xsrf_form_html() }}
+          <input type="hidden" name="next" value="{{ handler.args.get('next', '')}}">
+          <div class="form-group has-feedback">
+            <input type="username" name="username" class="form-control" placeholder="username" value="{{ handler.session.get('post_username', '')}}">
+            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+          </div>
+          {% if result %}
+            {% if result.return_code|int in [-100001, -100002] %}
+              <p class="text-red">{{ result.return_message }}</p>
+            {% endif %}
+          {% endif %}
+          <div class="form-group has-feedback">
+            <input type="password" id="password" class="form-control" placeholder="password">
+            <input type="hidden" name="password">
+            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+          </div>
+          {% if result %}
+            {% if result.return_code|int in [-100003, -100004] %}
+              <p class="text-red">{{ result.return_message }}</p>
+            {% endif %}
+          {% endif %}
+          <div class="row">
+            <div class="col-xs-8">
+              <div class="checkbox icheck">
+                <label>
+                  <input type="checkbox"> Remember Me
+                </label>
+              </div>
+            </div><!-- /.col -->
+            <div class="col-xs-4">
+              <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+            </div><!-- /.col -->
+          </div>
+        </form>
+
+        <!-- <a href="#">I forgot my password</a><br> -->
+        <a data-pjax href="{{ reverse_url('register') }}" class="text-center">注册新用户</a>
+    <script type="text/javascript">
+      $(function () {
+        $('input').iCheck({
+          checkboxClass: 'icheckbox_square-blue',
+          radioClass: 'iradio_square-blue',
+          increaseArea: '20%' // optional
+        });
+      });
+      function check_form(){
+        var password = $('#password').val();
+        $('input[name=password]').val(MD5(password));
+      }
+    </script>
