@@ -1,8 +1,9 @@
 /* ------------------ 2016-01-20 ------------------ */
 CREATE TABLE `pt_user` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-    `email` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '用户名',
-    `mobile` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '用户名',
+    `email` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '邮箱',
+    `mobile` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '手机号',
+    `username` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '用户名',
     `password` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '登录密码',
     `last_login` DATETIME NOT NULL DEFAULT  '0000-00-00 00:00:00' COMMENT '上次登录时间',
     `is_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1' COMMENT '是否可用',

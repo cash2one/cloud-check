@@ -65,10 +65,12 @@ class DataBaseService(ModelServiceMixin):
 
     def _db_init(self):
         self.db = self.__class__.__DB_Session()
-        try:
-            self.db.begin()
-        except:
-            logThrown()
+        if CONF("DB.ENGINE").lower() == "myisam":
+            try:
+                self.db.begin()
+                logger.info("====[begin transaction]====")
+            except:
+                logThrown()
         logger.info("====[INIT DB, DB.BEGIN]====")
 
     def __enter__(self):
