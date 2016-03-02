@@ -15,12 +15,34 @@ from tornado.web import asynchronous
 from tornado import gen
 from scloud.utils.permission import check_perms
 from scloud.services.svc_project import ProjectService
-from scloud.services.svc_pro_resource_apply import ProResourceApplyService
+from scloud.services.svc_pro_resource_apply import ProResourceCheckService
 from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
 from scloud.utils.error import SystemError
 from scloud.views.admin.guide import GuideStepGetHandler
 from scloud.const import STATUS_RESOURCE
+
+
+@url("/pro/resource/(?P<res_id>\d+)/detail", name="resource_check_detail", active="resource_check_list")
+class ResourceCheckListHandler(AuthHandler):
+    u'待审核资源'
+    @check_perms('pro_resource_apply.check')
+    @unblock
+    def get(self, **kwargs):
+        # res_status = self.args.get()
+        svc = ProResourceCheckService(self, kwargs)
+        resource_apply = svc.get_resource()
+        resource_res = svc.get_resources_by_status()
+        if isinstance(resource_res, Exception):
+            raise resource_res
+        data = {
+            "resource_apply": resource_apply.data,
+            "resource_res": resource_res,
+            "getattr": getattr,
+            "STATUS_RESOURCE": STATUS_RESOURCE,
+            "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if isinstance(i, int)]
+        }
+        return self.render_to_string("admin/pro_resource/check_detail.html", **data)
 
 
 @url("/pro/resource/check_list", name="resource_check_list", active="resource_check_list")
@@ -33,16 +55,16 @@ class ResourceCheckListHandler(AuthHandler):
         kw.update(self.args)
         kw.update(kwargs)
         # res_status = self.args.get()
-        svc = ProResourceApplyService(self, kw)
+        svc = ProResourceCheckService(self, kw)
         resource_res = svc.get_resources_by_status()
         if isinstance(resource_res, Exception):
             raise resource_res
-        page = self.getPage(resource_res.data.resource_list, 2)
+        page = self.getPage(resource_res.data.resource_list)
         data = {
             "page": page,
             "resource_res": resource_res,
             "STATUS_RESOURCE": STATUS_RESOURCE,
-            "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if str(i).isdigit()]
+            "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if isinstance(i, int)]
         }
         logger.info("\t [page]: %s" % [i.user.email for i in page.object_list])
         return self.render_to_string("admin/pro_resource/check_list.html", **data)
@@ -52,7 +74,7 @@ class ResourceCheckListHandler(AuthHandler):
     def post(self):
         kw = {"checker_id": self.current_user.id}
         kw.update(self.args)
-        svc = ProResourceApplyService(self, kw)
+        svc = ProResourceCheckService(self, kw)
         resource_action_res = svc.do_resource_action()
         if resource_action_res.return_code == 0:
             messages = resource_action_res.data
@@ -61,12 +83,12 @@ class ResourceCheckListHandler(AuthHandler):
         else:
             self.add_message("资源审核失败:(%s)%s" % (resource_action_res.return_code, resource_action_res.return_message))
         resource_res = svc.get_resources_by_status()
-        page = self.getPage(resource_res.data.resource_list, 2)
+        page = self.getPage(resource_res.data.resource_list)
         data = {
             "page": page,
             "resource_res": resource_res,
             "STATUS_RESOURCE": STATUS_RESOURCE,
-            "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if str(i).isdigit()]
+            "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if isinstance(i, int)]
         }
         tmpl = self.render_to_string("admin/pro_resource/check_list_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))

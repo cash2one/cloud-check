@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from scloud.config import logger
-from scloud.models.project import (Pro_Info, Pro_Resource_Apply)
+from scloud.models.project import (Pro_Info, Pro_Resource_Apply, get_due_date)
 from scloud.models.environment import (Env_Info,
     Env_Resource_Value, Env_Resource_Fee,
     Env_Internet_Ip_Types)
@@ -14,16 +14,17 @@ from scloud.async_services.base import thrownException
 
 
 def act_post(mapper, connect, target):
-    logger.info("-----[after_insert act_post]------")
-    logger.info(target.__class__.__name__)
-    logger.info(target.__doc__)
-    task_act_post.delay(act_type=1, table_name=target.__class__.__name__, table_doc=target.__doc__)
+    pass
+    # logger.info("-----[after_insert act_post]------")
+    # logger.info(target.__class__.__name__)
+    # logger.info(target.__doc__)
+    # task_act_post.delay(act_type=1, table_name=target.__class__.__name__, table_doc=target.__doc__)
 
 
 def act_update(mapper, connect, target):
-    logger.info("-----[after_update act_post]------")
-    logger.info(target.__class__.__name__)
-    logger.info(target.__doc__)
+    # logger.info("-----[after_update act_post]------")
+    # logger.info(target.__class__.__name__)
+    # logger.info(target.__doc__)
     connect.execute(
         target.__table__.update().where(
                 target.__table__.c.id == target.id
@@ -31,14 +32,15 @@ def act_update(mapper, connect, target):
                 update_time = datetime.now()
             )
         )
-    task_act_post.delay(act_type=2, table_name=target.__class__.__name__, table_doc=target.__doc__)
+    # task_act_post.delay(act_type=2, table_name=target.__class__.__name__, table_doc=target.__doc__)
 
 
 def act_delete(mapper, connect, target):
-    logger.info("-----[after_delete act_post]------")
-    logger.info(target.__class__.__name__)
-    logger.info(target.__doc__)
-    task_act_post.delay(act_type=3, table_name=target.__class__.__name__, table_doc=target.__doc__)
+    pass
+    # logger.info("-----[after_delete act_post]------")
+    # logger.info(target.__class__.__name__)
+    # logger.info(target.__doc__)
+    # task_act_post.delay(act_type=3, table_name=target.__class__.__name__, table_doc=target.__doc__)
 
 
 def update_keycode(mapper, connect, target):
@@ -51,11 +53,25 @@ def update_keycode(mapper, connect, target):
         )
     # connect.commit()
 
+def update_resource_due_date(mapper, connect, target):
+    logger.info("\t [update_resource_due_date]")
+    logger.info("\t [start_date]:%s" % target.start_date)
+    logger.info("\t [period]:%s" % target.period)
+    due_date = get_due_date(target.start_date, target.period)
+    logger.info("\t due_date: %s" % due_date)
+    if due_date:
+        connect.execute(
+            Pro_Resource_Apply.__table__.update().where(
+                    Pro_Resource_Apply.__table__.c.id == target.id
+                ).values(
+                    due_date = due_date
+                )
+            )
 
-# def init_listener():
-#     init_after_insert()
-#     init_after_update()
-#     init_after_delete()
+def init_listener():
+    init_after_insert()
+    init_after_update()
+    init_after_delete()
 
 
 def init_after_insert():
@@ -76,6 +92,7 @@ def init_after_update():
     event.listen(Act_Todo, 'after_update', act_update)
     event.listen(Pro_Info, 'after_update', act_update)
     event.listen(Pro_Resource_Apply, 'after_update', act_update)
+    event.listen(Pro_Resource_Apply, 'after_update', update_resource_due_date)
     event.listen(Env_Info, 'after_update', act_update)
     event.listen(Env_Resource_Fee, 'after_update', act_update)
     event.listen(Env_Resource_Value, 'after_update', act_update)

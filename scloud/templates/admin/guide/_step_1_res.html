@@ -62,7 +62,7 @@
               {% set loadbalance = last_apply.loadbalance %}
               {% set internet_ip = last_apply.internet_ip %}
               {% set internet_ip_ssl = last_apply.internet_ip_ssl %}
-              {% set start_date = last_apply.start_date.strftime("%Y-%m-%d") %}
+              {% set start_date = last_apply.start_date.strftime("%Y-%m-%d") if last_apply.start_date else '' %}
               {% set unit_fee = last_apply.unit_fee %}
               {% set period = last_apply.period %}
               {% set total_fee = last_apply.total_fee %}
@@ -84,15 +84,19 @@
             {% endif %}
 
             {% if last_apply %}
-              {% if last_apply.status == 0 %}
+              {% if last_apply.status == STATUS_RESOURCE.APPLIED %}
               {# <============ 撤销申请 =============> #}
               {% set post_action = reverse_url('resource_revoke', last_apply.pro_id, last_apply.id) %}
-              {% elif last_apply.status in [-1, -2] %}
-              {% set post_action = "" %}
+              {% elif last_apply.status in [STATUS_RESOURCE.REVOKED, STATUS_RESOURCE.REFUSED] %}
+              {% set delete_action = reverse_url('resource_delete', last_apply.pro_id, last_apply.id) %}
+              <form id="resource_delete_form" action="{{ delete_action }}" method="POST">
+                {{ handler.xsrf_form_html() }}
+                <input type="hidden" name="post_res_id" value="{{ last_apply.id }}">
+              </form>
               {# <============ 重新提交申请 =============> #}
               {% set post_action = reverse_url('guide_step_1.re_apply', pro_info_res.data.id, last_apply.id) %}
               {# <============ 删除申请 =============> #}
-              {% elif last_apply.status == 1 %}
+              {% elif last_apply.status == STATUS_RESOURCE.CHECKED %}
               {# <============ 完成支付 =============> #}
               {% endif %}
             {% else %}
@@ -100,9 +104,9 @@
               {% set post_action = reverse_url('guide_step_1', pro_info_res.data.id) %}
             {% endif %}
           <!-- form start -->
-            <form data-pjax action="{{ post_action }}" class="form-horizontal" method="POST">
-            {{ handler.xsrf_form_html() }}
               <div class="box-body">
+              <form id="resource_form" data-pjax action="{{ post_action }}" class="form-horizontal" method="POST">
+              {{ handler.xsrf_form_html() }}
                 <fieldset>
                   <legend>资源配置</legend>
                   <div class="form-group">
@@ -222,28 +226,30 @@
                   </div>
                   {{ mbase.check_post(post_apply_res, [-100053, -100073]) }}
                 </fieldset>
+              </form>
               </div><!-- /.box-body -->
               <div class="box-footer text-center">
                 {% if last_apply %}
-                  {% if last_apply.status|int == 0 %}
-                  <button id="submit" type="submit" class="btn btn-{{ STATUS_RESOURCE.revoked.level }}">撤销申请</button>
-                  {% elif last_apply.status|int in [-1, -2] %}
-                  <button id="submit" type="submit" class="btn btn-{{ STATUS_RESOURCE.applied.level }}">重新提交申请</button>
-                  <button id="submit" type="submit" class="btn btn-{{ STATUS_RESOURCE.unknown.level }}">删除申请</button>
-                  {% elif last_apply.status|int == 1 %}
+                  {% if last_apply.status|int == STATUS_RESOURCE.APPLIED %}
+                  <button id="do_revoke_btn" type="button" onclick="do_revoke()" class="btn btn-{{ STATUS_RESOURCE.revoked.level }}">撤销申请</button>
+                  {% elif last_apply.status|int in [STATUS_RESOURCE.REVOKED, STATUS_RESOURCE.REFUSED] %}
+                  <button id="do_re_apply_btn" type="button" onclick="do_re_apply()" class="btn btn-{{ STATUS_RESOURCE.applied.level }}">重新提交申请</button>
+                  <button id="do_delete_btn" type="button" onclick="do_delete()" class="btn btn-{{ STATUS_RESOURCE.unknown.level }}">删除申请</button>
+                  {% elif last_apply.status|int == STATUS_RESOURCE.CHECKED %}
                   <a data-pjax href="{{ reverse_url('guide_step_2', last_apply.project.id) }}" class="btn btn-{{ STATUS_RESOURCE.payed.level }}">去支付</a>
+                  {% elif last_apply.status|int == STATUS_RESOURCE.CONFIRMPAYED %}
+                  <a data-pjax href="{{ reverse_url('guide_step_3', last_apply.project.id) }}" class="btn btn-{{ STATUS_RESOURCE.payed.level }}">去填写运行参数</a>
                   {% endif %}
                 {% else %}
-                <button id="submit" type="submit" class="btn btn-{{ STATUS_RESOURCE.applied.level }}">提交申请</button>
+                <button id="do_apply_btn" type="button" onclick="do_apply()" class="btn btn-{{ STATUS_RESOURCE.applied.level }}">提交申请</button>
                 {% endif %}
               </div><!-- /.box-footer -->
-            </form>
         </div><!-- /.box-body -->
       </div><!-- /.box -->
     </div>
   </div><!-- /.box -->
   <script type="text/javascript">
-  $('.fa-calendar').datepicker({ format: 'yyyy-mm-dd', autoclose: true});
+  $('.fa-calendar').datepicker({ format: 'yyyy-mm-dd 00:00:00', autoclose: true});
   function add_res(){
     $('#panel_res').css('display', 'block').removeClass('box-info').addClass('box-warning').find('h3.box-title').text('资源申请');
     $('#submit').removeClass('btn-info').addClass('btn-warning');
@@ -277,5 +283,55 @@
       },
       timeout: 3000,
     })
+  }
+  function do_apply(){
+    generate_ajax_post({
+      form: "#resource_form",
+      button: "#do_apply_btn",
+      onTimeout: function(){ do_apply(); }
+    })
+  }
+  function do_re_apply(){
+    generate_ajax_post({
+      form: "#resource_form",
+      button: "#do_re_apply_btn",
+      onTimeout: function(){ do_re_apply(); }
+    })
+  }
+  function do_delete(){
+    generate_ajax_post({
+      form: "#resource_delete_form",
+      button: "#do_delete_btn",
+      method: "DELETE",
+      onTimeout: function(){ do_delete(); }
+    })
+  }
+  function do_revoke(){
+    generate_ajax_post({
+      form: "#resource_form",
+      button: "#do_revoke_btn",
+      onTimeout: function(){ do_revoke(); }
+    })
+    //var params = $("form").serialize();
+    //console.log(params)
+    //// $("#btn_do_pay").button("loading");
+    //$.ajax({
+    //  url: '{{ reverse_url("resource_revoke", last_apply.pro_id, last_apply.id) }}',
+    //  type: 'POST',
+    //  dataType: 'JSON',
+    //  data: params,
+    //  success: function(response){
+    //    $("#btn_do_pay").button("reset");
+    //    if(check_response(response)){
+    //      $("#pjax-container").html(response.data);
+    //    }
+    //  },
+    //  error: function(xhr, textStatus){
+    //    if (textStatus == 'timeout'){
+    //      do_pay();
+    //    }
+    //  },
+    //  timeout: 3000,
+    //})
   }
   </script>

@@ -8,11 +8,11 @@ class Pro_Info_Mixin(object):
 
     def get_apply_global_vars(self):
         logger.info("------[get_last_apply_global_vars]------")
-        logger.info("%s --> %s" % (self.id, self.name))
+        # logger.info("%s --> %s" % (self.id, self.name))
         applies = self.pro_resource_applies
         if len(applies) > 0:
             last_apply = applies[-1]
-            logger.info("applies --> %s" % (last_apply))
+            # logger.info("applies --> %s" % (last_apply))
             apply_status = last_apply.status
             percent_status = apply_status + 1
             if percent_status < 0:
@@ -40,6 +40,6 @@ class Pro_Info_Mixin(object):
             bg_color = bg_color,
             level = level,
         )
-        logger.info(data)
+        # logger.info(data)
         return data
 

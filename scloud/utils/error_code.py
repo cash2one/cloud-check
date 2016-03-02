@@ -64,10 +64,11 @@ class ERROR(object):
     res_re_apply_err = error(errcode=-100104, errvalue=u"当前状态不允许重复申请资源配额")
 
     res_check_err = error(errcode=-100105, errvalue=u"当前状态不允许对申请资源配额进行审核")
-    res_pay_err = error(errcode=-100106, errvalue=u"当前状态不允许对申请资源配额进行支付")
-    res_confirmpay_err = error(errcode=-100106, errvalue=u"当前状态不允许对申请资源配额进行支付确认")
-    res_start_err = error(errcode=-100107, errvalue=u"当前状态不允许对申请资源配额启用")
-    res_close_err = error(errcode=-100108, errvalue=u"当前状态不允许对申请资源配额关闭")
+    res_refuse_err = error(errcode=-100106, errvalue=u"当前状态不允许对申请资源配额进行审核")
+    res_pay_err = error(errcode=-100107, errvalue=u"当前状态不允许对申请资源配额进行支付")
+    res_confirmpay_err = error(errcode=-100108, errvalue=u"当前状态不允许对申请资源配额进行支付确认")
+    res_start_err = error(errcode=-100109, errvalue=u"当前状态不允许对申请资源配额启用")
+    res_close_err = error(errcode=-100110, errvalue=u"当前状态不允许对申请资源配额关闭")
 
 
 

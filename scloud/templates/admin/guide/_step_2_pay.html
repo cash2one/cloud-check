@@ -2,6 +2,7 @@
 {% import "admin/base/base_macros.html" as mbase %}
 {% set last_apply = apply_global_vars.last_apply %}
   <!-- Horizontal Form -->
+  {% if last_apply %}
   <div class="row">
     <div class="col-sm-12">
       <div id="panel_res" class="box box-{{ apply_global_vars.level }} box-solid">
@@ -68,6 +69,9 @@
       </div><!-- /.box -->
     </div>
   </div><!-- /.box -->
+  {% else %}
+  <a data-pjax href="{{ reverse_url('guide_step_2', pro_info_res.data.id) }}{% if s %}?{{ s }}{% endif %}" class="btn btn-default">刷新重试</a>
+  {% endif %}
   <script type="text/javascript">
   function check_form(){
     return true;

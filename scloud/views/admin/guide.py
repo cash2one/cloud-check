@@ -109,10 +109,12 @@ class GuideStep1Handler(GuideStepGetHandler):
         data.update(pro_info_data)
         if post_apply_res.return_code == 0:
             self.add_message(u"申请项目资源成功！", level="success")
-            return self.render_to_string("admin/guide/step2.html", **data)
+            tmpl = self.render_to_string("admin/guide/step2_pjax.html", **data)
+            return simplejson.dumps(self.success(data=tmpl))
         else:
             self.add_message(u"申请项目资源失败！(%s)%s" % (post_apply_res.return_code, post_apply_res.return_message), level="warning")
-            return self.render_to_string("admin/guide/step1.html", **data)
+            tmpl = self.render_to_string("admin/guide/step1_pjax.html", **data)
+            return simplejson.dumps(self.success(data=tmpl))
 
 
 @url("/guide/(?P<pro_id>\d+)/step/2", name="guide_step_2", active="guide")
@@ -152,7 +154,14 @@ class GuideStep3Handler(GuideStepGetHandler):
     @unblock
     def get(self, **kwargs):
         data = self.get_pro_info_res(kwargs["pro_id"])
-        return self.render_to_string("admin/guide/step3.html", **data)
+        applies = data["pro_info_res"].data.pro_resource_applies
+        if len(applies) > 0:
+            last_apply = applies[-1]
+            if not last_apply.start_date:
+                self.add_message(u"尚未设置云资源启用时间！", level="warning")
+            return self.render_to_string("admin/guide/step3.html", **data)
+        else:
+            return self.render_to_string("admin/guide/step1.html", **data)
 
     def post(self, pro_id):
         data = {"name": "torweb"}
@@ -172,6 +181,9 @@ class ProResourceRevokeHandler(GuideStepGetHandler):
             raise resource_res
         data = self.get_pro_info_res(kwargs["pro_id"])
         return self.render_to_string("admin/guide/step1.html", **data)
+
+    @check_perms('pro_resource_apply.update')
+    @unblock
     def post(self, **kwargs):
         kw = {"user_id": self.current_user.id}
         kw.update(self.args)
@@ -183,14 +195,55 @@ class ProResourceRevokeHandler(GuideStepGetHandler):
         pro_info_res = pro_svc.get_project()
         data = {
             "pro_info_res": pro_info_res,
-            "post_apply_res": revoke_res
+            "post_apply_res": revoke_res,
+            "STATUS_RESOURCE": STATUS_RESOURCE
         }
         if revoke_res.return_code == 0:
             self.add_message(u"资源申请已撤销！", level="success")
-            return self.render("admin/guide/step2.html", **data)
+            tmpl = self.render_to_string("admin/guide/step2_pjax.html", **data)
+            return simplejson.dumps(self.success(data=tmpl))
         else:
             self.add_message(u"资源申请撤销失败！(%s)%s" % (post_apply_res.return_code, post_apply_res.return_message), level="warning")
-            return self.render("admin/guide/step1.html", **data)
+            tmpl = self.render_to_string("admin/guide/step1_pjax.html", **data)
+            return simplejson.dumps(self.success(data=tmpl))
+
+
+@url("/pro/(?P<pro_id>\d+)/resource/(?P<res_id>\d+)/delete", name="resource_delete", active="guide")
+class ProResourceDeleteHandler(GuideStepGetHandler):
+    u"""删除资源申请"""
+    @check_perms('pro_resource_apply.delete')
+    @unblock
+    def delete(self, **kwargs):
+        svc = ProResourceApplyService(self, kwargs)
+        delete_res = svc.do_delete()
+        resource_res = svc.get_resource()
+        if isinstance(delete_res, Exception):
+            raise resource_res
+        data = self.get_pro_info_res(kwargs["pro_id"])
+        self.add_message("云资源申请已删除！", level="success")
+        # logger.info("\t [data]: %s" % data )
+        # logger.info("\t [data pro_info_res]: %s" % data["pro_info_res"])
+        tmpl = self.render_to_string("admin/guide/step1_pjax.html", **data)
+        return simplejson.dumps(self.success(data=tmpl))
+
+
+@url("/pro/(?P<pro_id>\d+)/resource/(?P<res_id>\d+)/set_start", name="resource_set_start", active="guide")
+class ProResourceSetStartHandler(GuideStepGetHandler):
+    u"""设置启用时间"""
+    @check_perms('pro_resource_apply.view')
+    @unblock
+    def post(self, **kwargs):
+        svc = ProResourceApplyService(self, kwargs)
+        start_res = svc.set_start()
+        resource_res = svc.get_resource()
+        if isinstance(resource_res, Exception):
+            raise resource_res
+        data = self.get_pro_info_res(kwargs["pro_id"])
+        self.add_message("云资源环境启用时间设置成功！", level="success")
+        # logger.info("\t [data]: %s" % data )
+        # logger.info("\t [data pro_info_res]: %s" % data["pro_info_res"])
+        tmpl = self.render_to_string("admin/guide/step3_pjax.html", **data)
+        return simplejson.dumps(self.success(data=tmpl))
 
 
 @url("/demo/mail", name="demo.name")

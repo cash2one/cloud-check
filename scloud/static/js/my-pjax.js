@@ -75,5 +75,8 @@ $(function(){
         // alert('complete ... ');
     });
 
+    try{
+      $(".fa-refresh").parent().attr("href", window.location.href)
+    }catch(e){}
 })
 

@@ -1,5 +1,7 @@
 
 {% set apply_global_vars = pro_info_res.data.get_apply_global_vars() %}
+{% import "admin/base/base_macros.html" as mbase %}
+{% set last_apply = apply_global_vars.last_apply %}
 <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
@@ -16,23 +18,27 @@
         <!-- Main content -->
         <section class="content">
           {% include "admin/base/base_messages.html" %}
+          {# % if last_apply and not last_apply.start_date %}
+          {% include "admin/guide/_step_3_start_date.html" %}
+          {% endif % #}
           {% include "admin/guide/_steps_guide.html" %}
           <div class="row">
             <div class="col-md-12">
               <!-- Custom Tabs -->
-              <div class="nav-tabs-custom">
+              <div class="nav-tabs-custom" id="guide_step_3_tabs">
                 <ul class="nav nav-tabs">
                   <li class="active"><a href="#tab_0" data-toggle="tab">用户授权</a></li>
                   <li><a href="#tab_1" data-toggle="tab">互联网发布</a></li>
                   <li><a href="#tab_2" data-toggle="tab">负载均衡</a></li>
                   <li><a href="#tab_3" data-toggle="tab">定期备份</a></li>
-                  <li class="pull-right header"><i class="fa fa-th"></i> Custom Tabs</li>
+                  <li><a href="#tab_4" data-toggle="tab"{% if last_apply and not last_apply.start_date %} class="alert-warning"{% endif %}>启用时间</a></li>
+                  <li class="pull-right header"><a data-pjax href=""><i class="fa fa-refresh"></i></a></li>
                 </ul>
                 <div class="tab-content">
                   <div class="tab-pane active" id="tab_0">
                   {% include "admin/guide/_step_3_user.html" %}
                   </div>
-                  <div class="tab-pane active" id="tab_1">
+                  <div class="tab-pane" id="tab_1">
                     {% include "admin/guide/_step_3_publish.html" %}
                   </div><!-- /.tab-pane -->
                   <div class="tab-pane" id="tab_2">
@@ -40,6 +46,9 @@
                   </div><!-- /.tab-pane -->
                   <div class="tab-pane" id="tab_3">
                     {% include "admin/guide/_step_3_backup.html" %}
+                  </div><!-- /.tab-pane -->
+                  <div class="tab-pane" id="tab_4">
+                    {% include "admin/guide/_step_3_start_date.html" %}
                   </div><!-- /.tab-pane -->
                 </div><!-- /.tab-content -->
               </div><!-- nav-tabs-custom -->

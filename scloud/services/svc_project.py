@@ -21,8 +21,8 @@ class ProjectService(BaseService):
         pro_id = self.params.get("pro_id", 0)
         project = self.db.query(Pro_Info).filter(Pro_Info.id == pro_id).first()
         if project:
-            res = project.as_dict()
-            logger.info("project: %s" % res)
+            # res = project.as_dict()
+            # logger.info("project: %s" % res)
             return self.success(data=project)
         else:
             return NotFoundError()
@@ -37,7 +37,7 @@ class ProjectService(BaseService):
             Pro_Info.user_id == user_id
         ).all()
         project_list = [i.as_dict() for i in projects]
-        logger.info("project_list %s" % project_list)
+        # logger.info("project_list %s" % project_list)
         # self.db.commit()
         # self.db.remove()
         return self.success(data=projects)

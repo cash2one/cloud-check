@@ -120,25 +120,6 @@ class ProResourceApplyService(BaseService):
         return self.success()
 
     @thrownException
-    def get_resources_by_status(self):
-        logger.info("\t ==========[ get_resources_by_status ]==========")
-        res_status = self.params.get("res_status", 0)
-        logger.info("\t [res_status]: %s" % res_status)
-        resource_list = self.db.query(
-            Pro_Resource_Apply
-        ).filter(
-            Pro_Resource_Apply.status == res_status
-        ).order_by(
-            Pro_Resource_Apply.create_time.desc()
-        ).all()
-        status_counts = self.db.query(Pro_Resource_Apply.status, func.count(Pro_Resource_Apply.id)).group_by(Pro_Resource_Apply.status).all()
-        status_counts = dict(status_counts)
-        data = ObjectDict()
-        data.resource_list = resource_list
-        data.status_counts = status_counts
-        return self.success(data=data)
-
-    @thrownException
     def generate_fee(self):
         logger.info("------[generate_fee]------")
         self.check_form_valid()
@@ -304,25 +285,29 @@ class ProResourceApplyService(BaseService):
         task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
         return self.success(data=resource)
 
+    @thrownException
     def do_delete(self):
         res_id = self.params.get("res_id", 0)
+        logger.info("\t res_id : %s" % res_id)
         user_id = self.params.get("user_id", 0)
         resource = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
         if not resource:
             return self.failure(ERROR.not_found_err)
         # 状态只有-1、-2（即：已撤销、申请被拒绝）可以删除
-        if resource.status <= -1:
-            return self.failure(ERROR.res_delete_err)
+        # if resource.status <= -1:
+        #     raise self.failure(ERROR.res_delete_err)
         # resource.status = STATUS_RESOURCE.REVOKED
         # self.db.add(resource)
-        resource.remove()
-        self.db.flush()
         mail_content = mail_format % {
             "pro_name": resource.project.name,
             "pro_id": resource.project.id,
             "user_name": resource.user.email or resource.user.mobile,
             "resource_status": "已删除",
         }
+        self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).delete()
+        # resource.delete()
+        self.db.flush()
+        logger.info("\t resource is deleted")
         sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_content, mail_content)
         task_post_pro_res_apply_history.delay(status=resource.status, content=mail_content, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
         return self.success(data=resource)
@@ -360,6 +345,56 @@ class ProResourceApplyService(BaseService):
         return self.success(data=resource)
 
     @thrownException
+    def set_start(self):
+        res_id = self.params.get("res_id", 0)
+        start_date = self.params.get("start_date", None)
+        resource = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
+        if not resource:
+            return self.failure(ERROR.not_found_err)
+        # 状态只有-1、-2（即：已撤销、申请被拒绝）可以删除
+        if resource.status <= -1:
+            return self.failure(ERROR.res_delete_err)
+        resource.start_date = start_date
+        # self.db.add(resource)
+        self.db.flush()
+        mail_html = self.render_to_string("admin/mail/pro_resource_apply_to_admin.html", resource_apply=resource, STATUS_RESOURCE=STATUS_RESOURCE)
+        mail_title = mail_title_format % {
+            "user_name": resource.user.email or resource.user.mobile,
+            "pro_name": resource.project.name,
+            "res_desc": resource.project.id,
+            "action": u"申请的",
+            "todo_action": u"资源，已设置启用时间",
+        }
+        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
+        task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=self.handler.current_user.id)
+        return self.success(data=resource)
+
+class ProResourceCheckService(BaseService):
+    @thrownException
+    def get_resource(self):
+        res_id = self.params.get("res_id", 0)
+        resource = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
+        return self.success(data=resource)
+    @thrownException
+    def get_resources_by_status(self):
+        logger.info("\t ==========[ get_resources_by_status ]==========")
+        res_status = self.params.get("res_status", 0)
+        logger.info("\t [res_status]: %s" % res_status)
+        resource_list = self.db.query(
+            Pro_Resource_Apply
+        ).filter(
+            Pro_Resource_Apply.status == res_status
+        ).order_by(
+            Pro_Resource_Apply.create_time.desc()
+        ).all()
+        status_counts = self.db.query(Pro_Resource_Apply.status, func.count(Pro_Resource_Apply.id)).group_by(Pro_Resource_Apply.status).all()
+        status_counts = dict(status_counts)
+        data = ObjectDict()
+        data.resource_list = resource_list
+        data.status_counts = status_counts
+        return self.success(data=data)
+
+    @thrownException
     def do_resource_action(self):
         """
             针对管理员修改资源申请状态
@@ -367,7 +402,7 @@ class ProResourceApplyService(BaseService):
         res_ids = self.params.get("res_ids", "")
         checker_id = self.params.get("checker_id", 0)
         action = self.params.get("action", "")
-        actions = [ STATUS_RESOURCE.get(i).value_en for i in STATUS_RESOURCE.keys() if str(i).isdigit() ]
+        actions = [ STATUS_RESOURCE.get(i).value_en for i in STATUS_RESOURCE.keys() if isinstance(i, int) ]
         logger.info("\t [actions] : %s" % actions)
         if action not in actions:
             return self.failure(ERROR.res_do_resource_action_err)
@@ -390,11 +425,15 @@ class ProResourceApplyService(BaseService):
             email = resource.user.email
 
             previous_status = STATUS_RESOURCE.get(action.upper()) - 1
+            if action == STATUS_RESOURCE.refused.value_en:
+                previous_status = STATUS_RESOURCE.APPLIED
             logger.info("<"+"#"*60+">")
             logger.info(resource.status)
             if resource.status != previous_status:
                 if action == STATUS_RESOURCE.checked.value_en:
                     tip_messages.append(_get_message(err=ERROR.res_check_err, level="warning"))
+                elif action == STATUS_RESOURCE.refused.value_en:
+                    tip_messages.append(_get_message(err=ERROR.res_refuse_err, level="warning"))
                 elif action == STATUS_RESOURCE.confirmpayed.value_en:
                     tip_messages.append(_get_message(err=ERROR.res_confirmpay_err, level="warning"))
                 elif action == STATUS_RESOURCE.started.value_en:

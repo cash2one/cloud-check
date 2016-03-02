@@ -1,0 +1,43 @@
+
+          <div class="row">
+            <div class="col-md-12">
+              <form id="resource_set_start_form" data-pjax action="{{ reverse_url('resource_set_start', last_apply.pro_id, last_apply.id) }}" class="form-horizontal" method="POST">
+                {{ handler.xsrf_form_html() }}
+                <input type="hidden" id="res_id" value="{{ last_apply.id }}">
+                <div class="form-group">
+                  <label for="start_date" class="col-sm-2 control-label">云主机启用时间</label>
+                  <div class="col-sm-6 input-group">
+                    <div class="input-group">
+                    <input type="text" class="form-control pull-right fa-calendar" id="start_date" name="start_date" value="{% if last_apply.start_date %}{{ last_apply.start_date }}{% endif %}" readonly>
+                    </div><!-- /.input group -->
+                  </div>
+                </div>
+                {{ mbase.check_post(post_apply_res, [-100050, -100070]) }}
+                <div class="box-footer text-center">
+                  {% if last_apply %}
+                  <a data-pjax id="resource_set_start_btn" href="javascript:;" onclick="resource_set_start()" class="btn btn-{{ STATUS_RESOURCE.payed.level }}">设置启用时间</a>
+                  {% endif %}
+                </div><!-- /.box-footer -->
+              </form>
+            </div>
+          </div>
+          <script type="text/javascript">
+          $(function(){
+            $('.fa-calendar').datepicker({ format: 'yyyy-mm-dd 00:00:00', autoclose: true});
+          })
+          function resource_set_start(){
+            generate_ajax_post({
+                form:"#resource_set_start_form",
+                button: "#resource_set_start_btn", 
+                onSuccess: function(){
+                  $("#guide_step_3_tabs").find("li").removeClass("active");
+                  $("#guide_step_3_tabs").find(".tab-pane").removeClass("active");
+                  $("#guide_step_3_tabs").find("a[href=#tab_4]").parent().addClass("active")
+                  $("#guide_step_3_tabs").find("#tab_4").addClass("active");
+                },
+                onTimeout: function(){
+                  resource_set_start();
+                }
+            })
+          }
+          </script>

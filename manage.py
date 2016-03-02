@@ -28,8 +28,8 @@ app = make_application(
     url_root=CONF("URL_ROOT"),
     **tornado_settings
 )
-# from scloud.async_services.listener import init_listener
-# init_listener()
+from scloud.async_services.listener import init_listener
+init_listener()
 if options.cmd == "runserver":
     import tcelery
     from scloud import celeryapp

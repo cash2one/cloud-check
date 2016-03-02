@@ -3,6 +3,7 @@
 # created: zhangpeng <zhangpeng1@infohold.com.cn>
 
 from datetime import datetime, timedelta
+from scloud.config import logger
 from scloud.models.base import BaseModel, BaseModelMixin
 from scloud.models.pt_user import PT_User
 from scloud.models.environment import Env_Info
@@ -12,13 +13,38 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.types import Unicode, Integer, Float, DateTime
 
 
-def get_due_date(context):
-    current = context.current_parameters['start_date']
-    months = context.current_parameters['period']
+def get_due_date(current, months):
+    logger.info("\t [get_due_date]")
+    if not current:
+        logger.info("\t [current]: %s" % current)
+        return False
+    if not months:
+        logger.info("\t [current]: %s" % months)
+        return False
+    if not isinstance(months, int) and not isinstance(months, long):
+        logger.info("\t [current instance]: %s" % type(months))
+        return False
+    if not isinstance(current, datetime):
+        current = datetime.strptime(current, "%Y-%m-%d %H:%M:%S")
+    # current = context.current_parameters['start_date']
+    # months = context.current_parameters['period']
     dateformat = "%s-%02d-%s" % (current.year + (current.month + months) / 12, (current.month + months) % 12, 1)
     due_date = datetime.strptime(dateformat, "%Y-%m-%d")
-    due_date = due_date + timedelta(days=-1)
+    due_date = due_date + timedelta(seconds=-1)
     return due_date
+
+def default_due_date(context):
+    current = context.current_parameters['start_date']
+    months = context.current_parameters['period']
+    result = get_due_date(current, months)
+    if result:
+        return result
+    else:
+        return '0000-00-00'
+    # dateformat = "%s-%02d-%s" % (current.year + (current.month + months) / 12, (current.month + months) % 12, 1)
+    # due_date = datetime.strptime(dateformat, "%Y-%m-%d")
+    # due_date = due_date + timedelta(days=-1)
+    # return due_date
 
 
 class Pro_Info(BaseModel, BaseModelMixin, Pro_Info_Mixin):
@@ -56,7 +82,7 @@ class Pro_Resource_Apply(BaseModel, BaseModelMixin):
     desc = Column(Unicode, default=u'资源申请', info={"name": u"资源申请描述"})
     start_date = Column(DateTime, default=func.now(), info={"name": u"启用时间"})
     period = Column(Integer, default=0, info={"name": u"运行有效期", "unit": u"月"})
-    due_date = Column(DateTime, default=get_due_date, info={"name": u"到期时间"})
+    due_date = Column(DateTime, default=default_due_date, info={"name": u"到期时间"})
     unit_fee = Column(Float, default=0.00, info={"name": u"单月费用", "unit": u"元"})
     total_fee = Column(Float, default=0.00, info={"name": u"总费用", "unit": u"元"})
     fee_desc = Column(Unicode, default=u'', info={"name": u"产生费用描述"})

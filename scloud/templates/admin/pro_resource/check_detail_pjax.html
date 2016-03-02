@@ -1,5 +1,4 @@
-
-{% set current_res_status = handler.args.get("res_status", 0)|int %}
+{% set current_res_status = resource_apply.status %}
         <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
@@ -71,33 +70,45 @@
                     </div>
                   </div><!-- /.box-tools -->
                 </div><!-- /.box-header -->
+
                 <div class="box-body no-padding">
                   <div class="mailbox-controls">
-                    {% include "admin/pro_resource/_check_list_buttons.html" %}  
+                  <a data-pjax href="{{ reverse_url('resource_check_list') }}?res_status={{ resource_apply.status }}" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-reply"></i> 返回</a>
+                    {% include "admin/pro_resource/_check_detail_buttons.html" %}  
                   </div>
-                  <div class="table-responsive mailbox-messages">
-                    <table class="table table-hover table-striped" id="resource_check_list_table">
-                      <tbody>
-                        {% for resource in page.object_list %}
-                        <tr>
-                          <td><input type="checkbox" value="{{ resource.id }}"></td>
-                          <td class="mailbox-star"><a href="javascript:;"><i class="fa fa-star text-yellow"></i></a></td>
-                          <td class="mailbox-name"><a data-pjax href="{{ reverse_url('resource_check_detail', resource.id) }}">{{ resource.user.email or resource.user.mobile }}</a></td>
-                          <td class="mailbox-subject"><b>{{ resource.project.name }}</b> - {{ resource.desc }}</td>
-                          <td class="mailbox-attachment"></td>
-                          <td class="mailbox-date">{{ resource.update_time }}</td>
-                        </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table><!-- /.table -->
-                  </div><!-- /.mail-box-messages -->
+                  <div class="box-body no-padding">
+                    <p>{{ resource_apply.project.desc }}</p>
+                    <table class="table table-striped" id="resource_check_table">
+                      <tr class="">
+                        <td>
+                          <input type="checkbox" value="{{ resource_apply.id }}" checked="checked"/>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>申请项目</th>
+                        <th>申请数量</th>
+                      </tr>
+                      {% for column in resource_apply.__table__.columns %}
+                      {% if column.info.name %}
+                      <tr>
+                        <td>{{ column.info.name or column.name }}:</td>
+                        <td>{{ getattr(resource_apply, column.name) }} {{ column.info.unit }}</td>
+                      </tr>
+                      {% endif %}
+                      {% endfor %}
+                    </table>
+                    <!--ul class="nav nav-pills nav-stacked">
+                      <li><a href="#"><i class="fa fa-circle-o text-red"></i> Important</a></li>
+                      <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> Promotions</a></li>
+                      <li><a href="#"><i class="fa fa-circle-o text-light-blue"></i> Social</a></li>
+                    </ul-->
+                  </div><!-- /.box-body -->
                 </div><!-- /.box-body -->
                 <div class="box-footer no-padding">
                   <div class="mailbox-controls">
-                    {% include "admin/pro_resource/_check_list_buttons.html" %}  
+                    {% include "admin/pro_resource/_check_detail_buttons.html" %}  
                   </div>
                 </div>
-                {% include "admin/base/base_paginator.html" %}
               </div><!-- /. box -->
             </div><!-- /.col -->
           </div><!-- /.row -->
@@ -157,7 +168,7 @@
         if (action == ""){
           confirmBox({message: "提交参数有误"});
         }
-        var checked_values = $getCheckValues("#resource_check_list_table");
+        var checked_values = $getCheckValues("#resource_check_table");
         console.log(checked_values)
         var params = {
           _xsrf: $cookie("_xsrf"),

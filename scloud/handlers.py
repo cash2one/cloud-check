@@ -16,6 +16,7 @@ from scloud.config import CONF, logger, logThrown
 from scloud.models.base import DataBaseService
 from scloud.async_services.svc_act import task_post_action
 from sqlalchemy.exc import SQLAlchemyError
+from scloud.utils.error import ERROR
 
 
 class HandlerMeta(type):
@@ -73,7 +74,7 @@ class Handler(BaseHandler):
             self.svc.db.commit()
             # self.db.flush()
             logger.info("\t" + "====[COMMIT]====")
-        except SQLAlchemyError:
+        except Exception:
             logThrown()
             self.svc.db.rollback()
             logger.info("\t" + "====[ROLLBACK]====")
@@ -120,6 +121,7 @@ class Handler(BaseHandler):
         return result
 
     def render_to_string(self, template, **kwargs):
+        logger.info("\t [messages]:%s" % self.session["messages"])
         if self.pjax:
             title = self.__doc__ or self.__class__.__name__
             title = title.encode("utf-8")
@@ -133,6 +135,7 @@ class Handler(BaseHandler):
             "handler": self,
             "request": self.request,
             "reverse_url": self.application.reverse_url,
+            "ERROR": ERROR,
             "s": s+"&" if s else ""
         })
         # logger.info("\t [render_to_string kwargs]: %s" % kwargs)
@@ -230,7 +233,7 @@ class AuthHandler(Handler):
 
     def get_current_user(self):
         current_user = self.session.get("current_user", None)
-        logger.info("******[GET SESSION] %s" % current_user)
+        # logger.info("******[GET SESSION] %s" % current_user)
         # if current_user:
         #     user_roles = current_user.user_roles
         #     for user_role in user_roles:

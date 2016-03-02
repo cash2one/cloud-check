@@ -130,4 +130,36 @@ function check_response(response){
     }
 }
 
+function generate_ajax_post(options){
+  options = options || {};
+  var button = options.button || "";
+  var form = options.form || "form";
+  var method = options.method || "POST";
+
+  if (button){
+    $(button).button("loading");
+  }
+  show_loading();
+  var params = $(form).serialize();
+  $.ajax({
+    url: $(form).attr("action"),
+    type: method,
+    dataType: "JSON",
+    data: params,
+    timeout: 3000,
+    success: function(response){
+      hide_loading();
+      $(button).button("reset");
+      if (check_response(response)){
+        $("#pjax-container").html(response.data);
+        if (options.onSuccess) {(options.onSuccess)();}
+      }
+    },
+    error: function(xhr, Status){
+      if (Status == "timeout"){
+        if (options.onTimeout) {(options.onTimeout)();}
+      }
+    }
+  })
+}
 </script>
