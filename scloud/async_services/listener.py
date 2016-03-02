@@ -10,7 +10,7 @@ from scloud.models.pt_user import PT_Perm, PT_Role, PT_Role_Group_Ops
 from scloud.models.act import Act_Todo
 from sqlalchemy import event, func
 from scloud.async_services.svc_act import task_act_post
-from scloud.async_services.base import thrownException
+from scloud.config import thrownException
 
 
 def act_post(mapper, connect, target):
