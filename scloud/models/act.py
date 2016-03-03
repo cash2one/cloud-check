@@ -17,9 +17,12 @@ class Act_Pro_History(BaseModel, BaseModelMixin):
     status = Column(Integer, default=0)
     desc = Column(Unicode, default=u'')
     user_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
+    checker_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
     pro = relationship("Pro_Info", backref="act_histories")
     user = relationship("PT_User", backref="act_histories")
-    res_apply = relationship("Pro_Resource_Apply", backref="act_histories")
+    user = relationship("PT_User", foreign_keys=[user_id], backref="act_histories")
+    checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_act_histories")
+    res_apply = relationship("Pro_Resource_Apply", backref=backref("act_histories", order_by="Act_Pro_History.create_time"))
 
 
 class Act_History(BaseModel, BaseModelMixin):

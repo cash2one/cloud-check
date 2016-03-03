@@ -13,15 +13,14 @@
 
         <!-- Main content -->
         <section class="content">
-
+          {% include "admin/base/base_messages.html" %}
           <div class="row">
             <div class="col-md-3">
-
               <!-- Profile Image -->
               <div class="box box-primary">
                 <div class="box-body box-profile">
                   <img class="profile-user-img img-responsive img-circle" src="{{ handler.static_url('default/dist/img/user2-160x160.jpg') }}" alt="User profile picture">
-                  <h3 class="profile-username text-center">{{ current_user.username or current_user.email or current_user.mobile }}</h3>
+                  <h3 class="profile-username text-center">{{ (current_user.username or current_user.email or current_user.mobile)|truncate(10, "...") }}</h3>
                   <p class="text-muted text-center">
                     [{% for user_role in current_user.user_roles %}
                       {{ user_role.role.name }}
@@ -58,7 +57,7 @@
                   <hr>
                   {% endfor %}
 
-                  <strong><i class="fa fa-map-marker margin-r-5"></i> Location</strong>
+                  <!--strong><i class="fa fa-map-marker margin-r-5"></i> Location</strong>
                   <p class="text-muted">Malibu, California</p>
 
                   <hr>
@@ -75,64 +74,84 @@
                   <hr>
 
                   <strong><i class="fa fa-file-text-o margin-r-5"></i> Notes</strong>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fermentum enim neque.</p>
-                  </div><!-- /.box-body -->
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fermentum enim neque.</p-->
+                </div><!-- /.box-body -->
               </div><!-- /.box -->
             </div><!-- /.col -->
             <div class="col-md-9">
               <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
-                  <li class="active"><a href="#activity" data-toggle="tab">Activity</a></li>
-                  <li><a href="#timeline" data-toggle="tab">Timeline</a></li>
-                  <li><a href="#settings" data-toggle="tab">Settings</a></li>
+                  <li class="active"><a href="#activity" data-toggle="tab">待处理任务列表</a></li>
+                  <!--li><a href="#timeline" data-toggle="tab">Timeline</a></li>
+                  <li><a href="#settings" data-toggle="tab">Settings</a></li-->
                 </ul>
                 <div class="tab-content">
                   <div class="active tab-pane" id="activity">
                     <!-- Post -->
-                    <div class="post">
-                      <div class="user-block">
-                        <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
-                        <span class='username'>
-                          <a href="#">Jonathan Burke Jr.</a>
-                          <a href='#' class='pull-right btn-box-tool'><i class='fa fa-times'></i></a>
-                        </span>
-                        <span class='description'>Shared publicly - 7:30 PM today</span>
-                      </div><!-- /.user-block -->
-                      <p>
-                        Lorem ipsum represents a long-held tradition for designers,
-                        typographers and the like. Some people hate it and argue for
-                        its demise, but others ignore the hate as they create awesome
-                        tools to help create filler text for everyone from bacon lovers
-                        to Charlie Sheen fans.
-                      </p>
-                      <ul class="list-inline">
-                        <li><a href="#" class="link-black text-sm"><i class="fa fa-share margin-r-5"></i> Share</a></li>
-                        <li><a href="#" class="link-black text-sm"><i class="fa fa-thumbs-o-up margin-r-5"></i> Like</a></li>
-                        <li class="pull-right"><a href="#" class="link-black text-sm"><i class="fa fa-comments-o margin-r-5"></i> Comments (5)</a></li>
-                      </ul>
-
-                      <input class="form-control input-sm" type="text" placeholder="Type a comment">
-                    </div><!-- /.post -->
-
-                    <!-- Post -->
+                    {% for task in apply_tasks_res.data %}
                     <div class="post clearfix">
                       <div class='user-block'>
-                        <img class='img-circle img-bordered-sm' src="{{ handler.static_url('default/dist/img/user2-160x160.jpg') }}" alt='user image'>
-                        <span class='username'>
-                          <a href="#">Sarah Ross</a>
-                          <a href='#' class='pull-right btn-box-tool'><i class='fa fa-times'></i></a>
-                        </span>
-                        <span class='description'>Sent you a message - 3 days ago</span>
+                          {% if "pro_resource_apply.view" in current_user.current_perms %}
+                          {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.res_apply.start_date %}
+                          {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and not task.res_apply.start_date %}
+                          <img class='img-circle img-bordered-sm' src="{{ handler.static_url('default/dist/img/user2-160x160.jpg') }}" alt='user image'>
+                          <span class='username'>
+                          <a href="#">管理员：{{ task.checker.email or task.checker.mobile or task.checker.username or "匿名用户" }}</a>
+                          </span>
+                          <span class='description'>Sent you a message - {{ task.create_time|getGoodTime }}</span>
+                          {% endif %}
+                          {% else %}
+                          {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id == 0 %}
+                          <img class='img-circle img-bordered-sm' src="{{ handler.static_url('default/dist/img/user2-160x160.jpg') }}" alt='user image'>
+                          <span class='username'>
+                          <a href="#">用户：{{ task.user.email or task.user.mobile or task.user.username or "匿名用户" }}</a>
+                          </span>
+                          <span class='description'>Sent you a message - {{ task.create_time|getGoodTime }}</span>
+                          {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id != 0 %}
+                          {% else %}
+                          <img class='img-circle img-bordered-sm' src="{{ handler.static_url('default/dist/img/user2-160x160.jpg') }}" alt='user image'>
+                          <span class='username'>
+                          <a href="#">用户：{{ task.user.email or task.user.mobile or task.user.username or "匿名用户" }}</a>
+                          </span>
+                          <span class='description'>Sent you a message - {{ task.create_time|getGoodTime }}</span>
+                          {% endif %}
+                          {% endif %}
                       </div><!-- /.user-block -->
                       <p>
-                        Lorem ipsum represents a long-held tradition for designers,
-                        typographers and the like. Some people hate it and argue for
-                        its demise, but others ignore the hate as they create awesome
-                        tools to help create filler text for everyone from bacon lovers
-                        to Charlie Sheen fans.
+                        {% if "pro_resource_apply.check" in current_user.current_perms %}
+                          {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id == 0 %}
+                          <form id="task_confirm_form" action="{{ reverse_url("task_confirm", task.id) }}">
+                          {{ handler.xsrf_form_html() }}
+                          <input type="hidden" name="task_id" value="{{ task.id }}">
+                          </form>
+                          [{{ task.checker_id }}]
+                          (用户{{ STATUS_RESOURCE.get(task.status).value.upper() }})
+                          {{ task.desc }}
+                          <a data-pjax id="do_confirm_btn" href='javascript:;' onclick="do_confirm_start_date()" class='pull-right btn-box-tool'><i class='fa fa-check'> 确认</i></a>
+                          {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id != 0 %}
+                          {% else %}
+                          [{{ task.checker_id }}]
+                          (用户{{ STATUS_RESOURCE.get(task.status).value.upper() }})
+                          {{ task.desc }}
+                          <a data-pjax href='{{ reverse_url("resource_check_list") }}?res_status={{ task.status }}' class='pull-right btn-box-tool'><i class='fa fa-check'> 去审核</i></a>
+                          {% endif %}
+                        {% else %}
+                          {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.res_apply.start_date %}
+                          {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and not task.res_apply.start_date %}
+                          [{{ task.checker_id }}]
+                          (管理员{{ STATUS_RESOURCE.get(task.status).value.upper() }})
+                          {{ task.desc }}
+                          <a data-pjax href='{{ reverse_url("guide") }}' class='pull-right btn-box-tool'><i class='fa fa-check'> 去处理</i></a>
+                          {% else %}
+                          [{{ task.checker_id }}]
+                          (管理员{{ STATUS_RESOURCE.get(task.status).value.upper() }})
+                          {{ task.desc }}
+                          <a data-pjax href='{{ reverse_url("guide") }}' class='pull-right btn-box-tool'><i class='fa fa-check'> 去处理</i></a>
+                          {% endif %}
+                        {% endif %}
                       </p>
 
-                      <form class='form-horizontal'>
+                      <!--form class='form-horizontal'>
                         <div class='form-group margin-bottom-none'>
                           <div class='col-sm-9'>
                             <input class="form-control input-sm" placeholder="Response">
@@ -141,47 +160,10 @@
                             <button class='btn btn-danger pull-right btn-block btn-sm'>Send</button>
                           </div>                          
                         </div>                        
-                      </form>
+                      </form-->
                     </div><!-- /.post -->
+                    {% endfor %}
 
-                    <!-- Post -->
-                    <div class="post">
-                      <div class='user-block'>
-                      <img class='img-circle img-bordered-sm' src="{{ handler.static_url('default/dist/img/user2-160x160.jpg') }}" alt='user image'>
-                        <span class='username'>
-                          <a href="#">Adam Jones</a>
-                          <a href='#' class='pull-right btn-box-tool'><i class='fa fa-times'></i></a>
-                        </span>
-                        <span class='description'>Posted 5 photos - 5 days ago</span>
-                      </div><!-- /.user-block -->
-                      <div class='row margin-bottom'>
-                        <div class='col-sm-6'>
-                          <img class='img-responsive' src='../../dist/img/photo1.png' alt='Photo'>
-                        </div><!-- /.col -->
-                        <div class='col-sm-6'>
-                          <div class='row'>
-                            <div class='col-sm-6'>
-                              <img class='img-responsive' src='../../dist/img/photo2.png' alt='Photo'>
-                              <br>
-                              <img class='img-responsive' src='../../dist/img/photo3.jpg' alt='Photo'>
-                            </div><!-- /.col -->
-                            <div class='col-sm-6'>
-                              <img class='img-responsive' src='../../dist/img/photo4.jpg' alt='Photo'>
-                              <br>
-                              <img class='img-responsive' src='../../dist/img/photo1.png' alt='Photo'>
-                            </div><!-- /.col -->
-                          </div><!-- /.row -->
-                        </div><!-- /.col -->
-                      </div><!-- /.row -->
-
-                      <ul class="list-inline">
-                        <li><a href="#" class="link-black text-sm"><i class="fa fa-share margin-r-5"></i> Share</a></li>
-                        <li><a href="#" class="link-black text-sm"><i class="fa fa-thumbs-o-up margin-r-5"></i> Like</a></li>
-                        <li class="pull-right"><a href="#" class="link-black text-sm"><i class="fa fa-comments-o margin-r-5"></i> Comments (5)</a></li>
-                      </ul>
-
-                      <input class="form-control input-sm" type="text" placeholder="Type a comment">
-                    </div><!-- /.post -->
                   </div><!-- /.tab-pane -->
                   <div class="tab-pane" id="timeline">
                     <!-- The timeline -->
@@ -320,3 +302,12 @@
           </div><!-- /.row -->
 
         </section><!-- /.content -->
+        <script type="text/javascript">
+        function do_confirm_start_date(){
+          generate_ajax_post({
+              form: "#task_confirm_form",
+              button: "#do_confirm_btn",
+              onTimeout: function(){ do_confirm_start_date();}
+          })
+        }
+        </script>

@@ -198,7 +198,7 @@ class ProResourceApplyService(BaseService):
             "todo_action": u"资源，已提交，请审核",
         }
         sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
-        task_post_pro_res_apply_history.delay(status=apply.status, content=apply.desc, pro_id=pro_id, res_apply_id=apply.id, user_id=user_id)
+        task_post_pro_res_apply_history.delay(status=apply.status, content=mail_title, pro_id=pro_id, res_apply_id=apply.id, user_id=user_id)
         return self.success(data=apply)
 
     @thrownException
@@ -427,6 +427,8 @@ class ProResourceCheckService(BaseService):
             previous_status = STATUS_RESOURCE.get(action.upper()) - 1
             if action == STATUS_RESOURCE.refused.value_en:
                 previous_status = STATUS_RESOURCE.APPLIED
+            if action == STATUS_RESOURCE.applied.value_en:
+                previous_status = STATUS_RESOURCE.CHECKED
             logger.info("<"+"#"*60+">")
             logger.info(resource.status)
             if resource.status != previous_status:
@@ -451,15 +453,15 @@ class ProResourceCheckService(BaseService):
             self.db.flush()
             mail_html = self.render_to_string("admin/mail/pro_resource_apply.html", resource_apply=resource, STATUS_RESOURCE=STATUS_RESOURCE)
             mail_title = mail_title_format % {
-                "user_name": resource.user.email or resource.user.mobile,
+                "user_name": resource.checker.email or resource.checker.mobile,
                 "pro_name": resource.project.name,
                 "res_desc": resource.project.id,
-                "action": u"申请的",
+                "action": u"审核的",
                 "todo_action": u"资源，%s，%s" % (STATUS_RESOURCE.get(resource.status).value, STATUS_RESOURCE.get(resource.status).todo_value),
             }
             email_list.append((email, mail_html))
             tip_messages.append(_get_message(msg=mail_title))
-            task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=checker_id)
+            task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=resource.user_id, checker_id=checker_id)
 
         email_dict = {}
         for email, mail_content in email_list:

@@ -56,7 +56,7 @@ class GuideHandler(GuideStepGetHandler):
         logger.info(result)
         if result.return_code == 0:
             logger.info("return_code:%s" % result.return_code)
-            self.add_message(u"项目添加成功", level="success")
+            self.add_message(u"项目[%s]添加成功" % result.data.name, level="success", post_action=True)
             data = self.get_pro_info_res(result.data.id)
             return self.render_to_string("admin/guide/step1.html", **data)
         else:
@@ -108,7 +108,7 @@ class GuideStep1Handler(GuideStepGetHandler):
         }
         data.update(pro_info_data)
         if post_apply_res.return_code == 0:
-            self.add_message(u"申请项目资源成功！", level="success")
+            self.add_message(u"申请项目[%s-%s]资源成功！" % (post_apply_res.data.project.name, post_apply_res.data.desc), level="success", post_action=True)
             tmpl = self.render_to_string("admin/guide/step2_pjax.html", **data)
             return simplejson.dumps(self.success(data=tmpl))
         else:
@@ -199,7 +199,7 @@ class ProResourceRevokeHandler(GuideStepGetHandler):
             "STATUS_RESOURCE": STATUS_RESOURCE
         }
         if revoke_res.return_code == 0:
-            self.add_message(u"资源申请已撤销！", level="success")
+            self.add_message(u"资源[%s-%s]申请撤销成功！" % (revoke_res.data.project.name, revoke_res.data.desc), level="success", post_action=True)
             tmpl = self.render_to_string("admin/guide/step2_pjax.html", **data)
             return simplejson.dumps(self.success(data=tmpl))
         else:
@@ -220,7 +220,7 @@ class ProResourceDeleteHandler(GuideStepGetHandler):
         if isinstance(delete_res, Exception):
             raise resource_res
         data = self.get_pro_info_res(kwargs["pro_id"])
-        self.add_message("云资源申请已删除！", level="success")
+        self.add_message("云资源[%s-%s]申请删除成功！"% (delete_res.data.project.name, delete_res.data.desc), level="success")
         # logger.info("\t [data]: %s" % data )
         # logger.info("\t [data pro_info_res]: %s" % data["pro_info_res"])
         tmpl = self.render_to_string("admin/guide/step1_pjax.html", **data)
@@ -239,7 +239,7 @@ class ProResourceSetStartHandler(GuideStepGetHandler):
         if isinstance(resource_res, Exception):
             raise resource_res
         data = self.get_pro_info_res(kwargs["pro_id"])
-        self.add_message("云资源环境启用时间设置成功！", level="success")
+        self.add_message("云资源[%s-%s]环境启用时间设置成功！" % (start_res.data.project.name, start_res.data.desc), level="success", post_action=True)
         # logger.info("\t [data]: %s" % data )
         # logger.info("\t [data pro_info_res]: %s" % data["pro_info_res"])
         tmpl = self.render_to_string("admin/guide/step3_pjax.html", **data)

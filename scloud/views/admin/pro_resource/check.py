@@ -79,7 +79,7 @@ class ResourceCheckListHandler(AuthHandler):
         if resource_action_res.return_code == 0:
             messages = resource_action_res.data
             for message, level in messages:
-                self.add_message(message, level)
+                self.add_message(message, level, post_action=True)
         else:
             self.add_message("资源审核失败:(%s)%s" % (resource_action_res.return_code, resource_action_res.return_message))
         resource_res = svc.get_resources_by_status()

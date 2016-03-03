@@ -266,6 +266,7 @@ CREATE TABLE `act_pro_history` (
     `status` INT(11) NOT NULL DEFAULT '0' COMMENT '项目申请状态',
     `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '数据库操作描述',
     `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '数据库操作人员',
+    `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核人员',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)

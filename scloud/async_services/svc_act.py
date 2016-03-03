@@ -32,7 +32,7 @@ def task_post_action(act_type=1, content=u"", user_id=0):
         svc.db.add(act)
 
 @celery.task
-def task_post_pro_res_apply_history(status=0, content=u"", pro_id=0, res_apply_id=0, user_id=0):
+def task_post_pro_res_apply_history(status=0, content=u"", pro_id=0, res_apply_id=0, user_id=0, checker_id=0):
     logger.info("------[celery task post action]------")
     with DataBaseService({}) as svc:
         act = Act_Pro_History()
@@ -41,4 +41,5 @@ def task_post_pro_res_apply_history(status=0, content=u"", pro_id=0, res_apply_i
         act.status = status
         act.desc = content
         act.user_id = user_id
+        act.checker_id = checker_id
         svc.db.add(act)

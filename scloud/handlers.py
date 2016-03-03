@@ -47,8 +47,9 @@ class Handler(BaseHandler):
         self.messages = self.session.get("messages", [])
         self.save_session()
 
-    def add_message(self, content, level="info"):
-        self.post_action(content=content, level=level)
+    def add_message(self, content, level="info", post_action=False):
+        if post_action:
+            self.post_action(content=content, level=level)
         self.session["messages"].append({"level": level, "content": content})
         self.session["messages_request"] = len(self.session["messages"])
         self.save_session()
