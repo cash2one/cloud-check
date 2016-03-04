@@ -124,6 +124,18 @@
                 </ul>
                 <div class="tab-content">
                   <div class="active tab-pane" id="activity">
+                    {% set task_list = apply_tasks_res.data %}
+                    {% if task_list|length <= 0 %}
+                    {% if "pro_resource_apply.view" in current_user.current_perms %}
+                    <div class="post">
+                    还没有创建项目？<a data-pjax href="{{ reverse_url('guide') }}">去创建</a>
+                    </div>
+                    {% elif "pro_resource_apply.check" in current_user.current_perms %}
+                    <div class="post">
+                    还没有用户提交申请
+                    </div>
+                    {% endif %}
+                    {% endif %}
                     {% for task in apply_tasks_res.data %}
                       {% if "pro_resource_apply.view" in current_user.current_perms %}
                         {{ get_task_module(task, STATUS_RESOURCE, user=task.user, imchecker=False) }}
