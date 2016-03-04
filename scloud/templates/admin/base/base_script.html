@@ -132,16 +132,20 @@ function check_response(response){
 
 function generate_ajax_post(options){
   options = options || {};
+  options = $.extend({pjax_container: true}, options);
+  console.log(options)
   var button = options.button || "";
   var form = options.form || "form";
   var method = options.method || "POST";
+  var pjax_container = $chk(options.pjax_container) != false ? true:false;
+  console.log("pjax_container: "+pjax_container)
 
   if (button){
     $(button).button("loading");
   }
   show_loading();
   var params = $(form).serialize();
-  $.ajax({
+  $.ajax($.extend({
     url: $(form).attr("action"),
     type: method,
     dataType: "JSON",
@@ -151,8 +155,10 @@ function generate_ajax_post(options){
       hide_loading();
       $(button).button("reset");
       if (check_response(response)){
-        $("#pjax-container").html(response.data);
-        if (options.onSuccess) {(options.onSuccess)();}
+        if(pjax_container == true){
+          $("#pjax-container").html(response.data);
+        }
+        if (options.onSuccess) {(options.onSuccess)(response);}
       }
     },
     error: function(xhr, Status){
@@ -160,6 +166,6 @@ function generate_ajax_post(options){
         if (options.onTimeout) {(options.onTimeout)();}
       }
     }
-  })
+  }, options))
 }
 </script>

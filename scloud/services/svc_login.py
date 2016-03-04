@@ -56,3 +56,16 @@ class LoginService(BaseService):
             return result
         else:
             return self.failure(ERROR.username_err)
+
+    def set_user_attrs(self, user_info):
+        user_roles = user_info.user_roles
+        current_perms = {}
+        for user_role in user_roles:
+            group_ops = user_role.role.group_ops
+            for group_op in group_ops:
+                g_keyword = GROUP[group_op.group_keycode].keyword
+                op_keyword = OP[group_op.op_keycode].keyword
+                g_keycode = group_op.group_keycode
+                op_keycode = group_op.op_keycode
+                current_perms.update({"%s.%s" % (g_keyword, op_keyword): "%s.%s" % (g_keycode, op_keycode)})
+        setattr(user_info, "current_perms", current_perms)

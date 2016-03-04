@@ -234,12 +234,8 @@ class AuthHandler(Handler):
 
     def get_current_user(self):
         current_user = self.session.get("current_user", None)
-        # logger.info("******[GET SESSION] %s" % current_user)
-        # if current_user:
-        #     user_roles = current_user.user_roles
-        #     for user_role in user_roles:
-        #         logger.info(user_role.role)
-        return self.session.get("current_user", None)
+        logger.info("******[GET SESSION] %s" % current_user)
+        return current_user
 
     def get_login_url(self, next=''):
         redirect_url = self.reverse_url("login")

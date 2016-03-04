@@ -40,6 +40,32 @@ class ProfileHandler(AuthHandler):
         data = self.get_index_page()
         return self.render_to_string("admin/user/profile/index.html", **data)
 
+    @unblock
+    def post(self):
+        svc = ProfileService(self)
+        user_res = svc.set_profile()
+        if isinstance(user_res, Exception):
+            raise user_res
+        logger.info("$"*60)
+        logger.info(user_res.data.username)
+        logger.info("$"*60)
+        delattr(self, "_current_user")
+        self.session["current_user"] = user_res.data
+        self.save_session()
+        logger.info("#"*60)
+        logger.info("self.current_user.username: %s" % self.current_user.username)
+        logger.info("self.session['current_user'].username: %s" % self.session["current_user"].username)
+        logger.info("self.session.get('current_user').username: %s" % self.session.get("current_user").username)
+        logger.info("#"*60)
+        #tmpl = self.render_to_string("admin/user/profile/_profile_index.html", user=user_res.data)
+        tmpl = self.render_to_string("admin/user/profile/_profile_index.html", user=self.current_user)
+        data = {
+            "tmpl": tmpl,
+            "user": self.current_user.as_dict()
+        }
+        return simplejson.dumps(self.success(data=data))
+
+
 
 @url("/task/(?P<task_id>\d+)/confirm_start_date", name="task_confirm", active="user_profile")
 class TaskConfirmHandler(ProfileHandler):

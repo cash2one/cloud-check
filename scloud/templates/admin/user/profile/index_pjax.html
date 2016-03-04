@@ -1,8 +1,75 @@
 
 {% from "admin/base/base_macros.html" import get_task_module with context %}
-{% from "admin/base/base_macros.html" import get_task_module1 with context %}
+{% from "admin/base/base_macros.html" import get_profile with context %}
+{% from "admin/base/base_macros.html" import get_history_module with context %}
+
 {% import "admin/base/base_macros.html" as mbase %}
         {% set current_user = handler.current_user %}
+        <style media="screen">
+        .htmleaf-header{background: #64448f; color: #fff;}
+        .flip-container {
+        width: 100%;
+        /*height: 260px;*/
+        position: relative;
+        -webkit-perspective: 800px;
+           -moz-perspective: 800px;
+             -o-perspective: 800px;
+                perspective: 800px;
+      }
+
+      #card {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        -webkit-transition: -webkit-transform 1s;
+           -moz-transition: -moz-transform 1s;
+             -o-transition: -o-transform 1s;
+                transition: transform 1s;
+        -webkit-transform-style: preserve-3d;
+           -moz-transform-style: preserve-3d;
+             -o-transform-style: preserve-3d;
+                transform-style: preserve-3d;
+      }
+
+      #card.flipped {
+        -webkit-transform: rotateY( 180deg );
+           -moz-transform: rotateY( 180deg );
+             -o-transform: rotateY( 180deg );
+                transform: rotateY( 180deg );
+      }
+
+      #card figure {
+        display: block;
+        height: 100%;
+        width: 100%;
+        /*
+        line-height: 260px;
+        color: white;
+        text-align: center;
+        font-weight: bold;
+        font-size: 140px;
+        */
+        position: absolute;
+        -webkit-backface-visibility: hidden;
+           -moz-backface-visibility: hidden;
+             -o-backface-visibility: hidden;
+                backface-visibility: hidden;
+      }
+
+      #card .front {
+        background: red;
+      }
+
+      #card .back {
+        background: blue;
+        -webkit-transform: rotateY( 180deg );
+           -moz-transform: rotateY( 180deg );
+             -o-transform: rotateY( 180deg );
+                transform: rotateY( 180deg );
+      }
+      #options{width:130px;height:50px;margin: 0 auto;}
+      #flip{margin: 0.5em;padding: 0.6em 1em;border: 3px solid #1d7db1;font-weight: 700;background: #fff;}
+        </style>
         <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
@@ -19,37 +86,19 @@
           {% include "admin/base/base_messages.html" %}
           <div class="row">
             <div class="col-md-3">
-              <!-- Profile Image -->
-              <div class="box box-primary">
-                <div class="box-body box-profile">
-                  <img class="profile-user-img img-responsive img-circle" src="{{ handler.static_url('default/dist/img/user2-160x160.jpg') }}" alt="User profile picture">
-                  <h3 class="profile-username text-center">{{ (current_user.username or current_user.email or current_user.mobile)|truncate(10, "...") }}</h3>
-                  <p class="text-muted text-center">
-                    [{% for user_role in current_user.user_roles %}
-                      {{ user_role.role.name }}
-                    {% endfor %}]
-                  </p>
-                  <p class="text-muted text-center">
-                  最近登录时间：{{ current_user.last_login|getGoodTime }}
-                  </p>
-
-                  <ul class="list-group list-group-unbordered">
-                    <li class="list-group-item">
-                      <b>用户名</b> <a class="pull-right">{{ current_user.username }}</a>
-                    </li>
-                    <li class="list-group-item">
-                      <b>邮箱</b> <a class="pull-right">{{ current_user.email }}</a>
-                    </li>
-                    <li class="list-group-item">
-                      <b>手机号</b> <a class="pull-right">{{ current_user.mobile }}</a>
-                    </li>
-                  </ul>
-
-                  <a href="#" class="btn btn-primary btn-block"><b>用户设置</b></a>
-                </div><!-- /.box-body -->
-              </div><!-- /.box -->
+              <div class="flip-container">
+              <div id="card">
+                <figure class="front">
+                  {% include "admin/user/profile/_profile_index.html" %}
+                </figure>
+                <figure class="back">
+                  {% include "admin/user/profile/_profile_form.html" %}
+                </figure>
+              </div>
+              </div>
 
               <!-- About Me Box -->
+              {#
               <div class="box box-primary">
                 <div class="box-header with-border">
                   <h3 class="box-title">About Me</h3>
@@ -61,16 +110,18 @@
                   {% endfor %}
                 </div><!-- /.box-body -->
               </div><!-- /.box -->
+              #}
             </div><!-- /.col -->
             <div class="col-md-9">
               <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                   <li class="active"><a href="#activity" data-toggle="tab">待处理任务列表</a></li>
-                  <!--li><a href="#timeline" data-toggle="tab">Timeline</a></li>
-                  <li><a href="#settings" data-toggle="tab">Settings</a></li-->
+                  <li><a href="#timeline" data-toggle="tab">历史操作列表</a></li>
+                  <!--li><a href="#settings" data-toggle="tab">Settings</a></li-->
                 </ul>
                 <div class="tab-content">
                   <div class="active tab-pane" id="activity">
+              <button class="btn btn-primary" onclick="do_flip_card()">翻转卡片</button>
                     {% for task in apply_tasks_res.data %}
                       {% if "pro_resource_apply.view" in current_user.current_perms %}
                         {{ get_task_module(task, STATUS_RESOURCE, user=task.user, imchecker=False) }}
@@ -85,76 +136,47 @@
                       <!-- timeline time label -->
                       <li class="time-label">
                         <span class="bg-red">
-                          10 Feb. 2014
+                          {% set act_histories = act_histories_res.data %}
+                          {% if act_histories.count > 0 %}
+                            {% set last_act = act_histories[0] %}
+                            {{ last_act.create_time }}
+                          {% endif %}
                         </span>
                       </li>
                       <!-- /.timeline-label -->
                       <!-- timeline item -->
+                      {% if act_histories.count > 10 %}
+                        {% for act in act_histories_res.data[:5] %}
+                        {{ get_history_module(act) }}
+                        {% endfor %}
                       <li>
-                        <i class="fa fa-envelope bg-blue"></i>
+                        <i class="fa fa-envelope bg-aqua"></i>
                         <div class="timeline-item">
-                          <span class="time"><i class="fa fa-clock-o"></i> 12:05</span>
-                          <h3 class="timeline-header"><a href="#">Support Team</a> sent you an email</h3>
-                          <div class="timeline-body">
-                            Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
-                            weebly ning heekya handango imeem plugg dopplr jibjab, movity
-                            jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
-                            quora plaxo ideeli hulu weebly balihoo...
-                          </div>
-                          <div class="timeline-footer">
-                            <a class="btn btn-primary btn-xs">Read more</a>
-                            <a class="btn btn-danger btn-xs">Delete</a>
-                          </div>
+                          <span class="time"></span>
+                          <h3 class="timeline-header no-border"> ...  </h3>
                         </div>
                       </li>
-                      <!-- END timeline item -->
-                      <!-- timeline item -->
-                      <li>
-                        <i class="fa fa-user bg-aqua"></i>
-                        <div class="timeline-item">
-                          <span class="time"><i class="fa fa-clock-o"></i> 5 mins ago</span>
-                          <h3 class="timeline-header no-border"><a href="#">Sarah Young</a> accepted your friend request</h3>
-                        </div>
-                      </li>
-                      <!-- END timeline item -->
-                      <!-- timeline item -->
-                      <li>
-                        <i class="fa fa-comments bg-yellow"></i>
-                        <div class="timeline-item">
-                          <span class="time"><i class="fa fa-clock-o"></i> 27 mins ago</span>
-                          <h3 class="timeline-header"><a href="#">Jay White</a> commented on your post</h3>
-                          <div class="timeline-body">
-                            Take me to your leader!
-                            Switzerland is small and neutral!
-                            We are more like Germany, ambitious and misunderstood!
-                          </div>
-                          <div class="timeline-footer">
-                            <a class="btn btn-warning btn-flat btn-xs">View comment</a>
-                          </div>
-                        </div>
-                      </li>
-                      <!-- END timeline item -->
+                        {% for act in act_histories_res.data[-5:] %}
+                        {{ get_history_module(act) }}
+                        {% endfor %}
+                      {% else %}
+
+                        {% for act in act_histories_res.data %}
+                        {{ get_history_module(act) }}
+                        {% endfor %}
+                      {% endif %}
                       <!-- timeline time label -->
                       <li class="time-label">
                         <span class="bg-green">
-                          3 Jan. 2014
+                          {% set act_histories = act_histories_res.data %}
+                          {% if act_histories.count > 0 %}
+                            {% set first_act = act_histories[-1] %}
+                            {{ first_act.create_time }}
+                          {% endif %}
                         </span>
                       </li>
                       <!-- /.timeline-label -->
                       <!-- timeline item -->
-                      <li>
-                        <i class="fa fa-camera bg-purple"></i>
-                        <div class="timeline-item">
-                          <span class="time"><i class="fa fa-clock-o"></i> 2 days ago</span>
-                          <h3 class="timeline-header"><a href="#">Mina Lee</a> uploaded new photos</h3>
-                          <div class="timeline-body">
-                            <img src="http://placehold.it/150x100" alt="..." class="margin">
-                            <img src="http://placehold.it/150x100" alt="..." class="margin">
-                            <img src="http://placehold.it/150x100" alt="..." class="margin">
-                            <img src="http://placehold.it/150x100" alt="..." class="margin">
-                          </div>
-                        </div>
-                      </li>
                       <!-- END timeline item -->
                       <li>
                         <i class="fa fa-clock-o bg-gray"></i>
@@ -222,6 +244,28 @@
               form: "#task_confirm_form",
               button: "#do_confirm_btn",
               onTimeout: function(){ do_confirm_start_date();}
+          })
+        }
+        function do_flip_card(){
+          if($("#card").hasClass("flipped")){
+            $("#card").removeClass("flipped");
+          }else{
+            $("#card").addClass("flipped");
+          }
+        }
+        function do_profile(options){
+          generate_ajax_post({
+              pjax_container: false,
+              form: "#profile_form",
+              button: "#profile_form_btn",
+              onSuccess: function(response){
+                console.log(response)
+                $("#card").find("figure.front").html(response.data.tmpl);
+                var user = response.data.user;
+                $("#head_current_user").text(user.username || user.email || user.mobile);
+                do_flip_card()
+              }//,
+              //onTimeout: function(){ do_profile();}
           })
         }
         </script>

@@ -63,22 +63,33 @@ class ActHistoryService(BaseService):
                 histories = resource.act_histories
                 if len(histories) > 0:
                     last_history = histories[-1]
-                    logger.info("#"*60)
-                    logger.info(u"STATUS:%s(%s) - USER_ID:%s - CHECKER_ID:%s" % (last_history.status, STATUS_RESOURCE.get(last_history.status).value, last_history.user_id, last_history.checker_id))
-                    logger.info("#"*60)
                     if "pro_resource_apply.check" in current_perms:
-                         if last_history.status in [STATUS_RESOURCE.APPLIED,
+                        if last_history.status in [STATUS_RESOURCE.APPLIED,
                                                     STATUS_RESOURCE.PAYED, 
                                                     STATUS_RESOURCE.CONFIRMPAYED]:
-                            task_list.append(last_history)
+                            if last_history.status == STATUS_RESOURCE.CONFIRMPAYED:
+                                if last_history.checker_id == 0: 
+
+                                    task_list.append(last_history)
+                            else:
+                                task_list.append(last_history)
                     if "pro_resource_apply.view" in current_perms.keys():
-                         if last_history.status in [STATUS_RESOURCE.REFUSED,
+                        if last_history.status in [STATUS_RESOURCE.REFUSED,
                                                     STATUS_RESOURCE.UNKNOWN,
                                                     STATUS_RESOURCE.REVOKED,
                                                     STATUS_RESOURCE.CHECKED,
                                                     STATUS_RESOURCE.CONFIRMPAYED]:
-                            task_list.append(last_history)
+                            if last_history.status == STATUS_RESOURCE.CONFIRMPAYED:
+                                if not last_history.res_apply.start_date:
+                                    task_list.append(last_history)
+                            else:
+                                task_list.append(last_history)
+
             logger.info(task_list)
+            for last_history in task_list:
+                logger.info("#"*60)
+                logger.info(u"STATUS:%s(%s) - USER_ID:%s - CHECKER_ID:%s" % (last_history.status, STATUS_RESOURCE.get(last_history.status).value, last_history.user_id, last_history.checker_id))
+                logger.info("#"*60)
             return self.success(data=task_list)
         else:
             return NotFoundError()
