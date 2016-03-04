@@ -36,6 +36,25 @@ class ActHistoryService(BaseService):
             return NotFoundError()
 
     @thrownException
+    def get_last_apply(self):
+        logger.info("------[get_profile]------")
+        current_user = self.handler.current_user
+        if current_user:
+            last_apply = self.db.query(
+                Act_Pro_History
+            ).filter(
+                Act_Pro_History.user_id == current_user.id
+            ).order_by(
+                Act_Pro_History.create_time.desc()
+            ).first()
+
+            # res = project.as_dict()
+            # logger.info("project: %s" % res)
+            return self.success(data=last_apply)
+        else:
+            return NotFoundError()
+
+    @thrownException
     def get_res_tasks(self):
         logger.info("------[get_res_tasks]------")
         current_user = self.handler.current_user

@@ -26,12 +26,14 @@ class ProfileHandler(AuthHandler):
         svc = ActHistoryService(self, kwargs)
         act_histories_res = svc.get_list()
         apply_tasks_res = svc.get_res_tasks()
+        last_apply_res = svc.get_last_apply()
         if isinstance(act_histories_res, Exception):
             raise act_histories_res
         data = {
             "STATUS_RESOURCE": STATUS_RESOURCE,
             "act_histories_res": act_histories_res,
-            "apply_tasks_res": apply_tasks_res
+            "apply_tasks_res": apply_tasks_res,
+            "last_apply_res": last_apply_res,
         }
         return data
 
