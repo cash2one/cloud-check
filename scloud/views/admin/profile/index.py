@@ -22,9 +22,8 @@ from scloud.utils.error import SystemError
 
 @url("/user/profile", name="user_profile", active="user_profile")
 class ProfileHandler(AuthHandler):
-    @unblock
-    def get(self):
-        svc = ActHistoryService(self)
+    def get_index_page(self, **kwargs):
+        svc = ActHistoryService(self, kwargs)
         act_histories_res = svc.get_list()
         apply_tasks_res = svc.get_res_tasks()
         if isinstance(act_histories_res, Exception):
@@ -34,15 +33,25 @@ class ProfileHandler(AuthHandler):
             "act_histories_res": act_histories_res,
             "apply_tasks_res": apply_tasks_res
         }
+        return data
+
+    @unblock
+    def get(self):
+        data = self.get_index_page()
         return self.render_to_string("admin/user/profile/index.html", **data)
 
 
 @url("/task/(?P<task_id>\d+)/confirm_start_date", name="task_confirm", active="user_profile")
-class TaskConfirmHandler(AuthHandler):
+class TaskConfirmHandler(ProfileHandler):
     @unblock
     def post(self, **kwargs):
         svc = ActHistoryService(self, kwargs)
         confirm_res = svc.confirm_start_date()
         if isinstance(confirm_res, Exception):
             raise confirm_res
-        return simplejson.dumps(self.success(data=confirm_res))
+        self.add_message(u"已确认用户信息")
+        data = self.get_index_page(**kwargs)
+        tmpl = self.render_to_string("admin/user/profile/index_pjax.html", **data)
+        logger.info(tmpl)
+        return simplejson.dumps(self.success(data=tmpl))
+
