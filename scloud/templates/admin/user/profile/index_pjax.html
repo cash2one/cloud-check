@@ -1,4 +1,7 @@
 
+{% from "admin/base/base_macros.html" import get_task_module with context %}
+{% from "admin/base/base_macros.html" import get_task_module1 with context %}
+{% import "admin/base/base_macros.html" as mbase %}
         {% set current_user = handler.current_user %}
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -56,25 +59,6 @@
                   <p class="text-muted">{{ act.desc }}</p>
                   <hr>
                   {% endfor %}
-
-                  <!--strong><i class="fa fa-map-marker margin-r-5"></i> Location</strong>
-                  <p class="text-muted">Malibu, California</p>
-
-                  <hr>
-
-                  <strong><i class="fa fa-pencil margin-r-5"></i> Skills</strong>
-                  <p>
-                    <span class="label label-danger">UI Design</span>
-                    <span class="label label-success">Coding</span>
-                    <span class="label label-info">Javascript</span>
-                    <span class="label label-warning">PHP</span>
-                    <span class="label label-primary">Node.js</span>
-                  </p>
-
-                  <hr>
-
-                  <strong><i class="fa fa-file-text-o margin-r-5"></i> Notes</strong>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fermentum enim neque.</p-->
                 </div><!-- /.box-body -->
               </div><!-- /.box -->
             </div><!-- /.col -->
@@ -87,83 +71,13 @@
                 </ul>
                 <div class="tab-content">
                   <div class="active tab-pane" id="activity">
-                    <!-- Post -->
                     {% for task in apply_tasks_res.data %}
-                    <div class="post clearfix">
-                      <div class='user-block'>
-                          {% if "pro_resource_apply.view" in current_user.current_perms %}
-                          {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.res_apply.start_date %}
-                          {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and not task.res_apply.start_date %}
-                          <img class='img-circle img-bordered-sm' src="{{ handler.static_url('default/dist/img/user2-160x160.jpg') }}" alt='user image'>
-                          <span class='username'>
-                          <a href="#">管理员：{{ task.checker.email or task.checker.mobile or task.checker.username or "匿名用户" }}</a>
-                          </span>
-                          <span class='description'>Sent you a message - {{ task.create_time|getGoodTime }}</span>
-                          {% endif %}
-                          {% else %}
-                          {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id == 0 %}
-                          <img class='img-circle img-bordered-sm' src="{{ handler.static_url('default/dist/img/user2-160x160.jpg') }}" alt='user image'>
-                          <span class='username'>
-                          <a href="#">用户：{{ task.user.email or task.user.mobile or task.user.username or "匿名用户" }}</a>
-                          </span>
-                          <span class='description'>Sent you a message - {{ task.create_time|getGoodTime }}</span>
-                          {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id != 0 %}
-                          {% else %}
-                          <img class='img-circle img-bordered-sm' src="{{ handler.static_url('default/dist/img/user2-160x160.jpg') }}" alt='user image'>
-                          <span class='username'>
-                          <a href="#">用户：{{ task.user.email or task.user.mobile or task.user.username or "匿名用户" }}</a>
-                          </span>
-                          <span class='description'>Sent you a message - {{ task.create_time|getGoodTime }}</span>
-                          {% endif %}
-                          {% endif %}
-                      </div><!-- /.user-block -->
-                      <p>
-                        {% if "pro_resource_apply.check" in current_user.current_perms %}
-                          {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id == 0 %}
-                          <form id="task_confirm_form" action="{{ reverse_url("task_confirm", task.id) }}">
-                          {{ handler.xsrf_form_html() }}
-                          <input type="hidden" name="task_id" value="{{ task.id }}">
-                          </form>
-                          [{{ task.checker_id }}]
-                          (用户{{ STATUS_RESOURCE.get(task.status).value.upper() }})
-                          {{ task.desc }}
-                          <a data-pjax id="do_confirm_btn" href='javascript:;' onclick="do_confirm_start_date()" class='pull-right btn-box-tool'><i class='fa fa-check'> 确认</i></a>
-                          {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id != 0 %}
-                          {% else %}
-                          [{{ task.checker_id }}]
-                          (用户{{ STATUS_RESOURCE.get(task.status).value.upper() }})
-                          {{ task.desc }}
-                          <a data-pjax href='{{ reverse_url("resource_check_list") }}?res_status={{ task.status }}' class='pull-right btn-box-tool'><i class='fa fa-check'> 去审核</i></a>
-                          {% endif %}
-                        {% else %}
-                          {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.res_apply.start_date %}
-                          {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and not task.res_apply.start_date %}
-                          [{{ task.checker_id }}]
-                          (管理员{{ STATUS_RESOURCE.get(task.status).value.upper() }})
-                          {{ task.desc }}
-                          <a data-pjax href='{{ reverse_url("guide") }}' class='pull-right btn-box-tool'><i class='fa fa-check'> 去处理</i></a>
-                          {% else %}
-                          [{{ task.checker_id }}]
-                          (管理员{{ STATUS_RESOURCE.get(task.status).value.upper() }})
-                          {{ task.desc }}
-                          <a data-pjax href='{{ reverse_url("guide") }}' class='pull-right btn-box-tool'><i class='fa fa-check'> 去处理</i></a>
-                          {% endif %}
-                        {% endif %}
-                      </p>
-
-                      <!--form class='form-horizontal'>
-                        <div class='form-group margin-bottom-none'>
-                          <div class='col-sm-9'>
-                            <input class="form-control input-sm" placeholder="Response">
-                          </div>                          
-                          <div class='col-sm-3'>
-                            <button class='btn btn-danger pull-right btn-block btn-sm'>Send</button>
-                          </div>                          
-                        </div>                        
-                      </form-->
-                    </div><!-- /.post -->
+                      {% if "pro_resource_apply.view" in current_user.current_perms %}
+                        {{ get_task_module(task, STATUS_RESOURCE, user=task.user, imchecker=False) }}
+                      {% elif "pro_resource_apply.check" in current_user.current_perms %}
+                        {{ get_task_module(task, STATUS_RESOURCE, user=task.user, imchecker=True) }}
+                      {% endif %}
                     {% endfor %}
-
                   </div><!-- /.tab-pane -->
                   <div class="tab-pane" id="timeline">
                     <!-- The timeline -->

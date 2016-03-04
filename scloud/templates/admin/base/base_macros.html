@@ -8,50 +8,70 @@
 {%- endmacro %}
 
 {% macro get_task_module(task, STATUS_RESOURCE, user=None, checker=None, imchecker=True) -%}
+  {% if imchecker %}
+    {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id == 0 %}
+      1
+      {{ user_info(task, user=user, imchecker=imchecker, content=content_check_sure(task)) }}
+    {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id != 0 %}
+    {% else %}
+      2
+      {{ user_info(task, user=user, imchecker=imchecker, content=content_check(task)) }}
+    {% endif %}
+  {% else %}
+
+    {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.res_apply.start_date %}
+    {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and not task.res_apply.start_date %}
+    3
+    {{ user_info(task, checker=checker, imchecker=imchecker, content=content_user(task)) }}
+    {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id != 0 %}
+    {% else %}
+    4
+      {{ user_info(task, checker=checker, imchecker=imchecker, content=content_user(task)) }}
+    {% endif %}
+  {% endif %}
+{%- endmacro %}
+
+{% macro user_info(task, user=None, checker=None, imchecker=True, content="") -%}
 <div class="post">
   <div class="user-block">
     <img class="img-circle img-bordered-sm" src="{{ handler.static_url('default/dist/img/user2-160x160.jpg') }} " alt="user image">
     <span class='username'>
       {% if imchecker %}
-      <a href="#">管理员：{{ checker.email or checker.mobile or checker.username or "匿名用户" }}</a>
+        <a href="#">用户：{{ user.email or user.mobile or user.username or "匿名用户" }}</a>
       {% elif user %}
-      <a href="#">用户：{{ user.email or user.mobile or user.username or "匿名用户" }}</a>
-      {% endif }
+        <a href="#">管理员：{{ checker.email or checker.mobile or checker.username or "匿名用户" }}</a>
+      {% endif %}
     </span>
     <span class='description'>Sent you a message - {{ task.create_time|getGoodTime }}</span>
   </div><!-- /.user-block -->
   <p>
-    {% if imchecker %}
-        {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id == 0 %}
-        <form id="task_confirm_form" action="{{ reverse_url("task_confirm", task.id) }}">
-        {{ handler.xsrf_form_html() }}
-        <input type="hidden" name="task_id" value="{{ task.id }}">
-        </form>
-        [{{ task.checker_id }}]
-        (用户{{ STATUS_RESOURCE.get(task.status).value.upper() }})
-        {{ task.desc }}
-        <a data-pjax id="do_confirm_btn" href='javascript:;' onclick="do_confirm_start_date()" class='pull-right btn-box-tool'><i class='fa fa-check'> 确认</i></a>
-        {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id != 0 %}
-        {% else %}
+    {{ content }}
+  </p>
+</div><!-- /.post -->
+{%- endmacro %}
+
+{% macro content_check_sure(task) -%}
+  <form id="task_confirm_form" action="{{ reverse_url('task_confirm', task.id) }}">
+  {{ handler.xsrf_form_html() }}
+  <input type="hidden" name="task_id" value="{{ task.id }}">
+  </form>
+  [{{ task.checker_id }}]
+  (用户{{ STATUS_RESOURCE.get(task.status).value.upper() }})
+  {{ task.desc }}
+  <a data-pjax id="do_confirm_btn" href='javascript:;' onclick="do_confirm_start_date()" class='pull-right btn-box-tool'><i class='fa fa-check'> 确认</i></a>
+{%- endmacro %}
+
+{% macro content_check(task) -%}
         [{{ task.checker_id }}]
         (用户{{ STATUS_RESOURCE.get(task.status).value.upper() }})
         {{ task.desc }}
         <a data-pjax href='{{ reverse_url("resource_check_list") }}?res_status={{ task.status }}' class='pull-right btn-box-tool'><i class='fa fa-check'> 去审核</i></a>
-        {% endif %}
-    {% elif user %}
-        {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.res_apply.start_date %}
-        {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and not task.res_apply.start_date %}
-        [{{ task.checker_id }}]
-        (管理员{{ STATUS_RESOURCE.get(task.status).value.upper() }})
-        {{ task.desc }}
-        <a data-pjax href='{{ reverse_url("guide") }}' class='pull-right btn-box-tool'><i class='fa fa-check'> 去处理</i></a>
-        {% else %}
-        [{{ task.checker_id }}]
-        (管理员{{ STATUS_RESOURCE.get(task.status).value.upper() }})
-        {{ task.desc }}
-        <a data-pjax href='{{ reverse_url("guide") }}' class='pull-right btn-box-tool'><i class='fa fa-check'> 去处理</i></a>
-        {% endif %}
-    {% endif %}
-  </p>
-</div><!-- /.post -->
 {%- endmacro %}
+
+{% macro content_user(task) -%}
+        [{{ task.checker_id }}]
+        (管理员{{ STATUS_RESOURCE.get(task.status).value.upper() }})
+        {{ task.desc }}
+        <a data-pjax href='{{ reverse_url("guide") }}' class='pull-right btn-box-tool'><i class='fa fa-check'> 去处理</i></a>
+{%- endmacro %}
+
