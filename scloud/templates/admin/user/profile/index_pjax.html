@@ -37,6 +37,9 @@
              -o-transform: rotateY( 180deg );
                 transform: rotateY( 180deg );
       }
+      /*#card.flipped .front {
+        visibility: hidden;
+      }*/
 
       #card figure {
         display: block;
@@ -121,7 +124,6 @@
                 </ul>
                 <div class="tab-content">
                   <div class="active tab-pane" id="activity">
-              <button class="btn btn-primary" onclick="do_flip_card()">翻转卡片</button>
                     {% for task in apply_tasks_res.data %}
                       {% if "pro_resource_apply.view" in current_user.current_perms %}
                         {{ get_task_module(task, STATUS_RESOURCE, user=task.user, imchecker=False) }}

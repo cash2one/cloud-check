@@ -1,13 +1,11 @@
               <!-- Profile Image -->
-              <div class="box box-primary">
+              <div class="box box-primary" style="min-height:398px;">
                 <div class="box-header with-border">
                   <h3 class="box-title">用户信息设置</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body box-profile">
-                  <p>
-                  </p>
                   <!--img class="profile-user-img img-responsive img-circle" src="{{ handler.static_url('default/dist/img/user2-160x160.jpg') }}" alt="User profile picture"-->
-                  <form id="profile_form" data-pjax action="{{ reverse_url('user_profile') }}" role="form">
+                  <form id="profile_form" data-pjax action="{{ reverse_url('user_profile') }}" role="form" style="margin-bottom:51px">
                   {{ handler.xsrf_form_html() }}
                   <input type="hidden" name="user_id" value="{{ current_user.id }}">
                     <div class="form-group">
@@ -24,7 +22,7 @@
                     </div>
                   </form>
 
-                  <a data-pjax href="javascript:;" onclick="do_flip_card()" class="btn btn-primary btn-block"><b>返 回</b></a>
                   <a data-pjax id="profile_form_btn" href="javascript:;" onclick="do_profile()" class="btn btn-warning btn-block"><b>修 改</b></a>
+                  <a data-pjax href="javascript:;" onclick="do_flip_card()" class="btn btn-primary btn-block"><b>返 回</b></a>
                 </div><!-- /.box-body -->
               </div><!-- /.box -->
