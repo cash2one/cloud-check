@@ -139,7 +139,7 @@
                       <li class="time-label">
                         <span class="bg-red">
                           {% set act_histories = act_histories_res.data %}
-                          {% if act_histories.count > 0 %}
+                          {% if act_histories.count() > 0 %}
                             {% set last_act = act_histories[0] %}
                             {{ last_act.create_time }}
                           {% endif %}
@@ -147,7 +147,7 @@
                       </li>
                       <!-- /.timeline-label -->
                       <!-- timeline item -->
-                      {% if act_histories.count > 10 %}
+                      {% if act_histories.count() > 10 %}
                         {% for act in act_histories_res.data[:5] %}
                         {{ get_history_module(act) }}
                         {% endfor %}
@@ -171,7 +171,7 @@
                       <li class="time-label">
                         <span class="bg-green">
                           {% set act_histories = act_histories_res.data %}
-                          {% if act_histories.count > 0 %}
+                          {% if act_histories.count() > 0 %}
                             {% set first_act = act_histories[-1] %}
                             {{ first_act.create_time }}
                           {% endif %}
