@@ -66,10 +66,23 @@
               </a>
               <ul class="treeview-menu">
                 <li><a data-pjax name="user_profile" href="{{ reverse_url('user_profile') }}"><i class="fa fa-circle-o"></i> 用户信息</a></li>
-                <li><a href="#"><i class="fa fa-circle-o"></i> 修改密码</a></li>
+                <li><a data-pjax name="user_resetpass" href="{{ reverse_url('user_resetpass') }}"><i class="fa fa-circle-o"></i> 修改密码</a></li>
               </ul>
             </li>
             <li class="treeview">
+              <a href="#">
+                <i class="fa fa-laptop"></i>
+                <span>默认设置</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a data-pjax name="defaultset.env_info" href="{{ reverse_url('defaultset.env_info' )}}"><i class="fa fa-circle-o"></i> 环境设置</a></li>
+                <!--li><a data-pjax name="defaultset.env_info" href="{{ reverse_url('defaultset.env_info' )}}"><i class="fa fa-circle-o"></i> 外部IP设置</a></li>
+                <li><a data-pjax name="defaultset.env_info" href="{{ reverse_url('defaultset.env_info' )}}"><i class="fa fa-circle-o"></i> 资源默认值</a></li>
+                <li><a data-pjax name="defaultset.env_info" href="{{ reverse_url('defaultset.env_info' )}}"><i class="fa fa-circle-o"></i> 资源默认费用</a></li-->
+              </ul>
+            </li>
+            <!--li class="treeview">
               <a href="#">
                 <i class="fa fa-laptop"></i>
                 <span>联系我们</span>
@@ -79,7 +92,7 @@
                 <li><a href="#"><i class="fa fa-circle-o"></i> 企业介绍</a></li>
                 <li><a href="#"><i class="fa fa-circle-o"></i> 招聘信息</a></li>
               </ul>
-            </li>
+            </li-->
           </ul>
         </section>
         <!-- /.sidebar -->
@@ -87,6 +100,6 @@
 <script type="text/javascript">
 $(function(){
     $(document).find('ul.sidebar-menu').find('li').removeClass('active');
-    $(document).find('ul.sidebar-menu').find('a[name={{ handler.kwargs.get("active", "") }}]').parent().addClass('active');
+    $(document).find('ul.sidebar-menu').find('a[name=\'{{ handler.kwargs.get("active", "") }}\']').parent().addClass('active');
 });
 </script>

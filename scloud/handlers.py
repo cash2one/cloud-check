@@ -16,8 +16,26 @@ from scloud.config import CONF, logger, logThrown
 from scloud.models.base import DataBaseService
 from scloud.async_services.svc_act import task_post_action
 from sqlalchemy.exc import SQLAlchemyError
-from scloud.utils.error import ERROR
+from scloud.utils.error_code import ERR
+from scloud.utils.error import SystemError
 
+
+def check_exception(method):
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        logger.info("-"*60)
+        logger.error("self.method: %s" % self.request.method)
+        logger.info("self.args: %s" % self.args)
+        if self.request.method == "POST":
+            logger.info("-"*60)
+            logger.info(self.args)
+            if "_xsrf" not in self.args:
+                logger.error("_xsrf error")
+                raise SystemError(ERROR.xsrf_err.errcode, ERROR.xsrf_err.errvalue)
+            logger.info("-"*60)
+        logger.info("-"*60)
+        return method(self, *args, **kwargs)
+    return wrapper
 
 class HandlerMeta(type):
     """
@@ -30,7 +48,7 @@ class HandlerMeta(type):
             if method in dct:
                 # 检查url地址中的不合法参数，防跨域调用js
                 # 检查函数运行时错误，遇到错误直接抛出
-                # dct[method] = check_exception(dct[method])
+                dct[method] = check_exception(dct[method])
                 pass
         return type.__new__(mcs, name, bases, dct)
 
@@ -136,7 +154,7 @@ class Handler(BaseHandler):
             "handler": self,
             "request": self.request,
             "reverse_url": self.application.reverse_url,
-            "ERROR": ERROR,
+            "ERR": ERR,
             "s": s+"&" if s else ""
         })
         # logger.info("\t [render_to_string kwargs]: %s" % kwargs)

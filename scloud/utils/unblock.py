@@ -14,17 +14,6 @@ from scloud.utils.error_code import ERROR
 EXECUTOR = ThreadPoolExecutor(max_workers=4)
 
 
-def return_future(handler, ):
-    if self._finished:
-        logger.info("+++++++++++++++ future.result() +++++++++++++++")
-        logger.info(future.result())
-        return future.result()
-    else:
-        # logger.info("+++++++++++++++ future.result() +++++++++++++++")
-        # logger.info(future.result())
-        self.write(future.result())
-        self.finish()
-
 def unblock(f):
 
     @tornado.web.asynchronous

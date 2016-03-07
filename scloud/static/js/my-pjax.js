@@ -64,7 +64,7 @@ $(function(){
         $(document).find('title').text(first + ' - ' + title);
         var active = decodeURI(options.getResponseHeader('active'));
         $(document).find('ul.sidebar-menu').find('li').removeClass('active');
-        $(document).find('ul.sidebar-menu').find('a[name='+active+']').parent().addClass('active');
+        $(document).find('ul.sidebar-menu').find('a[name="'+active+'"]').parent().addClass('active');
 
         console.log('end');
         hide_loading();

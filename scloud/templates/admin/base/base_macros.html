@@ -7,6 +7,30 @@
 {% endif %}
 {%- endmacro %}
 
+{% macro form_input(label, name, _type="text", value="", res=None, check_codes=[]) -%}
+  <div class="form-group{% if res and res.return_code in check_codes %} has-warning{% endif %}">
+    <label for="{{ name }}" class="col-sm-2 control-label">{{ label }}</label>
+    <div class="col-sm-10">
+      <input type="{{ _type }}" class="form-control" id="{{ name }}" name="{{ name }}" placeholder="请输入{{ label }}" value="{{ value }}">
+      {% if res and res.return_code in check_codes %}
+      <label class="control-label" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
+      {% endif %}
+    </div>
+  </div>
+{%- endmacro %}
+
+{% macro form_textarea(label, name, value="", res=None, check_codes=[]) -%}
+  <div class="form-group{% if res and res.return_code in check_codes %} has-warning{% endif %}">
+    <label for="inputPassword3" class="col-sm-2 control-label">环境说明</label>
+    <div class="col-sm-10">
+    <textarea class="form-control" id="{{ name }}"name="{{ name }}" placeholder="请输入{{ label }}">{{ value }}</textarea>
+    {% if res and res.return_code in check_codes %}
+    <label class="control-label" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
+    {% endif %}
+    </div>
+  </div>
+{%- endmacro %}
+
 {% macro get_task_module(task, STATUS_RESOURCE, user=None, checker=None, imchecker=True) -%}
   {% if imchecker %}
     {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id == 0 %}

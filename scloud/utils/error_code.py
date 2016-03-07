@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from collections import namedtuple
+from tornado.util import ObjectDict
+from code import interact
 
 error = namedtuple("operate", ["errvalue", "errcode"])
 
@@ -8,6 +10,7 @@ error = namedtuple("operate", ["errvalue", "errcode"])
 class ERROR(object):
     system_err = error(errcode=-999999, errvalue=u"系统错误")
     not_found_err = error(errcode=-999404, errvalue=u"对不起！您正在访问的数据资源未找到")
+    xsrf_err = error(errcode=-999403, errvalue=u"缺少xsrf参数，禁止提交表单")
     # 注册和登录
     username_empty_err = error(errcode=-100001, errvalue=u"用户名不能为空")
     username_err       = error(errcode=-100002, errvalue=u"该用户名不存在")
@@ -70,7 +73,17 @@ class ERROR(object):
     res_start_err = error(errcode=-100109, errvalue=u"当前状态不允许对申请资源配额启用")
     res_close_err = error(errcode=-100110, errvalue=u"当前状态不允许对申请资源配额关闭")
 
+    env_name_empty_err = error(errcode=-100120, errvalue=u"环境名称不能为空")
+    env_desc_empty_err = error(errcode=-100121, errvalue=u"环境说明不能为空")
 
+
+ERR = ObjectDict()
+for attr in dir(ERROR):
+    err = getattr(ERROR, attr)
+    if isinstance(err, error):
+        setattr(ERR, attr.upper(), err.errcode)
+        setattr(ERR, str(err.errcode), err.errvalue)
 
 if __name__ == '__main__':
-    print ERROR.username_err.keycode, ERROR.username_err.value
+    interact(local=locals())
+    print ERROR.username_err
