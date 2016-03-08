@@ -1,5 +1,6 @@
-        <p class="login-box-msg">登录</p>
-        <form action="{{ reverse_url('login') }}" method="post" onsubmit="return check_form()">
+          <p class="login-box-msg"></p>
+        <form id="login_form" action="{{ reverse_url('login') }}" method="post" onsubmit="return check_form()">
+          <p class="login-box-msg">登录</p>
           {{ handler.xsrf_form_html() }}
           <input type="hidden" name="next" value="{{ handler.args.get('next', '')}}">
           <div class="form-group has-feedback">
@@ -33,10 +34,10 @@
               <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
             </div><!-- /.col -->
           </div>
-        </form>
-
         <!-- <a href="#">I forgot my password</a><br> -->
         <a data-pjax href="{{ reverse_url('register') }}" class="text-center">注册新用户</a>
+        </form>
+
     <script type="text/javascript">
       $(function () {
         $('input').iCheck({

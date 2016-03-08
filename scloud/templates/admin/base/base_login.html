@@ -23,17 +23,6 @@
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-  </head>
-  <body class="hold-transition login-page">
-    <div class="login-box">
-      <div class="login-logo">
-        <a href="{{ reverse_url('pt_user') }}"><b>{{ CONF('APP_CN') }}</b>SCLOUD</a>
-      </div><!-- /.login-logo -->
-      {% block content %}
-      {% endblock %}
-    </div><!-- /.login-box -->
-
-    <!-- jQuery 2.1.4 -->
     <script src="{{ handler.static_url('default/plugins/jQuery/jQuery-2.1.4.min.js') }}"></script>
     <!-- Bootstrap 3.3.5 -->
     <script src="{{ handler.static_url('default/bootstrap/js/bootstrap.min.js') }}"></script>
@@ -46,6 +35,17 @@
     <script src="{{ handler.static_url('js/sonic.js') }}"></script>
     <script src="{{ handler.static_url('js/my-pjax.js') }}"></script>
     <script src="{{ handler.static_url('js/echo-strap-0.0.1.js') }}"></script>
+  </head>
+  <body class="hold-transition login-page">
+    <div class="login-box">
+      <div class="login-logo">
+        <a href="{{ reverse_url('pt_user') }}"><b>{{ CONF('APP_CN') }}</b>SCLOUD</a>
+      </div><!-- /.login-logo -->
+      {% block content %}
+      {% endblock %}
+    </div><!-- /.login-box -->
+
+    <!-- jQuery 2.1.4 -->
     <script>
       $(function () {
         $('input').iCheck({

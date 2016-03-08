@@ -1,5 +1,6 @@
-  <p class="login-box-msg">注册新用户</p>
-  <form action="{{ reverse_url('register') }}" method="post" onsubmit="return check_form()">
+  <p class="login-box-msg"></p>
+  <form id="register_form" action="{{ reverse_url('register') }}" method="post" onsubmit="return check_form()">
+    <p class="login-box-msg">注册新用户</p>
     {{ handler.xsrf_form_html() }}
     <div class="form-group has-feedback">
       <input type="text" id="email" name="email" class="form-control" placeholder="邮箱" value="{{ handler.session.get('post_email', '') }}">
@@ -47,8 +48,8 @@
         <button type="submit" class="btn btn-primary btn-block btn-flat">注册</button>
       </div><!-- /.col -->
     </div>
-  </form>
   <a data-pjax href="{{ reverse_url('login') }}" class="text-center">已有帐号，直接登录</a>
+  </form>
 <script type="text/javascript">
 // $(function(){
 //   $("#email").inputmask('Regex', { regex: "[a-zA-Z0-9._%-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,4}" });
