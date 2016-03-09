@@ -31,6 +31,10 @@ class EnvInternetIpService(BaseService):
     def add_env_internet_ip(self):
         env_id = self.params.get("env_id")
         name = self.params.get("name")
+        try:
+            fee = float(self.params.get("fee") or 0)
+        except:
+            return self.failure(ERROR.env_internet_ip_fee_invalid_err)
         desc = self.params.get("desc")
         env = self.db.query(
             Env_Info
@@ -43,6 +47,7 @@ class EnvInternetIpService(BaseService):
             return self.failure(ERROR.env_internet_ip_name_empty_err)
         env_internet_ip, created = Env_Internet_Ip_Types.get_or_create_obj(self.db, env_id=env_id, name=name)
         if created:
+            env_internet_ip.fee = fee
             env_internet_ip.desc = desc
             self.db.add(env_internet_ip)
             return self.success(data=env_internet_ip)
@@ -54,6 +59,10 @@ class EnvInternetIpService(BaseService):
         env_id = self.params.get("env_id")
         env_internet_ip_id = self.params.get("env_internet_ip_id")
         name = self.params.get("name")
+        try:
+            fee = float(self.params.get("fee") or 0)
+        except:
+            return self.failure(ERROR.env_internet_ip_fee_invalid_err)
         desc = self.params.get("desc")
         env = self.db.query(
             Env_Info
@@ -82,6 +91,7 @@ class EnvInternetIpService(BaseService):
                 Env_Internet_Ip_Types.env_id == env_id,
             ).first()
             env_internet_ip.name = name
+            env_internet_ip.fee = fee
             env_internet_ip.desc = desc
             self.db.add(env_internet_ip)
             return self.success(data=env_internet_ip)

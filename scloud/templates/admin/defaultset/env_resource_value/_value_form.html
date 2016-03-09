@@ -21,7 +21,13 @@
           {{ base.form_input(Env_Resource_Value.out_ip.info.name, "out_ip", value=resource_value.out_ip, res=env_res, check_codes=[ERR.RES_OUT_IP_INVALID_ERR], label_col=4) }}
           {{ base.form_input(Env_Resource_Value.snapshot.info.name, "snapshot", value=resource_value.snapshot, res=env_res, check_codes=[ERR.RES_SNAPSHOT_INVALID_ERR], label_col=4) }}
           {{ base.form_input(Env_Resource_Value.loadbalance.info.name, "loadbalance", value=resource_value.loadbalance, res=env_res, check_codes=[ERR.RES_LOADBALANCE_INVALID_ERR], label_col=4) }}
-          {{ base.form_select(Env_Resource_Value.internet_ip.info.name, "internet_ip", value=resource_value.internet_ip, res=env_res, label_col=4) }}
+          {{ base.form_select(
+                Env_Resource_Value.internet_ip.info.name,
+                "internet_ip",
+                options = internet_ip_options,
+                value=resource_value.internet_ip,
+                res=resource_value_res,
+                label_col=4) }}
           {{ base.form_select(Env_Resource_Value.internet_ip_ssl.info.name, "internet_ip_ssl", options=[{"value": 1, "desc": "是"}, {"value": 0, "desc": "否"}], value=resource_value.internet_ip_ssl, res=env_res, label_col=4) }}
           </div><!-- /.box-body -->
           <div class="box-footer text-center">

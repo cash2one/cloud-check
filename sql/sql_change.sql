@@ -234,6 +234,7 @@ CREATE TABLE `env_internet_ip_types` (
     `env_id` INT(11) NOT NULL DEFAULT '0' COMMENT '项目环境ID',
     `name` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '外网IP分类名称',
     `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '外网IP分类描述',
+    `fee` float(11,2) NOT NULL DEFAULT '0.00' COMMENT '相关费用',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)

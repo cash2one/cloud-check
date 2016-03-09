@@ -21,6 +21,7 @@ class Env_Internet_Ip_Types(BaseModel, BaseModelMixin):
     env_id = Column(Integer, ForeignKey('env_info.id'), default=0)
     name = Column(Unicode, unique=True, default=u'', info={"name": u"互联网IP分类名称", "placeholder": u"如单线、双线等"})
     desc = Column(Unicode, default=u'', info={"name": "互联网IP分类描述"})
+    fee = Column(Float, default=0.00, info={"name": u"相关费用（元）"})
     env = relationship("Env_Info", backref="env_internet_ip_types")
 
 

@@ -78,6 +78,7 @@ class ERROR(object):
 
     env_internet_ip_name_empty_err = error(errcode=-100140, errvalue=u"互联网IP类型名称不能为空")
     env_internet_ip_name_duplicate_err= error(errcode=-100141, errvalue=u"互联网IP类型名称已经存在，不能重复")
+    env_internet_ip_fee_invalid_err= error(errcode=-100142, errvalue=u"费用格式不合法")
 
 
 ERR = ObjectDict()

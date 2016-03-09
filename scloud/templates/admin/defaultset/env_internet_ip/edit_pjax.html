@@ -2,6 +2,7 @@
 {% import "admin/base/base_macros.html" as base %}
 {% block edit_content %}
               {% set name_value = env_internet_ip_res.data.name or handler.args.get("name", "") %}
+              {% set fee_value = "{:,.2f}".format((env_internet_ip_res.data.fee or handler.args.get("fee", "0.00"))|float) %}
               {% set desc_value = env_internet_ip_res.data.desc or handler.args.get("desc", "") %}
               <div class="box box-primary">
                 <div class="box-header with-border">
@@ -27,6 +28,13 @@
                           value=name_value,
                           res=env_internet_ip_res,
                           check_codes=[ERR.ENV_INTERNET_IP_NAME_EMPTY_ERR, ERR.ENV_INTERNET_IP_NAME_DUPLICATE_ERR]
+                        ) }}
+                    {{ base.form_input(
+                          Env_Internet_Ip_Types.fee.info.name,
+                          "fee",
+                          value=fee_value,
+                          res=env_internet_ip_res,
+                          check_codes=[ERR.ENV_INTERNET_IP_FEE_INVALID_ERR]
                         ) }}
                     {{ base.form_textarea(
                           Env_Internet_Ip_Types.desc.info.name,

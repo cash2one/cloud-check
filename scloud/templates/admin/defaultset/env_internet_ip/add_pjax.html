@@ -1,6 +1,7 @@
 {% extends "admin/defaultset/env_internet_ip/index_pjax.html" %}
 {% import "admin/base/base_macros.html" as base %}
 {% block edit_content %}
+              {% set fee_value = "{:,.2f}".format(handler.args.get("fee", "0.00")|float) %}
               <div class="box box-primary">
                 <div class="box-header with-border">
                   <h3 class="box-title">{{ env_res.data.name }} - 添加新互联网IP类型</h3>
@@ -25,6 +26,13 @@
                           value=handler.args.get('name', ''),
                           res=env_internet_ip_res,
                           check_codes=[ERR.ENV_INTERNET_IP_NAME_EMPTY_ERR, ERR.ENV_INTERNET_IP_NAME_DUPLICATE_ERR]
+                        ) }}
+                    {{ base.form_input(
+                          Env_Internet_Ip_Types.fee.info.name,
+                          "fee",
+                          value=fee_value,
+                          res=env_internet_ip_res,
+                          check_codes=[ERR.ENV_INTERNET_IP_FEE_INVALID_ERR]
                         ) }}
                     {{ base.form_textarea(
                           Env_Internet_Ip_Types.desc.info.name,
