@@ -1,0 +1,43 @@
+
+{% set env = env_res.data %}
+{% import "admin/base/base_macros.html" as base %}
+      <div class="box box-info">
+        <div class="box-header with-border">
+          <h3 class="box-title">编辑{{ env_res.data.name }}</h3>
+          <div class="pull-right box-tools">
+            <button class="btn btn-info btn-sm" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
+          </div><!-- /. tools -->
+        </div><!-- /.box-header -->
+        <!-- form start -->
+        <form data-pjax id="env_resource_value_form" class="form-horizontal" action="{{ reverse_url('defaultset.env_resource_value.edit', env_res.data.id) }}">
+          {{ handler.xsrf_form_html() }}
+          <input type="hidden" name="env_id" value="{{ env_res.data.id }}">
+          <div class="box-body">
+          {{ base.form_input(Env_Resource_Value.computer.info.name, "computer", value=resource_value.computer, res=env_res, check_codes=[ERR.RES_COMPUTER_INVALID_ERR], label_col=4) }}
+          {{ base.form_input(Env_Resource_Value.cpu.info.name, "cpu", value=resource_value.cpu, res=env_res, check_codes=[ERR.RES_CPU_INVALID_ERR], label_col=4) }}
+          {{ base.form_input(Env_Resource_Value.memory.info.name, "memory", value=resource_value.memory, res=env_res, check_codes=[ERR.RES_MEMORY_INVALID_ERR], label_col=4) }}
+          {{ base.form_input(Env_Resource_Value.disk.info.name, "disk", value=resource_value.disk, res=env_res, check_codes=[ERR.RES_DISK_INVALID_ERR], label_col=4) }}
+          {{ base.form_input(Env_Resource_Value.disk_backup.info.name, "disk_backup", value=resource_value.disk_backup, res=env_res, check_codes=[ERR.RES_DISK_BACKUP_INVALID_ERR], label_col=4) }}
+          {{ base.form_input(Env_Resource_Value.out_ip.info.name, "out_ip", value=resource_value.out_ip, res=env_res, check_codes=[ERR.RES_OUT_IP_INVALID_ERR], label_col=4) }}
+          {{ base.form_input(Env_Resource_Value.snapshot.info.name, "snapshot", value=resource_value.snapshot, res=env_res, check_codes=[ERR.RES_SNAPSHOT_INVALID_ERR], label_col=4) }}
+          {{ base.form_input(Env_Resource_Value.loadbalance.info.name, "loadbalance", value=resource_value.loadbalance, res=env_res, check_codes=[ERR.RES_LOADBALANCE_INVALID_ERR], label_col=4) }}
+          {{ base.form_select(Env_Resource_Value.internet_ip.info.name, "internet_ip", value=resource_value.internet_ip, res=env_res, label_col=4) }}
+          {{ base.form_select(Env_Resource_Value.internet_ip_ssl.info.name, "internet_ip_ssl", options=[{"value": 1, "desc": "是"}, {"value": 0, "desc": "否"}], value=resource_value.internet_ip_ssl, res=env_res, label_col=4) }}
+          </div><!-- /.box-body -->
+          <div class="box-footer text-center">
+            <button type="button" id="env_resource_value_form_btn" onclick="do_edit_env_resource_value()" class="btn btn-warning">确 定</button>
+          </div><!-- /.box-footer -->
+          <!--div class="box-footer text-center">
+            <button type="button" id="env_resource_value_form_btn" onclick="do_flip_card()" class="btn btn-info">返 回</button>
+          </div--><!-- /.box-footer -->
+        </form>
+      </div><!-- /.box -->
+      <script text="text/javascript">
+        function do_edit_env_resource_value(){
+          generate_ajax_post({
+              form: "#env_resource_value_form",
+              button: "#env_resource_value_form_btn",
+              ////onTimeout: function(){ do_edit_env_resource_value();}
+          })
+        }
+      </script>

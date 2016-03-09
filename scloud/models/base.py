@@ -162,3 +162,29 @@ class BaseModelMixin(object):
                 logger.info(instance)
                 created = True
         return instance, created
+
+    @classmethod
+    def get_or_create_obj(cls, db, **kwargs):
+        logger.info("============== [kwargs] ==============")
+        logger.info(kwargs)
+        instance = db.query(cls).filter_by(**kwargs).first()
+        logger.info("============== [instance] ==============")
+        logger.info(instance)
+        if instance:
+            # 已有，无需创建
+            created = False
+        else:
+            # 没有，需新创建
+            params = dict((k, v) for k, v in kwargs.iteritems() if not isinstance(v, ClauseElement))
+            logger.info("============== [kwargs] ==============")
+            logger.info(kwargs)
+            logger.info("============== [params] ==============")
+            logger.info(params)
+            instance_res = cls(**params)
+            db.add(instance_res)
+            db.flush()
+            instance = db.query(cls).filter_by(**kwargs).first()
+            logger.info("instance for create result")
+            logger.info(instance)
+            created = True
+        return instance, created

@@ -1,0 +1,28 @@
+{% extends "admin/defaultset/env_resource_value/index_pjax.html" %}
+{% import "admin/base/base_macros.html" as base %}
+{% set env = env_res.data %}
+{% block edit_content %}
+
+<div class="row">
+  <div class="col-md-8">
+    {% include "admin/defaultset/env_resource_value/_value_form.html" with context %}
+  </div>
+</div>
+{#
+<div class="row">
+  <div class="col-md-8">
+      <!-- Horizontal Form -->
+      <div class="flip-container">
+        <div class="card" id="env_resource_value">
+          <figure class="front">
+            {% include "admin/defaultset/env_resource_value/_value_index.html" with context %}
+          </figure>
+          <figure class="back">
+            {% include "admin/defaultset/env_resource_value/_value_form.html" with context %}
+          </figure>
+        </div>
+      </div>
+  </div>
+</div>
+#}
+{% endblock %}

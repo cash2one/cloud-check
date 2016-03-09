@@ -1,0 +1,57 @@
+{% extends "admin/defaultset/env_internet_ip/index_pjax.html" %}
+{% import "admin/base/base_macros.html" as base %}
+{% block edit_content %}
+              <div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title">{{ env_res.data.name }} - 添加新互联网IP类型</h3>
+                  <!--div class="box-tools pull-right">
+                    <div class="has-feedback">
+                      <input type="text" class="form-control input-sm" placeholder="Search Mail">
+                      <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                    </div>
+                  </div--><!-- /.box-tools -->
+                </div><!-- /.box-header -->
+                <div class="box-body no-padding">
+                  <div class="mailbox-controls">
+                    {% include "admin/defaultset/env_internet_ip/_edit_buttons.html" %}  
+                  </div>
+                  <form data-pjax id="env_internet_ip_form" class="form-horizontal" action="{{ reverse_url('defaultset.env_internet_ip.add', env_res.data.id) }}">
+                    {{ handler.xsrf_form_html() }}
+                    <div class="box-body">
+                    {{ base.form_input(
+                          Env_Internet_Ip_Types.name.info.name,
+                          "name",
+                          placeholder=Env_Internet_Ip_Types.name.info.placeholder,
+                          value=handler.args.get('name', ''),
+                          res=env_internet_ip_res,
+                          check_codes=[ERR.ENV_INTERNET_IP_NAME_EMPTY_ERR, ERR.ENV_INTERNET_IP_NAME_DUPLICATE_ERR]
+                        ) }}
+                    {{ base.form_textarea(
+                          Env_Internet_Ip_Types.desc.info.name,
+                          "desc",
+                          value=handler.args.get('desc', ''),
+                          res=env_internet_ip_res
+                        ) }}
+                    </div><!-- /.box-body -->
+                    <div class="box-footer text-center">
+                      <a data-pjax href="{{ reverse_url('defaultset.env_internet_ip.list', env_res.data.id) }}" id="cancel_form_btn" class="btn btn-default">取 消</a>
+                      <button type="button" id="env_internet_ip_form_btn" onclick="do_add_env_internet_ip()" class="btn btn-info">确 定</button>
+                    </div><!-- /.box-footer -->
+                  </form>
+                </div><!-- /.box-body -->
+                <div class="box-footer no-padding">
+                  <div class="mailbox-controls">
+                    {% include "admin/defaultset/env_internet_ip/_edit_buttons.html" %}  
+                  </div>
+                </div>
+              </div><!-- /. box -->
+              <script type="text/javascript">
+                function do_add_env_internet_ip(){
+                  generate_ajax_post({
+                      form: "#env_internet_ip_form",
+                      button: "#env_internet_ip_form_btn",
+                      onTimeout: function(){do_add_env_internet_ip()}
+                  })
+                }
+              </script>
+{% endblock %}

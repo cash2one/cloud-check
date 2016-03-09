@@ -179,4 +179,20 @@ function generate_ajax_post(options){
     }
   }, options))
 }
+
+function do_flip_card(options){
+  options = options || {};
+  var card = options.card_id || '.card';
+  if($(card).hasClass("flipped")){
+    $(card).removeClass("flipped");
+  }else{
+    $(card).addClass("flipped");
+  }
+}
+
+function CheckBoxListener(){
+  var elemToCheck = $("input[name=env_internet_ip_id]").parent().bind("propertychange", function(){
+    console.log($(this))
+  })
+}
 </script>

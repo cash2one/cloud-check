@@ -76,6 +76,9 @@ class ERROR(object):
     env_name_empty_err = error(errcode=-100120, errvalue=u"环境名称不能为空")
     env_desc_empty_err = error(errcode=-100121, errvalue=u"环境说明不能为空")
 
+    env_internet_ip_name_empty_err = error(errcode=-100140, errvalue=u"互联网IP类型名称不能为空")
+    env_internet_ip_name_duplicate_err= error(errcode=-100141, errvalue=u"互联网IP类型名称已经存在，不能重复")
+
 
 ERR = ObjectDict()
 for attr in dir(ERROR):

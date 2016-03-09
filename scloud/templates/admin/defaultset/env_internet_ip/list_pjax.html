@@ -1,0 +1,115 @@
+{% extends "admin/defaultset/env_internet_ip/index_pjax.html" %}
+{% block edit_content %}
+              <div class="box box-primary">
+                <div class="box-header with-border">
+                <h3 class="box-title">{{ env_res.data.name }}</h3>
+                  <div class="box-tools pull-right">
+                    <div class="has-feedback">
+                      <input type="text" class="form-control input-sm" placeholder="Search Mail">
+                      <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                    </div>
+                  </div><!-- /.box-tools -->
+                </div><!-- /.box-header -->
+                <div class="box-body no-padding">
+                  <div class="mailbox-controls">
+                    {% include "admin/defaultset/env_internet_ip/_list_buttons.html" %}  
+                  </div>
+                  <form id="env_internet_ip_del_form" action="{{ reverse_url('defaultset.env_internet_ip.del', env_res.data.id) }}">
+                  {{ handler.xsrf_form_html() }}
+                  <div class="table-responsive mailbox-messages">
+                    <table class="table table-hover table-striped" id="env_internet_ip_list_table">
+                      <tbody>
+                        {% for ip in page.object_list %}
+                        <tr>
+                          <td><input type="checkbox" id="env_internet_ip_id" name="env_internet_ip_id" value="{{ ip.id }}" onclick="change_check()"></td>
+                          <td class="mailbox-subject"><a data-pjax href="{{ reverse_url('defaultset.env_internet_ip.edit', env_res.data.id, ip.id) }}" ><i class="fa fa-edit"></i>  <b>{{ ip.name }}</b> - {{ ip.desc }}</a></td>
+                          <td class="mailbox-attachment"></td>
+                          <td class="mailbox-date">{{ ip.update_time }}</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table><!-- /.table -->
+                  </div><!-- /.mail-box-messages -->
+                  </form>
+                </div><!-- /.box-body -->
+                <div class="box-footer no-padding">
+                  <div class="mailbox-controls">
+                    {% include "admin/defaultset/env_internet_ip/_list_buttons.html" %}  
+                  </div>
+                </div>
+                {% include "admin/base/base_paginator.html" %}
+              </div><!-- /. box -->
+              <script type="text/javascript">
+                $(function () {
+                  //Enable iCheck plugin for checkboxes
+                  //iCheck for checkbox and radio inputs
+                  $('.mailbox-messages input[type="checkbox"]').iCheck({
+                    checkboxClass: 'icheckbox_flat-blue',
+                    radioClass: 'iradio_flat-blue'
+                  });
+
+                  //Enable check and uncheck all functionality
+                  $(".checkbox-toggle").click(function () {
+                    var clicks = $(this).data('clicks');
+                    if (clicks) {
+                      //Uncheck all checkboxes
+                      $(".mailbox-messages input[type='checkbox']").iCheck("uncheck");
+                      $(".fa", this).removeClass("fa-check-square-o").addClass('fa-square-o');
+                    } else {
+                      //Check all checkboxes
+                      $(".mailbox-messages input[type='checkbox']").iCheck("check");
+                      $(".fa", this).removeClass("fa-square-o").addClass('fa-check-square-o');
+                    }
+                    $(this).data("clicks", !clicks);
+                  });
+
+                  //Handle starring for glyphicon and font awesome
+                  $(".mailbox-star").click(function (e) {
+                    e.preventDefault();
+                    //detect type
+                    var $this = $(this).find("a > i");
+                    var glyph = $this.hasClass("glyphicon");
+                    var fa = $this.hasClass("fa");
+
+                    //Switch states
+                    if (glyph) {
+                      $this.toggleClass("glyphicon-star");
+                      $this.toggleClass("glyphicon-star-empty");
+                    }
+
+                    if (fa) {
+                      $this.toggleClass("fa-star");
+                      $this.toggleClass("fa-star-o");
+                    }
+                  });
+                });
+                function do_del_env_internet_ip(){
+                  // var env_internet_ip_ids = $getCheckValues("#env_internet_ip_list_table")
+                  confirmBox({
+                      message: "确定删除所选的互联网IP类型吗？",
+                      onConfirm: function(){
+                        generate_ajax_post({
+                            form: "#env_internet_ip_del_form",
+                            btn: "#env_internet_ip_del_form_btn",
+                            onSuccess: function(response){
+                              $("#confirmBox").tClose()
+                            },
+                            method: "DELETE"
+                        })
+                      }
+                  })
+                }
+                 $(function(){
+                     $("input").bind("propertychange", function(){
+                         console.log($(this))
+                     })
+                   $("input").parent().bind("domattrmodified", function(){
+                         console.log($(this))
+                     })
+                 })
+                // function change_check(){
+                //   console.log($(this).checked)
+                //   console.log($("#env_internet_ip_del_form").serialize())
+                // }
+              </script>
+{% endblock %}

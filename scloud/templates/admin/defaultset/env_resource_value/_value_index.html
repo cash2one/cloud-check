@@ -1,0 +1,28 @@
+{% set env = env_res.data %}
+{% set resource_value = env.env_resource_value %}
+{% import "admin/base/base_macros.html" as base %}
+      <div class="box box-info" style="min-height: 661px">
+        <div class="box-header with-border">
+          <h3 class="box-title">编辑{{ env_res.data.name }}</h3>
+          <div class="pull-right box-tools">
+            <button class="btn btn-info btn-sm" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
+          </div><!-- /. tools -->
+        </div><!-- /.box-header -->
+        <input type="hidden" name="env_id" value="{{ resource_value.id }}">
+        <div class="box-body">
+        <p> {{ Env_Resource_Value.computer.info.name }}: {{ resource_value.computer|default('未设置') }} </p>
+        <p> {{ Env_Resource_Value.cpu.info.name }}: {{ resource_value.cpu|default('未设置') }} </p>
+        <p> {{ Env_Resource_Value.memory.info.name }}: {{ resource_value.memory|default('未设置') }} </p>
+        <p> {{ Env_Resource_Value.disk.info.name }}: {{ resource_value.disk|default('未设置') }} </p>
+        <p> {{ Env_Resource_Value.disk_backup.info.name }}: {{ resource_value.disk_backup|default('未设置') }} </p>
+        <p> {{ Env_Resource_Value.out_ip.info.name }}: {{ resource_value.out_ip|default('未设置') }} </p>
+        <p> {{ Env_Resource_Value.snapshot.info.name }}: {{ resource_value.snapshot|default('未设置') }} </p>
+        <p> {{ Env_Resource_Value.loadbalance.info.name }}: {{ resource_value.loadbalance|default('未设置') }} </p>
+        <p> {{ Env_Resource_Value.internet_ip.info.name }}: {{ resource_value.internet_ip|default('未设置') }} </p>
+        <p> {{ Env_Resource_Value.internet_ip_ssl.info.name }}: {{ resource_value.internet_ip_ssl|default('未设置') }} </p>
+        </div><!-- /.box-body -->
+        <div class="box-footer text-center">
+          <a data-pjax href="{{ reverse_url('defaultset.env_resource_value') }}" id="cancel_form_btn" class="btn btn-default">取 消</a>
+          <button type="button" id="env_form_btn" onclick="do_flip_card()" class="btn btn-info">设置默认值</button>
+        </div><!-- /.box-footer -->
+      </div><!-- /.box -->

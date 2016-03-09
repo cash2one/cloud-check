@@ -1,0 +1,11 @@
+                    <!-- Check all button -->
+                    <button class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i> 全选</button>
+                    <div class="btn-group">
+                      <a data-pjax href="{{ reverse_url('defaultset.env_internet_ip.add', env_res.data.id) }}" class="btn btn-sm btn-warning"><i class="fa fa-plus"></i>  添加</a>
+                      <!--button onclick="" class="btn btn-sm btn-success"><i class="fa fa-edit"></i>  修改</button-->
+                      <button id="env_internet_ip_del_form_btn" onclick="do_del_env_internet_ip()" class="btn btn-sm btn-danger"><i class="fa fa-times"></i>  删除</button>
+                      <!--button class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
+                      <button class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button>
+                      <button class="btn btn-default btn-sm"><i class="fa fa-share"></i></button-->
+                    </div><!-- /.btn-group -->
+                    <a data-pjax href="{{ handler.request.path }}{% if s %}?{{ s }}{% endif %}" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></a>

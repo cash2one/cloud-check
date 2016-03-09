@@ -276,7 +276,7 @@ class AuthHandler(Handler):
 
     def expire_session(self):
         from datetime import datetime, timedelta
-        expires = datetime.utcnow() + timedelta(seconds=1 * 6)
+        expires = datetime.utcnow() + timedelta(seconds=60 * 60)
         try:
             self.set_cookie('session_id', self.session.sid, expires=expires)
             self.session["timestamp"] = datetime.now()

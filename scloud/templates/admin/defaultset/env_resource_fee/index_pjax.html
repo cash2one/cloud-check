@@ -27,7 +27,7 @@
                   <ul class="nav nav-pills nav-stacked">
                     {#% for env in page.object_list %#}
                     {% for env in env_list_res.data %}
-                    <li name="env_{{ env.id }}"><a data-pjax href="{{ reverse_url('defaultset.env_info.edit', env.id) }}"><i class="fa fa-inbox"></i> {{ env.name }}</a></li>
+                    <li><a data-pjax href="{{ reverse_url('defaultset.env_info.edit', env.id) }}"><i class="fa fa-inbox"></i> {{ env.name }}</a></li>
                     {% endfor %}
                     <!--li><a href="mailbox.html"><i class="fa fa-inbox"></i> Inbox <span class="label label-primary pull-right">12</span></a></li>
                     <li><a href="#"><i class="fa fa-envelope-o"></i> Sent</a></li>
@@ -45,14 +45,3 @@
             </div><!-- /.col -->
           </div><!-- /.row -->
         </section><!-- /.content -->
-        <script type="text/javascript">
-        {% if env_res %}
-          $(function(){
-              init_status()
-          })
-          function init_status(){
-            var env_id = "{{ env_res.data.id }}";
-            $("li[name=env_"+env_id+"]").addClass("active");
-          }
-        {% endif %}
-        </script>

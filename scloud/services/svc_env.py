@@ -43,7 +43,7 @@ class EnvService(BaseService):
 
     @thrownException
     def get_env(self):
-        logger.info("------[add_env]------")
+        logger.info("------[get_env]------")
         env_id = self.params.get("env_id")
         env = self.db.query(
             Env_Info
@@ -56,7 +56,7 @@ class EnvService(BaseService):
 
     @thrownException
     def edit_env(self):
-        logger.info("------[add_env]------")
+        logger.info("------[edit_env]------")
         env_id = self.params.get("env_id")
         name = self.params.get("name")
         desc = self.params.get("desc")

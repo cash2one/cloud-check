@@ -22,7 +22,7 @@
           <div class="row">
             <div class="col-md-3">
               <div class="flip-container">
-              <div id="card">
+              <div class="card" id="user_profile_card">
                 <figure class="front">
                   {% include "admin/user/profile/_profile_index.html" %}
                 </figure>
@@ -201,13 +201,13 @@
               onTimeout: function(){ do_confirm_start_date();}
           })
         }
-        function do_flip_card(){
-          if($("#card").hasClass("flipped")){
-            $("#card").removeClass("flipped");
-          }else{
-            $("#card").addClass("flipped");
-          }
-        }
+        // function do_flip_card(){
+        //   if($("#card").hasClass("flipped")){
+        //     $("#card").removeClass("flipped");
+        //   }else{
+        //     $("#card").addClass("flipped");
+        //   }
+        // }
         function do_profile(options){
           generate_ajax_post({
               pjax_container: false,
