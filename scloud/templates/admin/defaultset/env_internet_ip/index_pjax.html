@@ -26,7 +26,7 @@
                 <div class="box-body no-padding">
                   <ul class="nav nav-pills nav-stacked">
                     {% for env in env_list_res.data %}
-                    <li name="env_{{ env.id }}"><a data-pjax href="{{ reverse_url('defaultset.env_internet_ip.list', env.id) }}"><i class="fa fa-internet-explorer"></i> {{ env.name }} </a></li>
+                    <li name="env_{{ env.id }}"><a data-pjax href="{{ reverse_url('defaultset.env_internet_ip.list', env.id) }}"><i class="fa fa-internet-explorer"></i> {{ env.name }} <span class="label label-{% if env.env_internet_ip_types|length > 0 %}primary{% else %}default{% endif %} pull-right">{{ env.env_internet_ip_types|length }}</span>     </a></li>
                     {% endfor %}
                     <!--li><a href="mailbox.html"><i class="fa fa-inbox"></i> Inbox <span class="label label-primary pull-right">12</span></a></li>
                     <li><a href="#"><i class="fa fa-envelope-o"></i> Sent</a></li>

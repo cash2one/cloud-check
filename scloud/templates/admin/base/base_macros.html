@@ -7,12 +7,19 @@
 {% endif %}
 {%- endmacro %}
 
-{% macro form_input(label, name, placeholder=None, _type="text", value="", res=None, check_codes=[], label_col=2) -%}
+{% macro form_input(label, name, placeholder=None, _type="text", value="", res=None, check_codes=[], label_col=2, unit=False, readonly=False) -%}
   {% set col2 = 12 - label_col %}
   <div class="form-group{% if res and res.return_code in check_codes %} has-warning{% endif %}">
     <label for="{{ name }}" class="col-sm-{{ label_col }} control-label">{{ label }}</label>
     <div class="col-sm-{{ col2 }}">
-    <input type="{{ _type }}" class="form-control" id="{{ name }}" name="{{ name }}" placeholder="{% if placeholder %}{{ placeholder }}{% else %}请输入{{ label }}{% endif %}" value="{{ value }}">
+    {% if unit %}
+    <div class="input-group">
+    <input type="{{ _type }}" class="form-control" id="{{ name }}" name="{{ name }}" placeholder="{% if placeholder %}{{ placeholder }}{% else %}请输入{{ label }}{% endif %}" value="{{ value }}"{% if readonly %} readonly{% endif %}>
+    <span class="input-group-addon">{{ unit }}</span>
+    </div>
+    {% else %}
+    <input type="{{ _type }}" class="form-control" id="{{ name }}" name="{{ name }}" placeholder="{% if placeholder %}{{ placeholder }}{% else %}请输入{{ label }}{% endif %}" value="{{ value }}"{% if readonly %} readonly{% endif %}>
+    {% endif %}
       {% if res and res.return_code in check_codes %}
       <label class="control-label" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
       {% endif %}

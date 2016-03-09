@@ -28,6 +28,9 @@ class Env_Internet_Ip_Types(BaseModel, BaseModelMixin):
 class Env_Resource_Fee(BaseModel, BaseModelMixin):
     u"""环境资源费用配置"""
     __tablename__ = "env_resource_fee"
+    json_columns = [
+        "internet_ip"
+    ]
     env_id = Column(Integer, ForeignKey('env_info.id'), default=0)
     computer = Column(Float, default=0.00, info={"name": u"默认云主机费用(个)", "unit": u"元"})
     cpu = Column(Float, default=0.00, info={"name": u"默认CPU费用（个）", "unit": u"元"})
@@ -37,7 +40,7 @@ class Env_Resource_Fee(BaseModel, BaseModelMixin):
     out_ip = Column(Float, default=0.00, info={"name": u"默认外部IP费用（个）", "unit": u"元"})
     snapshot = Column(Float, default=0.00, info={"name": u"默认快照费用（个）", "unit": u"元"})
     loadbalance = Column(Float, default=0.00, info={"name": u"默认负载均衡费用（个）", "unit": u"元"})
-    internet_ip = Column(Float, default=0.00, info={"name": u"默认互联网IP选项", "unit": u"元"})
+    internet_ip = Column(String, default="", info={"name": u"默认互联网IP选项", "unit": u"元"})
     internet_ip_ssl = Column(Float, default=0.00, info={"name": u"默认是否需要SSL卸载费用", "unit": u"元"})
     env = relationship("Env_Info", backref=backref("env_resource_fee", uselist=False))
 

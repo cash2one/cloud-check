@@ -10,14 +10,14 @@
           </div><!-- /. tools -->
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form data-pjax id="env_form" class="form-horizontal" action="{{ reverse_url('defaultset.env_info.add') }}">
+        <form data-pjax id="env_form" class="form-horizontal" action="{{ reverse_url('defaultset.env_resource_value.add') }}">
           {{ handler.xsrf_form_html() }}
           <div class="box-body">
           {{ base.form_input("环境名称", "name", value=handler.args.get('name', ''), res=env_res, check_codes=[ERR.ENV_NAME_EMPTY_ERR]) }}
           {{ base.form_textarea("环境说明", "desc", value=handler.args.get('desc', ''), res=env_res, check_codes=[ERR.ENV_DESC_EMPTY_ERR]) }}
           </div><!-- /.box-body -->
           <div class="box-footer text-center">
-            <a data-pjax href="{{ reverse_url('defaultset.env_info') }}" id="cancel_form_btn" class="btn btn-default">取 消</a>
+            <a data-pjax href="{{ reverse_url('defaultset.env_resource_value') }}" id="cancel_form_btn" class="btn btn-default">取 消</a>
             <button type="button" id="env_form_btn" onclick="do_add_env()" class="btn btn-info">确 定</button>
           </div><!-- /.box-footer -->
         </form>

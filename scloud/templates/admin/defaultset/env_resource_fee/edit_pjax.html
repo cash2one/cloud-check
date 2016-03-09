@@ -1,35 +1,28 @@
-{% extends "admin/defaultset/env_info/index_pjax.html" %}
+{% extends "admin/defaultset/env_resource_fee/index_pjax.html" %}
 {% import "admin/base/base_macros.html" as base %}
+{% set env = env_res.data %}
 {% block edit_content %}
+
+<div class="row">
+  <div class="col-md-8">
+    {% include "admin/defaultset/env_resource_fee/_value_form.html" with context %}
+  </div>
+</div>
+{#
+<div class="row">
+  <div class="col-md-8">
       <!-- Horizontal Form -->
-      <div class="box box-info">
-        <div class="box-header with-border">
-          <h3 class="box-title">编辑{{ env_res.data.name }}</h3>
-          <div class="pull-right box-tools">
-            <button class="btn btn-info btn-sm" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
-          </div><!-- /. tools -->
-        </div><!-- /.box-header -->
-        <!-- form start -->
-        <form data-pjax id="env_form" class="form-horizontal" action="{{ reverse_url('defaultset.env_info.edit', env_res.data.id) }}">
-          {{ handler.xsrf_form_html() }}
-          <input type="hidden" name="env_id" value="{{ env_res.data.id }}">
-          <div class="box-body">
-          {{ base.form_input("环境名称", "name", value=env_res.data.name, res=env_res, check_codes=[ERR.ENV_NAME_EMPTY_ERR]) }}
-          {{ base.form_textarea("环境说明", "desc", value=env_res.data.desc, res=env_res, check_codes=[ERR.ENV_DESC_EMPTY_ERR]) }}
-          </div><!-- /.box-body -->
-          <div class="box-footer text-center">
-            <a data-pjax href="{{ reverse_url('defaultset.env_info') }}" id="cancel_form_btn" class="btn btn-default">取 消</a>
-            <button type="button" id="env_form_btn" onclick="do_edit_env()" class="btn btn-info">确 定</button>
-          </div><!-- /.box-footer -->
-        </form>
-      </div><!-- /.box -->
-      <script text="text/javascript">
-        function do_edit_env(){
-          generate_ajax_post({
-              form: "#env_form",
-              button: "#env_form_btn",
-              onTimeout: function(){ do_add_env();}
-          })
-        }
-      </script>
+      <div class="flip-container">
+        <div class="card" id="env_resource_fee">
+          <figure class="front">
+            {% include "admin/defaultset/env_resource_fee/_value_index.html" with context %}
+          </figure>
+          <figure class="back">
+            {% include "admin/defaultset/env_resource_fee/_value_form.html" with context %}
+          </figure>
+        </div>
+      </div>
+  </div>
+</div>
+#}
 {% endblock %}

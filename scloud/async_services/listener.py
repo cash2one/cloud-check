@@ -74,7 +74,7 @@ def get_or_create_env_resource_fee(mapper, connect, target):
     env_internet_ip_types = connect.execute(Env_Internet_Ip_Types.__table__.select().where(
         Env_Internet_Ip_Types.__table__.c.env_id == target.env_id
     ))
-    env_internet_ip_types = [{"id": i.id, "fee": "%.2f" % i.fee} for i in env_internet_ip_types]
+    env_internet_ip_types = [{"id": i.id, "name": i.name, "fee": "%.2f" % i.fee} for i in env_internet_ip_types]
     result = connect.execute(
         Env_Resource_Fee.__table__.update().where(
             Env_Resource_Fee.env_id == target.env_id

@@ -34,7 +34,8 @@
                           "fee",
                           value=fee_value,
                           res=env_internet_ip_res,
-                          check_codes=[ERR.ENV_INTERNET_IP_FEE_INVALID_ERR]
+                          check_codes=[ERR.ENV_INTERNET_IP_FEE_INVALID_ERR],
+                          unit="元"
                         ) }}
                     {{ base.form_textarea(
                           Env_Internet_Ip_Types.desc.info.name,

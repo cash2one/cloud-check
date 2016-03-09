@@ -14,7 +14,7 @@
         <section class="content">
           {% include "admin/base/base_messages.html" %}
           <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-6">
             <a data-pjax href="{{ reverse_url('defaultset.env_info.add') }}" class="btn btn-primary btn-block margin-bottom">添加新环境</a>
               <div class="box box-solid">
                 <div class="box-header with-border">
@@ -27,7 +27,13 @@
                   <ul class="nav nav-pills nav-stacked">
                     {#% for env in page.object_list %#}
                     {% for env in env_list_res.data %}
-                    <li name="env_{{ env.id }}"><a data-pjax href="{{ reverse_url('defaultset.env_info.edit', env.id) }}"><i class="fa fa-inbox"></i> {{ env.name }}</a></li>
+                    <li name="env_{{ env.id }}"><a data-pjax href="{{ reverse_url('defaultset.env_info.edit', env.id) }}"><i class="fa fa-inbox"></i> {{ env.name }}
+                    <span class="pull-right">
+                    <span class="label label-{% if env.env_internet_ip_types|length > 0 %}primary{% else %}default{% endif %} ">{{ env.env_internet_ip_types|length }}</span> &nbsp;
+                    <span class="label label-{% if env.env_resource_value %}primary{% else %}default{% endif %} "><i class="fa fa-info"></i> {% if env.env_resource_value %}已设定{% else %}未设定{% endif %}</span> &nbsp;
+                    <span class="label label-{% if env.env_resource_fee %}primary{% else %}default{% endif %} "><i class="fa fa-cny"></i> {% if env.env_resource_fee %}已设定{% else %}未设定{% endif %}</span>
+                    </span>
+                    </a></li>
                     {% endfor %}
                     <!--li><a href="mailbox.html"><i class="fa fa-inbox"></i> Inbox <span class="label label-primary pull-right">12</span></a></li>
                     <li><a href="#"><i class="fa fa-envelope-o"></i> Sent</a></li>
@@ -39,7 +45,7 @@
                   {#% include "admin/base/base_paginator.html" %#}
               </div><!-- /. box -->
             </div><!-- /.col -->
-            <div class="col-md-9">
+            <div class="col-md-6">
             {% block edit_content %}
             {% endblock %}
             </div><!-- /.col -->
