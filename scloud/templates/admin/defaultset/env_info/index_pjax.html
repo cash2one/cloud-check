@@ -24,13 +24,13 @@
                   </div>
                 </div>
                 <div class="box-body no-padding">
+                  {#
                   <ul class="nav nav-pills nav-stacked">
-                    {#% for env in page.object_list %#}
                     {% for env in env_list_res.data %}
                     <li name="env_{{ env.id }}"><a data-pjax href="{{ reverse_url('defaultset.env_info.edit', env.id) }}"><i class="fa fa-inbox"></i> {{ env.name }}
                     <span class="pull-right">
-                    <span class="label label-{% if env.env_internet_ip_types|length > 0 %}primary{% else %}default{% endif %} ">{{ env.env_internet_ip_types|length }}</span> &nbsp;
-                    <span class="label label-{% if env.env_resource_value %}primary{% else %}default{% endif %} "><i class="fa fa-info"></i> {% if env.env_resource_value %}已设定{% else %}未设定{% endif %}</span> &nbsp;
+                    <span class="label label-{% if env.env_internet_ip_types|length > 0 %}primary{% else %}default{% endif %} ">{{ env.env_internet_ip_types|length }}</span>
+                    <span class="label label-{% if env.env_resource_value %}primary{% else %}default{% endif %} "><i class="fa fa-info"></i> {% if env.env_resource_value %}已设定{% else %}未设定{% endif %}</span>
                     <span class="label label-{% if env.env_resource_fee %}primary{% else %}default{% endif %} "><i class="fa fa-cny"></i> {% if env.env_resource_fee %}已设定{% else %}未设定{% endif %}</span>
                     </span>
                     </a></li>
@@ -40,6 +40,32 @@
                     <li><a href="#"><i class="fa fa-file-text-o"></i> Drafts</a></li>
                     <li><a href="#"><i class="fa fa-filter"></i> Junk <span class="label label-warning pull-right">65</span></a></li>
                     <li><a href="#"><i class="fa fa-trash-o"></i> Trash</a></li-->
+                  </ul>
+                  #}
+                  <ul class="todo-list" id="env_list_res">
+                    {% for env in env_list_res.data %}
+                    <li>
+                      <!-- drag handle -->
+                      <!-- todo text -->
+                      <input type="checkbox" id="env_{{ env.id }}" value="{{ env.id }}" name="" onclick="check_done('{{ env.id }}')">
+                      <span class="text">{{ env.name }}</span>
+                      <!-- Emphasis label -->
+                      <span class="label label-{% if env.env_internet_ip_types|length > 0 %}primary{% else %}default{% endif %} ">{{ env.env_internet_ip_types|length }}</span> &nbsp;
+                      <span class="label label-{% if env.env_resource_value %}primary{% else %}default{% endif %} "><i class="fa fa-info"></i> {% if env.env_resource_value %}已设定{% else %}未设定{% endif %}</span> &nbsp;
+                      <span class="label label-{% if env.env_resource_fee %}primary{% else %}default{% endif %} "><i class="fa fa-cny"></i> {% if env.env_resource_fee %}已设定{% else %}未设定{% endif %}</span>
+                      <!-- General tools such as edit or delete-->
+                      <div class="tools">
+                        <i class="fa fa-edit"></i>
+                        <i class="fa fa-trash-o"></i>
+                      </div>
+                    </li>
+                    {% endfor %}
+                      <!-- li -->
+                      <li id="li-btns" style="display: none">
+                          <!-- li -->
+                          <a id="env_list_edit_btn" data-pjax href="{{ reverse_url('defaultset.env_info.edit_info') }}" class="btn btn-success">编辑</a>
+                          <a data-pjax href="" class="btn btn-danger">删除</a>
+                      </li>
                   </ul>
                 </div><!-- /.box-body -->
                   {#% include "admin/base/base_paginator.html" %#}
@@ -52,6 +78,29 @@
           </div><!-- /.row -->
         </section><!-- /.content -->
         <script type="text/javascript">
+        function check_done(env_id){
+          var _this = $("#env_"+env_id)
+          console.log(_this)
+          if(_this.prop("checked")){
+            _this.parent().addClass("done");
+          }else{
+            _this.parent().removeClass("done");
+          }
+          var checked_values = $getCheckValues("#env_list_res")
+          console.log(checked_values)
+          if (checked_values.length > 0){
+            if (checked_values.length == 1){
+              $("#env_list_edit_btn").css("display", "")
+              var href = "{{ reverse_url('defaultset.env_info.edit_info') }}" + "?env_id=" + checked_values[0]
+              $("#env_list_edit_btn").attr("href", href)
+            }else{
+              $("#env_list_edit_btn").css("display", "none")
+            }
+            $("#li-btns").css("display", "");
+          }else{
+            $("#li-btns").css("display", "none");
+          }
+        }
         {% if env_res %}
           $(function(){
               init_status()

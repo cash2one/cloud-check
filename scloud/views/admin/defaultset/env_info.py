@@ -66,6 +66,7 @@ class Add_Env_Info_Handler(BaseEnvHandler):
 
 
 @url("/defaultset/env_info/(?P<env_id>\d+)/edit", name="defaultset.env_info.edit", active="defaultset.env_info")
+@url("/defaultset/env_info/edit", name="defaultset.env_info.edit_info", active="defaultset.env_info")
 class Add_Env_Info_Handler(BaseEnvHandler):
     u"""编辑环境"""
     @unblock
