@@ -41,7 +41,7 @@ class Base_Env_Resource_Value_Handler(BaseEnvHandler):
 
 @url("/defaultset/env_resource_value", name="defaultset.env_resource_value", active="defaultset.env_resource_value")
 class Env_resource_value_Handler(BaseEnvHandler):
-    u"""资源申请费用设置"""
+    u"""资源申请推荐数据设置"""
     @unblock
     def get(self):
         data = self.get_index_page()
@@ -50,7 +50,7 @@ class Env_resource_value_Handler(BaseEnvHandler):
 
 @url("/defaultset/env_resource_value/(?P<env_id>\d+)/edit", name="defaultset.env_resource_value.edit", active="defaultset.env_resource_value")
 class Add_Env_resource_value_Handler(Base_Env_Resource_Value_Handler):
-    u"""编辑资源申请费用"""
+    u"""编辑资源申请推荐数据"""
     @unblock
     def get(self, **kwargs):
         data = self.get_index_page(**kwargs)
