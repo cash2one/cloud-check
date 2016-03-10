@@ -3,16 +3,19 @@
 import simplejson
 from datetime import datetime
 from scloud.config import logger
-from scloud.models.project import (Pro_Info, Pro_Resource_Apply, get_due_date)
+from scloud.models.project import (Pro_Info, Pro_Resource_Apply)
 from scloud.models.environment import (Env_Info,
     Env_Resource_Value, Env_Resource_Fee,
     Env_Internet_Ip_Types)
 from scloud.models.pt_user import PT_Perm, PT_Role, PT_Role_Group_Ops
 from scloud.models.act import Act_Todo
-from scloud.models.environment import Env_Internet_Ip_Types, Env_Resource_Fee
+# from scloud.models.environment import Env_Internet_Ip_Types, Env_Resource_Fee, Env_Resource_Value
 from sqlalchemy import event, func, select
 from scloud.async_services.svc_act import task_act_post
 from scloud.config import thrownException
+from scloud.async_services.listener_env_info import delete_env_info
+from scloud.async_services.listener_env_internet_ip import get_or_create_env_resource_fee
+from scloud.async_services.listener_pro_resource_apply import update_resource_due_date
 
 
 def act_post(mapper, connect, target):
@@ -55,78 +58,16 @@ def update_keycode(mapper, connect, target):
         )
     # connect.commit()
 
-def update_resource_due_date(mapper, connect, target):
-    logger.info("\t [update_resource_due_date]")
-    logger.info("\t [start_date]:%s" % target.start_date)
-    logger.info("\t [period]:%s" % target.period)
-    due_date = get_due_date(target.start_date, target.period)
-    logger.info("\t due_date: %s" % due_date)
-    if due_date:
-        connect.execute(
-            Pro_Resource_Apply.__table__.update().where(
-                    Pro_Resource_Apply.__table__.c.id == target.id
-                ).values(
-                    due_date = due_date
-                )
-            )
 
-def get_or_create_env_resource_fee(mapper, connect, target):
-    env_internet_ip_types = connect.execute(Env_Internet_Ip_Types.__table__.select().where(
-        Env_Internet_Ip_Types.__table__.c.env_id == target.env_id
-    ))
-    env_internet_ip_types = [{"id": i.id, "name": i.name, "fee": "%.2f" % i.fee} for i in env_internet_ip_types]
-    result = connect.execute(
-        Env_Resource_Fee.__table__.update().where(
-            Env_Resource_Fee.env_id == target.env_id
-        ).values(
-            internet_ip = simplejson.dumps(env_internet_ip_types)
-        )
-    )
-    logger.info(result.rowcount)
-    # from code import interact
-    # interact(local=locals())
-    if result.rowcount <= 0:
-        insert_result = connect.execute(
-            Env_Resource_Fee.__table__.insert().values(
-                env_id = target.env_id,
-                internet_ip = simplejson.dumps(env_internet_ip_types)
-            )
-        )
-        logger.info(insert_result.rowcount)
-    logger.info("\t [env_internet_ip_types]: %s" % env_internet_ip_types)
-    # logger.info("\t [update_resource_due_date]")
-    # logger.info("\t [start_date]:%s" % target.start_date)
-    # logger.info("\t [period]:%s" % target.period)
-    # due_date = get_due_date(target.start_date, target.period)
-    # logger.info("\t due_date: %s" % due_date)
-    # if due_date:
-    #     connect.execute(
-    #         Pro_Resource_Apply.__table__.update().where(
-    #                 Pro_Resource_Apply.__table__.c.id == target.id
-    #             ).values(
-    #                 due_date = due_date
-    #             )
-    #         )
 
 def init_listener():
     init_after_insert()
     init_after_update()
-    init_after_delete()
+    #init_before_delete()
 
 
 def init_after_insert():
-    event.listen(Act_Todo, 'after_insert', act_post)
-    event.listen(Pro_Info, 'after_insert', act_post)
-    event.listen(Pro_Resource_Apply, 'after_insert', act_post)
-    event.listen(Env_Info, 'after_insert', act_post)
-    event.listen(Env_Resource_Fee, 'after_insert', act_post)
-    event.listen(Env_Resource_Value, 'after_insert', act_post)
-    event.listen(Env_Internet_Ip_Types, 'after_insert', act_post)
     event.listen(Env_Internet_Ip_Types, 'after_insert', get_or_create_env_resource_fee)
-    event.listen(PT_Perm, 'after_insert', act_post)
-    event.listen(PT_Perm, 'after_insert', update_keycode)
-    event.listen(PT_Role, 'after_insert', act_post)
-    event.listen(PT_Role_Group_Ops, 'after_insert', act_post)
 
 
 def init_after_update():
@@ -144,14 +85,5 @@ def init_after_update():
     event.listen(PT_Role_Group_Ops, 'after_update', act_update)
 
 
-def init_after_delete():
-    event.listen(Act_Todo, 'after_delete', act_delete)
-    event.listen(Pro_Info, 'after_delete', act_delete)
-    event.listen(Pro_Resource_Apply, 'after_delete', act_delete)
-    event.listen(Env_Info, 'after_delete', act_delete)
-    event.listen(Env_Resource_Fee, 'after_delete', act_delete)
-    event.listen(Env_Resource_Value, 'after_delete', act_delete)
-    event.listen(Env_Internet_Ip_Types, 'after_delete', act_delete)
-    event.listen(PT_Perm, 'after_delete', act_delete)
-    event.listen(PT_Role, 'after_delete', act_delete)
-    event.listen(PT_Role_Group_Ops, 'after_delete', act_delete)
+def init_before_delete():
+    event.listen(Env_Info, 'before_delete', delete_env_info)

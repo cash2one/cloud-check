@@ -13,6 +13,7 @@ from scloud.utils.error import NotFoundError
 from scloud.const import pro_resource_apply_status_types, STATUS_RESOURCE
 from scloud.services.svc_pro_resource_apply import mail_title_format
 from scloud.services.svc_login import LoginService
+from scloud.models.base import db_engine
 
 
 class EnvService(BaseService):
@@ -82,17 +83,34 @@ class EnvService(BaseService):
         env_ids = self.params.get("env_ids")
         or_conditions = or_()
         for env_id in env_ids:
-            or_conditions.append(Env_Info.id == env_id)
+            # or_conditions.append(Env_Info.id == env_id)
+            or_conditions.append(Env_Info.__table__.c.id == env_id)
         env_info_query_list = self.db.query(
             Env_Info
         ).filter(
             or_conditions
         )
         messages = []
+        logger.info("-------------query------------------")
         for env in env_info_query_list.all():
             messages.append(u"环境[%s(%s)]已经删除成功！" % (env.name, env.id))
             self.db.delete(env)
-        env_info_query_list.delete()
+            logger.info("--------------[session delete]-----------------")
+        # env_info_query_list = self.db.query(
+        #     Env_Info
+        # ).filter(
+        #     or_conditions
+        # ).delete()
+        self.db.flush()
+        logger.info("--------------[flush]-----------------")
+        # env_info_query_list.delete()
+        # conn = db_engine.connect()
+        # conn.execute(
+        #     Env_Info.__table__.delete().where(
+        #         or_conditions
+        #         # Env_Info.__table__.c.id == 
+        #     )
+        # )
         # self.db.delete(env_info_query_list)
         return self.success(data=messages)
 

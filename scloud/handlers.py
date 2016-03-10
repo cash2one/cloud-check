@@ -41,7 +41,7 @@ class HandlerMeta(type):
     """
      asynchronous handler meta class
     """
-    __ASYNC_HANDLER = ('post', 'get',)  # 必须加逗号
+    __ASYNC_HANDLER = ('post', 'get', 'delete', 'put')  # 必须加逗号
 
     def __new__(mcs, name, bases, dct):
         for method in mcs.__ASYNC_HANDLER:
