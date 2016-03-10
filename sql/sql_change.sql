@@ -200,7 +200,9 @@ CREATE TABLE `env_resource_fee` (
     `internet_ip_ssl` INT(11) NOT NULL DEFAULT '0' COMMENT '互联网IP是否需要SSL卸载',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    KEY `env_id` (`env_id`),
+    CONSTRAINT `env_resource_fee_ibfk_1` FOREIGN KEY (`env_id`) REFERENCES `env_info` (`id`) ON DELETE CASCADE
 )
 COMMENT='环境资源单价费用表'
 COLLATE='utf8_general_ci'
@@ -222,7 +224,9 @@ CREATE TABLE `env_resource_value` (
     `internet_ip_ssl` INT(11) NOT NULL DEFAULT '0' COMMENT '互联网IP是否需要SSL卸载默认推荐值',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    KEY `env_id` (`env_id`),
+    CONSTRAINT `env_resource_value_ibfk_1` FOREIGN KEY (`env_id`) REFERENCES `env_info` (`id`) ON DELETE CASCADE
 )
 COMMENT='环境资源默认值表'
 COLLATE='utf8_general_ci'
@@ -237,7 +241,10 @@ CREATE TABLE `env_internet_ip_types` (
     `fee` float(11,2) NOT NULL DEFAULT '0.00' COMMENT '相关费用',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `name` (`name`),
+    KEY `env_id` (`env_id`),
+    CONSTRAINT `env_internet_ip_types_ibfk_1` FOREIGN KEY (`env_id`) REFERENCES `env_info` (`id`) ON DELETE CASCADE
 )
 COMMENT='环境外网IP分类表'
 COLLATE='utf8_general_ci'
