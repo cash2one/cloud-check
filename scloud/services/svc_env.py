@@ -76,3 +76,23 @@ class EnvService(BaseService):
         self.db.add(env)
         return self.success(data=env)
 
+    @thrownException
+    def del_env_info(self):
+        logger.info("------[del_env_info]------")
+        env_ids = self.params.get("env_ids")
+        or_conditions = or_()
+        for env_id in env_ids:
+            or_conditions.append(Env_Info.id == env_id)
+        env_info_query_list = self.db.query(
+            Env_Info
+        ).filter(
+            or_conditions
+        )
+        messages = []
+        for env in env_info_query_list.all():
+            messages.append(u"环境[%s(%s)]已经删除成功！" % (env.name, env.id))
+            self.db.delete(env)
+        env_info_query_list.delete()
+        # self.db.delete(env_info_query_list)
+        return self.success(data=messages)
+

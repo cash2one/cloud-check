@@ -109,5 +109,9 @@ class EnvInternetIpService(BaseService):
             Env_Internet_Ip_Types
         ).filter(
             or_conditions
-        ).all()
-        return self.success(data=ips)
+        )
+        messages = []
+        for ip in ips.all():
+            messages.append(u"环境[%s]对应互联网IP类型[%s]删除成功！" % (ip.env.name, ip.name))
+        ips.delete()
+        return self.success(data=messages)

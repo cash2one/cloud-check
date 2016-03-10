@@ -94,3 +94,18 @@ class Add_Env_Info_Handler(BaseEnvHandler):
             # self.add_message(env_res.return_message, level="warning")
             tmpl = self.render_to_string("admin/defaultset/env_info/add_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))
+
+
+@url("/defaultset/env_info/del", name="defaultset.env_info.del", active="defaultset.env_info")
+class Env_Info_Del_Handler(BaseEnvHandler):
+    @unblock
+    def delete(self):
+        env_ids = self.get_arguments("env_id")
+        svc = EnvService(self, {"env_ids": env_ids})
+        del_res = svc.del_env_info()
+        data = self.get_index_page()
+        if del_res.return_code == 0:
+            for message in del_res.data:
+                self.add_message(message, level="success", post_action=False)
+        tmpl = self.render_to_string("admin/defaultset/env_info/index_pjax.html", **data)
+        return simplejson.dumps(self.success(data=tmpl))

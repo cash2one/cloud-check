@@ -126,7 +126,7 @@ class Env_Internet_Ip_Del_Handler(BaseEnvInternetIpHandler):
         env_internet_ip_res = svc.del_env_internet_ip()
         data = self.get_index_page(**kwargs)
         if env_internet_ip_res.return_code == 0:
-            for ip in env_internet_ip_res.data:
-                self.add_message(u"环境[%s]对应互联网IP类型[%s]删除成功！" % (ip.env.name, ip.name), level="success", post_action=False)
+            for message in env_internet_ip_res.data:
+                self.add_message(message, level="success", post_action=False)
         tmpl = self.render_to_string("admin/defaultset/env_internet_ip/list_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))

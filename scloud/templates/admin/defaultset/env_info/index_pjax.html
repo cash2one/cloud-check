@@ -42,15 +42,17 @@
                     <li><a href="#"><i class="fa fa-trash-o"></i> Trash</a></li-->
                   </ul>
                   #}
+                <form data-pjax id="env_res_form" action="{{ reverse_url('defaultset.env_info.del') }}">
+                  {{ handler.xsrf_form_html() }}
                   <ul class="todo-list" id="env_list_res">
                     {% for env in env_list_res.data %}
                     <li>
                       <!-- drag handle -->
                       <!-- todo text -->
-                      <input type="checkbox" id="env_{{ env.id }}" value="{{ env.id }}" name="" onclick="check_done('{{ env.id }}')">
+                      <input type="checkbox" id="env_{{ env.id }}" value="{{ env.id }}" name="env_id" onclick="check_done('{{ env.id }}')">
                       <span class="text">{{ env.name }}</span>
                       <!-- Emphasis label -->
-                      <span class="label label-{% if env.env_internet_ip_types|length > 0 %}primary{% else %}default{% endif %} ">{{ env.env_internet_ip_types|length }}</span> &nbsp;
+                      <a data-pjax href="{{ reverse_url('defaultset.env_internet_ip.list', env.id) }}"><span class="label label-{% if env.env_internet_ip_types|length > 0 %}primary{% else %}default{% endif %} ">{{ env.env_internet_ip_types|length }}</span></a> &nbsp;
                       <span class="label label-{% if env.env_resource_value %}primary{% else %}default{% endif %} "><i class="fa fa-info"></i> {% if env.env_resource_value %}已设定{% else %}未设定{% endif %}</span> &nbsp;
                       <span class="label label-{% if env.env_resource_fee %}primary{% else %}default{% endif %} "><i class="fa fa-cny"></i> {% if env.env_resource_fee %}已设定{% else %}未设定{% endif %}</span>
                       <!-- General tools such as edit or delete-->
@@ -60,13 +62,14 @@
                       </div>
                     </li>
                     {% endfor %}
-                      <!-- li -->
-                      <li id="li-btns" style="display: none">
-                          <!-- li -->
-                          <a id="env_list_edit_btn" data-pjax href="{{ reverse_url('defaultset.env_info.edit_info') }}" class="btn btn-success">编辑</a>
-                          <a data-pjax href="" class="btn btn-danger">删除</a>
-                      </li>
+                    <!-- li -->
+                    <li id="li-btns" style="display: none">
+                        <!-- li -->
+                        <a id="env_list_edit_btn" data-pjax href="{{ reverse_url('defaultset.env_info.edit_info') }}" class="btn btn-success">编辑</a>
+                        <a data-pjax id="env_res_del_btn" href="javascript:;" onclick="do_del_env();" class="btn btn-danger">删除</a>
+                    </li>
                   </ul>
+                </form>
                 </div><!-- /.box-body -->
                   {#% include "admin/base/base_paginator.html" %#}
               </div><!-- /. box -->
@@ -100,6 +103,21 @@
           }else{
             $("#li-btns").css("display", "none");
           }
+        }
+        function do_del_env(){
+          confirmBox({
+              message: "确定删除所选的环境设置吗？",
+              onConfirm: function(){
+                generate_ajax_post({
+                    form: "#env_res_form",
+                    method: "DELETE",
+                    button: "#env_res_del_btn",
+                    onSuccess: function(response){
+                      $("#confirmBox").tClose()
+                    }
+                })
+              }
+          })
         }
         {% if env_res %}
           $(function(){
