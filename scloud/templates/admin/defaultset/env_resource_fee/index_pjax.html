@@ -26,7 +26,9 @@
                 <div class="box-body no-padding">
                   <ul class="nav nav-pills nav-stacked">
                     {% for env in env_list_res.data %}
-                    <li name="env_{{ env.id }}"><a data-pjax href="{{ reverse_url('defaultset.env_resource_fee.edit', env.id) }}"><i class="fa fa-cny"></i> {{ env.name }} <span class="label label-{% if env.env_resource_fee %}primary{% else %}default{% endif %} pull-right"><i class="fa fa-cny"></i> {% if env.env_resource_fee %}已设定{% else %}未设定{% endif %}</span></a></li>
+                    <li name="env_{{ env.id }}"><a data-pjax href="{{ reverse_url('defaultset.env_resource_fee.edit', env.id) }}"><i class="fa fa-cny"></i> {{ env.name }} 
+                    <span class="label label-{% if env.env_resource_fee %}primary{% else %}default{% endif %} pull-right"><i class="fa fa-cny"></i> {% if env.env_resource_fee %}已设定{% else %}未设定{% endif %}</span>
+                    </a></li>
                     {% endfor %}
                     <!--li><a href="mailbox.html"><i class="fa fa-inbox"></i> Inbox <span class="label label-primary pull-right">12</span></a></li>
                     <li><a href="#"><i class="fa fa-envelope-o"></i> Sent</a></li>

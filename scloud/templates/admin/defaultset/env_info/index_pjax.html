@@ -46,10 +46,10 @@
                   {{ handler.xsrf_form_html() }}
                   <ul class="todo-list" id="env_list_res">
                     {% for env in env_list_res.data %}
-                    <li>
+                    <li{% if env_res and env_res.data.id == env.id %} class="done"{% endif %}>
                       <!-- drag handle -->
                       <!-- todo text -->
-                      <input type="checkbox" id="env_{{ env.id }}" value="{{ env.id }}" name="env_id" onclick="check_done('{{ env.id }}')">
+                      <input type="checkbox" id="env_{{ env.id }}" value="{{ env.id }}" name="env_id" onclick="check_done('{{ env.id }}')"{% if env_res and env_res.data.id == env.id %} checked{% endif %}>
                       <span class="text">{{ env.name }}</span>
                       <!-- Emphasis label -->
                       <a data-pjax href="{{ reverse_url('defaultset.env_internet_ip.list', env.id) }}"><span class="label label-{% if env.env_internet_ip_types|length > 0 %}primary{% else %}default{% endif %} ">{{ env.env_internet_ip_types|length }}</span></a> &nbsp;
@@ -57,8 +57,9 @@
                       <span class="label label-{% if env.env_resource_fee %}primary{% else %}default{% endif %} "><i class="fa fa-cny"></i> {% if env.env_resource_fee %}已设定{% else %}未设定{% endif %}</span>
                       <!-- General tools such as edit or delete-->
                       <div class="tools">
-                        <i class="fa fa-edit"></i>
-                        <i class="fa fa-trash-o"></i>
+                        <!-- tools -->
+                        <a data-pjax href="{{ reverse_url('defaultset.env_info.edit', env.id) }}"><i class="fa fa-edit"></i></a>
+                        <a data-pjax href="javascript:;" onclick="do_del_env()"><i class="fa fa-trash-o"></i></a>
                       </div>
                     </li>
                     {% endfor %}
@@ -105,8 +106,13 @@
           }
         }
         function do_del_env(){
+          var checked_values = $getCheckValues("#env_list_res")
+          var names = []
+          for(var i in checked_values){
+            names.push($("input[id=env_"+checked_values[i]+"]").next().text());
+          }
           confirmBox({
-              message: "确定删除所选的环境设置吗？",
+              message: "确定删除环境"+names.join("、")+"设置吗？",
               onConfirm: function(){
                 generate_ajax_post({
                     form: "#env_res_form",
@@ -122,6 +128,7 @@
         {% if env_res %}
           $(function(){
               init_status()
+              check_done()
           })
           function init_status(){
             var env_id = "{{ env_res.data.id }}";
