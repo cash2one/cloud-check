@@ -23,6 +23,7 @@ db_engine = create_engine(
     echo=False,
     pool_size=100,
     pool_recycle=3600,
+    encoding="utf-8",
     isolation_level='REPEATABLE READ',
 )
 
