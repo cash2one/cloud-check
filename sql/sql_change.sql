@@ -149,7 +149,7 @@ CREATE TABLE `env_info` (
 )
 COMMENT='项目环境表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 CREATE TABLE `pro_resource_apply` (
@@ -206,7 +206,7 @@ CREATE TABLE `env_resource_fee` (
 )
 COMMENT='环境资源单价费用表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 CREATE TABLE `env_resource_value` (
@@ -230,7 +230,7 @@ CREATE TABLE `env_resource_value` (
 )
 COMMENT='环境资源默认值表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 CREATE TABLE `env_internet_ip_types` (
@@ -248,7 +248,7 @@ CREATE TABLE `env_internet_ip_types` (
 )
 COMMENT='环境外网IP分类表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 CREATE TABLE `act_history` (

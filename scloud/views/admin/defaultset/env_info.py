@@ -98,6 +98,7 @@ class Add_Env_Info_Handler(BaseEnvHandler):
 
 @url("/defaultset/env_info/del", name="defaultset.env_info.del", active="defaultset.env_info")
 class Env_Info_Del_Handler(BaseEnvHandler):
+    u"""环境设置"""
     @unblock
     def delete(self):
         env_ids = self.get_arguments("env_id")
