@@ -26,4 +26,4 @@ class ProfileHandler(AuthHandler):
 
     @unblock
     def get(self):
-        return self.render_to_string("admin/user/resetpass/index.html")
+        return self.render_to_string("admin/profile/resetpass/index.html")

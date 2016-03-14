@@ -1,4 +1,5 @@
 
+{% import "admin/base/base_macros.html" as base %}
   <!-- Horizontal Form -->
   <div>
     <div class="box-header with-border">
@@ -9,30 +10,9 @@
     <form data-pjax action="/guide/step/1" class="form-horizontal" method="POST">
     {{ handler.xsrf_form_html() }}
       <div class="box-body">
-        <div class="form-group">
-          <label for="computer" class="col-sm-2 control-label">管理员用户名</label>
-          <div class="col-sm-6">
-            <select class="form-control select2 multiple" style="width: 100%;">
-              <option selected="selected">Alabama</option>
-              <option>Alaska</option>
-              <option>California</option>
-              <option>Delaware</option>
-              <option>Tennessee</option>
-              <option>Texas</option>
-              <option>Washington</option>
-            </select>
-          </div>
-          <label for="computer" class="col-sm-2 control-label"><button type="button" onclick="" class="btn btn-block btn-danger btn-sm">添加</button></label>
-        </div>
-        <div class="form-group">
-          <label for="loadbalance" class="col-sm-2 control-label">项目权限</label>
-          <div class="col-sm-6">
-            <select class="form-control select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
-              <option>xx项目测试环境</option>
-              <option selected="selected">Alaska</option>
-            </select>
-          </div>
-        </div>
+          {{ base.form_input("用户名", "username") }}
+          {{ base.form_input("邮箱", "email") }}
+          {{ base.form_select("是否有效", "is_enable", options=[{"value":0, "desc": "否"}, {"value": 1, "desc": "是"}]) }}
         <div class="form-group">
           <div class="radio col-sm-offset-2 col-sm-10">
               <label>

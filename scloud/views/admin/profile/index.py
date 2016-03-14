@@ -40,7 +40,7 @@ class ProfileHandler(AuthHandler):
     @unblock
     def get(self):
         data = self.get_index_page()
-        return self.render_to_string("admin/user/profile/index.html", **data)
+        return self.render_to_string("admin/profile/profile/index.html", **data)
 
     @unblock
     def post(self):
@@ -60,7 +60,7 @@ class ProfileHandler(AuthHandler):
         logger.info("self.session.get('current_user').username: %s" % self.session.get("current_user").username)
         logger.info("#"*60)
         #tmpl = self.render_to_string("admin/user/profile/_profile_index.html", user=user_res.data)
-        tmpl = self.render_to_string("admin/user/profile/_profile_index.html", user=self.current_user)
+        tmpl = self.render_to_string("admin/profile/profile/_profile_index.html", user=self.current_user)
         data = {
             "tmpl": tmpl,
             "user": self.current_user.as_dict()
@@ -79,7 +79,7 @@ class TaskConfirmHandler(ProfileHandler):
             raise confirm_res
         self.add_message(u"已确认用户信息")
         data = self.get_index_page(**kwargs)
-        tmpl = self.render_to_string("admin/user/profile/index_pjax.html", **data)
+        tmpl = self.render_to_string("admin/profile/profile/index_pjax.html", **data)
         logger.info(tmpl)
         return simplejson.dumps(self.success(data=tmpl))
 

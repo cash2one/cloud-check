@@ -42,7 +42,7 @@ class ResourceCheckListHandler(AuthHandler):
             "STATUS_RESOURCE": STATUS_RESOURCE,
             "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if isinstance(i, int)]
         }
-        return self.render_to_string("admin/pro_resource/check_detail.html", **data)
+        return self.render_to_string("admin/check/check_detail.html", **data)
 
 
 @url("/pro/resource/check_list", name="resource_check_list", active="resource_check_list")
@@ -67,7 +67,7 @@ class ResourceCheckListHandler(AuthHandler):
             "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if isinstance(i, int)]
         }
         logger.info("\t [page]: %s" % [i.user.email for i in page.object_list])
-        return self.render_to_string("admin/pro_resource/check_list.html", **data)
+        return self.render_to_string("admin/check/check_list.html", **data)
 
     @check_perms('pro_resource_apply.check')
     @unblock
@@ -90,6 +90,6 @@ class ResourceCheckListHandler(AuthHandler):
             "STATUS_RESOURCE": STATUS_RESOURCE,
             "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if isinstance(i, int)]
         }
-        tmpl = self.render_to_string("admin/pro_resource/check_list_pjax.html", **data)
+        tmpl = self.render_to_string("admin/check/check_list_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))
 
