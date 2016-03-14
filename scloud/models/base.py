@@ -105,6 +105,7 @@ BaseModel = declarative_base()
 
 
 class BaseModelMixin(object):
+    __table_args__ = {'mysql_engine': CONF('DB.ENGINE')}
     id = Column(Integer, autoincrement=True, primary_key=True)
     create_time = Column(DateTime, default=func.now())
     update_time = Column(DateTime, default=func.now(), onupdate=func.now())

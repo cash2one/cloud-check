@@ -32,7 +32,7 @@ db:
   storm: store
   sqlalchemy: session
   connection_string: '{db.scheme}://{db.user}:{db.pass}@{db.host}:{db.port}/{db.name}?charset=utf8'
-  engine: 'myisam'
+  engine: 'MyISAM'
 
 sqlalchemy:
   echo: True
