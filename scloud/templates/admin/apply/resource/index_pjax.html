@@ -1,0 +1,122 @@
+
+
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            {{ handler }}
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">{{ handler }}</li>
+          </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+          {% include "admin/base/base_messages.html" %}
+          <div class="row">
+            <div class="col-md-4">
+            <a data-pjax href="{{ reverse_url('guide') }}" class="btn btn-primary btn-block margin-bottom">申请新项目</a>
+              <div class="box box-solid">
+                <div class="box-header with-border">
+                  <h3 class="box-title">项目列表</h3>
+                  <div class="box-tools">
+                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                  </div>
+                </div>
+                <div class="box-body no-padding">
+                <form data-pjax id="env_res_form" action="{{ reverse_url('defaultset.env_info.del') }}">
+                  {{ handler.xsrf_form_html() }}
+                  <ul class="todo-list" id="env_list_res">
+                    {% for pro in pro_list_res.data %}
+                      {% set applies = pro.pro_resource_applies %}
+                      {% set last_apply = applies[-1] %}
+                      {% if last_apply.status >= STATUS_RESOURCE.CONFIRMPAYED or last_apply.status <= STATUS_RESOURCE.REVOKED %}
+                    <li{% if pro_info_res and pro_info_res.data.id == pro.id %} class="done"{% endif %}>
+                      <!-- drag handle -->
+                      <!-- todo text -->
+                      <input type="checkbox" id="pro_{{ pro.id }}" value="{{ pro.id }}" name="pro_id" onclick="check_done('{{ pro.id }}')"{% if pro_info_res and pro_info_res.data.id == pro.id %} checked{% endif %}>
+                      <span class="text">{{ pro.name }}</span>
+                      <!-- Emphasis label -->
+                      <span class="label label-primary">{{ STATUS_RESOURCE.get(last_apply.status).value }}</span>
+                      <!-- General tools such as edit or delete-->
+                      <div class="tools">
+                        <!-- tools -->
+                        <a data-pjax href=""><i class="fa fa-edit"></i></a>
+                        <a data-pjax href="javascript:;" onclick="do_del_env()"><i class="fa fa-trash-o"></i></a>
+                      </div>
+                    </li>
+                      {% endif %}
+                      {% endfor %}
+                    <!-- li -->
+                    <li id="li-btns" style="display: none">
+                        <!-- li -->
+                        <a id="env_list_edit_btn" data-pjax href="{{ reverse_url('apply.resource.add') }}" class="btn btn-success">资源申请</a>
+                        <a data-pjax id="env_res_del_btn" href="javascript:;" onclick="do_del_env();" class="btn btn-danger">删除</a>
+                    </li>
+                  </ul>
+                </form>
+                </div><!-- /.box-body -->
+              </div><!-- /. box -->
+            </div><!-- /.col -->
+            <div class="col-md-8">
+            {% block edit_content %}
+            {% endblock %}
+            </div><!-- /.col -->
+          </div><!-- /.row -->
+        </section><!-- /.content -->
+        <script type="text/javascript">
+        function check_done(env_id){
+          var _this = $("#pro_"+env_id)
+          console.log(_this)
+          if(_this.prop("checked")){
+            _this.parent().addClass("done");
+          }else{
+            _this.parent().removeClass("done");
+          }
+          var checked_values = $getCheckValues("#env_list_res")
+          console.log(checked_values)
+          if (checked_values.length > 0){
+            if (checked_values.length == 1){
+              $("#env_list_edit_btn").css("display", "")
+              var href = "{{ reverse_url('apply.resource.add') }}" + "?pro_id=" + checked_values[0]
+              $("#env_list_edit_btn").attr("href", href)
+            }else{
+              $("#env_list_edit_btn").css("display", "none")
+            }
+            $("#li-btns").css("display", "");
+          }else{
+            $("#li-btns").css("display", "none");
+          }
+        }
+        function do_del_env(){
+          var checked_values = $getCheckValues("#env_list_res")
+          var names = []
+          for(var i in checked_values){
+            names.push($("input[id=env_"+checked_values[i]+"]").next().text());
+          }
+          confirmBox({
+              message: "确定删除事件"+names.join("、")+"吗？",
+              onConfirm: function(){
+                generate_ajax_post({
+                    form: "#env_res_form",
+                    method: "DELETE",
+                    button: "#env_res_del_btn",
+                    onSuccess: function(response){
+                      $("#confirmBox").tClose()
+                    }
+                })
+              }
+          })
+        }
+        {% if pro_info_res %}
+          $(function(){
+              init_status()
+              check_done()
+          })
+          function init_status(){
+            var pro_id = "{{ pro_info_res.data.id }}";
+            $("li[name=pro_"+pro_id+"]").addClass("active");
+          }
+        {% endif %}
+        </script>

@@ -1,0 +1,204 @@
+{% import "admin/base/base_macros.html" as mbase %}
+      <div id="panel_res" class="box box-{{ apply_global_vars.level }} box-solid">
+        <div class="box-header with-border">
+          <h3 class="box-title">资源申请</h3>
+          <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="remove"><i   class="fa fa-times"></i></button>
+          </div><!-- /.box-tools -->
+        </div><!-- /.box-header -->
+        <div class="box-body">
+            {% if last_apply %}
+              {% set computer = last_apply.computer %}
+              {% set cpu = last_apply.cpu %}
+              {% set memory = last_apply.memory %}
+              {% set disk = last_apply.disk %}
+              {% set disk_backup = last_apply.disk_backup %}
+              {% set out_ip = last_apply.out_ip %}
+              {% set snapshot = last_apply.snapshot %}
+              {% set loadbalance = last_apply.loadbalance %}
+              {% set internet_ip = last_apply.internet_ip %}
+              {% set internet_ip_ssl = last_apply.internet_ip_ssl %}
+              {% set start_date = last_apply.start_date.strftime("%Y-%m-%d") if last_apply.start_date else '' %}
+              {% set unit_fee = last_apply.unit_fee %}
+              {% set period = last_apply.period %}
+              {% set total_fee = last_apply.total_fee %}
+            {% else %}
+              {% set computer = handler.args.get('computer', '') %}
+              {% set cpu = handler.args.get('cpu', '') %}
+              {% set memory = handler.args.get('memory', '') %}
+              {% set disk = handler.args.get('disk', '') %}
+              {% set disk_backup = handler.args.get('disk_backup', '') %}
+              {% set out_ip = handler.args.get('out_ip', '') %}
+              {% set snapshot = handler.args.get('snapshot', '') %}
+              {% set loadbalance = handler.args.get('loadbalance', '') %}
+              {% set internet_ip = handler.args.get('internet_ip', '') %}
+              {% set internet_ip_ssl = handler.args.get('internet_ip_ssl', '') %}
+              {% set start_date = handler.args.get('start_date', '') %}
+              {% set unit_fee = handler.args.get('unit_fee', '') %}
+              {% set period = handler.args.get('period', '') %}
+              {% set total_fee = handler.args.get('total_fee', '') %}
+            {% endif %}
+
+            {% if last_apply %}
+              {% if last_apply.status == STATUS_RESOURCE.APPLIED %}
+              {# <============ 撤销申请 =============> #}
+              {% set post_action = reverse_url('resource_revoke', last_apply.pro_id, last_apply.id) %}
+              {% elif last_apply.status in [STATUS_RESOURCE.REVOKED, STATUS_RESOURCE.REFUSED] %}
+              {% set delete_action = reverse_url('resource_delete', last_apply.pro_id, last_apply.id) %}
+              <form id="resource_delete_form" action="{{ delete_action }}" method="POST">
+                {{ handler.xsrf_form_html() }}
+                <input type="hidden" name="post_res_id" value="{{ last_apply.id }}">
+              </form>
+              {# <============ 重新提交申请 =============> #}
+              {% set post_action = reverse_url('guide_step_1.re_apply', pro_info_res.data.id, last_apply.id) %}
+              {# <============ 删除申请 =============> #}
+              {% elif last_apply.status == STATUS_RESOURCE.CHECKED %}
+              {# <============ 完成支付 =============> #}
+              {% endif %}
+            {% else %}
+              {# <============ 申请新资源 =============> #}
+              {% set post_action = reverse_url('guide_step_1', pro_info_res.data.id) %}
+            {% endif %}
+          <!-- form start -->
+              <div class="box-body">
+              <form id="resource_form" data-pjax action="{{ post_action }}" class="form-horizontal" method="POST">
+              {{ handler.xsrf_form_html() }}
+                <fieldset>
+                  <legend>资源配置</legend>
+                  <div class="form-group">
+                    <label for="computer" class="col-sm-2 control-label">云主机数量</label>
+                    <div class="col-sm-6 input-group">
+                      <input type="text" class="form-control" id="computer" name="computer" placeholder="10" value="{{ computer }}">
+                      <div class="input-group-unit">台</div>
+                    </div>
+                  </div>
+                  {{ mbase.check_post(post_apply_res, [-100040, -100060]) }}
+                  <div class="form-group">
+                    <label for="cpu" class="col-sm-2 control-label">CPU总量</label>
+                    <div class="col-sm-6 input-group">
+                      <input type="text" class="form-control" id="cpu" name="cpu" placeholder="4" value="{{ cpu }}">
+                      <div class="input-group-unit">台</div>
+                    </div>
+                  </div>
+                  {{ mbase.check_post(post_apply_res, [-100041, -100061]) }}
+                  <div class="form-group">
+                    <label for="memory" class="col-sm-2 control-label">内存总量</label>
+                    <div class="col-sm-6 input-group">
+                      <input type="text" class="form-control" id="memory" name="memory" placeholder="8" value="{{ memory }}">
+                      <div class="input-group-unit">GB</div>
+                    </div>
+                  </div>
+                  {{ mbase.check_post(post_apply_res, [-100042, -100062]) }}
+                  <div class="form-group">
+                    <label for="disk" class="col-sm-2 control-label">云磁盘个数</label>
+                    <div class="col-sm-6 input-group">
+                      <input type="text" class="form-control" id="disk" name="disk" placeholder="10" value="{{ disk }}">
+                      <div class="input-group-unit">个,</div>
+                      <div class="input-group-unit">其中</div>
+                      <input type="text" class="form-control" id="disk_backup" name="disk_backup" placeholder="10" value="{{ disk_backup }}">
+                      <div class="input-group-unit">个需要云盘备份</div>
+                    </div>
+                  </div>
+                  {{ mbase.check_post(post_apply_res, [-100043, -100063, -100044, -100064]) }}
+                  <div class="form-group">
+                    <label for="ip" class="col-sm-2 control-label">外部IP数量</label>
+                    <div class="col-sm-6 input-group">
+                      <input type="text" class="form-control" id="out_ip" name="out_ip" placeholder="8" value="{{ out_ip }}">
+                      <div class="input-group-unit">个</div>
+                    </div>
+                  </div>
+                  {{ mbase.check_post(post_apply_res, [-100045, -100065]) }}
+                  <div class="form-group">
+                    <label for="snapshot" class="col-sm-2 control-label">快照个数</label>
+                    <div class="col-sm-6 input-group">
+                      <input type="text" class="form-control" id="snapshot" name="snapshot" placeholder="8" value="{{ snapshot }}">
+                      <div class="input-group-unit">个</div>
+                    </div>
+                  </div>
+                  {{ mbase.check_post(post_apply_res, [-100046, -100066]) }}
+                  <div class="form-group">
+                    <label for="loadbalance" class="col-sm-2 control-label">应用负载均衡</label>
+                    <div class="col-sm-6 input-group">
+                      <input type="text" class="form-control" id="loadbalance" name="loadbalance" placeholder="10" value="{{ loadbalance }}">
+                      <div class="input-group-unit">个vSERVER</div>
+                    </div>
+                  </div>
+                  {{ mbase.check_post(post_apply_res, [-100047, -100067]) }}
+                  <div class="form-group">
+                    <label for="loadbalance" class="col-sm-2 control-label">互联网IP({{ internet_ip }})</label>
+                    <div class="col-sm-6 input-group">
+                      <select multiple class="form-control" id="internet_ip" name="internet_ip">
+                        <option value="0"{% if internet_ip|string == "0" %} selected{% endif %}>无需</option>
+                        <option value="1"{% if internet_ip|string == "1" %} selected{% endif %}>双线负载均衡</option>
+                        <option value="2"{% if internet_ip|string == "2" %} selected{% endif %}>单线（软件园）</option>
+                        <option value="3"{% if internet_ip|string == "3" %} selected{% endif %}>单线（移动）</option>
+                      </select>
+                      <div class="input-group-unit">
+                        <div class="radio pull-left">
+                          <label>
+                            <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="1"{% if internet_ip_ssl|string == "1" %} checked="checked"{% endif %}>
+                            需要SSL卸载
+                          </label>
+                        </div>
+                        <div class="radio pull-left">
+                          <label>
+                            <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="0"{% if internet_ip_ssl|string == "0" %} checked="checked"{% endif %}>
+                            不需要SSL卸载
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {{ mbase.check_post(post_apply_res, [-100048, -100068, -100049, -100069]) }}
+                  <div class="form-group">
+                    <label for="start_date" class="col-sm-2 control-label">云主机启用时间</label>
+                    <div class="col-sm-6 input-group">
+                      <div class="input-group">
+                        <input type="text" class="form-control pull-right fa-calendar" id="start_date" name="start_date" value="{{ start_date }}" readonly>
+                      </div><!-- /.input group -->
+                    </div>
+                  </div>
+                  {{ mbase.check_post(post_apply_res, [-100050, -100070]) }}
+                </fieldset>
+                <fieldset>
+                  <legend>产生费用 <button type="button" id="generate_fee_btn" onclick="generate_fee()" class="btn btn-warning btn-sm">试算</button></legend>
+                  <div class="form-group">
+                    <label for="unit_fee" class="col-sm-2 control-label">本月费用</label>
+                    <div class="col-sm-6 input-group">
+                      <input type="text" class="form-control" id="unit_fee" name="unit_fee" placeholder="10" value="{{ unit_fee }}" readonly>
+                      <div class="input-group-unit">元/月</div>
+                      <div class="input-group-unit">X</div>
+                      <input type="text" class="form-control" id="period" name="period" placeholder="12" value="{{ period }}">
+                      <div class="input-group-unit">月</div>
+                    </div>
+                  </div>
+                  {{ mbase.check_post(post_apply_res, [-100051, -100071, -100052, -100072]) }}
+                  <div class="form-group">
+                    <label for="total_fee" class="col-sm-2 control-label">合计费用</label>
+                    <div class="col-sm-6 input-group">
+                      <input type="text" class="form-control" id="total_fee" name="total_fee" placeholder="10" value="{{ total_fee }}" readonly>
+                      <div class="input-group-unit">元</div>
+                    </div>
+                  </div>
+                  {{ mbase.check_post(post_apply_res, [-100053, -100073]) }}
+                </fieldset>
+              </form>
+              </div><!-- /.box-body -->
+              <div class="box-footer text-center">
+                {% if last_apply %}
+                  {% if last_apply.status|int == STATUS_RESOURCE.APPLIED %}
+                  <button id="do_revoke_btn" type="button" onclick="do_revoke()" class="btn btn-{{ STATUS_RESOURCE.revoked.level }}">撤销申请</button>
+                  {% elif last_apply.status|int in [STATUS_RESOURCE.REVOKED, STATUS_RESOURCE.REFUSED] %}
+                  <button id="do_re_apply_btn" type="button" onclick="do_re_apply()" class="btn btn-{{ STATUS_RESOURCE.applied.level }}">重新提交申请</button>
+                  <button id="do_delete_btn" type="button" onclick="do_delete()" class="btn btn-{{ STATUS_RESOURCE.unknown.level }}">删除申请</button>
+                  {% elif last_apply.status|int == STATUS_RESOURCE.CHECKED %}
+                  <a data-pjax href="{{ reverse_url('guide_step_2', last_apply.project.id) }}" class="btn btn-{{ STATUS_RESOURCE.payed.level }}">去支付</a>
+                  {% elif last_apply.status|int == STATUS_RESOURCE.CONFIRMPAYED %}
+                  <a data-pjax href="{{ reverse_url('guide_step_3', last_apply.project.id) }}" class="btn btn-{{ STATUS_RESOURCE.payed.level }}">去填写运行参数</a>
+                  {% endif %}
+                {% else %}
+                <button id="do_apply_btn" type="button" onclick="do_apply()" class="btn btn-{{ STATUS_RESOURCE.applied.level }}">提交申请</button>
+                {% endif %}
+              </div><!-- /.box-footer -->
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
