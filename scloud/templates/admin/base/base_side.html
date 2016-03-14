@@ -3,8 +3,11 @@
         <section class="sidebar">
           
           <!-- sidebar menu: : style can be found in sidebar.less -->
+          {% set current_user = handler.current_user %}
+          {% set current_perms = current_user.current_perms %}
           <ul class="sidebar-menu">
             <li class="header">导航</li>
+            {% if "pro_info.view" in current_perms %}
             <li class="active treeview">
               <a href="#">
                 <i class="fa fa-hand-o-right"></i> <span>项目引导</span> <i class="fa fa-angle-left pull-right"></i>
@@ -13,6 +16,7 @@
                 <li><a data-pjax name="guide" href="{{ reverse_url('guide') }}"><i class="fa fa-database"></i>申请资源</a></li>
               </ul>
             </li>
+            {% endif %}
             {#
             <li class="active">
               <a href="#">
@@ -24,6 +28,7 @@
               </ul>
             </li>
             #}
+            {% if "pro_info.view" in current_perms %}
             <li class="active">
               <a href="#">
                 <i class="fa fa-pencil-square"></i> <span>权限申请</span> <i class="fa fa-angle-left pull-right"></i>
@@ -48,6 +53,9 @@
                 <li><a data-pjax name="resource_check_list" href="{{ reverse_url('apply.resource') }}"><i class="fa fa-circle-o"></i> 资源申请</a></li>
               </ul>
             </li>
+            {% endif %}
+
+            {% if "pro_info.check" in current_perms %}
             <li class="active">
               <a href="#">
                 <i class="fa fa-pencil-square"></i> <span>项目审核</span> <i class="fa fa-angle-left pull-right"></i>
@@ -56,6 +64,8 @@
                 <li><a data-pjax name="resource_check_list" href="{{ reverse_url('resource_check_list') }}"><i class="fa fa-circle-o"></i> 资源审核</a></li>
               </ul>
             </li>
+            {% endif %}
+            {% if "pt_user.view" in current_perms %}
             <li class="active">
               <a href="#">
                 <i class="fa fa-puzzle-piece"></i> <span>权限管理</span> <i class="fa fa-angle-left pull-right"></i>
@@ -66,6 +76,7 @@
                 <li><a data-pjax name="pt_user" href="{{ reverse_url('pt_user') }}"><i class="fa fa-circle-o"></i> 用户管理</a></li>
               </ul>
             </li>
+            {% endif %}
             <li class="treeview">
               <a href="#">
                 <i class="fa fa-files-o"></i>
@@ -93,6 +104,7 @@
                 <li><a data-pjax name="user_resetpass" href="{{ reverse_url('user_resetpass') }}"><i class="fa fa-circle-o"></i> 修改密码</a></li>
               </ul>
             </li>
+            {% if "env_info.view" in current_perms %}
             <li class="treeview">
               <a href="#">
                 <i class="fa fa-laptop"></i>
@@ -106,6 +118,7 @@
                 <li><a data-pjax name="defaultset.env_resource_fee" href="{{ reverse_url('defaultset.env_resource_fee' )}}"><i class="fa fa-circle-o"></i> 资源申请相关费用</a></li>
               </ul>
             </li>
+            {% endif %}
             <!--li class="treeview">
               <a href="#">
                 <i class="fa fa-laptop"></i>
