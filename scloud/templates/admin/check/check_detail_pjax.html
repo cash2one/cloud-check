@@ -74,7 +74,7 @@
                 <div class="box-body no-padding">
                   <div class="mailbox-controls">
                   <a data-pjax href="{{ reverse_url('resource_check_list') }}?res_status={{ resource_apply.status }}" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-reply"></i> 返回</a>
-                    {% include "admin/pro_resource/_check_detail_buttons.html" %}  
+                    {% include "admin/check/_check_detail_buttons.html" %}  
                   </div>
                   <div class="box-body no-padding">
                     <p>{{ resource_apply.project.desc }}</p>
@@ -106,7 +106,7 @@
                 </div><!-- /.box-body -->
                 <div class="box-footer no-padding">
                   <div class="mailbox-controls">
-                    {% include "admin/pro_resource/_check_detail_buttons.html" %}  
+                    {% include "admin/check/_check_detail_buttons.html" %}  
                   </div>
                 </div>
               </div><!-- /. box -->
