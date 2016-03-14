@@ -49,10 +49,8 @@
                 <span class="label label-primary pull-right">4</span>
               </a>
               <ul class="treeview-menu">
-                <li><a data-pjax href="/event/calendar"><i class="fa fa-circle-o"></i>日历事件</a></li>
-                <!--li><a href="pages/layout/boxed.html"><i class="fa fa-circle-o"></i> Boxed</a></li>
-                <li><a href="pages/layout/fixed.html"><i class="fa fa-circle-o"></i> Fixed</a></li>
-                <li><a href="pages/layout/collapsed-sidebar.html"><i class="fa fa-circle-o"></i> Collapsed Sidebar</a></li-->
+                <li><a data-pjax href="{{ reverse_url('event.index') }}"><i class="fa fa-circle-o"></i>创建事件</a></li>
+                <li><a data-pjax href="{{ reverse_url('event.calendar') }}"><i class="fa fa-circle-o"></i>日历</a></li>
               </ul>
             </li>
             <!--li>
