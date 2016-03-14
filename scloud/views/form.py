@@ -3,7 +3,7 @@
 import os
 import scloud
 from scloud.handlers import Handler
-from torweb.urls import url
+from scloud.shortcuts import url
 
 
 @url("/form", name="form")

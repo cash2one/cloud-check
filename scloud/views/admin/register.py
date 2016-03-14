@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from torweb.urls import url
+from scloud.shortcuts import url
 from scloud.config import logger, thrownException
 from scloud.handlers import Handler
 # from tornado.web import asynchronous

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # created: zhangpeng <zhangpeng1@infohold.com.cn>
 
-from torweb.urls import url
+from scloud.shortcuts import url
 from scloud.const import act_actions
 from scloud.config import logger
 from scloud.handlers import Handler

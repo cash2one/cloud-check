@@ -3,7 +3,7 @@
 # created: zhangpeng <zhangpeng1@infohold.com.cn>
 
 import scloud
-from torweb.urls import url
+from scloud.shortcuts import url
 from scloud.shortcuts import *
 from scloud.handlers import Handler
 import requests

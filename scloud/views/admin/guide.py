@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import scloud
-from torweb.urls import url
+#from torweb.urls import url
+from scloud.shortcuts import url
 from scloud.config import logger, thrownException
 from scloud.const import pro_resource_apply_status_types, STATUS_RESOURCE
 from scloud.handlers import Handler, AuthHandler
