@@ -10,9 +10,10 @@
                 <i class="fa fa-hand-o-right"></i> <span>项目引导</span> <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
-                <li><a data-pjax name="guide" href="/guide"><i class="fa fa-database"></i>申请资源</a></li>
+                <li><a data-pjax name="guide" href="{{ reverse_url('guide') }}"><i class="fa fa-database"></i>申请资源</a></li>
               </ul>
             </li>
+            {#
             <li class="active">
               <a href="#">
                 <i class="fa fa-dashboard"></i> <span>项目概览</span> <i class="fa fa-angle-left pull-right"></i>
@@ -22,6 +23,7 @@
                 <li><a data-pjax name="index2" href="/index2"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
               </ul>
             </li>
+            #}
             <li class="active">
               <a href="#">
                 <i class="fa fa-pencil-square"></i> <span>项目审核</span> <i class="fa fa-angle-left pull-right"></i>
