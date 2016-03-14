@@ -39,7 +39,9 @@
   <body class="hold-transition login-page">
     <div class="login-box">
       <div class="login-logo">
-        <a href="{{ reverse_url('pt_user') }}"><b>{{ CONF('APP_CN') }}</b>SCLOUD</a>
+        <a href="{{ reverse_url('index') }}"><b>{{ CONF('APP_CN') }}</b>SCLOUD</a>
+        </br>
+        <small>{{ CONF('SUB_APP_CN') }}</small>
       </div><!-- /.login-logo -->
       {% block content %}
       {% endblock %}
