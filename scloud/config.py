@@ -39,6 +39,7 @@ dictConfig(yaml.load(open(settings_path, 'r')))
 itornado = logging.getLogger("console")
 logger = logging.getLogger("file")
 iError = logging.getLogger("iError")
+CONF = CONFIG(settings_path)
 
 
 def logThrown():
@@ -80,14 +81,15 @@ def thrownException(func):
     return wrapper
 
 static_path = os.path.join(scloud.base_path, "static")
+logger.info("static_path: %s" % static_path)
 tornado_settings = {
     "static_path": static_path,
+    "static_url_prefix": "%s/static/" % CONF("URL_ROOT"),
     'cookie_secret': base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),
     'xsrf_cookies': True,
 }
 logger.info("tornado_settings: %s" % tornado_settings)
 
-CONF = CONFIG(settings_path)
 
 # url = Url(CONF("URL_ROOT"))
 
