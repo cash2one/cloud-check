@@ -1,0 +1,31 @@
+{% extends "admin/apply/user/index_pjax.html" %}
+{% import "admin/base/base_macros.html" as mbase %}
+{% block edit_content %}
+{% set apply_global_vars = pro_info_res.data.get_apply_global_vars() %}
+{% set applies = pro_info_res.data.pro_resource_applies %}
+{% set last_apply = applies[-1] %}
+              <!-- Custom Tabs -->
+              <div class="nav-tabs-custom" id="guide_step_3_tabs">
+                <ul class="nav nav-tabs">
+                  <li class="active"><a href="#tab_1" data-toggle="tab">互联网发布</a></li>
+                  <li><a href="#tab_2" data-toggle="tab">负载均衡</a></li>
+                  <li><a href="#tab_3" data-toggle="tab">定期备份</a></li>
+                  <li><a href="#tab_4" data-toggle="tab"{% if last_apply and not last_apply.start_date %} class="alert-warning"{% endif %}>启用时间</a></li>
+                  <li class="pull-right header"><a data-pjax href=""><i class="fa fa-refresh"></i></a></li>
+                </ul>
+                <div class="tab-content">
+                  <div class="tab-pane active" id="tab_1">
+                    {% include "admin/guide/_step_3_publish.html" %}
+                  </div><!-- /.tab-pane -->
+                  <div class="tab-pane" id="tab_2">
+                    {% include "admin/guide/_step_3_balance.html" %}
+                  </div><!-- /.tab-pane -->
+                  <div class="tab-pane" id="tab_3">
+                    {% include "admin/guide/_step_3_backup.html" %}
+                  </div><!-- /.tab-pane -->
+                  <div class="tab-pane" id="tab_4">
+                    {% include "admin/guide/_step_3_start_date.html" %}
+                  </div><!-- /.tab-pane -->
+                </div><!-- /.tab-content -->
+              </div><!-- nav-tabs-custom -->
+{% endblock %}
