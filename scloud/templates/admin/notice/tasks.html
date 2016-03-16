@@ -15,7 +15,18 @@
                       {% for task in tasks %}
                       {% set global_vars = task.res_apply.get_global_vars() %}
                       <li><!-- Task item -->
-                        <a data-pjax href="{{ reverse_url('guide') }}">
+                        {% if imchecker == False %}
+                        {% set act_url = reverse_url('guide') %}
+                        {% else %}
+                          {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id == 0 %}
+                            {% set act_url = reverse_url('user_profile') %}
+                          {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id != 0 %}
+                            {% set act_url = "javascript:;" %}
+                          {% else %}
+                          {% set act_url = "{}?res_status={}".format(reverse_url('resource_check_list'), task.status) %}
+                          {% endif %}
+                        {% endif %}
+                        <a data-pjax href="{{ act_url }}">
                           <h3>{{ task.desc }}
                             <small class="pull-right">{{ global_vars.progress_percent }}</small>
                           </h3>

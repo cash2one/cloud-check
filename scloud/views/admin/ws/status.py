@@ -14,7 +14,7 @@ class MySocketHandler(WebSocketHandler):
     def initialize(self, **kwargs):
         super(MySocketHandler, self).initialize()
 
-@url("/ws/status", name="ws.demo")
+@url("/ws/status", name="ws.status")
 class EchoWebSocket(MySocketHandler, AuthHandler):
     users = dict()
     def check_origin(self, origin):
@@ -46,10 +46,18 @@ class EchoWebSocket(MySocketHandler, AuthHandler):
             # resource_res = svc.get_resource()
             # user_id = resource_res.data.user_id
             user_id = json_message["user_id"]
+            svc = PtUserService(self, {"user_id": user_id})
+            pt_user_res = svc.get_info()
+            current_perms = pt_user_res.data.get_current_perms()
+            if "pro_resource_apply.view" in current_perms:
+                imchecker = False
+            else:
+                imchecker = True
             svc = ActHistoryService(self, {"user_id": user_id})
             tasks_res = svc.get_res_tasks()
             data = {
                 "tasks_res": tasks_res,
+                "imchecker": imchecker,
                 "STATUS_RESOURCE": STATUS_RESOURCE
             }
             chat = {
