@@ -15,7 +15,6 @@
                       {% for task in tasks %}
                       {% set global_vars = task.res_apply.get_global_vars() %}
                       <li><!-- Task item -->
-                        imchecker: {{ imchecker }}
                         {% if not imchecker %}
                           {% if task.status <= STATUS_RESOURCE.APPLIED %}
                             {% set act_url = reverse_url('guide_step_1', task.pro.id) %}

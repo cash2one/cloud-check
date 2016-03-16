@@ -59,22 +59,18 @@
 {% macro get_task_module(task, STATUS_RESOURCE, user=None, checker=None, imchecker=True) -%}
   {% if imchecker %}
     {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id == 0 %}
-      1
       {{ user_info(task, user=user, imchecker=imchecker, content=content_check_sure(task)) }}
     {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id != 0 %}
     {% else %}
-      2
       {{ user_info(task, user=user, imchecker=imchecker, content=content_check(task)) }}
     {% endif %}
   {% else %}
 
     {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.res_apply.start_date %}
     {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and not task.res_apply.start_date %}
-    3
     {{ user_info(task, checker=checker, imchecker=imchecker, content=content_user(task)) }}
     {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id != 0 %}
     {% else %}
-    4
       {{ user_info(task, checker=checker, imchecker=imchecker, content=content_user(task)) }}
     {% endif %}
   {% endif %}
