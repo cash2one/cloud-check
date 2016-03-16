@@ -3,6 +3,7 @@
 from datetime import datetime
 from tornado import gen
 from scloud.services.base import BaseService
+from scloud.services.svc_pt_user import PtUserService
 from scloud.models.base import MYSQL_POOL
 from scloud.models.pt_user import PT_User
 from scloud.models.act import Act_History, Act_Pro_History
@@ -57,11 +58,19 @@ class ActHistoryService(BaseService):
     @thrownException
     def get_res_tasks(self):
         logger.info("------[get_res_tasks]------")
-        current_user = self.handler.current_user
-        if current_user:
-            user_id = current_user.id
-            role_ids = [role.id for role in current_user.user_roles]
-            current_perms = current_user.current_perms
+        user_id = self.params.get("user_id", None)
+        if not user_id:
+            user_id = self.handler.current_user.id
+        svc = PtUserService(self.handler, {"user_id": user_id})
+        user_res = svc.get_info()
+        user = user_res.data
+        # current_user = self.handler.current_user
+        # if current_user:
+        if user:
+            # user_id = current_user.id
+            # role_ids = [role.id for role in current_user.user_roles]
+            # current_perms = current_user.current_perms
+            current_perms = user.get_current_perms()
             conditions = and_()
             or_conditions = or_()
             # 如果是管理员用户，查看所有项目申请提交的任务状态

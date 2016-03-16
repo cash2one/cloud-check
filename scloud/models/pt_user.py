@@ -6,10 +6,11 @@ from scloud.models.base import BaseModel, BaseModelMixin
 from sqlalchemy import Column, func, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Unicode, Integer, DateTime
+from scloud.models.pt_user_mixin import PT_User_Mixin
 
 
 # 用户表
-class PT_User(BaseModel, BaseModelMixin):
+class PT_User(BaseModel, BaseModelMixin, PT_User_Mixin):
     u"""用户"""
     __tablename__ = "pt_user"
     email = Column(Unicode, default=u'')

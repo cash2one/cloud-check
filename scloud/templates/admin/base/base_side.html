@@ -8,7 +8,7 @@
           <ul class="sidebar-menu">
             <li class="header">导航</li>
             {% if "pro_info.view" in current_perms %}
-            <li class="active treeview">
+            <li class="treeview">
               <a href="#">
                 <i class="fa fa-hand-o-right"></i> <span>项目引导</span> <i class="fa fa-angle-left pull-right"></i>
               </a>
@@ -18,7 +18,7 @@
             </li>
             {% endif %}
             {#
-            <li class="active">
+            <li class="">
               <a href="#">
                 <i class="fa fa-dashboard"></i> <span>项目概览</span> <i class="fa fa-angle-left pull-right"></i>
               </a>
@@ -29,34 +29,28 @@
             </li>
             #}
             {% if "pro_info.view" in current_perms %}
-            <li class="active">
-              <a href="#">
-                <i class="fa fa-pencil-square"></i> <span>权限申请</span> <i class="fa fa-angle-left pull-right"></i>
+            <li class="">
+              <a data-pjax name="apply.user" href="{{ reverse_url('apply.user') }}">
+                <i class="fa fa-user"></i> <span>权限申请</span>
+                <span class="label label-primary pull-right">2</span>
               </a>
-              <ul class="treeview-menu">
-                <li><a data-pjax name="resource_check_list" href="{{ reverse_url('apply.user') }}"><i class="fa fa-circle-o"></i> 权限申请</a></li>
-              </ul>
             </li>
-            <li class="active">
-              <a href="#">
-                <i class="fa fa-pencil-square"></i> <span>服务申请</span> <i class="fa fa-angle-left pull-right"></i>
+            <li class="">
+              <a data-pjax name="apply.service" href="{{ reverse_url('apply.service') }}">
+                <i class="fa fa-cutlery"></i> <span>服务申请</span>
+                <span class="label label-primary pull-right">2</span>
               </a>
-              <ul class="treeview-menu">
-                <li><a data-pjax name="resource_check_list" href="{{ reverse_url('apply.service') }}"><i class="fa fa-circle-o"></i> 服务申请</a></li>
-              </ul>
             </li>
-            <li class="active">
-              <a href="#">
-                <i class="fa fa-pencil-square"></i> <span>资源申请</span> <i class="fa fa-angle-left pull-right"></i>
+            <li class="">
+              <a data-pjax name="apply.resource" href="{{ reverse_url('apply.resource') }}">
+                <i class="fa fa-database"></i> <span>资源申请</span>
+                <span class="label label-primary pull-right">2</span>
               </a>
-              <ul class="treeview-menu">
-                <li><a data-pjax name="resource_check_list" href="{{ reverse_url('apply.resource') }}"><i class="fa fa-circle-o"></i> 资源申请</a></li>
-              </ul>
             </li>
             {% endif %}
 
             {% if "pro_info.check" in current_perms %}
-            <li class="active">
+            <li class="">
               <a href="#">
                 <i class="fa fa-pencil-square"></i> <span>项目审核</span> <i class="fa fa-angle-left pull-right"></i>
               </a>
@@ -66,7 +60,7 @@
             </li>
             {% endif %}
             {% if "pt_user.view" in current_perms %}
-            <li class="active">
+            <li class="">
               <a href="#">
                 <i class="fa fa-puzzle-piece"></i> <span>权限管理</span> <i class="fa fa-angle-left pull-right"></i>
               </a>
@@ -114,8 +108,8 @@
               <ul class="treeview-menu">
                 <li><a data-pjax name="defaultset.env_info" href="{{ reverse_url('defaultset.env_info' )}}"><i class="fa fa-circle-o"></i> 环境设置</a></li>
                 <li><a data-pjax name="defaultset.env_internet_ip" href="{{ reverse_url('defaultset.env_internet_ip' )}}"><i class="fa fa-circle-o"></i> 互联网IP类型设置</a></li>
-                <li><a data-pjax name="defaultset.env_resource_value" href="{{ reverse_url('defaultset.env_resource_value' )}}"><i class="fa fa-circle-o"></i> 资源申请推荐数据</a></li>
-                <li><a data-pjax name="defaultset.env_resource_fee" href="{{ reverse_url('defaultset.env_resource_fee' )}}"><i class="fa fa-circle-o"></i> 资源申请相关费用</a></li>
+                <li><a data-pjax name="defaultset.env_resource_value" href="{{ reverse_url('defaultset.env_resource_value' )}}"><i class="fa fa-circle-o"></i> 推荐设置</a></li>
+                <li><a data-pjax name="defaultset.env_resource_fee" href="{{ reverse_url('defaultset.env_resource_fee' )}}"><i class="fa fa-circle-o"></i> 费率设置</a></li>
               </ul>
             </li>
             {% endif %}

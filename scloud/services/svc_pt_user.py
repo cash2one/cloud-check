@@ -45,8 +45,7 @@ class PtUserService(BaseService):
             PT_User.id == user_id
         ).first()
         if pt_user:
-            data = {"pt_user": pt_user}
-            return self.success(data=data)
+            return self.success(data=pt_user)
         else:
             return NotFoundError()
 

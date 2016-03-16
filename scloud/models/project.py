@@ -7,7 +7,7 @@ from scloud.config import logger
 from scloud.models.base import BaseModel, BaseModelMixin
 from scloud.models.pt_user import PT_User
 from scloud.models.environment import Env_Info
-from scloud.models.project_mixin import Pro_Info_Mixin
+from scloud.models.project_mixin import Pro_Info_Mixin, Pro_Resource_Apply_Mixin
 from sqlalchemy import Column, func, ForeignKey, ForeignKeyConstraint
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.types import Unicode, Integer, Float, DateTime
@@ -65,7 +65,7 @@ class Pro_Info(BaseModel, BaseModelMixin, Pro_Info_Mixin):
     env = relationship("Env_Info", backref="pro_infos")
 
 
-class Pro_Resource_Apply(BaseModel, BaseModelMixin):
+class Pro_Resource_Apply(BaseModel, BaseModelMixin, Pro_Resource_Apply_Mixin):
     u"""项目资源申请"""
     __tablename__ = "pro_resource_apply"
     pro_id = Column(Integer, ForeignKey("pro_info.id"), default=0, info=u"资源申请编号")

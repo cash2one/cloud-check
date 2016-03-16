@@ -3,8 +3,8 @@
   {% set title = "更新" %}
   {% set data = result.data %}
   {% set theme = "warning" %}
-  {% if data.pt_user %}
-    {% set pt_user = data.pt_user %}
+  {% if data %}
+    {% set pt_user = data %}
   {% else %}
     {% set pt_user = {} %}
   {% endif %}
