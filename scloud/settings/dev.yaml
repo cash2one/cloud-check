@@ -1,6 +1,7 @@
 app: scloud
 app_cn: '小付云平台'
 sub_app_cn: '运营管理平台'
+company: '小付钱包技术（北京）有限公司'
 language: python
 port: 9999
 

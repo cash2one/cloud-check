@@ -101,22 +101,12 @@
                     <div class="form-group has-feedback">
                       <label for="owner" class="col-sm-2 control-label">项目环境</label>
                       <div class="col-sm-offset-2 col-sm-10">
+                          {% for env in env_list_res.data %}
                           <label class="col-sm-4">
-                          <input type="radio" name="env_id" id="env_id" value="0" {#% if handler.args.get('env_id', -1)|int == 0} checked{% endif %#}>
-                            开发测试环境
+                          <input type="radio" name="env_id" id="env_id" value="{{ env.id }}" {#% if handler.args.get('env_id', -1)|int == 0} checked{% endif %#}>
+                            {{ env.name }}
                           </label>
-                          <label class="col-sm-4">
-                            <input type="radio" name="env_id" id="env_id" value="1" {#% if handler.args.get('env_id', -1)|int == 1} checked{% endif %#}>
-                            小付云（北京）
-                          </label>
-                          <label class="col-sm-4">
-                            <input type="radio" name="env_id" id="env_id" value="2" {#% if handler.args.get('env_id', -1)|int == 2} checked{% endif %#}>
-                            小付云（内蒙古）
-                          </label>
-                          <label class="col-sm-4">
-                            <input type="radio" name="env_id" id="env_id" value="3" {#% if handler.args.get('env_id', -1)|int == 3} checked{% endif %#}>
-                            小付云（吉林）
-                          </label>
+                          {% endfor %}
                       </div>
                     </div>
                     {% if post_result %}

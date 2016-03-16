@@ -16,6 +16,7 @@ from tornado.web import asynchronous
 from tornado import gen
 from scloud.utils.permission import check_perms
 from scloud.services.svc_project import ProjectService
+from scloud.services.svc_env import EnvService
 from scloud.services.svc_pro_resource_apply import ProResourceApplyService
 from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
@@ -42,16 +43,20 @@ class GuideHandler(GuideStepGetHandler):
     @check_perms('pro_info.view')
     @unblock
     def get(self):
+        env_svc = EnvService(self)
+        env_list_res = env_svc.get_list()
         svc = ProjectService(self)
         result = svc.get_project_list()
         if result.return_code < 0:
             raise SystemError(result.return_code, result.return_message)
         logger.info(result)
-        return self.render_to_string("admin/guide/index.html", result=result, pro_resource_apply_status_types=pro_resource_apply_status_types)
+        return self.render_to_string("admin/guide/index.html", result=result, pro_resource_apply_status_types=pro_resource_apply_status_types, env_list_res=env_list_res)
 
     @check_perms('pro_info.insert')
     @unblock
     def post(self):
+        env_svc = EnvService(self)
+        env_list_res = env_svc.get_list()
         svc = ProjectService(self)
         result = svc.create_project()
         logger.info(result)
@@ -65,7 +70,7 @@ class GuideHandler(GuideStepGetHandler):
             post_result = result
             proj_result = svc.get_project_list()
             self.add_message(post_result.return_message, level='warning')
-            return self.render_to_string("admin/guide/index.html", result=proj_result, post_result=post_result)
+            return self.render_to_string("admin/guide/index.html", result=proj_result, post_result=post_result, env_list_res=env_list_res)
 
 @url("/guide/(?P<pro_id>\d+)/step/1/generate_fee", name="generate_fee", active="guide")
 class GuideGenerateFeeHandler(AuthHandler):
