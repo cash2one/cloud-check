@@ -4,7 +4,7 @@ $(function(){
   init_ws_status();
 })
 function init_ws_status(){
-  var wsServer = 'ws://127.0.0.1:9999/scloud/ws/status'; //服务器地址
+  var wsServer = 'ws://127.0.0.1:9998/scloud/ws/status'; //服务器地址
   ws_socket = new WebSocket(wsServer); //创建 WebSocket 对象
   // ws_socket.send("hello");//向服务器发送消息
   ws_socket.onopen = function (evt) {
@@ -15,7 +15,8 @@ function init_ws_status(){
   };
   ws_socket.onclose = function (evt) {
     console.log("onclose");
-    ws_socket.send(JSON.stringify({action:"offline", user_id:'{{ handler.current_user.id }}'}))
+    ws_socket = new WebSocket(wsServer); //创建 WebSocket 对象
+    //ws_socket.send(JSON.stringify({action:"offline", user_id:'{{ handler.current_user.id }}'}))
       //已经关闭连接
   };
   ws_socket.onmessage = function (evt) {
@@ -32,12 +33,18 @@ function init_ws_status(){
   };
   ws_socket.onerror = function (evt) {
     console.log("onerror");
+    ws_socket = new WebSocket(wsServer); //创建 WebSocket 对象
       //产生异常
   };
 }
 function send_init_message(){
   var current_user_id = $("#head_current_user").attr("current_user_id")
-  ws_socket.send(JSON.stringify({action: "init_status", user_id: current_user_id}))
+  try{
+    ws_socket.send(JSON.stringify({action: "init_status", user_id: current_user_id}))
+  }catch(e){
+  var wsServer = 'ws://127.0.0.1:9999/scloud/ws/status'; //服务器地址
+  ws_socket = new WebSocket(wsServer); //创建 WebSocket 对象
+  }
 }
 function init_task_status(response){
   // console.log(response);

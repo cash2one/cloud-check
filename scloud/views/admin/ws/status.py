@@ -48,25 +48,27 @@ class EchoWebSocket(MySocketHandler, AuthHandler):
             user_id = json_message["user_id"]
             svc = PtUserService(self, {"user_id": user_id})
             pt_user_res = svc.get_info()
-            current_perms = pt_user_res.data.get_current_perms()
-            if "pro_resource_apply.view" in current_perms:
-                imchecker = False
-            else:
-                imchecker = True
-            svc = ActHistoryService(self, {"user_id": user_id})
-            tasks_res = svc.get_res_tasks()
-            data = {
-                "tasks_res": tasks_res,
-                "imchecker": imchecker,
-                "STATUS_RESOURCE": STATUS_RESOURCE
-            }
-            chat = {
-                "user_id": user_id,
-                "task_html": self.render_to_string("admin/notice/tasks.html", **data)
-            }
-            chat.update(json_message)
-            logger.error(chat)
-            self.write_message(chat)
+            if pt_user_res.return_code == 0:
+                current_perms = pt_user_res.data.get_current_perms()
+                if "pro_resource_apply.view" in current_perms:
+                    imchecker = False
+                else:
+                    imchecker = True
+                svc = ActHistoryService(self, {"user_id": user_id})
+                tasks_res = svc.get_res_tasks()
+                data = {
+                    "tasks_res": tasks_res,
+                    "imchecker": imchecker,
+                    "STATUS_RESOURCE": STATUS_RESOURCE
+                }
+                chat = {
+                    "user_id": user_id,
+                    "task_html": self.render_to_string("admin/notice/tasks.html", **data)
+                }
+                chat.update(json_message)
+                logger.error(chat)
+                self.write_message(chat)
+            self.on_finish()
             # chat.update(json_message)
             # EchoWebSocket.send_message(chat)
             # self.write_message(u"You said: " + message)

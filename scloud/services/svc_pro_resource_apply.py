@@ -80,7 +80,7 @@ class ProResourceApplyService(BaseService):
             if start_date == "":
                 self.start_date = ""
             else:
-                self.start_date = datetime.strptime(self.params.get("start_date"), "%Y-%m-%d")
+                self.start_date = datetime.strptime(self.params.get("start_date"), "%Y-%m-%d %H:%M:%S")
         except:
             return self.failure(ERROR.res_start_date_invalid_err)
         try:
@@ -193,7 +193,7 @@ class ProResourceApplyService(BaseService):
         mail_title = mail_title_format % {
             "user_name": apply.user.email or apply.user.mobile,
             "pro_name": apply.project.name,
-            "res_desc": apply.project.id,
+            "res_desc": apply.desc,
             "action": u"申请的",
             "todo_action": u"资源，已提交，请审核",
         }
@@ -252,7 +252,7 @@ class ProResourceApplyService(BaseService):
         mail_title = mail_title_format % {
             "user_name": resource.user.email or resource.user.mobile,
             "pro_name": resource.project.name,
-            "res_desc": resource.project.id,
+            "res_desc": resource.desc,
             "action": u"申请的",
             "todo_action": u"资源，已重新提交，请审核",
         }
@@ -277,7 +277,7 @@ class ProResourceApplyService(BaseService):
         mail_title = mail_title_format % {
             "user_name": resource.user.email or resource.user.mobile,
             "pro_name": resource.project.name,
-            "res_desc": resource.project.id,
+            "res_desc": resource.desc,
             "action": u"申请的",
             "todo_action": u"资源，已撤销",
         }
@@ -336,7 +336,7 @@ class ProResourceApplyService(BaseService):
         mail_title = mail_title_format % {
             "user_name": resource.user.email or resource.user.mobile,
             "pro_name": resource.project.name,
-            "res_desc": resource.project.id,
+            "res_desc": resource.desc,
             "action": u"申请的",
             "todo_action": u"资源，已完成支付，请确认收款",
         }
@@ -361,7 +361,7 @@ class ProResourceApplyService(BaseService):
         mail_title = mail_title_format % {
             "user_name": resource.user.email or resource.user.mobile,
             "pro_name": resource.project.name,
-            "res_desc": resource.project.id,
+            "res_desc": resource.desc,
             "action": u"申请的",
             "todo_action": u"资源，已设置启用时间",
         }
@@ -455,7 +455,7 @@ class ProResourceCheckService(BaseService):
             mail_title = mail_title_format % {
                 "user_name": resource.checker.email or resource.checker.mobile,
                 "pro_name": resource.project.name,
-                "res_desc": resource.project.id,
+                "res_desc": resource.desc,
                 "action": u"审核的",
                 "todo_action": u"资源，%s，%s" % (STATUS_RESOURCE.get(resource.status).value, STATUS_RESOURCE.get(resource.status).todo_value),
             }

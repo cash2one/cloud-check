@@ -90,39 +90,40 @@ class EchoWebSocket(MySocketHandler, AuthHandler):
         logger.info(resource_res.data.checker_id)
         data = {
             "tasks_res": tasks_res,
+            "imchecker": False,
             "STATUS_RESOURCE": STATUS_RESOURCE
         }
         chat = {
             "user_id": user_id,
             "data": resource_res.data.as_dict(),
-            "imchecker": False,
             "html": self.render_to_string("admin/notice/tasks.html", **data)
         }
         logger.error(chat)
         chat.update(json_message)
         EchoWebSocket.send_message(chat)
+        self.on_finish()
         # self.write_message(u"You said: " + message)
 
     def do_notice_checker(self, json_message):
         logger.info("-----------------------------NOTICE CHECKER-----------------------------")
         svc = PtUserService(self)
         pt_users_res = svc.get_list()
-        user_ids = [u.id for u in pt_user_res.data if "pro_resource_apply.check" in u.get_current_perms()]
+        user_ids = [u.id for u in pt_users_res.data if "pro_resource_apply.check" in u.get_current_perms()]
 
         for user_id in user_ids:
             svc = ActHistoryService(self, {"user_id": user_id})
             tasks_res = svc.get_res_tasks()
             data = {
                 "tasks_res": tasks_res,
+                "imchecker": True,
                 "STATUS_RESOURCE": STATUS_RESOURCE
             }
             chat = {
                 "user_id": user_id,
-                "data": resource_res.data.as_dict(),
-                "imchecker": True,
                 "html": self.render_to_string("admin/notice/tasks.html", **data)
             }
             logger.error(chat)
             chat.update(json_message)
             EchoWebSocket.send_message(chat)
+        self.on_finish()
         # self.write_message(u"You said: " + message)

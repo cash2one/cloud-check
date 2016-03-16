@@ -58,7 +58,7 @@ class ProjectService(BaseService):
             return self.failure(ERROR.pro_owner_email_empty_err)
         if not env_id:
             return self.failure(ERROR.pro_env_empty_err)
-        project, created = Pro_Info.get_or_create(name=name, owner=owner, env_id=env_id)
+        project, created = Pro_Info.get_or_create_obj(self.db, name=name, owner=owner, env_id=env_id)
         project.owner_email = owner_email
         project.desc = desc
         project.user_id = user_id

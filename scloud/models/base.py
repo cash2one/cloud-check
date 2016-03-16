@@ -56,7 +56,8 @@ class ModelServiceMixin(object):
 class DataBaseService(ModelServiceMixin):
     event.listen(db_engine, 'checkout', my_on_checkout)
     db_session = __DB_Session = scoped_session(
-        sessionmaker(bind=db_engine, query_cls=CacheQuery, expire_on_commit=False, autoflush=False, autocommit=True))
+        #sessionmaker(bind=db_engine, query_cls=CacheQuery, expire_on_commit=False, autoflush=False, autocommit=True))
+        sessionmaker(bind=db_engine, query_cls=CacheQuery, expire_on_commit=False, autoflush=False, autocommit=False))
     meta_data = MetaData(bind=db_engine)
     # db_session = __DB_Session = sessionmaker(bind=db_engine, query_cls=CacheQuery, expire_on_commit=False, autoflush=False, autocommit=True)
 

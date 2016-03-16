@@ -51,7 +51,7 @@ class PtPermService(BaseService):
         logger.info("------ [get_or_create] ------")
         name = self.params.get("name", "")
         keyword = self.params.get("keyword", "")
-        perm_info, created = PT_Perm.get_or_create(
+        perm_info, created = PT_Perm.get_or_create_obj(self.db,
             name = name,
             keyword = keyword,
             )

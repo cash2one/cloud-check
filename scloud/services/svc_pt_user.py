@@ -56,7 +56,7 @@ class PtUserService(BaseService):
         email = self.params.get("email", "")
         mobile = self.params.get("mobile", "")
         password = self.params.get("password", "")
-        user_instance, created = PT_User.get_or_create(username=username, email=email, mobile=mobile)
+        user_instance, created = PT_User.get_or_create_obj(self.db, username=username, email=email, mobile=mobile)
         user_instance.password = password
         self.db.add(user_instance)
         user_info = self.db.query(
@@ -146,7 +146,7 @@ class PtUserService(BaseService):
         need_deletes = set(user_role_list) - set(role_ids)
         logger.info(need_deletes)
         for role_id in role_ids:
-            instance, created = PT_User_Role.get_or_create(
+            instance, created = PT_User_Role.get_or_create_obj(self.db,
                 user_id = int(user_id),
                 role_id = int(role_id),
             )

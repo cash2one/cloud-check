@@ -23,8 +23,8 @@ class RegisterService(BaseService):
             return self.failure(ERROR.mobile_empty_err)
         if password == "":
             return self.failure(ERROR.password_empty_err)
-        instance, created = PT_User.get_or_create(email=email, mobile=mobile, password=password)
-        PT_User_Role.get_or_create(user_id=instance.id, role_id=2)
+        instance, created = PT_User.get_or_create_obj(self.db, email=email, mobile=mobile, password=password)
+        PT_User_Role.get_or_create_obj(self.db, user_id=instance.id, role_id=2)
         conditions = and_()
         conditions.append(PT_User.id == instance.id)
         conditions.append(PT_User.is_enable == 1)

@@ -15,15 +15,22 @@
                       {% for task in tasks %}
                       {% set global_vars = task.res_apply.get_global_vars() %}
                       <li><!-- Task item -->
-                        {% if imchecker == False %}
-                        {% set act_url = reverse_url('guide') %}
+                        imchecker: {{ imchecker }}
+                        {% if not imchecker %}
+                          {% if task.status <= STATUS_RESOURCE.APPLIED %}
+                            {% set act_url = reverse_url('guide_step_1', task.pro.id) %}
+                          {% elif task.status == STATUS_RESOURCE.CHECKED %}
+                            {% set act_url = reverse_url('guide_step_2', task.pro.id) %}
+                          {% elif task.status >= STATUS_RESOURCE.PAYED %}
+                            {% set act_url = reverse_url('guide_step_3', task.pro.id) %}
+                          {% endif %}
                         {% else %}
                           {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id == 0 %}
                             {% set act_url = reverse_url('user_profile') %}
                           {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id != 0 %}
                             {% set act_url = "javascript:;" %}
                           {% else %}
-                          {% set act_url = "{}?res_status={}".format(reverse_url('resource_check_list'), task.status) %}
+                            {% set act_url = "{}?res_status={}".format(reverse_url('resource_check_list'), task.status) %}
                           {% endif %}
                         {% endif %}
                         <a data-pjax href="{{ act_url }}">

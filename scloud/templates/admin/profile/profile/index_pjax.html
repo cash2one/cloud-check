@@ -198,6 +198,9 @@
           generate_ajax_post({
               form: "#task_confirm_form",
               button: "#do_confirm_btn",
+              onSuccess: function(response){
+                send_init_message();
+              },
               onTimeout: function(){ do_confirm_start_date();}
           })
         }

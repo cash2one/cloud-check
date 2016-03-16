@@ -34,6 +34,7 @@
                   $("#guide_step_3_tabs").find(".tab-pane").removeClass("active");
                   $("#guide_step_3_tabs").find("a[href=#tab_4]").parent().addClass("active")
                   $("#guide_step_3_tabs").find("#tab_4").addClass("active");
+                  do_notice_checker();
                 },
                 onTimeout: function(){
                   resource_set_start();

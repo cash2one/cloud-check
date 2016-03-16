@@ -95,7 +95,7 @@ class PtRoleService(BaseService):
         group_op_list = [(g, op) for g, op in [_str.split(".") for _str in group_ops]]
         need_delete_list = [(g, op) for g, op in [_str.split(".") for _str in need_deletes]]
         for g, op in group_op_list:
-            instance, created = PT_Role_Group_Ops.get_or_create(
+            instance, created = PT_Role_Group_Ops.get_or_create_obj(self.db,
                 role_id = int(role_id),
                 group_keycode = g,
                 op_keycode = op
@@ -116,7 +116,7 @@ class PtRoleService(BaseService):
         name = self.params.get("name")
         desc = self.params.get("desc")
         remark = self.params.get("remark")
-        role_info, created = PT_Role.get_or_create(
+        role_info, created = PT_Role.get_or_create_obj(self.db,
             name = name,
             )
         role_info.desc = desc
