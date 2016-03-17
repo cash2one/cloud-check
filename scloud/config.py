@@ -31,6 +31,7 @@ def get_config_name():
     config_choices = {
         '192.168.1.108': 'dev.yaml',
         '20:68:9d:48:a9:40': 'dev.yaml',
+        '00:0c:29:1c:15:8a': 'dev.yaml',
     }
     return config_choices.get(host_ip, None) or config_choices.get(host_mac, None) or CONFIG_NAME
 

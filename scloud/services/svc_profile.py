@@ -60,3 +60,65 @@ class ProfileService(BaseService):
         else:
             return NotFoundError()
 
+        @thrownException
+        def reset_password(self):
+            logging.info("------[reset_password]------")
+            old_password = self.params.get("old_password")
+            new_password = self.params.get("new_password")
+            repeat_new_password = self.params.get("repeat_new_password")
+            current_user = self.handler.current_user
+            
+            if not old_password:
+                return self.failure()
+            if not new_password:
+                return self.failure()
+            if not repeat_new_password:
+                return self.failure()
+            if current_user.password != old_password:
+                return self.failure()
+            if new_password != repeat_new_password:
+                return self.failure()
+
+            user = self.db.query(
+                PT_User
+            ).filter(
+                PT_User.id == current_user.id
+            ).first()
+
+            user.password = new_password
+            self.db.add(user)
+            return self.success(data=user)
+
+                
+
+
+
+
+            if password != old_password:
+                return self.failure(ERROR.password_err)
+            else:
+                new_password = self.params.get("new_password")
+                repeat_new_password = self.params.get("repeat_new_password")
+                if new_password != repeat_new_password:
+                    return self.failure(ERROR.password_err)
+                else:
+                    pass
+
+
+
+
+
+
+            
+            
+
+
+            
+
+            
+            
+
+             
+
+
+
