@@ -25,6 +25,9 @@
       </div><!-- /.box -->
       <script text="text/javascript">
         function do_edit_env(){
+          $("#old_password").val(MD5($("#old_password").val()))
+          $("#new_password").val(MD5($("#new_password").val()))
+          $("#repeat_password").val(MD5($("#repeat_password").val()))
           generate_ajax_post({
               form: "#env_form",
               button: "#env_form_btn",
