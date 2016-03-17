@@ -2,7 +2,9 @@
 
 import simplejson
 from scloud.shortcuts import url
-from scloud.config import logger, logThrown
+from scloud.shortcuts import env
+from scloud.config import logger, logThrown, CONF
+from scloud.utils.error_code import ERR
 from scloud.handlers import AuthHandler
 from tornado.websocket import WebSocketHandler
 from scloud.models.base import DataBaseService
@@ -14,9 +16,26 @@ from scloud.const import STATUS_RESOURCE
 class MySocketHandler(WebSocketHandler):
     def initialize(self, **kwargs):
         super(MySocketHandler, self).initialize()
+    @property
+    def args(self):
+        return {}
+    def render_to_string(self, template, **kwargs):
+        tmpl = env.get_template(template)
+        s = "&".join(["%s=%s" % (k, v) for k, v in self.args.items() if k not in ["page", "_pjax"]])
+        kwargs.update({
+            "CONF": CONF,
+            "handler": self,
+            "request": self.request,
+            "reverse_url": self.application.reverse_url,
+            "ERR": ERR,
+            "s": s+"&" if s else ""
+        })
+        # logger.info("\t [render_to_string kwargs]: %s" % kwargs)
+        template_string = tmpl.render(**kwargs)
+        return template_string
 
 @url("/ws/demo", name="ws.demo")
-class EchoWebSocket(MySocketHandler, AuthHandler):
+class EchoWebSocket(MySocketHandler):
     users = dict()
     def check_origin(self, origin):
         return True
@@ -40,6 +59,7 @@ class EchoWebSocket(MySocketHandler, AuthHandler):
             waiter.write_message(simplejson.dumps(chat))
 
     def on_message(self, message):
+        logger.error("====[index onmessage]====")
         self.svc = DataBaseService()
         self.svc.__enter__()
         logger.error("\t WebSocket message: %s" % message)
@@ -54,7 +74,9 @@ class EchoWebSocket(MySocketHandler, AuthHandler):
             EchoWebSocket.users.pop(str(json_message["user_id"]))
         else:
             self.write_message(u"You said: " + message)
+        self.svc.db.commit()
         self.svc.db.close()
+        logger.error("====[index finish]====")
 
     def on_close(self):
         logger.info("WebSocket closed")
@@ -82,7 +104,7 @@ class EchoWebSocket(MySocketHandler, AuthHandler):
         EchoWebSocket.users.update({user_id: self})
         EchoWebSocket.send_all(chat)
         logger.info("**users: %s" % EchoWebSocket.users)
-        self.on_finish()
+        # self.on_finish()
 
     def do_notice_user(self, json_message):
         svc = ProResourceApplyService(self, {"res_id": json_message["res_id"]})
@@ -105,7 +127,7 @@ class EchoWebSocket(MySocketHandler, AuthHandler):
         logger.error(chat)
         chat.update(json_message)
         EchoWebSocket.send_message(chat)
-        self.on_finish()
+        # self.on_finish()
         # self.write_message(u"You said: " + message)
 
     def do_notice_checker(self, json_message):
@@ -126,8 +148,8 @@ class EchoWebSocket(MySocketHandler, AuthHandler):
                 "user_id": user_id,
                 "html": self.render_to_string("admin/notice/tasks.html", **data)
             }
-            logger.error(chat)
             chat.update(json_message)
+            logger.error(chat)
             EchoWebSocket.send_message(chat)
-        self.on_finish()
+        # self.on_finish()
         # self.write_message(u"You said: " + message)

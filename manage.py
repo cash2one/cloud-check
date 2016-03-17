@@ -49,7 +49,7 @@ if options.cmd == "runserver":
     from scloud import celeryapp
     tcelery.setup_nonblocking_producer(celery_app=celeryapp.celery)
     # run_torweb.run(app, port=CONF("PORT"))
-    run_torweb.run(app, port=CONF("PORT"))
+    run_torweb.run(app, port=options.port or CONF("PORT"))
 elif options.cmd == "syncdb":
     logging.info("** start sycndb ... **")
     # from scloud.models.user import User

@@ -89,16 +89,16 @@ class Handler(BaseHandler):
 
     def on_finish(self):
         logger.info("\t" + "====[EXIT]====")
-        s = self.svc.db
+        # s = self.svc.db
         # from code import interact
         # interact(local=locals())
-        session_dict = s.__dict__
-        logger.error("session_dict: %s" % session_dict)
+        # session_dict = s.__dict__
+        # logger.error("session_dict: %s" % session_dict)
         try:
             # transaction = session_dict.get("transaction")
             # logger.error("transaction: %s" % transaction)
             #if transaction:
-            dispatch = session_dict.get("dispatch")
+            # dispatch = session_dict.get("dispatch")
             self.svc.db.commit()
             # self.db.flush()
             logger.info("\t" + "====[COMMIT]====")
