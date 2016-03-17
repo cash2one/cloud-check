@@ -1,4 +1,6 @@
+{% import "admin/base/base_macros.html" as base %}
 <section class="content">
+  {% include "admin/base/base_messages.html" %}
   <div class="row">
     <div class="col-md-3">
     </div>
@@ -9,29 +11,14 @@
           <h3 class="box-title">重置密码</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal">
+        <form id="form" action="{{ reverse_url('user_resetpass') }}" class="form-horizontal">
           <div class="box-body">
-            <div class="form-group">
-              <label for="inputEmail3" class="col-sm-2 control-label">旧密码</label>
-              <div class="col-sm-10">
-                <input type="email" class="form-control" id="inputEmail3" placeholder="请输入旧密码">
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="inputPassword3" class="col-sm-2 control-label">新密码</label>
-              <div class="col-sm-10">
-                <input type="password" class="form-control" id="inputPassword3" placeholder="请输入新密码">
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="inputPassword3" class="col-sm-2 control-label">重复新密码</label>
-              <div class="col-sm-10">
-                <input type="password" class="form-control" id="inputPassword3" placeholder="请重复新密码">
-              </div>
-            </div>
+          {{ base.form_input("旧密码", "old_password", _type="password", res=res, check_codes=[ERR.PASSWORD_EMPTY_ERR, ERR.PASSWORD_ERR]) }}
+          {{ base.form_input("新密码", "new_password", _type="password", res=res, check_codes=[ERR.NEW_PASSWORD_EMPTY_ERR, ERR.PASSWORD_ERR]) }}
+          {{ base.form_input("重复密码", "new_password", _type="password", res=res, check_codes=[ERR.REPEAT_PASSWORD_EMPTY_ERR, ERR.REPEAT_PASSWORD_ERR]) }}
           </div><!-- /.box-body -->
           <div class="box-footer text-center">
-            <button type="submit" class="btn btn-info">确 定</button>
+            <button type="button" id="form_btn" class="btn btn-info">确 定</button>
           </div><!-- /.box-footer -->
         </form>
       </div><!-- /.box -->
@@ -40,3 +27,11 @@
     </div>
   </div>
 </section>
+<script type="text/javascript">
+function do_reset_pass(){
+  generate_ajax_form({
+    form: "#form",
+    button: "form_btn"
+  });
+}
+</script>

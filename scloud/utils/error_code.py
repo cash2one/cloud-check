@@ -22,6 +22,9 @@ class ERROR(object):
     mobile_err         = error(errcode=-100008, errvalue=u"手机号错误")
     user_empty_err     = error(errcode=-100009, errvalue=u"操作用户不能为空")
     checker_empty_err  = error(errcode=-100010, errvalue=u"审核用户不能为空")
+    new_password_empty_err = error(errcode=-100011, errvalue=u"新密码不能为空")
+    repeat_password_empty_err = error(errcode=-100011, errvalue=u"重复密码不能为空")
+    repeat_password_err = error(errcode=-100011, errvalue=u"重复密码与新密码不一致")
 
     # 创建项目
     pro_name_empty_err        = error(errcode=-100020, errvalue=u"项目名称不能为空")
