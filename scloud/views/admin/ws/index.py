@@ -5,6 +5,7 @@ from scloud.shortcuts import url
 from scloud.config import logger, logThrown
 from scloud.handlers import AuthHandler
 from tornado.websocket import WebSocketHandler
+from scloud.models.base import DataBaseService
 from scloud.services.svc_pro_resource_apply import ProResourceApplyService
 from scloud.services.svc_pt_user import PtUserService
 from scloud.services.svc_act import ActHistoryService
@@ -39,6 +40,8 @@ class EchoWebSocket(MySocketHandler, AuthHandler):
             waiter.write_message(simplejson.dumps(chat))
 
     def on_message(self, message):
+        self.svc = DataBaseService()
+        self.svc.__enter__()
         logger.error("\t WebSocket message: %s" % message)
         json_message = simplejson.loads(message)
         if json_message["action"] == "pro_resource_apply":
@@ -51,6 +54,7 @@ class EchoWebSocket(MySocketHandler, AuthHandler):
             EchoWebSocket.users.pop(str(json_message["user_id"]))
         else:
             self.write_message(u"You said: " + message)
+        self.svc.db.close()
 
     def on_close(self):
         logger.info("WebSocket closed")
