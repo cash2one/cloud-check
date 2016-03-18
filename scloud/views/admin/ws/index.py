@@ -12,10 +12,24 @@ from scloud.services.svc_pro_resource_apply import ProResourceApplyService
 from scloud.services.svc_pt_user import PtUserService
 from scloud.services.svc_act import ActHistoryService
 from scloud.const import STATUS_RESOURCE
+from scloud.views.admin.ws.base import TimeoutWebSocketService
+
 
 class MySocketHandler(WebSocketHandler):
+
     def initialize(self, **kwargs):
         super(MySocketHandler, self).initialize()
+
+    def prepare(self):
+        self.timeout_service = TimeoutWebSocketService(self, timeout=(1000*60))
+        self.timeout_service.refresh_timeout()
+
+    def on_message(self, message):
+        self.timeout_service.refresh_timeout()
+
+    def on_close(self):
+        self.timeout_service.clean_timeout()
+
     @property
     def args(self):
         return {}

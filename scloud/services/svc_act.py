@@ -61,9 +61,11 @@ class ActHistoryService(BaseService):
         user_id = self.params.get("user_id", None)
         if not user_id:
             user_id = self.handler.current_user.id
+        logger.info("user_id: %s" % user_id )
         svc = PtUserService(self.handler, {"user_id": user_id})
         user_res = svc.get_info()
         user = user_res.data
+        logger.info("user_info: %s" % user.as_dict())
         # current_user = self.handler.current_user
         # if current_user:
         if user:
@@ -71,12 +73,14 @@ class ActHistoryService(BaseService):
             # role_ids = [role.id for role in current_user.user_roles]
             # current_perms = current_user.current_perms
             current_perms = user.get_current_perms()
+            logger.info("current_perms: %s" % current_perms)
             conditions = and_()
             or_conditions = or_()
             # 如果是管理员用户，查看所有项目申请提交的任务状态
             # 如果是普通用户，查看自己资源审批的任务状态
             if "pro_resource_apply.view" in current_perms.keys():
                 conditions.append(Pro_Resource_Apply.user_id == user_id)
+                logger.info("view user")
             conditions.append(or_conditions)
 
             resource_list = self.db.query(
