@@ -55,6 +55,8 @@ def task_post_pro_res_apply_history(status=0, content=u"", pro_id=0, res_apply_i
         this_id = user_id
         user_id = checker_id
         action = "on_notice_checker"
+    logger.info("*"*80)
+    logger.info("="*80)
     logger.info("[action]: %s, [user_id]: %s" % (action, user_id))
     data = {
         "user_id": user_id,
@@ -63,5 +65,11 @@ def task_post_pro_res_apply_history(status=0, content=u"", pro_id=0, res_apply_i
         "this_id": this_id
     }
     params = ["%s=%s" % (k, v) for k, v in data.items()]
-    request_result = requests.get("%s?%s" % (os.path.join(CONF("DOMAIN_HOST"), "scloud/comet/tasks"), "&".join(params)))
+    url = "%s?%s" % (os.path.join(CONF("PUB_HOST"), "scloud/comet/tasks"), "&".join(params))
+    logger.info(url)
+    request_result = requests.get(url)
+    logger.info(request_result)
+    logger.info("="*80)
+    logger.info("*"*80)
+    # request_result = requests.get("%s?%s" % (os.path.join(CONF("DOMAIN_HOST"), "scloud/comet/tasks"), "&".join(params)))
         # logger.info(request_result)

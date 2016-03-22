@@ -53,3 +53,9 @@ def restart_all():
     run("supervisorctl restart scloud")
     run("supervisorctl restart scloud_ws")
     run("supervisorctl restart scloud_celery")
+
+@hosts("smt_app@192.168.3.145")
+def restart_celery():
+    env.password = "smt_app"
+    #with cd("/usr/api-root/supervisor/"):
+    run("supervisorctl restart scloud_celery")
