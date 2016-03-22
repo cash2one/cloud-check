@@ -7,17 +7,19 @@ from scloud.config import CONF, logger
 
 class BaseService(object):
     def __init__(self, handler, params=None):
-        self.db = handler.svc.db
+        self.db = handler.db
         self.handler = handler
         logger.info("params :%s" % params)
         self.params = {}
-        self.params.update(self.handler.args)
+        if handler:
+            self.params.update(self.handler.args)
         if params:
             self.params.update(params)
         else:
             self.params.update({})
         logger.info("self.params : %s" % self.params)
-        logger.info("handler args :%s" % self.handler.args)
+        if handler:
+            logger.info("handler args :%s" % self.handler.args)
 
     def success(self, data=None):
         result = ObjectDict()

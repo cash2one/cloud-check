@@ -12,11 +12,11 @@ import redis
 from scloud.shortcuts import url
 from scloud.config import logger, logThrown, CONF
 from scloud.views.admin.ws.index import MySocketHandler
+from scloud.utils.publish.base import r
+from scloud.utils.publish.tasks import publish_tasks
 
 
 LISTENERS = dict()
-
-r = redis.Redis(host='127.0.0.1', db=2)
 
 
 def redis_listener():
@@ -25,7 +25,7 @@ def redis_listener():
     for message in p.listen():
         message_data = unicode(message['data'])
         json_message = simplejson.loads(message_data, encoding="utf-8")
-        logger.info(json_message)
+        # logger.info(json_message)
         if isinstance(json_message, dict) and "user_id" in json_message.keys():
             user = LISTENERS.get(str(json_message["user_id"]))
             if user:
@@ -34,16 +34,6 @@ def redis_listener():
             for element in LISTENERS.values():
                 element.write_message(unicode(message['data']))
 
-
-# class NewMsgHandler(tornado.web.RequestHandler):
-#     def get(self):
-#         self.write(TEMPLATE)
-# 
-#     def post(self):
-#         data = self.request.arguments['data'][0]
-#         r = redis.Redis(host='127.0.0.1', db=2)
-#         r.publish('test_realtime', data)
-        
 
 @url("/ws/pubsub", name="ws.pubsub")
 class RealtimeHandler(MySocketHandler):
@@ -58,8 +48,9 @@ class RealtimeHandler(MySocketHandler):
         }
         params = "&".join(["%s=%s" % (k, v) for k, v in data.items()])
         logger.info("#"*30+" [user %s init tasks] "%self.user_id+"#"*30)
-        url = "%s?%s" % (os.path.join(CONF("PUB_HOST"), self.reverse_url("comet.tasks")[1:]), params)
-        request_result = requests.get(url)
+        request_result = publish_tasks(self.user_id)
+        # url = "%s?%s" % (os.path.join(CONF("PUB_HOST"), self.reverse_url("comet.tasks")[1:]), params)
+        # request_result = requests.get(url)
         logger.info(request_result)
         logger.info("#"*30+" [user %s init tasks finished] "%self.user_id+"#"*30)
 

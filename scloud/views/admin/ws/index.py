@@ -5,7 +5,7 @@ from scloud.shortcuts import url
 from scloud.shortcuts import env
 from scloud.config import logger, logThrown, CONF
 from scloud.utils.error_code import ERR
-from scloud.handlers import AuthHandler
+#from scloud.handlers import AuthHandler
 from tornado.websocket import WebSocketHandler
 from scloud.models.base import DataBaseService
 from scloud.services.svc_pro_resource_apply import ProResourceApplyService
@@ -33,6 +33,7 @@ class MySocketHandler(WebSocketHandler):
     @property
     def args(self):
         return {}
+
     def render_to_string(self, template, **kwargs):
         tmpl = env.get_template(template)
         s = "&".join(["%s=%s" % (k, v) for k, v in self.args.items() if k not in ["page", "_pjax"]])

@@ -10,6 +10,7 @@ from scloud.celeryapp import celery
 from scloud.models.act import Act_History, Act_Pro_History
 from scloud.models.base import DataBaseService
 from scloud.shortcuts import render_to_string
+from scloud.utils.publish.tasks import publish_notice_tasks
 
 
 @celery.task
@@ -58,16 +59,17 @@ def task_post_pro_res_apply_history(status=0, content=u"", pro_id=0, res_apply_i
     logger.info("*"*80)
     logger.info("="*80)
     logger.info("[action]: %s, [user_id]: %s" % (action, user_id))
-    data = {
-        "user_id": user_id,
-        "action": action,
-        "res_id": res_apply_id,
-        "this_id": this_id
-    }
-    params = ["%s=%s" % (k, v) for k, v in data.items()]
-    url = "%s?%s" % (os.path.join(CONF("PUB_HOST"), "scloud/comet/tasks"), "&".join(params))
-    logger.info(url)
-    request_result = requests.get(url)
+    # data = {
+    #     "user_id": user_id,
+    #     "action": action,
+    #     "res_id": res_apply_id,
+    #     "this_id": this_id
+    # }
+    # params = ["%s=%s" % (k, v) for k, v in data.items()]
+    # url = "%s?%s" % (os.path.join(CONF("PUB_HOST"), "scloud/comet/tasks"), "&".join(params))
+    # logger.info(url)
+    # request_result = requests.get(url)
+    request_result = publish_notice_tasks(action, user_id, this_id)
     logger.info(request_result)
     logger.info("="*80)
     logger.info("*"*80)
