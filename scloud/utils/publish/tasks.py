@@ -7,6 +7,7 @@ from scloud.services.svc_act import ActHistoryService
 from scloud.const import STATUS_RESOURCE
 from scloud.shortcuts import render_to_string
 from scloud.utils.publish.base import r
+from scloud.config import logger
 
 
 def publish_notice_tasks(action, user_id=0, this_id=0):
@@ -24,12 +25,12 @@ def publish_notice_tasks(action, user_id=0, this_id=0):
             # imchecker = True
 
     for user_id in user_ids:
-        publish_tasks(user_id)
+        publish_tasks(user_id, action)
 
     publish_tasks(this_id)
     return True
 
-def publish_tasks(user_id):
+def publish_tasks(user_id, action="on_task"):
     with DataBaseService({"user_id": user_id}) as DBSvc:
         user_svc = PtUserService(DBSvc, {"user_id": user_id})
         pt_user_res = user_svc.get_info()
@@ -46,9 +47,10 @@ def publish_tasks(user_id):
         }
         chat = {
             "user_id": user_id,
-            "action": "on_task",
+            "action": action,
             "html": render_to_string("admin/notice/tasks.html", **data)
         }
+        logger.info(chat)
         r.publish("test_realtime", simplejson.dumps(chat))
     return True
 

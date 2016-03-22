@@ -19,6 +19,12 @@ function init_ws_pubsub(){
     var action = response.action;
     if ( action == "on_task" ){
       on_task(response)
+    }else if ( action == "on_notice_user" ){
+      // $("#chatAudio")[0].play();
+      on_task(response)
+    }else if ( action == "on_notice_checker" ){
+      // $("#chatAudio")[0].play();
+      on_task(response)
     }
   };
   ws_pubsub.onclose = function() {
@@ -30,6 +36,10 @@ function init_ws_pubsub(){
 function on_task(response){
   // console.log("task_notice");
   // console.log(response);
+  if (response.action != "on_task"){
+    console.log(response.action)
+    $("#chatAudio")[0].play();
+  }
   $("#tasks-menu").html(response.html)
 }
 </script>

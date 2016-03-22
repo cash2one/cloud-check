@@ -56,8 +56,7 @@ def task_post_pro_res_apply_history(status=0, content=u"", pro_id=0, res_apply_i
         this_id = user_id
         user_id = checker_id
         action = "on_notice_checker"
-    logger.info("*"*80)
-    logger.info("="*80)
+    logger.info("#"*30+" [user %s notice tasks] " % user_id+"#"*30)
     logger.info("[action]: %s, [user_id]: %s" % (action, user_id))
     # data = {
     #     "user_id": user_id,
@@ -71,7 +70,6 @@ def task_post_pro_res_apply_history(status=0, content=u"", pro_id=0, res_apply_i
     # request_result = requests.get(url)
     request_result = publish_notice_tasks(action, user_id, this_id)
     logger.info(request_result)
-    logger.info("="*80)
-    logger.info("*"*80)
+    logger.info("#"*30+" [user %s notice tasks] " % user_id+"#"*30)
     # request_result = requests.get("%s?%s" % (os.path.join(CONF("DOMAIN_HOST"), "scloud/comet/tasks"), "&".join(params)))
         # logger.info(request_result)
