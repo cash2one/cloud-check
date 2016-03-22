@@ -15,7 +15,7 @@ class BaseService(object):
         if params:
             self.params.update(params)
         else:
-            self.params = dict()
+            self.params.update({})
         logger.info("self.params : %s" % self.params)
         logger.info("handler args :%s" % self.handler.args)
 

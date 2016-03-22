@@ -46,3 +46,10 @@ def stop():
     # with cd("/usr/api-root/supervisor/"):
     run("supervisorctl stop scloud")
 
+@hosts("smt_app@192.168.3.145")
+def restart_all():
+    env.password = "smt_app"
+    #with cd("/usr/api-root/supervisor/"):
+    run("supervisorctl restart scloud")
+    run("supervisorctl restart scloud_ws")
+    run("supervisorctl restart scloud_celery")
