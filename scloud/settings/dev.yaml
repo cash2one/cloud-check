@@ -13,7 +13,7 @@ static_path: '/static'
 
 # WebSocket地址
 ws_host: 'ws://127.0.0.1:9998'
-pub_host: 'http://127.0.0.1:9998'
+pub_host: 'http://127.0.0.1:9999'
 
 # 是否启用页面调试
 debug_page: True

@@ -10,26 +10,26 @@ function init_ws_pubsub(){
   console.log("current_user_id:"+current_user_id);
   ws_pubsub.onopen = function(evt) {
     ws_pubsub.send(current_user_id);
-    console.log("onopen");
+    // console.log("onopen");
   };
   ws_pubsub.onmessage = function (evt) {
-    console.log("onmessage");
+    // console.log("onmessage");
     var response = JSON.parse(evt.data);
-    console.log(response)
+    // console.log(response)
     var action = response.action;
     if ( action == "on_task" ){
       on_task(response)
     }
   };
   ws_pubsub.onclose = function() {
-    console.log("onclose");
+    // console.log("onclose");
     // setTimeout(init_ws_pubsub, 1000)
     init_ws_pubsub()
   };
 }
 function on_task(response){
-  console.log("task_notice");
-  console.log(response);
+  // console.log("task_notice");
+  // console.log(response);
   $("#tasks-menu").html(response.html)
 }
 </script>

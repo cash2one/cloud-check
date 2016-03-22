@@ -20,6 +20,7 @@ ws_host = CONF("WS_HOST")
 
 @url("/comet/online", name="comet.online")
 class CometTaskHandler(Handler):
+
     @asynchronous
     @gen.coroutine
     def get(self):
@@ -34,6 +35,28 @@ class CometTaskHandler(Handler):
 
 @url("/comet/tasks", name="comet.tasks")
 class CometTaskHandler(Handler):
+
+    def publish_tasks(self, user_id):
+        user_svc = PtUserService(self, {"user_id": user_id})
+        pt_user_res = user_svc.get_info()
+        if "pro_resource_apply.check" in pt_user_res.data.get_current_perms():
+            imchecker = True
+        else:
+            imchecker = False
+        svc = ActHistoryService(self, {"user_id": user_id})
+        tasks_res = svc.get_res_tasks()
+        data = {
+            "tasks_res": tasks_res,
+            "imchecker": imchecker,
+            "STATUS_RESOURCE": STATUS_RESOURCE
+        }
+        chat = {
+            "user_id": user_id,
+            "action": "on_task",
+            "html": self.render_to_string("admin/notice/tasks.html", **data)
+        }
+        r.publish("test_realtime", simplejson.dumps(chat))
+
     @unblock
     def post(self):
         self.get()
@@ -48,7 +71,7 @@ class CometTaskHandler(Handler):
         if action == "on_notice_user":
             user_ids.append(user_id)
             imchecker = False
-        else:
+        elif action == "on_notice_checker":
             svc = PtUserService(self)
             pt_users_res = svc.get_list()
             user_ids = [u.id for u in pt_users_res.data if "pro_resource_apply.check" in u.get_current_perms()]
@@ -56,33 +79,35 @@ class CometTaskHandler(Handler):
 
         for user_id in user_ids:
             res_id = self.args.get("res_id")
-            svc = ActHistoryService(self, {"user_id": user_id})
-            tasks_res = svc.get_res_tasks()
-            data = {
-                "tasks_res": tasks_res,
-                "imchecker": imchecker,
-                "STATUS_RESOURCE": STATUS_RESOURCE
-            }
-            chat = {
-                "user_id": user_id,
-                "action": "on_task",
-                "html": self.render_to_string("admin/notice/tasks.html", **data)
-            }
-            r.publish("test_realtime", simplejson.dumps(chat))
+            self.publish_tasks(user_id)
+            # svc = ActHistoryService(self, {"user_id": user_id})
+            # tasks_res = svc.get_res_tasks()
+            # data = {
+            #     "tasks_res": tasks_res,
+            #     "imchecker": imchecker,
+            #     "STATUS_RESOURCE": STATUS_RESOURCE
+            # }
+            # chat = {
+            #     "user_id": user_id,
+            #     "action": "on_task",
+            #     "html": self.render_to_string("admin/notice/tasks.html", **data)
+            # }
+            # r.publish("test_realtime", simplejson.dumps(chat))
         logger.info("*"*20)
         this_id = self.args.get("this_id")
-        svc = ActHistoryService(self, {"user_id": this_id})
-        tasks_res = svc.get_res_tasks()
-        data = {
-            "tasks_res": tasks_res,
-            "imchecker": False if imchecker else True,
-            "STATUS_RESOURCE": STATUS_RESOURCE
-        }
-        chat = {
-            "user_id": this_id,
-            "action": "on_task",
-            "html": self.render_to_string("admin/notice/tasks.html", **data)
-        }
-        r.publish("test_realtime", simplejson.dumps(chat))
+        self.publish_tasks(this_id)
+        # svc = ActHistoryService(self, {"user_id": this_id})
+        # tasks_res = svc.get_res_tasks()
+        # data = {
+        #     "tasks_res": tasks_res,
+        #     "imchecker": False if imchecker else True,
+        #     "STATUS_RESOURCE": STATUS_RESOURCE
+        # }
+        # chat = {
+        #     "user_id": this_id,
+        #     "action": "on_task",
+        #     "html": self.render_to_string("admin/notice/tasks.html", **data)
+        # }
+        # r.publish("test_realtime", simplejson.dumps(chat))
         return simplejson.dumps({"success": True})
 

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+import requests
 import threading
 import simplejson
 import tornado.httpserver
@@ -8,7 +10,7 @@ import tornado.ioloop
 import tornado.web
 import redis
 from scloud.shortcuts import url
-from scloud.config import logger, logThrown
+from scloud.config import logger, logThrown, CONF
 from scloud.views.admin.ws.index import MySocketHandler
 
 
@@ -51,6 +53,15 @@ class RealtimeHandler(MySocketHandler):
         self.user_id = self.get_argument("user_id", 0)
         LISTENERS[str(self.user_id)] = self
         logger.info(LISTENERS)
+        data = {
+            "this_id": self.user_id
+        }
+        params = "&".join(["%s=%s" % (k, v) for k, v in data.items()])
+        logger.info("#"*30+" [user %s init tasks] "%self.user_id+"#"*30)
+        url = "%s?%s" % (os.path.join(CONF("PUB_HOST"), self.reverse_url("comet.tasks")[1:]), params)
+        request_result = requests.get(url)
+        logger.info(request_result)
+        logger.info("#"*30+" [user %s init tasks finished] "%self.user_id+"#"*30)
 
     def on_message(self, message):
         pass
