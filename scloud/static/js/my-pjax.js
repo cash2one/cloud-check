@@ -28,7 +28,7 @@ function loadingImg() {
 function show_loading(){
     $("#pjax-container").css("opacity", "0.8");
     $('#loading_canvas').show();
-    send_init_message();
+    // send_init_message();
 }
 
 function hide_loading(){

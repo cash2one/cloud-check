@@ -12,6 +12,8 @@ import traceback
 from torweb.urls import Url
 from torweb.tmpl import get_environment
 from scloud.config import CONF
+from scloud.utils.error_code import ERROR as ERR
+from tornado.web import Application
 
 env = get_environment(scloud.__name__)
 from scloud.utils.filters import Filters
@@ -39,3 +41,12 @@ def get_cache():
 
 cache = get_cache()
 
+def render_to_string(tmpl, **kwargs):
+    template = env.get_template(tmpl)
+    kwargs.update({
+        "CONF": CONF,
+        "reverse_url": Application.reverse_url,
+        "ERR": ERR,
+    })
+    template_string = template.render(**kwargs)
+    return template_string

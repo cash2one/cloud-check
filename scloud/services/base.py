@@ -10,13 +10,14 @@ class BaseService(object):
         self.db = handler.svc.db
         self.handler = handler
         logger.info("params :%s" % params)
+        self.params = {}
+        self.params.update(self.handler.args)
         if params:
-            self.params = params
+            self.params.update(params)
         else:
             self.params = dict()
         logger.info("self.params : %s" % self.params)
         logger.info("handler args :%s" % self.handler.args)
-        self.params.update(self.handler.args)
 
     def success(self, data=None):
         result = ObjectDict()

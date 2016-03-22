@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import os
+import requests
 from scloud.shortcuts import url
-from scloud.config import logger, thrownException
+from scloud.config import logger, thrownException, CONF
 from scloud.handlers import Handler, AuthHandler
 from tornado.web import asynchronous
 from tornado import gen
@@ -43,9 +45,11 @@ class LoginHandler(Handler):
 
 @url("/logout", name="logout")
 class LogoutHandler(AuthHandler):
+    @unblock
     def get(self):
         return self.post()
 
+    @unblock
     def post(self):
         next = self.request.headers.get("referer")
         self.cookies.clear()

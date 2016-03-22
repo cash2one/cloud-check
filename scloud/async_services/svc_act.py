@@ -2,11 +2,14 @@
 # -*- coding: utf-8 -*-
 # created: zhangpeng <zhangpeng1@infohold.com.cn>
 
+import os
+import requests
 from scloud.const import act_actions
-from scloud.config import logger
+from scloud.config import logger, CONF
 from scloud.celeryapp import celery
 from scloud.models.act import Act_History, Act_Pro_History
 from scloud.models.base import DataBaseService
+from scloud.shortcuts import render_to_string
 
 
 @celery.task
@@ -43,3 +46,22 @@ def task_post_pro_res_apply_history(status=0, content=u"", pro_id=0, res_apply_i
         act.user_id = user_id
         act.checker_id = checker_id
         svc.db.add(act)
+
+    if checker_id:
+        this_id = checker_id
+        user_id = user_id
+        action = "on_notice_user"
+    else:
+        this_id = user_id
+        user_id = checker_id
+        action = "on_notice_checker"
+    logger.info("[action]: %s, [user_id]: %s" % (action, user_id))
+    data = {
+        "user_id": user_id,
+        "action": action,
+        "res_id": res_apply_id,
+        "this_id": this_id
+    }
+    params = ["%s=%s" % (k, v) for k, v in data.items()]
+    request_result = requests.get("%s?%s" % (os.path.join(CONF("DOMAIN_HOST"), "scloud/comet/tasks"), "&".join(params)))
+        # logger.info(request_result)

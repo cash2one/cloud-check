@@ -64,8 +64,8 @@ class ActHistoryService(BaseService):
         logger.info("user_id: %s" % user_id )
         svc = PtUserService(self.handler, {"user_id": user_id})
         user_res = svc.get_info()
-        user = user_res.data
-        logger.info("user_info: %s" % user.as_dict())
+        user = user_res.data if not isinstance(user_res, Exception) else None
+        logger.info("user_info: %s" % user)
         # current_user = self.handler.current_user
         # if current_user:
         if user:
