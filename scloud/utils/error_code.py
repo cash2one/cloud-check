@@ -23,8 +23,13 @@ class ERROR(object):
     user_empty_err     = error(errcode=-100009, errvalue=u"操作用户不能为空")
     checker_empty_err  = error(errcode=-100010, errvalue=u"审核用户不能为空")
     new_password_empty_err = error(errcode=-100011, errvalue=u"新密码不能为空")
-    repeat_password_empty_err = error(errcode=-100011, errvalue=u"重复密码不能为空")
-    repeat_password_err = error(errcode=-100011, errvalue=u"重复密码与新密码不一致")
+    repeat_password_empty_err = error(errcode=-100012, errvalue=u"重复密码不能为空")
+    repeat_password_err = error(errcode=-100013, errvalue=u"重复密码与新密码不一致")
+    email_format_err = error(errcode=-100014, errvalue=u"邮箱格式错误")
+    email_reused_err = error(errcode=-100015, errvalue=u"该邮箱已经被使用")
+    username_reused_err = error(errcode=-100016, errvalue=u"该用户名已经被使用")
+    mobile_reused_err = error(errcode=-100017, errvalue=u"该手机号已经被使用")
+
 
     # 创建项目
     pro_name_empty_err        = error(errcode=-100020, errvalue=u"项目名称不能为空")

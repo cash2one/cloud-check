@@ -9,11 +9,19 @@ from scloud.config import logger, thrownException
 from sqlalchemy import and_
 from scloud.utils.permission import GROUP, OP
 from scloud.utils.error_code import ERROR
-
+import re 
 
 class RegisterService(BaseService):
     @thrownException
+    def email_check(self,email):
+        if len(email) > 7:
+            if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) != None:
+                return 1
+        return 0
+
+    @thrownException
     def do_register(self):
+        username = self.params.get("username", "").strip()
         email = self.params.get("email", "").strip()
         mobile = self.params.get("mobile", "").strip().replace(' ', '')
         password = self.params.get("password", "").strip()
@@ -23,6 +31,32 @@ class RegisterService(BaseService):
             return self.failure(ERROR.mobile_empty_err)
         if password == "":
             return self.failure(ERROR.password_empty_err)
+        if self.email_check(email) == 0:
+            return self.failure(ERROR.email_format_err) 
+        pt_user = self.db.query(
+           PT_User 
+        ).filter(
+            PT_User.email == email
+        ).first()
+        if pt_user:
+            return self.failure(ERROR.email_reused_err) 
+        
+        pt_user = self.db.query(
+           PT_User 
+        ).filter(
+            PT_User.username == username
+        ).first()
+        if pt_user:
+            return self.failure(ERROR.username_reused_err) 
+
+        pt_user = self.db.query(
+           PT_User 
+        ).filter(
+            PT_User.mobile == mobile
+        ).first()
+        if pt_user:
+            return self.failure(ERROR.mobile_reused_err) 
+
         instance, created = PT_User.get_or_create_obj(self.db, email=email, mobile=mobile, password=password)
         PT_User_Role.get_or_create_obj(self.db, user_id=instance.id, role_id=2)
         conditions = and_()
