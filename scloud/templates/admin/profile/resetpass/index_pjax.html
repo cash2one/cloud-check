@@ -12,13 +12,19 @@
         </div><!-- /.box-header -->
         <!-- form start -->
         <form id="form" action="{{ reverse_url('user_resetpass') }}" class="form-horizontal">
+          {{ handler.xsrf_form_html() }}
           <div class="box-body">
-          {{ base.form_input("旧密码", "old_password", _type="password", res=res, check_codes=[ERR.PASSWORD_EMPTY_ERR, ERR.PASSWORD_ERR]) }}
-          {{ base.form_input("新密码", "new_password", _type="password", res=res, check_codes=[ERR.NEW_PASSWORD_EMPTY_ERR, ERR.PASSWORD_ERR]) }}
-          {{ base.form_input("重复密码", "new_password", _type="password", res=res, check_codes=[ERR.REPEAT_PASSWORD_EMPTY_ERR, ERR.REPEAT_PASSWORD_ERR]) }}
+          {{ base.form_input("旧密码", "old_password", _type="password", res=res,
+                check_codes=[ERR.OLD_PASSWORD_EMPTY_ERR, ERR.PASSWORD_ERR]) }}
+
+          {{ base.form_input("新密码", "new_password", _type="password", res=res,
+                check_codes=[ERR.NEW_PASSWORD_EMPTY_ERR]) }}
+
+          {{ base.form_input("重复密码", "repeat_password", _type="password", res=res,
+                check_codes=[ERR.REPEAT_PASSWORD_EMPTY_ERR, ERR.REPEAT_PASSWORD_ERR]) }}
           </div><!-- /.box-body -->
           <div class="box-footer text-center">
-            <button type="button" id="form_btn" class="btn btn-info">确 定</button>
+            <button type="button" id="form_btn" onclick="do_reset_pass()" class="btn btn-info">确 定</button>
           </div><!-- /.box-footer -->
         </form>
       </div><!-- /.box -->
@@ -29,7 +35,10 @@
 </section>
 <script type="text/javascript">
 function do_reset_pass(){
-  generate_ajax_form({
+  $("#old_password").val($("#new_password").val()==""? "":MD5($("#old_password").val()))
+  $("#new_password").val($("#new_password").val()==""? "":MD5($("#new_password").val()))
+  $("#repeat_password").val($("#repeat_password").val()==""? "":MD5($("#repeat_password").val()))
+  generate_ajax_post({
     form: "#form",
     button: "form_btn"
   });

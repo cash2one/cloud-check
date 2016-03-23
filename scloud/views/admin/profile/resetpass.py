@@ -31,11 +31,13 @@ class ProfileHandler(AuthHandler):
     def post(self):
         svc = ProfileService(self)
         res = svc.reset_password()
+        logger.info(res)
         if(res.return_code == 0):
             self.add_message(u"密码修改成功！", level="success",
                              post_action=True)
         else:
-            self.add_message(u"密码修改失败！", level="warning")
-        return self.render_to_string("admin/profile/resetpass/index.html",
+            self.add_message(u"密码修改失败！(%s)(%s)" % (res.return_code, res.return_message), level="warning")
+        tmpl = self.render_to_string("admin/profile/resetpass/index_pjax.html",
                                      res=res);
+        return simplejson.dumps(self.success(data=tmpl))
  
