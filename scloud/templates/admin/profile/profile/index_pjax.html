@@ -198,9 +198,9 @@
           generate_ajax_post({
               form: "#task_confirm_form",
               button: "#do_confirm_btn",
-              onSuccess: function(response){
-                send_init_message();
-              },
+              //onSuccess: function(response){
+              //  send_init_message();
+              //},
               onTimeout: function(){ do_confirm_start_date();}
           })
         }
@@ -217,7 +217,7 @@
               form: "#profile_form",
               button: "#profile_form_btn",
               onSuccess: function(response){
-                console.log(response)
+                // console.log(response)
                 $("#card").find("figure.front").html(response.data.tmpl);
                 var user = response.data.user;
                 $("#head_current_user").text(user.username || user.email || user.mobile);

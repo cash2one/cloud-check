@@ -105,5 +105,9 @@
     {% include "admin/base/base_script.html" %}
     {% import "admin/base/base_macros.html" as mbase %}
     {% block main_container %}{% endblock %}
+    <audio id="chatAudio">
+      <!-- source -->
+      <source src="{{ handler.static_url('notify.ogg') }}" type="audio/ogg"> 
+    </audio>
   </body>
 </html>

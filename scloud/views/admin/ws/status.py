@@ -5,17 +5,22 @@ from scloud.shortcuts import url
 from scloud.config import logger, logThrown
 from scloud.handlers import AuthHandler
 from tornado.websocket import WebSocketHandler
+from scloud.models.base import DataBaseService
 from scloud.services.svc_pro_resource_apply import ProResourceApplyService
 from scloud.services.svc_pt_user import PtUserService
 from scloud.services.svc_act import ActHistoryService
 from scloud.const import STATUS_RESOURCE
+from scloud.views.admin.ws.index import MySocketHandler
 
-class MySocketHandler(WebSocketHandler):
-    def initialize(self, **kwargs):
-        super(MySocketHandler, self).initialize()
+# class MySocketHandler(WebSocketHandler):
+#     def initialize(self, **kwargs):
+#         super(MySocketHandler, self).initialize()
+#         # self.svc = DataBaseService()
+#         # self.svc.__enter__()
+#         logger.info("==[initialize]==")
 
 @url("/ws/status", name="ws.status")
-class EchoWebSocket(MySocketHandler, AuthHandler):
+class EchoWebSocket(MySocketHandler):
     users = dict()
     def check_origin(self, origin):
         return True
@@ -39,6 +44,9 @@ class EchoWebSocket(MySocketHandler, AuthHandler):
             waiter.write_message(simplejson.dumps(chat))
 
     def on_message(self, message):
+        logger.error("====[status onmessage]====")
+        self.svc = DataBaseService()
+        self.svc.__enter__()
         logger.error("\t WebSocket message: %s" % message)
         json_message = simplejson.loads(message)
         if json_message["action"] == "init_status":
@@ -68,7 +76,7 @@ class EchoWebSocket(MySocketHandler, AuthHandler):
                 chat.update(json_message)
                 logger.error(chat)
                 self.write_message(chat)
-            self.on_finish()
+            # self.on_finish()
             # chat.update(json_message)
             # EchoWebSocket.send_message(chat)
             # self.write_message(u"You said: " + message)
@@ -76,6 +84,9 @@ class EchoWebSocket(MySocketHandler, AuthHandler):
             EchoWebSocket.users.pop(str(json_message["user_id"]))
         else:
             self.write_message(u"You said: " + message)
+        self.svc.db.commit()
+        self.svc.db.close()
+        logger.error("====[status finish]====")
 
     def on_close(self):
         logger.info("WebSocket closed")

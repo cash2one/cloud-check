@@ -65,6 +65,10 @@ class DataBaseService(ModelServiceMixin):
         self.param_dict = param_dict
         self.db = None
 
+    @property
+    def args(self):
+        return self.param_dict
+
     def _db_init(self):
         self.db = self.__class__.__DB_Session()
         if CONF("DB.ENGINE").lower() == "myisam":

@@ -181,7 +181,7 @@ function generate_ajax_post(options){
 }
 
 function do_flip_card(options){
-  websocket.send("hello");
+  // websocket.send("hello");
   options = options || {};
   var card = options.card_id || '.card';
   if($(card).hasClass("flipped")){
@@ -197,5 +197,7 @@ function CheckBoxListener(){
   })
 }
 </script>
-{% include "admin/base/scripts/ws_notice.html" %}
-{% include "admin/base/scripts/ws_status.html" %}
+{#% include "admin/base/scripts/ws_notice.html" %#}
+{#% include "admin/base/scripts/ws_comet.html" %#}
+{#% include "admin/base/scripts/ws_status.html" %#}
+{% include "admin/base/scripts/ws_pubsub.html" %}

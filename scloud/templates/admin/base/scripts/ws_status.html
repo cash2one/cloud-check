@@ -4,36 +4,38 @@ $(function(){
   init_ws_status();
 })
 function init_ws_status(){
-  var wsServer = 'ws://127.0.0.1:9998{{ CONF("URL_ROOT") }}/ws/status'; //服务器地址
+  var wsServer = '{{ CONF("WS_HOST") }}/ws/status'; //服务器地址
   ws_socket = new WebSocket(wsServer); //创建 WebSocket 对象
   // ws_socket.send("hello");//向服务器发送消息
   ws_socket.onopen = function (evt) {
-    console.log("onopen");
+    // console.log("onopen");
     // ws_socket.send("hello world")
     //已经建立连接
     send_init_message()
   };
   ws_socket.onclose = function (evt) {
-    console.log("onclose");
-    ws_socket = new WebSocket(wsServer); //创建 WebSocket 对象
+    // console.log("onclose");
+    init_ws_status();
+    // ws_socket = new WebSocket(wsServer); //创建 WebSocket 对象
     //ws_socket.send(JSON.stringify({action:"offline", user_id:'{{ handler.current_user.id }}'}))
       //已经关闭连接
   };
   ws_socket.onmessage = function (evt) {
-    console.log("onmessage");
-    console.log(evt.data)
+    // console.log("onmessage");
+    // console.log(evt.data)
     var response = JSON.parse(evt.data);
 
-    console.log(response.action)
+    // console.log(response.action)
     if (response.action == "init_status"){
-      console.log("init_status")
+      // console.log("init_status")
       init_task_status(response);
     }
       //收到服务器消息，使用 evt.data 提取
   };
   ws_socket.onerror = function (evt) {
-    console.log("onerror");
-    ws_socket = new WebSocket(wsServer); //创建 WebSocket 对象
+    // console.log("onerror");
+    // init_ws_status();
+    // ws_socket = new WebSocket(wsServer); //创建 WebSocket 对象
       //产生异常
   };
 }
@@ -48,7 +50,7 @@ function send_init_message(){
 }
 function init_task_status(response){
   // console.log(response);
-  console.log(response.task_html)
+  // console.log(response.task_html)
   $("#tasks-menu").html(response.task_html)
 }
 </script>

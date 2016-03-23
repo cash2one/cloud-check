@@ -89,39 +89,40 @@ class Handler(BaseHandler):
 
     def on_finish(self):
         logger.info("\t" + "====[EXIT]====")
-        s = self.svc.db
+        # s = self.svc.db
         # from code import interact
         # interact(local=locals())
-        session_dict = s.__dict__
-        logger.error("session_dict: %s" % session_dict)
+        # session_dict = s.__dict__
+        # logger.error("session_dict: %s" % session_dict)
         try:
             # transaction = session_dict.get("transaction")
             # logger.error("transaction: %s" % transaction)
             #if transaction:
-            dispatch = session_dict.get("dispatch")
-            self.svc.db.commit()
+            # dispatch = session_dict.get("dispatch")
+            self.db.commit()
             # self.db.flush()
             logger.info("\t" + "====[COMMIT]====")
         except Exception:
             logThrown()
-            self.svc.db.rollback()
+            self.db.rollback()
             logger.info("\t" + "====[ROLLBACK]====")
-        # self.svc.db.remove()
-        self.svc.db.close()
+        # self.db.remove()
+        self.db.close()
         logger.info("\t" + "====[CLOSE]====")
-        # logger.info(self.svc.db.is_active)
+        # logger.info(self.db.is_active)
         # logger.info("====================== [http method (%s)] ======================" % self.request.method)
-        # self.svc.db.is_active
-        # self.svc.db.remove()
-        # self.svc.db.close()
-        # logger.info(self.svc.db)
-        # logger.info(self.svc.db.is_active)
+        # self.db.is_active
+        # self.db.remove()
+        # self.db.close()
+        # logger.info(self.db)
+        # logger.info(self.db.is_active)
         logger.critical("<" + "="*25 + " [finish] " + "="*25 + ">")
 
     def prepare(self):
         logger.warning("<" + "="*25 + " [prepare] " + "="*25 + ">")
         self.svc = DataBaseService()
         self.svc.__enter__()
+        self.db = self.svc.db
         # self.svc._db_init()
         # self.svc.db.begin_nested()
         # self.svc.db.begin()

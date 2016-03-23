@@ -199,6 +199,8 @@ class ProResourceApplyService(BaseService):
         }
         sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
         task_post_pro_res_apply_history.delay(status=apply.status, content=mail_title, pro_id=pro_id, res_apply_id=apply.id, user_id=user_id)
+        # from scloud.views.admin.ws.pubsub import r
+        # r.publish("test_realtime", "notice_checker")
         return self.success(data=apply)
 
     @thrownException
@@ -258,6 +260,8 @@ class ProResourceApplyService(BaseService):
         }
         sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
         task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
+        # from scloud.views.admin.ws.pubsub import r
+        # r.publish("test_realtime", "notice_checker")
         return self.success(data=resource)
 
     @thrownException
@@ -283,6 +287,8 @@ class ProResourceApplyService(BaseService):
         }
         sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
         task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
+        # from scloud.views.admin.ws.pubsub import r
+        # r.publish("test_realtime", "notice_checker")
         return self.success(data=resource)
 
     @thrownException
@@ -310,6 +316,8 @@ class ProResourceApplyService(BaseService):
         logger.info("\t resource is deleted")
         sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_content, mail_content)
         task_post_pro_res_apply_history.delay(status=resource.status, content=mail_content, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
+        # from scloud.views.admin.ws.pubsub import r
+        # r.publish("test_realtime", "notice_checker")
         return self.success(data=resource)
 
     @thrownException
@@ -342,6 +350,8 @@ class ProResourceApplyService(BaseService):
         }
         sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
         task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
+        # from scloud.views.admin.ws.pubsub import r
+        # r.publish("test_realtime", "notice_checker")
         return self.success(data=resource)
 
     @thrownException
@@ -473,4 +483,6 @@ class ProResourceCheckService(BaseService):
 
         for email, mail_content_list in email_dict.items():
             sendMail.delay("scloud@infohold.com.cn", [email], u"资源%s通知" % STATUS_RESOURCE.get(action).act_value, "\n\n".join(mail_content_list))
+        # from scloud.views.admin.ws.pubsub import r
+        # r.publish("test_realtime", "notice_user")
         return self.success(data=tip_messages)

@@ -1,0 +1,45 @@
+<script type="text/javascript">
+var ws_pubsub = null;
+$(function(){
+    init_ws_pubsub();
+})
+function init_ws_pubsub(){
+  var current_user_id = $("#head_current_user").attr("current_user_id");
+  var ws_url = '{{ CONF("WS_HOST") }}{{ handler.reverse_url("ws.pubsub") }}?user_id='+current_user_id; //服务器地址
+  ws_pubsub = new WebSocket(ws_url);
+  // console.log("current_user_id:"+current_user_id);
+  ws_pubsub.onopen = function(evt) {
+    ws_pubsub.send(current_user_id);
+    // console.log("onopen");
+  };
+  ws_pubsub.onmessage = function (evt) {
+    // console.log("onmessage");
+    var response = JSON.parse(evt.data);
+    // console.log(response)
+    var action = response.action;
+    if ( action == "on_task" ){
+      on_task(response)
+    }else if ( action == "on_notice_user" ){
+      // $("#chatAudio")[0].play();
+      on_task(response)
+    }else if ( action == "on_notice_checker" ){
+      // $("#chatAudio")[0].play();
+      on_task(response)
+    }
+  };
+  ws_pubsub.onclose = function() {
+    // console.log("onclose");
+    // setTimeout(init_ws_pubsub, 1000)
+    init_ws_pubsub()
+  };
+}
+function on_task(response){
+  // console.log("task_notice");
+  // console.log(response);
+  if (response.action != "on_task"){
+    // console.log(response.action)
+    $("#chatAudio")[0].play();
+  }
+  $("#tasks-menu").html(response.html)
+}
+</script>

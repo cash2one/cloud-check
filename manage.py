@@ -4,6 +4,7 @@
 
 import os
 import scloud
+import threading
 import logging
 import tornado.web
 # import tornado.options
@@ -43,11 +44,14 @@ app = make_application(
 )
 
 from scloud.async_services.listener import init_listener
+from scloud.views.admin.ws.pubsub import redis_listener
 init_listener()
 if options.cmd == "runserver":
     import tcelery
     from scloud import celeryapp
     tcelery.setup_nonblocking_producer(celery_app=celeryapp.celery)
+    threading.Thread(target=redis_listener).start()
+
     # run_torweb.run(app, port=CONF("PORT"))
     run_torweb.run(app, port=CONF("PORT"))
 elif options.cmd == "syncdb":

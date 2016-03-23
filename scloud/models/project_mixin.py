@@ -7,6 +7,8 @@ from scloud.const import pro_resource_apply_status_types
 class Pro_Info_Mixin(object):
 
     def get_apply_global_vars(self):
+        if hasattr(self, "_get_apply_global_vars"):
+            return self._get_apply_global_vars
         logger.info("------[get_last_apply_global_vars]------")
         # logger.info("%s --> %s" % (self.id, self.name))
         applies = self.pro_resource_applies
@@ -41,12 +43,16 @@ class Pro_Info_Mixin(object):
             level = level,
         )
         # logger.info(data)
-        return data
+        setattr(self, "_get_apply_global_vars", data)
+        return self._get_apply_global_vars
+        # return data
 
 
 class Pro_Resource_Apply_Mixin(object):
 
     def get_global_vars(self):
+        if hasattr(self, "_get_global_vars"):
+            return self._get_global_vars
         logger.info("------[get_apply_global_vars]------")
         apply_status = self.status
         percent_status = apply_status + 1
@@ -67,5 +73,7 @@ class Pro_Resource_Apply_Mixin(object):
             bg_color = bg_color,
             level = level,
         )
-        return data
+        setattr(self,"_get_global_vars", data)
+        return self._get_global_vars
+        # return data
 
