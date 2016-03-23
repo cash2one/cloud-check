@@ -181,7 +181,7 @@ function generate_ajax_post(options){
 }
 
 function do_flip_card(options){
-  websocket.send("hello");
+  // websocket.send("hello");
   options = options || {};
   var card = options.card_id || '.card';
   if($(card).hasClass("flipped")){

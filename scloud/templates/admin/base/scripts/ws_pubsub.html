@@ -7,7 +7,7 @@ function init_ws_pubsub(){
   var current_user_id = $("#head_current_user").attr("current_user_id");
   var ws_url = '{{ CONF("WS_HOST") }}{{ handler.reverse_url("ws.pubsub") }}?user_id='+current_user_id; //服务器地址
   ws_pubsub = new WebSocket(ws_url);
-  console.log("current_user_id:"+current_user_id);
+  // console.log("current_user_id:"+current_user_id);
   ws_pubsub.onopen = function(evt) {
     ws_pubsub.send(current_user_id);
     // console.log("onopen");
@@ -37,7 +37,7 @@ function on_task(response){
   // console.log("task_notice");
   // console.log(response);
   if (response.action != "on_task"){
-    console.log(response.action)
+    // console.log(response.action)
     $("#chatAudio")[0].play();
   }
   $("#tasks-menu").html(response.html)
