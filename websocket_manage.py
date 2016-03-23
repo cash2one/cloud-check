@@ -50,10 +50,10 @@ if options.cmd == "runserver":
     import tcelery
     from scloud import celeryapp
     tcelery.setup_nonblocking_producer(celery_app=celeryapp.celery)
-    # threading.Thread(target=redis_listener).start()
+    threading.Thread(target=redis_listener).start()
 
     # run_torweb.run(app, port=CONF("PORT"))
-    run_torweb.run(app, port=CONF("PORT"))
+    run_torweb.run(app, port=CONF("WEBSOCKET_PORT"))
 elif options.cmd == "syncdb":
     logging.info("** start sycndb ... **")
     # from scloud.models.user import User

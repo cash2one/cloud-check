@@ -38,4 +38,4 @@ class ProfileHandler(AuthHandler):
             self.add_message(u"密码修改失败！", level="warning")
         return self.render_to_string("admin/profile/resetpass/index.html",
                                      res=res);
-            
+ 

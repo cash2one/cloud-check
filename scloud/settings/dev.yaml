@@ -4,6 +4,7 @@ sub_app_cn: '运营管理平台'
 company: '小付钱包技术（北京）有限公司'
 language: python
 port: 9999
+websocket_port: 9998
 
 # url根路径及静态文件根路径
 domain_host: 'http://127.0.0.1:{port}'
@@ -12,7 +13,7 @@ static_domain: '/static'
 static_path: '/static'
 
 # WebSocket地址
-ws_host: 'ws://127.0.0.1:9998'
+ws_host: 'ws://127.0.0.1:{websocket_port}'
 pub_host: 'http://127.0.0.1:9999'
 
 # 是否启用页面调试

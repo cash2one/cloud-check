@@ -68,7 +68,7 @@ class ProfileService(BaseService):
         repeat_new_password = self.params.get("repeat_new_password")
         current_user = self.handler.current_user
         if not current_user:
-            return NotFoundError()
+            return self.failure(ERROR.not_found_err)
         
         if not old_password:
             return self.failure(ERROR.old_password_empty_err)
@@ -87,8 +87,8 @@ class ProfileService(BaseService):
             PT_User.id == current_user.id
         ).first()
         if user:
-            user.password = new_password
-            self.db.add(user)
+            # user.password = new_password
+            # self.db.add(user)
             return self.success(data=user)
         else:
-            return NotFoundError()
+            return self.failure(ERROR.not_found_err)
