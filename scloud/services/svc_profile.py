@@ -87,8 +87,8 @@ class ProfileService(BaseService):
             PT_User.id == current_user.id
         ).first()
         if user:
-            # user.password = new_password
-            # self.db.add(user)
+            user.password = new_password
+            self.db.add(user)
             return self.success(data=user)
         else:
             return self.failure(ERROR.not_found_err)
