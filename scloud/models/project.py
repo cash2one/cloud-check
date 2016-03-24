@@ -94,3 +94,55 @@ class Pro_Resource_Apply(BaseModel, BaseModelMixin, Pro_Resource_Apply_Mixin):
     user = relationship("PT_User", foreign_keys=[user_id], backref="pro_resource_applies")
     checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_resource_applies")
     project = relationship("Pro_Info", backref=backref("pro_resource_applies", order_by="Pro_Resource_Apply.update_time"))
+
+class Pro_User(BaseModel, BaseModelMixin):
+    u"""项目用户"""
+    __tablename__ = "pro_user"
+    pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
+    email = Column(Unicode, default=u'', info=u"邮箱")
+    username = Column(Unicode, default=u'', info=u"用户名") 
+    is_enable = Column(Integer, default=1, info=u"是否可用")
+    use_vpn = Column(Integer, default=0, info=u"是否需要开通VPN远程访问")
+
+class Pro_Publish(BaseModel, BaseModelMixin):
+    u"""项目发布"""
+    __tablename__ = "pro_publish"
+    pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
+    domain = Column("domain", Unicode, default=u'', info=u"域名")
+    domain_port = Column("domain_port", Integer, default=80, info=u"互联网端口")
+    network_address = Column("network_address", Unicode, default=u'', info=u"内网地址" )
+    network_port = Column("network_port", Integer, default=80, info=u"内网端口")
+    use_ssl = Column("use_ssl", Integer, default=0, info=u"是否需要SSL卸载")
+
+class Pro_Balance(BaseModel, BaseModelMixin):
+    u"""负载均衡"""
+    __tablename__ = "pro_balance"
+    pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
+    res_apply_id = Column("res_apply_id", Integer, ForeignKey("pro_resource_apply.id"), default=0,info=u"所属资源申请")
+    members = Column("members", Unicode, default=u'', info=u"成员")
+    plot = Column("plot", Integer, default=0, info=u"策略")
+    health = Column("health", Integer, default=0, info=u"策略")
+    url = Column("url", Unicode, default=u'', info=u"URL（仅限HTTP方式）")
+    keyword = Column("keyword", Unicode, default=u'', info=u"关键字（仅限HTTP方式）")
+    desc = Column("desc", Unicode, default=u'', info=u"特殊说明")
+
+class Pro_Backup(BaseModel, BaseModelMixin):
+    u"""项目备份"""
+    __tablename__ = "pro_backup"
+    pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
+    res_apply_id = Column("res_apply_id", Integer, ForeignKey("pro_resource_apply.id"), default=0, info=u"所属资源申请")
+    disk = Column("disk", Unicode, default=u'', info=u"磁盘名称")
+    plot = Column("plot", Integer, default=0, info=u"策略")
+    period = Column("period", Unicode, default=u'', info=u"间隔")
+
+
+    
+
+
+
+    
+
+
+
+
+
