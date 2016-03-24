@@ -68,3 +68,30 @@ class GuideHandler(GuideStepGetHandler):
             "pro_list_res": pro_list_res
         })
         return self.render_to_string("admin/apply/service/add.html", **data)
+
+
+@url("/apply/service/publish/add", name="apply.service.publish.add", active="apply.service.add")
+class GuideHandler(GuideStepGetHandler):
+    u'服务申请'
+    @check_perms('pro_info.view')
+    @unblock
+    def post(self):
+        # svc = ApplyService(self)
+        # publish_res = svc.publish()
+        # if publish_res.return_code == 0:
+            # self.add_message(u"互联网发布信息添加成功！", level="success")
+        # else:
+            # self.add_message(u"互联网发布信息添加失败！(%s)(%s)" % (publish_res,return_code, publish_res.return_message), level="warning")
+        svc = ProjectService(self)
+        pro_id = self.args.get("pro_id")
+        data = self.get_pro_info_res(pro_id)
+        pro_list_res = svc.get_project_list()
+        if pro_list_res.return_code < 0:
+            raise SystemError(pro_list_res.return_code, pro_list_res.return_message)
+        logger.info(pro_list_res)
+        data.update({
+            "pro_list_res": pro_list_res
+            # "publish_res": publish_res
+        })
+        tmpl = self.render_to_string("admin/apply/service/add_pjax.html", **data)
+        return simplejson.dumps(self.success(data=tmpl))

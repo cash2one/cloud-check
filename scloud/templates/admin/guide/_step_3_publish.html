@@ -1,50 +1,16 @@
 
+{% import "admin/base/base_macros.html" as base %}
   <!-- Horizontal Form -->
   <div>
     <!-- form start -->
-    <form data-pjax action="/guide/step/3" class="form-horizontal" method="POST">
+    <form data-pjax action="{{ reverse_url('apply.service.add') }}" class="form-horizontal" method="POST">
     {{ handler.xsrf_form_html() }}
+      <input type="hidden" name="pro_id" value={{ pro_info_res.data.id }}> 
       <div class="box-body">
-      {#
-        <div class="form-group">
-          <label for="computer" class="col-sm-2 control-label">项目选择</label>
-          <div class="col-sm-6">
-            <select class="form-control select2" style="width: 100%;">
-              <option selected="selected">Alabama</option>
-              <option>Alaska</option>
-              <option>California</option>
-              <option>Delaware</option>
-              <option>Tennessee</option>
-              <option>Texas</option>
-              <option>Washington</option>
-            </select>
-          </div>
-        </div>
-        #}
-        <div class="form-group">
-          <label for="loadbalance" class="col-sm-2 control-label">域名</label>
-          <div class="col-sm-6">
-            <input type="text" class="form-control" id="computer" placeholder="10">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="loadbalance" class="col-sm-2 control-label">互联网端口</label>
-          <div class="col-sm-6">
-            <input type="text" class="form-control" id="computer" placeholder="80">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="loadbalance" class="col-sm-2 control-label">内网地址</label>
-          <div class="col-sm-6">
-            <input type="text" class="form-control" id="computer" placeholder="192.168.3.10">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="loadbalance" class="col-sm-2 control-label">内网端口</label>
-          <div class="col-sm-6">
-            <input type="text" class="form-control" id="computer" placeholder="8080">
-          </div>
-        </div>
+      {{ base.form_input("域名", "domain", res=service_res) }}
+      {{ base.form_input("互联网端口", "domain_port", res=service_res) }}
+      {{ base.form_input("内网地址", "network_address", res=service_res) }}
+      {{ base.form_input("内网端口", "network_port", res=service_res) }}
         <div class="form-group">
           <label for="loadbalance" class="col-sm-2 control-label">SSL卸载</label>
           <div class="radio col-sm-offset-2 col-sm-10">
@@ -61,9 +27,8 @@
           </div>
         </div>
       </div>
-      <div class="box-footer">
-        <button type="submit" class="btn btn-default">取消</button>
-        <button type="submit" class="btn btn-info pull-right">提交</button>
+      <div class="box-footer text-center">
+        <button type="button" id="form_publish_btn" onclick="do_form_publish()" class="btn btn-info">提 交</button>
       </div><!-- /.box-footer -->
     </form>
   </div><!-- /.box -->
@@ -71,5 +36,11 @@
   $(function(){
     $(".select2").select2();
   })
+  function do_form_publish(){
+    generate_ajax_post({
+      form: "#form_publish",
+      btn: "#form_publish_btn"
+    })
+  }
   </script>
   
