@@ -3,7 +3,7 @@
   <!-- Horizontal Form -->
   <div>
     <!-- form start -->
-    <form data-pjax action="{{ reverse_url('apply.service.add') }}" class="form-horizontal" method="POST">
+    <form id="form_publish" data-pjax action="{{ reverse_url('apply.service.publish.add') }}" class="form-horizontal" method="POST">
     {{ handler.xsrf_form_html() }}
       <input type="hidden" name="pro_id" value={{ pro_info_res.data.id }}> 
       <div class="box-body">
