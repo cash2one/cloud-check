@@ -17,9 +17,16 @@ class ApplyService(BaseService):
     def do_publish(self):
         pro_id = self.params.get("pro_id")
         domain = self.params.get("domain")
-        domain_port = int(self.params.get("domain_port"))
+        try:
+            domain_port = int(self.params.get("domain_port"))
+        except ValueError:
+            return self.failure(ERROR.pro_publish_domain_port_invalid_err)
+
         network_address = self.params.get("network_address")
-        network_port = int(self.params.get("network_port"))
+        try:
+            network_port = int(self.params.get("network_port"))
+        except ValueError:
+            return self.failure(ERROR.pro_publish_network_port_invalid_err)
         use_ssl = self.params.get("use_ssl", 0)
 
         if not pro_id:
@@ -32,7 +39,7 @@ class ApplyService(BaseService):
             return self.failure(ERROR.pro_publish_network_address_empty_err)
         if not network_port:
             return self.failure(ERROR.pro_publish_network_port_empty_err)
-        if domain_port < 1024 or domain_port > 65535:
+        if domain_port < 80 or domain_port > 65535:
             return self.failure(ERROR.pro_publish_domain_port_invalid_err)
         if network_port < 1024 or network_port > 65535:
             return self.failure(ERROR.pro_publish_network_port_invalid_err)

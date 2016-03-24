@@ -61,5 +61,6 @@ class GuideHandler(ApplyHandler):
         pro_id = self.args.get("pro_id")
         data = self.get_pro_data(pro_id=pro_id)
         data.update({"publish_res": publish_res})
+        logger.info(publish_res)
         tmpl = self.render_to_string("admin/apply/service/add_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))

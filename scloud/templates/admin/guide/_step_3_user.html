@@ -3,16 +3,20 @@
   <!-- Horizontal Form -->
   <div>
     <div class="box-header with-border">
-      <h3 class="box-title">xx项目管理授权</h3>
+      <h3 class="box-title">{{ pro_info_res.data.name }}管理授权</h3>
       <!-- tools box -->
     </div><!-- /.box-header -->
     <!-- form start -->
-    <form data-pjax action="/guide/step/1" class="form-horizontal" method="POST">
-    {{ handler.xsrf_form_html() }}
+    <form id="form_user" data-pjax action="{{ reverse_url('apply.user.add') }}" class="form-horizontal" method="POST">
+      {{ handler.xsrf_form_html() }}
+      <input type="hidden" name="pro_id" value="{{ pro_info_res.data.id }}">
       <div class="box-body">
-          {{ base.form_input("用户名", "username") }}
-          {{ base.form_input("邮箱", "email") }}
-          {{ base.form_select("是否有效", "is_enable", options=[{"value": 1, "desc": "是"}, {"value":0, "desc": "否"}]) }}
+        <!-- form input -->
+        {{ base.form_input("用户名", "username", res=pro_user_res,
+              check_codes=[ERR.USERNAME_EMPTY_ERR, ERR.USERNAME_DUPLICATE_ERR]) }}
+        {{ base.form_input("邮箱", "email", res=pro_user_res,
+              check_codes=[ERR.EMAIL_EMPTY_ERR, ERR.EMAIL_FORMAT_ERR, ERR.EMAIL_DUPLICATE_ERR]) }}
+        {{ base.form_select("是否有效", "is_enable", options=[{"value": 1, "desc": "是"}, {"value":0, "desc": "否"}], res=pro_user_res) }}
         <div class="form-group">
           <div class="radio col-sm-offset-2 col-sm-10">
               <label>
@@ -29,9 +33,8 @@
           </div>
         </div>
       </div>
-      <div class="box-footer">
-        <button type="submit" class="btn btn-default">取消</button>
-        <button type="submit" class="btn btn-info pull-right">提交</button>
+      <div class="box-footer text-center">
+        <button type="button" id="form_user_btn" onclick="do_form_user()" class="btn btn-info">提交</button>
       </div><!-- /.box-footer -->
     </form>
   </div><!-- /.box -->
@@ -39,5 +42,11 @@
   $(function(){
     $(".select2").select2();
   })
+  function do_form_user(){
+    generate_ajax_post({
+      form: "#form_user",
+      btn: "#form_user_btn"
+    })
+  }
   </script>
   

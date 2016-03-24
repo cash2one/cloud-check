@@ -25,6 +25,20 @@
                   </div>
                 </div>
                 <div class="box-body no-padding">
+                  <ul class="nav nav-pills nav-stacked">
+                    {% for pro in pro_list_res.data %}
+                      {% set applies = pro.pro_resource_applies %}
+                      {% set last_apply = applies[-1] %}
+                      {% if last_apply.status >= STATUS_RESOURCE.CONFIRMPAYED %}
+                      <li name="pro_{{ pro.id }}"><a data-pjax href="{{ reverse_url('apply.resource.add') }}?pro_id={{ pro.id }}"><i class="fa fa-inbox"></i> {{ pro.name }}
+                      <span class="pull-right">
+                      <span class="label label-primary">{{ STATUS_RESOURCE.get(last_apply.status).value }}</span>
+                      </span>
+                      </a></li>
+                      {% endif %}
+                    {% endfor %}
+                  </ul>
+                {#
                 <form data-pjax id="env_res_form" action="{{ reverse_url('defaultset.env_info.del') }}">
                   {{ handler.xsrf_form_html() }}
                   <ul class="todo-list" id="env_list_res">
@@ -56,6 +70,7 @@
                     </li>
                   </ul>
                 </form>
+                #}
                 </div><!-- /.box-body -->
               </div><!-- /. box -->
             </div><!-- /.col -->

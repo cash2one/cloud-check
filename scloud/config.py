@@ -78,6 +78,7 @@ def thrownException(func):
             data = ObjectDict()
             data.return_code = ERROR.system_err.errcode
             data.return_message = e.__unicode__()
+            data.data = None
             return data
     return wrapper
 

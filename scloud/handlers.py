@@ -48,7 +48,7 @@ class HandlerMeta(type):
             if method in dct:
                 # 检查url地址中的不合法参数，防跨域调用js
                 # 检查函数运行时错误，遇到错误直接抛出
-                dct[method] = check_exception(dct[method])
+                # dct[method] = check_exception(dct[method])
                 pass
         return type.__new__(mcs, name, bases, dct)
 
@@ -262,7 +262,11 @@ class AuthHandler(Handler):
 
     def get_current_user(self):
         current_user = self.session.get("current_user", None)
-        logger.info("******[GET SESSION] %s" % current_user)
+        # logger.info("******[GET SESSION] %s" % current_user)
+        if current_user:
+            logger.info("\t [current_user]: %s(%s)" % (current_user.id, current_user.username))
+        else:
+            logger.info("\t [current_user]: None")
         return current_user
 
     def get_login_url(self, next=''):
