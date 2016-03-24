@@ -91,13 +91,13 @@ class ERROR(object):
 
     # 互联网发布
     pro_publish_domain_empty_err = error(errcode=-100160, errvalue=u"域名不能为空")
-    pro_publish_domain_invalid_err = error(errcode=-100161, errvalue=u"域名不能为空")
+    pro_publish_domain_invalid_err = error(errcode=-100161, errvalue=u"域名不合法")
     pro_publish_domain_port_empty_err = error(errcode=-100162, errvalue=u"互联网端口不能为空")
-    pro_publish_domain_port_invalid_err = error(errcode=-100163, errvalue=u"互联网端口必须为数字")
-    pro_publish_network_address_empty_err = error(errcode=-100164, errvalue=u"内网地址不能为空")
+    pro_publish_domain_port_invalid_err = error(errcode=-100163, errvalue=u"互联网端口必须为大于1024小于65535的正整数") 
+    pro_publish_network_address_empty_err = error(errcode=-100164, errvalue=u"内网地址不能为空") 
     pro_publish_network_address_invalid_err = error(errcode=-100165, errvalue=u"内网地址不合法")
     pro_publish_network_port_empty_err = error(errcode=-100166, errvalue=u"内网端口不能为空")
-    pro_publish_network_port_invalid_err = error(errcode=-100167, errvalue=u"内网端口必须为数字")
+    pro_publish_network_port_invalid_err = error(errcode=-100167, errvalue=u"内网端口必须为大于1024小于65535的正整数")
 
 
 ERR = ObjectDict()
