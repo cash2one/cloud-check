@@ -7,10 +7,14 @@
     {{ handler.xsrf_form_html() }}
       <input type="hidden" name="pro_id" value={{ pro_info_res.data.id }}> 
       <div class="box-body">
-      {{ base.form_input("域名", "domain", res=service_res) }}
-      {{ base.form_input("互联网端口", "domain_port", res=service_res) }}
-      {{ base.form_input("内网地址", "network_address", res=service_res) }}
-      {{ base.form_input("内网端口", "network_port", res=service_res) }}
+      {{ base.form_input("域名", "domain", res=service_res,
+            check_codes=[ERR.PRO_PUBLISH_DOMAIN_EMPTY_ERR, ERR.PRO_PUBLISH_DOMAIN_INVALID_ERR]) }}
+      {{ base.form_input("互联网端口", "domain_port", res=service_res,
+            check_codes=[ERR.PRO_PUBLISH_DOMAIN_PORT_EMPTY_ERR, ERR.PRO_PUBLISH_DOMAIN_PORT_INVALID_ERR]) }}
+      {{ base.form_input("内网地址", "network_address", res=service_res,
+            check_codes=[ERR.PRO_PUBLISH_NETWORK_ADDRESS_EMPTY_ERR, ERR.PRO_PUBLISH_NETWORK_ADDRESS_INVALID_ERR]) }}
+      {{ base.form_input("内网端口", "network_port", res=service_res,
+            check_codes=[ERR.PRO_PUBLISH_NETWORK_PORT_EMPTY_ERR, ERR.PRO_PUBLISH_NETWORK_PORT_INVALID_ERR]) }}
         <div class="form-group">
           <label for="loadbalance" class="col-sm-2 control-label">SSL卸载</label>
           <div class="radio col-sm-offset-2 col-sm-10">
@@ -22,7 +26,7 @@
           <div class="radio col-sm-offset-2 col-sm-10">
               <label>
                 <input type="radio" name="use_vpn" id="use_vpn" value="0">
-                不需开
+                不需要
               </label>
           </div>
         </div>
