@@ -1,3 +1,72 @@
+/* ------------------ 2016-03-23 ------------------ */
+CREATE TABLE `pro_user` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `pro_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属项目',
+    `email` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '邮箱',
+    `username` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '用户名',
+    `is_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1' COMMENT '是否可用',
+    `use_vpn` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '是否需要开通VPN远程访问',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='项目管理用户表'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=0;
+
+CREATE TABLE `pro_publish` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `pro_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属项目',
+    `domain` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '域名',
+    `domain_port` int(11) NOT NULL DEFAULT '80' COMMENT '互联网端口',
+    `network_address` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '内网地址',
+    `network_port` INT(11) NOT NULL DEFAULT '80' COMMENT '内网端口',
+    `use_ssl` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '是否需要SSL卸载',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='项目互联网发布表'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=0;
+
+CREATE TABLE `pro_balance` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `pro_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属项目',
+    `res_apply_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属资源申请',
+    `members` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '成员',
+    `plot` TINYINT(1) NOT NULL DEFAULT '0' COMMENT '策略',
+    `health` TINYINT(1) NOT NULL DEFAULT '0' COMMENT '策略',
+    `url` VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'URL（仅限HTTP方式）',
+    `keyword` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '关键字（仅限HTTP方式）',
+    `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '特殊说明',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='项目互联网发布表'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=0;
+
+CREATE TABLE `pro_backup` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `pro_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属项目',
+    `res_apply_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属资源申请',
+    `disk` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '磁盘名称',
+    `plot` TINYINT(1) NOT NULL DEFAULT '0' COMMENT '策略',
+    `period` varchar(255) NOT NULL DEFAULT '' COMMENT '间隔',
+    `backup_time` TIME NOT NULL DEFAULT '00:00:00' COMMENT '备份时间',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='项目互联网发布表'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=0;
 /* ------------------ 2016-01-20 ------------------ */
 CREATE TABLE `pt_user` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
@@ -13,7 +82,7 @@ CREATE TABLE `pt_user` (
 )
 COMMENT='管理员用户表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 
@@ -29,7 +98,7 @@ CREATE TABLE `pt_group` (
 )
 COMMENT='管理员用户表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 
@@ -45,7 +114,7 @@ CREATE TABLE `pt_perm` (
 )
 COMMENT='管理员用户表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 
@@ -59,7 +128,7 @@ CREATE TABLE `pt_group_perms` (
 )
 COMMENT='管理员用户表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 CREATE TABLE `pt_role` (
@@ -74,7 +143,7 @@ CREATE TABLE `pt_role` (
 )
 COMMENT='角色表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 CREATE TABLE `pt_role_group_ops` (
@@ -89,7 +158,7 @@ CREATE TABLE `pt_role_group_ops` (
 )
 COMMENT='角色权限表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 CREATE TABLE `pt_role_groups` (
@@ -103,7 +172,7 @@ CREATE TABLE `pt_role_groups` (
 )
 COMMENT='角色权限表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 CREATE TABLE `pt_user_role` (
@@ -117,7 +186,7 @@ CREATE TABLE `pt_user_role` (
 )
 COMMENT='角色权限表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 /* ------------------ 2016-01-18 ------------------ */
 CREATE TABLE `pro_info` (
@@ -137,7 +206,7 @@ CREATE TABLE `pro_info` (
 )
 COMMENT='项目信息表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 CREATE TABLE `env_info` (
@@ -183,7 +252,7 @@ CREATE TABLE `pro_resource_apply` (
 )
 COMMENT='项目资源申请表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 CREATE TABLE `env_resource_fee` (
@@ -265,7 +334,7 @@ CREATE TABLE `act_history` (
 )
 COMMENT='数据库操作历史表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 CREATE TABLE `act_pro_history` (
@@ -282,7 +351,7 @@ CREATE TABLE `act_pro_history` (
 )
 COMMENT='数据库操作历史表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
 CREATE TABLE `act_todo` (
@@ -298,5 +367,5 @@ CREATE TABLE `act_todo` (
 )
 COMMENT='TODO信息表'
 COLLATE='utf8_general_ci'
-ENGINE=MyISAM
+ENGINE=InnoDB
 AUTO_INCREMENT=0;
