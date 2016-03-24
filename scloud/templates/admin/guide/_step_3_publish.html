@@ -7,8 +7,8 @@
     {{ handler.xsrf_form_html() }}
       <input type="hidden" name="pro_id" value="{{ pro_info_res.data.id }}">
       <div class="box-body">
-      {% if service_res %}
-      {% set data = service_res.data %}
+      {% if publish_res %}
+      {% set data = publish_res.data %}
       {% else %}
       {% set data = {} %}
       {% endif %}
@@ -18,13 +18,13 @@
       {% set network_port = data.network_port or handler.args.get("network_port", "") %}
       {% set use_vpn = data.use_vpn or handler.args.get("use_vpn", "-1") %}
 
-      {{ base.form_input("域名", "domain", res=service_res, value=domain,
+      {{ base.form_input("域名", "domain", res=publish_res, value=domain,
             check_codes=[ERR.PRO_PUBLISH_DOMAIN_EMPTY_ERR, ERR.PRO_PUBLISH_DOMAIN_INVALID_ERR]) }}
-      {{ base.form_input("互联网端口", "domain_port", res=service_res, value=domain_port,
+      {{ base.form_input("互联网端口", "domain_port", res=publish_res, value=domain_port,
             check_codes=[ERR.PRO_PUBLISH_DOMAIN_PORT_EMPTY_ERR, ERR.PRO_PUBLISH_DOMAIN_PORT_INVALID_ERR]) }}
-      {{ base.form_input("内网地址", "network_address", res=service_res, value=network_address,
+      {{ base.form_input("内网地址", "network_address", res=publish_res, value=network_address,
             check_codes=[ERR.PRO_PUBLISH_NETWORK_ADDRESS_EMPTY_ERR, ERR.PRO_PUBLISH_NETWORK_ADDRESS_INVALID_ERR]) }}
-      {{ base.form_input("内网端口", "network_port", res=service_res, value=network_port,
+      {{ base.form_input("内网端口", "network_port", res=publish_res, value=network_port,
             check_codes=[ERR.PRO_PUBLISH_NETWORK_PORT_EMPTY_ERR, ERR.PRO_PUBLISH_NETWORK_PORT_INVALID_ERR]) }}
         <div class="form-group">
           <label for="loadbalance" class="col-sm-2 control-label">SSL卸载</label>
