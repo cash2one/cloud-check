@@ -1,26 +1,29 @@
-          <p class="login-box-msg"></p>
+
+{% import "admin/base/base_macros.html" as base %}
+        <p class="login-box-msg"></p>
         <form id="login_form" action="{{ reverse_url('login') }}" method="post" onsubmit="return check_form()">
           <p class="login-box-msg">登录</p>
           {{ handler.xsrf_form_html() }}
-          <input type="hidden" name="next" value="{{ handler.args.get('next', '')}}">
+          {% set next = handler.args.get('next', '') %}
+          {% if "logout" in next %}
+          {% set next = reverse_url('index') %}
+          {% endif %}
+          {% set username = handler.args.get('username', '') %}
+          <input type="hidden" name="next" value="{{ next }}">
           <div class="form-group has-feedback">
             <input type="username" name="username" class="form-control" placeholder="username" value="{{ handler.session.get('post_username', '')}}">
             <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
           </div>
-          {% if result %}
-            {% if result.return_code|int in [-100001, -100002] %}
+          {% if result and result.return_code|int in [ERR.USERNAME_EMPTY_ERR, ERR.USERNAME_ERR] %}
               <p class="text-red">{{ result.return_message }}</p>
-            {% endif %}
           {% endif %}
           <div class="form-group has-feedback">
             <input type="password" id="password" class="form-control" placeholder="password">
             <input type="hidden" name="password">
             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
           </div>
-          {% if result %}
-            {% if result.return_code|int in [-100003, -100004] %}
+          {% if result and result.return_code|int in [ERR.PASSWORD_EMPTY_ERR, ERR.PASSWORD_ERR] %}
               <p class="text-red">{{ result.return_message }}</p>
-            {% endif %}
           {% endif %}
           <div class="row">
             <div class="col-xs-8">

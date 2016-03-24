@@ -14,6 +14,16 @@ from scloud.const import pro_resource_apply_status_types
 from scloud.models.project import Pro_Publish 
 class ApplyService(BaseService):
     @thrownException
+    def get_publish(self):
+        pro_id = self.params.get("pro_id")
+        publish = self.db.query(
+            Pro_Publish
+        ).filter(
+            Pro_Publish.pro_id == pro_id
+        ).first()
+        return self.success(data=publish)
+
+    @thrownException
     def do_publish(self):
         pro_id = self.params.get("pro_id")
         domain = self.params.get("domain")

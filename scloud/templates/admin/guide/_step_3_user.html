@@ -7,10 +7,37 @@
       <!-- tools box -->
     </div><!-- /.box-header -->
     <!-- form start -->
-    <form id="form_user" data-pjax action="{{ reverse_url('apply.user.add') }}" class="form-horizontal" method="POST">
-      {{ handler.xsrf_form_html() }}
-      <input type="hidden" name="pro_id" value="{{ pro_info_res.data.id }}">
-      <div class="box-body">
+    <div class="box-body">
+      <form data-pjax id="env_res_form" action="{{ reverse_url('defaultset.env_info.del') }}">
+        {{ handler.xsrf_form_html() }}
+        <ul class="todo-list" id="env_list_res">
+          {#% for pro in pro_users_res.data %}
+          <li{% if pro_users_res and pro_users_res.data.id == pro.id %} class="done"{% endif %}>
+            <!-- drag handle -->
+            <!-- todo text -->
+            <input type="checkbox" id="pro_{{ pro.id }}" value="{{ pro.id }}" name="pro_id" onclick="check_done('{{ pro.id }}')"{% if pro_users_res and pro_users_res.data.id == pro.id %} checked{% endif %}>
+            <span class="text">{{ pro.name }}</span>
+            <!-- Emphasis label -->
+            <span class="label label-primary">{{ STATUS_RESOURCE.get(last_apply.status).value }}</span>
+            <!-- General tools such as edit or delete-->
+            <div class="tools">
+              <!-- tools -->
+              <a data-pjax href=""><i class="fa fa-edit"></i></a>
+              <a data-pjax href="javascript:;" onclick="do_del_env()"><i class="fa fa-trash-o"></i></a>
+            </div>
+          </li>
+          {% endfor %#}
+          <!-- li -->
+          <li id="li-btns" style="display: none">
+              <!-- li -->
+              <a id="env_list_edit_btn" data-pjax href="{{ reverse_url('apply.user.add') }}" class="btn btn-success">编辑</a>
+              <a data-pjax id="env_res_del_btn" href="javascript:;" onclick="do_del_env();" class="btn btn-danger">删除</a>
+          </li>
+        </ul>
+      </form>
+      <form id="form_user" data-pjax action="{{ reverse_url('apply.user.add') }}" class="form-horizontal" method="POST">
+        {{ handler.xsrf_form_html() }}
+        <input type="hidden" name="pro_id" value="{{ pro_info_res.data.id }}">
         <!-- form input -->
         {{ base.form_input("用户名", "username", res=pro_user_res,
               check_codes=[ERR.USERNAME_EMPTY_ERR, ERR.USERNAME_DUPLICATE_ERR]) }}
@@ -32,11 +59,11 @@
               
           </div>
         </div>
-      </div>
-      <div class="box-footer text-center">
-        <button type="button" id="form_user_btn" onclick="do_form_user()" class="btn btn-info">提交</button>
-      </div><!-- /.box-footer -->
-    </form>
+        <div class="box-footer text-center">
+          <button type="button" id="form_user_btn" onclick="do_form_user()" class="btn btn-info">提交</button>
+        </div><!-- /.box-footer -->
+      </form>
+    </div>
   </div><!-- /.box -->
   <script type="text/javascript">
   $(function(){

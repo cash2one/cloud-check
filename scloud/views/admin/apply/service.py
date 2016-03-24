@@ -43,6 +43,9 @@ class GuideHandler(ApplyHandler):
     def get(self):
         pro_id = self.args.get("pro_id")
         data = self.get_pro_data(pro_id=pro_id)
+        svc = ApplyService(self)
+        publish_res = svc.get_publish()
+        data.update(publish_res=publish_res)
         return self.render_to_string("admin/apply/service/add.html", **data)
 
 
@@ -64,3 +67,4 @@ class GuideHandler(ApplyHandler):
         logger.info(publish_res)
         tmpl = self.render_to_string("admin/apply/service/add_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))
+
