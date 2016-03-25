@@ -11,7 +11,7 @@
       <form data-pjax id="env_res_form" action="{{ reverse_url('defaultset.env_info.del') }}">
         {{ handler.xsrf_form_html() }}
         <ul class="todo-list" id="env_list_res">
-          {#% for pro in pro_users_res.data %}
+          {% for pro in pro_users_res.data %}
           <li{% if pro_users_res and pro_users_res.data.id == pro.id %} class="done"{% endif %}>
             <!-- drag handle -->
             <!-- todo text -->
@@ -26,7 +26,7 @@
               <a data-pjax href="javascript:;" onclick="do_del_env()"><i class="fa fa-trash-o"></i></a>
             </div>
           </li>
-          {% endfor %#}
+          {% endfor %}
           <!-- li -->
           <li id="li-btns" style="display: none">
               <!-- li -->
@@ -56,7 +56,6 @@
                 <input type="radio" name="use_vpn" id="use_vpn" value="0">
                 不需开通VPN，管理员于操作间使用资源
               </label>
-              
           </div>
         </div>
         <div class="box-footer text-center">

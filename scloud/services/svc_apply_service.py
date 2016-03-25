@@ -12,7 +12,10 @@ from scloud.utils.error_code import ERROR
 from scloud.utils.error import NotFoundError
 from scloud.const import pro_resource_apply_status_types
 from scloud.models.project import Pro_Publish, Pro_Balance 
+
+
 class ApplyService(BaseService):
+
     @thrownException
     def get_publish(self):
         pro_id = self.params.get("pro_id")

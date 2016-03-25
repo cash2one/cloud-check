@@ -13,7 +13,9 @@ from scloud.utils.error import NotFoundError
 from scloud.const import pro_resource_apply_status_types
 from scloud.models.project import Pro_User 
 
+
 class ProUserService(BaseService):
+
     @thrownException
     def do_pro_user(self):
         pro_id = int(self.params.get("pro_id"))
@@ -38,20 +40,10 @@ class ProUserService(BaseService):
     @thrownException
     def get_list(self):
         pro_id = int(self.params.get("pro_id"))
-        pro_user = self.db.query(
+        pro_users = self.db.query(
             Pro_User
-            ).filter(
-                Pro_User.pro_id == pro_id    
-            ).all()
-        return self.success(data=pro_user)
-
-
-
-
-
-
-
-        
-
-
+        ).filter(
+            Pro_User.pro_id == pro_id    
+        ).all()
+        return self.success(data=pro_users)
 

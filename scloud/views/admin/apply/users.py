@@ -51,7 +51,7 @@ class GuideHandler(ApplyHandler):
     @check_perms('pro_info.view')
     @unblock
     def post(self):
-        svc = ApplyService(self)
+        svc = ProUserService(self)
         pro_user_res = svc.do_pro_user()
         if pro_user_res.return_code == 0:
             self.add_message(u"用户信息添加成功！", level="success")
