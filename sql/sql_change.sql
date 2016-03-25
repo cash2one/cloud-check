@@ -55,10 +55,7 @@ CREATE TABLE `pro_backup` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
     `pro_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属项目',
     `res_apply_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属资源申请',
-    `disk` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '磁盘名称',
-    `plot` TINYINT(1) NOT NULL DEFAULT '0' COMMENT '策略',
-    `period` varchar(255) NOT NULL DEFAULT '' COMMENT '间隔',
-    `backup_time` TIME NOT NULL DEFAULT '00:00:00' COMMENT '备份时间',
+    `plot` VARCHAR(1024) NOT NULL DEFAULT '' COMMENT '策略(json格式)',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)

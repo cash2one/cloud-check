@@ -16,7 +16,7 @@ from tornado.web import asynchronous
 from tornado import gen
 from scloud.utils.permission import check_perms
 from scloud.services.svc_project import ProjectService
-from scloud.services.svc_apply_service import ApplyService
+from scloud.services.svc_apply_publish import ApplyPublish
 from scloud.services.svc_pro_resource_apply import ProResourceApplyService
 from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
@@ -43,7 +43,7 @@ class GuideHandler(ApplyHandler):
     def get(self):
         pro_id = self.args.get("pro_id")
         data = self.get_pro_data(pro_id=pro_id)
-        svc = ApplyService(self)
+        svc = ApplyPublish(self)
         publish_res = svc.get_publish()
         data.update(publish_res=publish_res)
         return self.render_to_string("admin/apply/service/add.html", **data)
@@ -51,11 +51,11 @@ class GuideHandler(ApplyHandler):
 
 @url("/apply/service/publish/add", name="apply.service.publish.add", active="apply.service.add")
 class GuideHandler(ApplyHandler):
-    u'服务申请'
+    u'互联网发布申请'
     @check_perms('pro_info.view')
     @unblock
     def post(self):
-        svc = ApplyService(self)
+        svc = ApplyPublish(self)
         publish_res = svc.do_publish()
         if publish_res.return_code == 0:
             self.add_message(u"互联网发布信息添加成功！", level="success")
@@ -65,6 +65,44 @@ class GuideHandler(ApplyHandler):
         data = self.get_pro_data(pro_id=pro_id)
         data.update({"publish_res": publish_res})
         logger.info(publish_res)
+        tmpl = self.render_to_string("admin/apply/service/add_pjax.html", **data)
+        return simplejson.dumps(self.success(data=tmpl))
+
+@url("/apply/service/balance/add", name="apply.service.balance.add", active="apply.service.add")
+class GuideHandler(ApplyHandler):
+    u'负载均衡申请'
+    @check_perms('pro_info.view')
+    @unblock
+    def post(self):
+        svc = ApplyBalance(self)
+        balance_res = svc.do_balance()
+        if balance_res.return_code == 0:
+            self.add_message(u"负载均衡申请成功！", level="success")
+        else:
+            self.add_message(u"负载均衡申请失败！(%s)(%s)" % (balance_res.return_code, balance_res.return_message), level="warning")
+        pro_id = self.args.get("pro_id")
+        data = self.get_pro_data(pro_id=pro_id)
+        data.update({"balance_res": balance_res})
+        logger.info(balance_res)
+        tmpl = self.render_to_string("admin/apply/service/add_pjax.html", **data)
+        return simplejson.dumps(self.success(data=tmpl))
+
+@url("/apply/service/backups/add", name="apply.service.backups.add", active="apply.service.add")
+class GuideHandler(ApplyHandler):
+    u'定期备份申请'
+    @check_perms('pro_info.view')
+    @unblock
+    def post(self):
+        svc = ApplyBackups(self)
+        backups_res = svc.do_backups()
+        if backups_res.return_code == 0:
+            self.add_message(u"定期备份申请成功！", level="success")
+        else:
+            self.add_message(u"负载均衡申请失败！(%s)(%s)" % (backups_res.return_code, backups_res.return_message), level="warning")
+        pro_id = self.args.get("pro_id")
+        data = self.get_pro_data(pro_id=pro_id)
+        data.update({"backups_res": backups_res})
+        logger.info(backups_res)
         tmpl = self.render_to_string("admin/apply/service/add_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))
 

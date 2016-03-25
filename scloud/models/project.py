@@ -131,9 +131,7 @@ class Pro_Backup(BaseModel, BaseModelMixin):
     __tablename__ = "pro_backup"
     pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
     res_apply_id = Column("res_apply_id", Integer, ForeignKey("pro_resource_apply.id"), default=0, info=u"所属资源申请")
-    disk = Column("disk", Unicode, default=u'', info=u"磁盘名称")
-    plot = Column("plot", Integer, default=0, info=u"策略")
-    period = Column("period", Unicode, default=u'', info=u"间隔")
+    plot = Column("plot", Unicode, default=u'', info=u"策略(json)")
 
 
     

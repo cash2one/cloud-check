@@ -99,6 +99,17 @@ class ERROR(object):
     pro_publish_network_port_empty_err = error(errcode=-100166, errvalue=u"内网端口不能为空")
     pro_publish_network_port_invalid_err = error(errcode=-100167, errvalue=u"内网端口必须为大于1024小于65535的正整数")
 
+    #定期备份
+    pro_backups_disk_empty_err = error(errcode=-100180, errvalue=u"磁盘不能为空") 
+    pro_backups_plot_empty_err = error(errcode=-100181, errvalue=u"备份策略不能为空")
+    pro_backups_interval_empty_err = error(errcode=-100182, errvalue=u"时间间隔不能为空")
+    pro_backups_backup_time_empty_err =error(errcode=-100183, errvalue=u"备份时间不能为空")
+
+    #负载均衡
+    pro_balance_member_port_empty_err = error(errcode=-100200, errvalue=u"端口不能为空")
+    pro_balance_member_address_empty_err = error(errcode=-100201, errvalue=u"ip不能为空")
+
+
 
 ERR = ObjectDict()
 for attr in dir(ERROR):
