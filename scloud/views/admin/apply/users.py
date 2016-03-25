@@ -42,10 +42,12 @@ class GuideHandler(ApplyHandler):
     @unblock
     def get(self):
         pro_id = self.args.get("pro_id")
+        user_id = self.args.get("user_id", 0)
         data = self.get_pro_data(pro_id=pro_id)
-        svc = ProUserService(self) 
-        pro_users_res = svc.get_list() 
-        data.update(pro_users_res=pro_users_res)
+        svc = ProUserService(self)
+        pro_users_res = svc.get_list()
+        pro_user_res = svc.get_info()
+        data.update(pro_users_res=pro_users_res, pro_user_res=pro_user_res)
         return self.render_to_string("admin/apply/user/add.html", **data)
 
     @check_perms('pro_info.view')
@@ -53,15 +55,44 @@ class GuideHandler(ApplyHandler):
     def post(self):
         svc = ProUserService(self)
         pro_user_res = svc.do_pro_user()
-        if pro_user_res.return_code == 0:
-            self.add_message(u"用户信息添加成功！", level="success")
+        user_id = self.args.get("user_id")
+        if user_id:
+            message = u"修改"
         else:
-            self.add_message(u"用户信息添加失败！(%s)(%s)" % (pro_user_res.return_code, pro_user_res.return_message), level="warning")
+            message = u"添加"
+        if pro_user_res.return_code == 0:
+            self.add_message(u"用户信息%s成功！" % message, level="success")
+        else:
+            self.add_message(u"用户信息%s失败！(%s)(%s)" % (message, pro_user_res.return_code, pro_user_res.return_message), level="warning")
         pro_id = self.args.get("pro_id")
         data = self.get_pro_data(pro_id=pro_id)
         svc = ProUserService(self) 
         pro_users_res = svc.get_list() 
         data.update(pro_users_res=pro_users_res)
         data.update({"pro_user_res": pro_user_res})
+        tmpl = self.render_to_string("admin/apply/user/add_pjax.html", **data)
+        return simplejson.dumps(self.success(data=tmpl))
+
+
+@url("/apply/user/del", name="apply.user.del", active="apply.user.del")
+class ApplyUserDelHandler(ApplyHandler):
+    u'删除用户'
+    @check_perms('pro_info.view')
+    @unblock
+    def post(self):
+        user_id_list = self.get_arguments("user_id")
+        svc = ProUserService(self, {"user_id_list": user_id_list})
+        del_res = svc.do_del_pro_user()
+        logger.info(del_res)
+        if del_res.return_code == 0:
+            self.add_message(u"用户信息删除成功！", level="success")
+        else:
+            self.add_message(u"用户信息删除失败！(%s)(%s)" % (del_res.return_code, del_res.return_message), level="warning")
+        pro_id = self.args.get("pro_id")
+        data = self.get_pro_data(pro_id=pro_id)
+        svc = ProUserService(self) 
+        pro_users_res = svc.get_list() 
+        data.update(pro_users_res=pro_users_res)
+        data.update({"pro_user_res": del_res})
         tmpl = self.render_to_string("admin/apply/user/add_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))

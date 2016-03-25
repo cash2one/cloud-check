@@ -1,59 +1,80 @@
 
 {% import "admin/base/base_macros.html" as base %}
+{% set pro_user = pro_user_res.data %}
   <!-- Horizontal Form -->
-  <div>
+  <form data-pjax id="user_res_form" action="{{ reverse_url('apply.user.del') }}">
+    {{ handler.xsrf_form_html() }}
+    <input type="hidden" name="pro_id" value="{{ pro_info_res.data.id }}">
+    <ul class="todo-list" id="user_list_res">
+      <!-- li -->
+      <li id="li-users-btns">
+          <!-- li -->
+          <!--a id="user_list_add_btn" onclick="$('#form_user').parent().parent().css('display', '')" data-pjax href="javascript:;" class="btn btn-info btn-sm">添加</a-->
+          <a id="user_list_add_btn" data-pjax href="{{ reverse_url('apply.user.add') }}?pro_id={{ pro_info_res.data.id }}&action=add" class="btn btn-info btn-sm">添加</a>
+          <a id="user_list_edit_btn" style="display: none" data-pjax href="{{ reverse_url('apply.user.add') }}" class="btn btn-warning btn-sm">编辑</a>
+          <a data-pjax id="user_res_del_btn" style="display: none" href="javascript:;" onclick="do_del_user();" class="btn btn-danger btn-sm">删除</a>
+      </li>
+      {% for user in pro_users_res.data %}
+      <li{% if pro_user_res and pro_user_res.data.id == user.id %} class="done"{% endif %}>
+        <!-- drag handle -->
+        <!-- todo text -->
+        <input type="checkbox" id="user_{{ user.id }}" value="{{ user.id }}" name="user_id" onclick="check_users('{{ user.id }}')"{% if pro_user_res and pro_user_res.data.id == user.id %} checked{% endif %}>
+        <span class="text">{{ user.username }}</span>
+        <span class="text">{{ user.email }}</span>
+        <!-- Emphasis label -->
+        <span class="label label-primary"></span>
+        <!-- General tools such as edit or delete-->
+        <div class="tools">
+          <!-- tools -->
+          <a data-pjax href=""><i class="fa fa-edit"></i></a>
+          <a data-pjax href="javascript:;" onclick="do_del_user()"><i class="fa fa-trash-o"></i></a>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </form>
+
+  <div{% if not handler.args.get("action") %} style="display: none"{% endif %}>
     <div class="box-header with-border">
       <h3 class="box-title">{{ pro_info_res.data.name }}管理授权</h3>
       <!-- tools box -->
+      <div class="pull-right box-tools">
+      <button class="btn btn-info btn-sm" data-toggle="tooltip" onclick="$('#form_user').parent().parent().css('display', 'none')"><i class="fa fa-times"></i></button>
+      </div><!-- /. tools -->
     </div><!-- /.box-header -->
     <!-- form start -->
     <div class="box-body">
-      <form data-pjax id="env_res_form" action="{{ reverse_url('defaultset.env_info.del') }}">
-        {{ handler.xsrf_form_html() }}
-        <ul class="todo-list" id="env_list_res">
-          {% for pro in pro_users_res.data %}
-          <li{% if pro_users_res and pro_users_res.data.id == pro.id %} class="done"{% endif %}>
-            <!-- drag handle -->
-            <!-- todo text -->
-            <input type="checkbox" id="pro_{{ pro.id }}" value="{{ pro.id }}" name="pro_id" onclick="check_done('{{ pro.id }}')"{% if pro_users_res and pro_users_res.data.id == pro.id %} checked{% endif %}>
-            <span class="text">{{ pro.name }}</span>
-            <!-- Emphasis label -->
-            <span class="label label-primary">{{ STATUS_RESOURCE.get(last_apply.status).value }}</span>
-            <!-- General tools such as edit or delete-->
-            <div class="tools">
-              <!-- tools -->
-              <a data-pjax href=""><i class="fa fa-edit"></i></a>
-              <a data-pjax href="javascript:;" onclick="do_del_env()"><i class="fa fa-trash-o"></i></a>
-            </div>
-          </li>
-          {% endfor %}
-          <!-- li -->
-          <li id="li-btns" style="display: none">
-              <!-- li -->
-              <a id="env_list_edit_btn" data-pjax href="{{ reverse_url('apply.user.add') }}" class="btn btn-success">编辑</a>
-              <a data-pjax id="env_res_del_btn" href="javascript:;" onclick="do_del_env();" class="btn btn-danger">删除</a>
-          </li>
-        </ul>
-      </form>
       <form id="form_user" data-pjax action="{{ reverse_url('apply.user.add') }}" class="form-horizontal" method="POST">
         {{ handler.xsrf_form_html() }}
+        {% if pro_user %}
+          <input type="hidden" name="user_id" value="{{ pro_user.id }}">
+          {% set username = pro_user.username %}
+          {% set email = pro_user.email %}
+          {% set is_enable = pro_user.is_enable %}
+          {% set use_vpn = pro_user.use_vpn %}
+        {% else %}
+          {% set username = handler.args.get("username", "") %}
+          {% set email = handler.args.get("email", "") %}
+          {% set is_enable = handler.args.get("is_enable", "") %}
+          {% set use_vpn = handler.args.get("use_vpn", "") %}
+        {% endif %}
         <input type="hidden" name="pro_id" value="{{ pro_info_res.data.id }}">
         <!-- form input -->
-        {{ base.form_input("用户名", "username", res=pro_user_res,
+        {{ base.form_input("用户名", "username", res=pro_user_res, value=username,
               check_codes=[ERR.USERNAME_EMPTY_ERR, ERR.USERNAME_DUPLICATE_ERR]) }}
-        {{ base.form_input("邮箱", "email", res=pro_user_res,
+        {{ base.form_input("邮箱", "email", res=pro_user_res, value=email,
               check_codes=[ERR.EMAIL_EMPTY_ERR, ERR.EMAIL_FORMAT_ERR, ERR.EMAIL_DUPLICATE_ERR]) }}
-        {{ base.form_select("是否有效", "is_enable", options=[{"value": 1, "desc": "是"}, {"value":0, "desc": "否"}], res=pro_user_res) }}
+        {{ base.form_select("是否有效", "is_enable", value=is_enable, options=[{"value": 1, "desc": "是"}, {"value":0, "desc": "否"}], res=pro_user_res) }}
         <div class="form-group">
           <div class="radio col-sm-offset-2 col-sm-10">
               <label>
-                <input type="radio" name="use_vpn" id="use_vpn" value="1">
+              <input type="radio" name="use_vpn" id="use_vpn" value="1"{% if use_vpn|int == 1 %} checked="checked"{% endif %}>
                 需要为此用户开通VPN远程访问，并接受用户安全协议。<a href="#">查看协议</a>
               </label>
           </div>
           <div class="radio col-sm-offset-2 col-sm-10">
               <label>
-                <input type="radio" name="use_vpn" id="use_vpn" value="0">
+              <input type="radio" name="use_vpn" id="use_vpn" value="0"{% if use_vpn|int == 0 %} checked="checked"{% endif %}>
                 不需开通VPN，管理员于操作间使用资源
               </label>
           </div>
@@ -72,6 +93,56 @@
     generate_ajax_post({
       form: "#form_user",
       btn: "#form_user_btn"
+    })
+  }
+  function check_users(user_id){
+    var _this = $("#user_"+user_id)
+    console.log(_this)
+    if(_this.prop("checked")){
+      _this.parent().addClass("done");
+    }else{
+      _this.parent().removeClass("done");
+    }
+    var checked_values = $getCheckValues("#user_list_res")
+    console.log(checked_values)
+    if (checked_values.length > 0){
+      if (checked_values.length == 1){
+        $("#user_list_edit_btn").css("display", "")
+        var href = "{{ reverse_url('apply.user.add') }}" + "?pro_id={{ handler.args.get('pro_id') }}&user_id=" + checked_values[0] + "&action=edit";
+        $("#user_list_edit_btn").attr("href", href)
+      }else{
+        $("#user_list_edit_btn").css("display", "none")
+      }
+      $("#li-users-btns").find("a").css("display", "");
+    }else{
+      $("#li-users-btns").find("#user_list_edit_btn").css("display", "none");
+      $("#li-users-btns").find("#user_res_del_btn").css("display", "none");
+    }
+  }
+  {% if pro_user %}
+    $(function(){
+        init_user_status()
+        check_users()
+    })
+    function init_user_status(){
+      var pro_id = "{{ pro_user.id }}";
+      $("li[name=pro_"+pro_id+"]").addClass("active");
+    }
+  {% endif %}
+  function do_del_user(){
+    // var checked_values = $getCheckValues("#user_list_res")
+    confirmBox({
+        message: "确定删除该用户吗？",
+        onConfirm: function(){
+          generate_ajax_post({
+            form: "#user_res_form",
+            btn: "#user_res_del_btn",
+            onSuccess: function(response){
+              $("#confirmBox").tClose()
+            }
+            //method: "DELETE"
+          })
+        }
     })
   }
   </script>

@@ -27,7 +27,15 @@ class ProUserService(BaseService):
             return self.failure(ERROR.username_empty_err)
         if not email:
             return self.failure(ERROR.email_empty_err)
-        pro_user = Pro_User()
+        user_id = self.params.get("user_id")
+        if user_id:
+            pro_user = self.db.query(
+                Pro_User
+            ).filter(
+                Pro_User.id == user_id
+            ).first()
+        else:
+            pro_user = Pro_User()
         pro_user.pro_id = pro_id
         pro_user.username = username
         pro_user.email = email
@@ -46,4 +54,30 @@ class ProUserService(BaseService):
             Pro_User.pro_id == pro_id    
         ).all()
         return self.success(data=pro_users)
+
+    @thrownException
+    def get_info(self):
+        user_id = self.params.get("user_id")
+        if user_id:
+            pro_user = self.db.query(
+                Pro_User
+            ).filter(
+                Pro_User.id == user_id    
+            ).first()
+            return self.success(data=pro_user)
+        else:
+            return self.failure(ERROR.not_found_err)
+
+    @thrownException
+    def do_del_pro_user(self):
+        user_id_list = self.params.get("user_id_list")
+        for user_id in user_id_list:
+            pro_user = self.db.query(
+                Pro_User
+            ).filter(
+                Pro_User.id == user_id    
+            ).first()
+            self.db.delete(pro_user)
+            self.db.flush()
+        return self.success(data=None)
 
