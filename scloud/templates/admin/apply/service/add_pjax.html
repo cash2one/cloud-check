@@ -4,14 +4,14 @@
 {% set apply_global_vars = pro_info_res.data.get_apply_global_vars() %}
 {% set applies = pro_info_res.data.pro_resource_applies %}
 {% set last_apply = applies[-1] %}
-              <!-- Custom Tabs -->
+              <!-- custom Tabs -->
               <div class="nav-tabs-custom" id="guide_step_3_tabs">
                 <ul class="nav nav-tabs">
                   <li class="active"><a href="#tab_1" data-toggle="tab">互联网发布</a></li>
                   <li><a href="#tab_2" data-toggle="tab">负载均衡</a></li>
                   <li><a href="#tab_3" data-toggle="tab">定期备份</a></li>
                   <li><a href="#tab_4" data-toggle="tab"{% if last_apply and not last_apply.start_date %} class="alert-warning"{% endif %}>启用时间</a></li>
-                  <li class="pull-right header"><a data-pjax href=""><i class="fa fa-refresh"></i></a></li>
+                  <li class="pull-right header"><a data-pjax href="" onclick="check_active_tab(this)"><i class="fa fa-refresh"></i></a></li>
                 </ul>
                 <div class="tab-content">
                   <div class="tab-pane active" id="tab_1">
@@ -28,4 +28,19 @@
                   </div><!-- /.tab-pane -->
                 </div><!-- /.tab-content -->
               </div><!-- nav-tabs-custom -->
+              <script type="text/javascript">
+              var active = "{{ handler.args.get('active', '') }}";
+              $(function(){
+                if (active!= ''){
+                  $("a[data-toggle=tab]").parent().removeClass("active");
+                  $("a[href=#"+active+"]").parent().addClass("active");
+                  $("div.tab-pane").removeClass("active");
+                  $("div[id="+active+"]").addClass("active");
+                }
+              });
+              function check_active_tab(_this){
+                  var active = $("div.tab-pane.active").attr("id");
+                  $(_this).attr("href", "{{ reverse_url('apply.service.add') }}?pro_id={{ pro_info_res.data.id }}&active="+active);
+              }
+              </script>
 {% endblock %}

@@ -17,6 +17,7 @@ from tornado import gen
 from scloud.utils.permission import check_perms
 from scloud.services.svc_project import ProjectService
 from scloud.services.svc_apply_publish import ApplyPublish
+from scloud.services.svc_apply_balance import ApplyLoadBalance
 from scloud.services.svc_pro_resource_apply import ProResourceApplyService
 from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
@@ -46,6 +47,11 @@ class GuideHandler(ApplyHandler):
         svc = ApplyPublish(self)
         publish_res = svc.get_publish()
         data.update(publish_res=publish_res)
+        pro_info_res = data["pro_info_res"]
+        applies = pro_info_res.data.pro_resource_applies
+        logger.info(len(applies))
+        last_apply = applies[-1]
+        logger.info(last_apply.as_dict())
         return self.render_to_string("admin/apply/service/add.html", **data)
 
 
@@ -68,24 +74,26 @@ class GuideHandler(ApplyHandler):
         tmpl = self.render_to_string("admin/apply/service/add_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))
 
-@url("/apply/service/balance/add", name="apply.service.balance.add", active="apply.service.add")
+
+@url("/apply/service/loadbalance/add", name="apply.service.loadbalance.add", active="apply.service.add")
 class GuideHandler(ApplyHandler):
     u'负载均衡申请'
     @check_perms('pro_info.view')
     @unblock
     def post(self):
-        svc = ApplyBalance(self)
-        balance_res = svc.do_balance()
-        if balance_res.return_code == 0:
+        svc = ApplyLoadBalance(self)
+        loadbalance_res = svc.do_loadbalance()
+        if loadbalance_res.return_code == 0:
             self.add_message(u"负载均衡申请成功！", level="success")
         else:
-            self.add_message(u"负载均衡申请失败！(%s)(%s)" % (balance_res.return_code, balance_res.return_message), level="warning")
+            self.add_message(u"负载均衡申请失败！(%s)(%s)" % (loadbalance_res.return_code, loadbalance_res.return_message), level="warning")
         pro_id = self.args.get("pro_id")
         data = self.get_pro_data(pro_id=pro_id)
-        data.update({"balance_res": balance_res})
-        logger.info(balance_res)
+        data.update({"loadbalance_res": loadbalance_res})
+        logger.info(loadbalance_res)
         tmpl = self.render_to_string("admin/apply/service/add_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))
+
 
 @url("/apply/service/backups/add", name="apply.service.backups.add", active="apply.service.add")
 class GuideHandler(ApplyHandler):
