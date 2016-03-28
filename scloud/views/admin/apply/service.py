@@ -46,12 +46,14 @@ class GuideHandler(ApplyHandler):
         data = self.get_pro_data(pro_id=pro_id)
         svc = ApplyPublish(self)
         publish_res = svc.get_publish()
-        data.update(publish_res=publish_res)
-        pro_info_res = data["pro_info_res"]
-        applies = pro_info_res.data.pro_resource_applies
-        logger.info(len(applies))
-        last_apply = applies[-1]
-        logger.info(last_apply.as_dict())
+        svc = ApplyLoadBalance(self)
+        loadbalance_res = svc.get_loadbalance()
+        data.update(publish_res=publish_res, loadbalance_res=loadbalance_res)
+        # pro_info_res = data["pro_info_res"]
+        # applies = pro_info_res.data.pro_resource_applies
+        # logger.info(len(applies))
+        # last_apply = applies[-1]
+        # logger.info(last_apply.as_dict())
         return self.render_to_string("admin/apply/service/add.html", **data)
 
 

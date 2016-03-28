@@ -166,3 +166,18 @@
                 </div><!-- /.box-body -->
               </div><!-- /.box -->
 {%- endmacro %}
+
+{% macro loadbalance_member(member=None, loop=1) %}
+    <div class="form-group">
+      <label for="disk" class="col-sm-2 control-label">成员{{ loop }}</label>
+      <div class="col-sm-6 input-group">
+        <div class="input-group-unit">IP</div>
+        <input type="text" class="form-control" name="address" placeholder="10"{% if member %} value="{{ member.address }}"{% endif %}>
+        <div class="input-group-unit">PORT</div>
+        <input type="text" class="form-control" name="port" placeholder="10"{% if member %} value="{{ member.port }}"{% endif %}>
+        <div class="input-group-unit">
+        <button class="btn btn-box-tool" onclick="$(this).parent().parent().parent().remove();loop-=1;set_member_tip()"><i class="fa fa-times"></i></button>
+        </div>
+      </div>
+    </div>
+{% endmacro %}

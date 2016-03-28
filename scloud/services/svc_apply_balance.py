@@ -11,7 +11,7 @@ from sqlalchemy import and_, or_
 from scloud.utils.error_code import ERROR
 from scloud.utils.error import NotFoundError
 from scloud.const import pro_resource_apply_status_types
-from scloud.models.project import Pro_Balance 
+from scloud.models.project import Pro_Info, Pro_Balance 
 import simplejson
 
 
@@ -20,18 +20,26 @@ class ApplyLoadBalance(BaseService):
     @thrownException
     def get_loadbalance(self):
         pro_id = self.params.get("pro_id")
-        balance = self.db.query(
-            Pro_Balance
-            ).filter(
-                Pro_Balance.pro_id == pro_id
-            ).first()
-        return self.success(data = balance)
+        pro_info = self.db.query(
+            Pro_Info
+        ).filter(
+            Pro_Info.id == pro_id
+        ).first()
+        applies = pro_info.pro_resource_applies
+        last_apply = applies[-1]
+        loadbalance_plot = last_apply.loadbalance_plot
+        # balance = self.db.query(
+        #     Pro_Balance
+        #     ).filter(
+        #         Pro_Balance.pro_id == pro_id
+        #     ).first()
+        return self.success(data=loadbalance_plot)
 
     @thrownException
     def do_loadbalance(self):
         pro_id = self.params.get("pro_id")
         res_apply_id = self.params.get("res_apply_id")
-        member = self.params.get("balance_str")
+        member = self.params.get("members", "")
         members = simplejson.loads(member)
         for mem in members:
             port = mem['port']
@@ -40,11 +48,11 @@ class ApplyLoadBalance(BaseService):
             address = mem['address']
             if not address:
                 return self.failure(ERROR.pro_balance_member_address_empty_err)
-        plot = self.params.get("plot", 0)    
+        plot = self.params.get("plot", 0)
         health = self.params.get("health", 0)
         url = self.params.get("url")
         keyword = self.params.get("keyword")
-        desc = self.params.get("desc")
+        desc = self.params.get("desc", "")
         do_balance_info, created = Pro_Balance.get_or_create_obj(self.db, pro_id=pro_id, res_apply_id=res_apply_id)
         do_balance_info.members = member
         do_balance_info.plot = plot
@@ -53,5 +61,6 @@ class ApplyLoadBalance(BaseService):
         do_balance_info.keyword = keyword
         do_balance_info.desc = desc
         self.db.add(do_balance_info)
+        self.db.flush()
         return self.success(data=do_balance_info)
  
