@@ -1,11 +1,32 @@
 
+{% import "admin/base/base_macros.html" as base %}
+    {% set backup_plot = backups_res.data %}
   <!-- Horizontal Form -->
   <div>
     <!-- form start -->
-    <form data-pjax action="/guide/step/3" class="form-horizontal" method="POST">
+    <form id="form_backup" data-pjax action="{{ reverse_url('apply.service.backups.add') }}?pro_id={{ pro_info_res.data.id }}&active=tab_3" class="form-horizontal" method="POST">
     {{ handler.xsrf_form_html() }}
+    {% set applies = pro_info_res.data.pro_resource_applies %}
+    {% if applies|length > 0 %}
+      {% set last_apply = applies[-1] %}
+    {% else %}
+      {% set last_apply = None %}
+    {% endif %}
+    <input type="hidden" name="pro_id" value="{{ pro_info_res.data.id }}">
+    {% if last_apply %}
+    <input type="hidden" name="res_apply_id" value="{{ last_apply.id }}">
+    {% endif %}
+    {% if backup_plot %}
+      {% set backup_list = backup_plot.as_dict().plot %}
+    {% else %}
+      {% set backup_list = [] %}
+    {% endif %}
       <div class="box-body">
-        <div class="form-group">
+        <input type="hidden" id="backups" name="backups" value="">
+        {% for member in backup_list %}
+          {{ base.backup_member(member, loop=loop.index) }}
+        {% endfor %}
+        <!--div class="form-group">
           <label for="disk" class="col-sm-1 control-label">硬盘名称</label>
           <div class="col-sm-10 input-group">
             <div class="input-group-unit">A</div>
@@ -29,13 +50,148 @@
             <div class="input-group-unit">时间</div>
             <input type="text" class="form-control" id="disk" placeholder="02:00:00">
           </div>
+        </div-->
+        <div class="form-group" id="backup_add_button">
+          <!-- button -->
+          <label class="col-sm-2 control-label">
+            <button type="button" onclick="add_backup()" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> 添加磁盘</button>
+          </label>
+          <div class="col-sm-6 input-group">
+          <div class="input-group-unit" id="backups_add_tip">还可以添加{{ last_apply.disk_backup - backup_list|length }}个磁盘</div>
+          </div>
         </div>
       </div><!-- /.box-body -->
-      <div class="box-footer">
-        <button type="submit" class="btn btn-default">取消</button>
-        <button type="submit" class="btn btn-info pull-right">提交申请</button>
+      <div class="box-footer text-center">
+        <button type="button" id="form_backup_btn" onclick="do_form_backup()" class="btn btn-info">提交申请</button>
       </div><!-- /.box-footer -->
     </form>
   </div><!-- /.box -->
 
+  <div id="backup_block" style="display:none">
+    {{ base.backup_member() }}
+    {#
+    <div class="content row" name="disk_backup_plot" style="min-height:0px">
+      <div class="form-group">
+        <label for="disk" class="col-sm-2 control-label">硬盘名称</label>
+        <div class="col-sm-10 input-group">
+          <!--div class="input-group-unit">A</div-->
+          <input type="text" class="form-control input-sm" id="disk" name="disk" placeholder="disk1">
+          <div class="input-group-unit">备份策略,每</div>
+          <select class="form-control" name="backup_plot" onchange="change_interval(this)">
+            <option value="天" type="day">天</option>
+            <option value="周" type="week">周</option>
+            <option value="月" type="month">月</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="disk" class="col-sm-2 control-label"></label>
+        <div class="col-sm-10 input-group">
+          <div name="interval_title" class="input-group-unit" style="display: none">间隔</div>
+          <select class="form-control" name="backup_interval" style="display: none">
+            <option value="周日">周日</option>
+            <option value="周一">周一</option>
+            <option value="周二">周二</option>
+            <option value="周三">周三</option>
+            <option value="周四">周四</option>
+            <option value="周五">周五</option>
+            <option value="周六">周六</option>
+          </select>
+          <div class="input-group-unit">时间</div>
+          <input type="text" class="form-control" id="backup_time" name="backup_time" placeholder="02:00:00">
+          <div class="input-group-unit">
+            <button class="btn btn-box-tool" onclick="$(this).parent().parent().parent().parent().remove();bloop-=1;set_backup_tip()"><i class="fa fa-times"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    #}
+  </div>
+  <div id="week_options" style="display: none">
+    <option value="周日">周日</option>
+    <option value="周一">周一</option>
+    <option value="周二">周二</option>
+    <option value="周三">周三</option>
+    <option value="周四">周四</option>
+    <option value="周五">周五</option>
+    <option value="周六">周六</option>
+  </div>
+  <div id="month_options" style="display: none">
+    {% for x in range(1, 32) %}
+    <option value="{{ x }}日">{{ x }}日</option>
+    {% endfor %}
+  </div>
   
+  <script type="text/javascript">
+  var bmax_loop = {{ last_apply.disk_backup - backup_list|length }};
+  var bloop = 0;
+  var backups = 0;
+  function set_backup_tip(){
+    var remainder = bmax_loop - bloop;
+    $("#backups_add_tip").html("还可以添加"+ remainder +"个磁盘")
+  }
+  function add_backup(){
+    if (bloop >= bmax_loop){ 
+      $("#backups_add_tip").html("还可以添加0个磁盘")
+      return false 
+    };
+    backups += 1;
+    bloop += 1;
+    set_backup_tip()
+    // $("#backup_block").find("label").text("磁盘"+backups);
+    $("#backup_block").find("input[name=disk]").attr("value", "disk"+backups);
+    $("#backup_block").find("input[name=disk]").attr("placeholder", "disk"+backups);
+    var html = $("#backup_block").html();
+    $("#backup_add_button").before(html)
+  }
+  function do_form_backup(){
+    var disks = $("#form_backup").find("div[name=disk_backup_plot]");
+    var params = [];
+    for(var i in disks.toArray()){
+      var backup = {};
+      var div = $(disks[i]);
+      var name = $(div).find("input[name=disk]").val();
+      var plot = $(div).find("select[name=backup_plot]").val();
+      var interval = $(div).find("select[name=backup_interval]").val();
+      var time = $(div).find("input[name=backup_time]").val();
+      backup["disk"] = name;
+      backup["plot"] = plot;
+      backup["interval"] = interval;
+      backup["backup_time"] = time;
+      params.push(backup);
+    }
+    $("#backups").val(JSON.stringify(params))
+    generate_ajax_post({
+        form: "#form_backup",
+        btn: "#form_backup_btn",
+    })
+  }
+  function change_interval(_this){
+    var plot = $(_this).val()
+    var backup_interval = $(_this).parent().parent().next().find("select[name=backup_interval]");
+    var interval_title = $(_this).parent().parent().next().find("div[name=interval_title]");
+    console.log(backup_interval)
+    if (plot == "天"){
+      $(backup_interval).css("display", "none")
+      interval_title.css("display", "none");
+      backup_interval.html("")
+      // console.log(backup_interval.css("display"))
+    }else if (plot == "周"){
+      $(backup_interval).css("display", "")
+      interval_title.css("display", "");
+      show_week_options(backup_interval)
+      // console.log(backup_interval.css("display"))
+    }else if (plot == "月"){
+      backup_interval.css("display", "")
+      interval_title.css("display", "");
+      show_month_options(backup_interval)
+      // console.log(backup_interval.css("display"))
+    }
+  }
+  function show_week_options(backup_interval){
+    backup_interval.html($("#week_options").html())
+  }
+  function show_month_options(backup_interval){
+    backup_interval.html($("#month_options").html())
+  }
+  </script>

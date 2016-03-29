@@ -137,7 +137,11 @@ class Pro_Balance(BaseModel, BaseModelMixin):
 class Pro_Backup(BaseModel, BaseModelMixin):
     u"""项目备份"""
     __tablename__ = "pro_backup"
+    json_columns = [
+        "plot"
+    ]
     pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
     res_apply_id = Column("res_apply_id", Integer, ForeignKey("pro_resource_apply.id"), default=0, info=u"所属资源申请")
     plot = Column("plot", Unicode, default=u'', info=u"策略(json)")
+    res_apply = relationship("Pro_Resource_Apply", backref=backref("backups_plot", uselist=False))
 
