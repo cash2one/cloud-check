@@ -2,6 +2,7 @@
 CREATE TABLE `pro_user` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
     `pro_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属项目',
+    `status` INT(11) NOT NULL DEFAULT '0' COMMENT '提交状态 0:已提交（受理中），1：已处理（已处理）,-1:已拒绝（已拒绝）',
     `email` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '邮箱',
     `username` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '用户名',
     `is_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1' COMMENT '是否可用',
@@ -18,6 +19,7 @@ AUTO_INCREMENT=0;
 CREATE TABLE `pro_publish` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
     `pro_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属项目',
+    `status` INT(11) NOT NULL DEFAULT '0' COMMENT '提交状态 0:已提交（受理中），1：已处理（已处理）,-1:已拒绝（已拒绝）',
     `domain` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '域名',
     `domain_port` int(11) NOT NULL DEFAULT '80' COMMENT '互联网端口',
     `network_address` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '内网地址',
@@ -35,6 +37,7 @@ AUTO_INCREMENT=0;
 CREATE TABLE `pro_balance` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
     `pro_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属项目',
+    `status` INT(11) NOT NULL DEFAULT '0' COMMENT '提交状态 0:已提交（受理中），1：已处理（已处理）,-1:已拒绝（已拒绝）',
     `res_apply_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属资源申请',
     `members` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '成员',
     `plot` TINYINT(1) NOT NULL DEFAULT '0' COMMENT '策略',
@@ -55,6 +58,7 @@ CREATE TABLE `pro_backup` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
     `pro_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属项目',
     `res_apply_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属资源申请',
+    `status` INT(11) NOT NULL DEFAULT '0' COMMENT '提交状态 0:已提交（受理中），1：已处理（已处理）,-1:已拒绝（已拒绝）',
     `plot` VARCHAR(1024) NOT NULL DEFAULT '' COMMENT '策略(json格式)',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
