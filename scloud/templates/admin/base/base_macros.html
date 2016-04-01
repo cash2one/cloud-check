@@ -182,14 +182,31 @@
     </div>
 {% endmacro %}
 
-{% macro backup_member(member=None, loop=1) %}
+{% macro backup_member(member=None, loop=1, failures=[], ERR=None) %}
+{% if ERR %}
+{% set check_codes = [
+    ERR.PRO_BACKUPS_DISK_EMPTY_ERR,
+    ERR.PRO_BACKUPS_PLOT_EMPTY_ERR,
+    ERR.PRO_BACKUPS_INTERVAL_EMPTY_ERR,
+    ERR.PRO_BACKUPS_BACKUP_TIME_EMPTY_ERR
+] %}
+{% else %}
+  {% set check_codes = [] %}
+{% endif %}
+
     <div class="content row" name="disk_backup_plot" style="min-height:0px">
-      <div class="form-group">
-        <label for="disk" class="col-sm-2 control-label">硬盘名称</label>
-        <div class="col-sm-10 input-group">
-          <!--div class="input-group-unit">A</div-->
+      <!-- form group -->
+      <div class="form-group col-sm-6{% for f in failures %}{% if f.return_code in [ERR.PRO_BACKUPS_DISK_EMPTY_ERR] %} has-warning{% endif %}{% endfor %}">
+        <label for="disk" class="col-sm-5 control-label">硬盘名称：</label>
+        <div class="input-group">
           <input type="text" class="form-control input-sm" id="disk" name="disk" placeholder="disk1" value="{{ member.disk }}">
-          <div class="input-group-unit">备份策略,每</div>
+        </div>
+      </div>
+      <div class="form-group col-sm-6">
+        <!-- -->
+        <label for="disk" class="col-sm-5 control-label">备份策略：</label>
+        <div class="input-group col-sm-7">
+          <div class="input-group-addon">每</div>
           <select class="form-control" name="backup_plot" onchange="change_interval(this)">
             
           <option value="天" type="day"{% if member and member.plot == "天" %} selected="selected"{% endif %}>天</option>
@@ -198,11 +215,19 @@
           </select>
         </div>
       </div>
-      <div class="form-group">
-        <label for="disk" class="col-sm-2 control-label"></label>
-        <div class="col-sm-10 input-group">
-          <div name="interval_title" class="input-group-unit"{% if member and member.plot == "天" %} style="display: none"{% endif %} >间隔</div>
-          <select class="form-control" name="backup_interval"{% if member and member.plot == "天" %} style="display: none"{% endif %}>
+      {% if member %}
+        {% if member.plot == "天" %}
+          {% set display = False %}
+        {% else %}
+          {% set display = True %}
+        {% endif %}
+      {% else %}
+        {% set display = False %}
+      {% endif %}
+      <div name="interval_title" class="form-group col-sm-6"{% if not display %} style="display:none"{% endif %}>
+        <label for="disk" class="col-sm-5 control-label">间隔：</label>
+        <div class="input-group col-sm-6">
+          <select class="form-control" name="backup_interval">
             {% if member %}
             {% if member.plot == "周" %}
             <option value="周日"{% if member and member.interval == "周日" %} selected="selected"{% endif %}>周日</option>
@@ -219,12 +244,29 @@
             {% endif %}
             {% endif %}
           </select>
-          <div class="input-group-unit">时间</div>
-          <input type="text" class="form-control" id="backup_time" name="backup_time" placeholder="02:00:00" value="{% if member %}{{ member.backup_time }}{% endif %}">
-          <div class="input-group-unit">
-            <button class="btn btn-box-tool" onclick="$(this).parent().parent().parent().parent().remove();bloop-=1;set_backup_tip()"><i class="fa fa-times"></i></button>
-          </div>
         </div>
       </div>
+      <div class="bootstrap-timepicker col-sm-6">
+        <div class="col-sm-12 form-group{% for f in failures %}{% if f.return_code in [ERR.PRO_BACKUPS_BACKUP_TIME_EMPTY_ERR] %} has-warning{% endif %}{% endfor %}">
+          <label class="control-label col-sm-5" for="backup_time">时间：</label>
+          <div class="input-group">
+            <!--div class="input-group-unit">时间</div-->
+            <input type="text" class="form-control timepicker" id="backup_time" name="backup_time" placeholder="02:00:00" value="{% if member %}{{ member.backup_time }}{% endif %}">
+            <div class="input-group-addon">
+            <i class="fa fa-clock-o"></i>
+            </div>
+          </div>
+        </div>
+        <!--span class="input-group-unit">
+          <button class="btn btn-box-tool" onclick="$(this).parent().parent().parent().parent().remove();bloop-=1;set_backup_tip()"><i class="fa fa-times"></i></button>
+        </span-->
+      </div>
+      {% for f in failures %}
+      {% if f.return_code in check_codes %}
+      <div class="form-group has-warning col-sm-12">
+      <label class="col-sm-offset-2 control-label" for="inputWarning"><i class="fa fa-bell-o"></i> {{ f.return_message }}</label>
+      </div>
+      {% endif %}
+      {% endfor %}
     </div>
 {% endmacro %}

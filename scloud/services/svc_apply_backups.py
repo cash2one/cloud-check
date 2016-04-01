@@ -35,24 +35,44 @@ class ApplyBackups(BaseService):
         res_apply_id = self.params.get("res_apply_id")
         plot_str = self.params.get("backups", "")
         plot_s = simplejson.loads(plot_str) 
-        for plot_mem in plot_s:
+        g_plot_messages = []
+        for index, plot_mem in enumerate(plot_s):
             disk = plot_mem['disk']
             plot = plot_mem['plot']
             interval = plot_mem['interval']
             backup_time = plot_mem['backup_time']
+            plot_messages = []
             if not disk:
-                return self.failure(ERROR.pro_backups_disk_empty_err)
+                plot_messages.append(self.failure(ERROR.pro_backups_disk_empty_err))
+                g_plot_messages.append(self.failure(ERROR.pro_backups_disk_empty_err))
+                # return self.failure(ERROR.pro_backups_disk_empty_err)
             if not plot:
-                return self.failure(ERROR.pro_backups_plot_empty_err)
+                plot_messages.append(self.failure(ERROR.pro_backups_plot_empty_err))
+                g_plot_messages.append(self.failure(ERROR.pro_backups_plot_empty_err))
+                # return self.failure(ERROR.pro_backups_plot_empty_err)
             if plot in [u"月", u"周"] and not interval:
-                return self.failure(ERROR.pro_backups_interval_empty_err)
+                plot_messages.append(self.failure(ERROR.pro_backups_interval_empty_err))
+                g_plot_messages.append(self.failure(ERROR.pro_backups_interval_empty_err))
+                # return self.failure(ERROR.pro_backups_interval_empty_err)
             if not backup_time:
-                return self.failure(ERROR.pro_backups_backup_time_empty_err)
+                plot_messages.append(self.failure(ERROR.pro_backups_backup_time_empty_err))
+                g_plot_messages.append(self.failure(ERROR.pro_backups_backup_time_empty_err))
+            plot_mem["failures"] = plot_messages
+                # return self.failure(ERROR.pro_backups_backup_time_empty_err)
+        logger.info(plot_s)
         do_backups_info, created = Pro_Backup.get_or_create_obj(self.db, pro_id=pro_id)
         do_backups_info.pro_id = pro_id
         do_backups_info.res_apply_id = res_apply_id
-        do_backups_info.plot = plot_str
-        self.db.add(do_backups_info)
-        self.db.flush()
-        return self.success(data=do_backups_info)
+        logger.info("len(plot_messages): %s" % len(g_plot_messages))
+        if len(g_plot_messages) == 0:
+            do_backups_info.status = 0
+            do_backups_info.plot = plot_str
+            self.db.add(do_backups_info)
+            self.db.flush()
+            # do_backups_info.plot = plot_str
+            return self.success(data=do_backups_info)
+        else:
+            do_backups_info.status = -1
+            do_backups_info.plot = simplejson.dumps(plot_s)
+            return self.failures(g_plot_messages, data=do_backups_info)
 

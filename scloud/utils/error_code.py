@@ -11,6 +11,7 @@ class ERROR(object):
     system_err = error(errcode=-999999, errvalue=u"系统错误")
     not_found_err = error(errcode=-999404, errvalue=u"对不起！您正在访问的数据资源未找到")
     xsrf_err = error(errcode=-999403, errvalue=u"缺少xsrf参数，禁止提交表单")
+    database_save_err = error(errcode=-999402, errvalue=u"数据库保存错误")
     # 注册和登录
     username_empty_err      = error(errcode=-100001, errvalue=u"用户名不能为空")
     username_duplicate_err  = error(errcode=-100017, errvalue=u"该用户名已经被使用")

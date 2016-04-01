@@ -3,6 +3,7 @@
 from tornado.util import ObjectDict
 from scloud.shortcuts import env
 from scloud.config import CONF, logger
+from scloud.utils.error_code import ERROR
 
 
 class BaseService(object):
@@ -27,11 +28,19 @@ class BaseService(object):
         result.data = data
         return result
 
-    def failure(self, error_obj):
+    def failure(self, error_obj, data=None):
         result = ObjectDict()
         result.return_code = error_obj.errcode
         result.return_message = error_obj.errvalue
-        result.data = None
+        result.data = data
+        return result
+
+    def failures(self, failure_list, data=None):
+        result = ObjectDict()
+        result.return_code = ERROR.database_save_err.errcode
+        result.return_message = u",".join(["(%s)%s" % (f.return_code, f.return_message) for f in failure_list])
+        result.return_messages = failure_list
+        result.data = data
         return result
 
     def render_to_string(self, template, **kwargs):

@@ -24,7 +24,8 @@
       <div class="box-body">
         <input type="hidden" id="backups" name="backups" value="">
         {% for member in backup_list %}
-          {{ base.backup_member(member, loop=loop.index) }}
+          {% set failures = member.failures %}
+          {{ base.backup_member(member, loop=loop.index, failures=failures, ERR=ERR) }}
         {% endfor %}
         <!--div class="form-group">
           <label for="disk" class="col-sm-1 control-label">硬盘名称</label>
@@ -168,21 +169,22 @@
   }
   function change_interval(_this){
     var plot = $(_this).val()
-    var backup_interval = $(_this).parent().parent().next().find("select[name=backup_interval]");
-    var interval_title = $(_this).parent().parent().next().find("div[name=interval_title]");
-    console.log(backup_interval)
+    var interval_title = $(_this).parent().parent().parent().find("div[name=interval_title]");
+    var backup_interval = interval_title.find("select[name=backup_interval]");
+    // console.log(interval_title)
+    // console.log(backup_interval)
     if (plot == "天"){
-      $(backup_interval).css("display", "none")
+      // $(backup_interval).css("display", "none")
       interval_title.css("display", "none");
       backup_interval.html("")
       // console.log(backup_interval.css("display"))
     }else if (plot == "周"){
-      $(backup_interval).css("display", "")
+      // $(backup_interval).css("display", "")
       interval_title.css("display", "");
       show_week_options(backup_interval)
       // console.log(backup_interval.css("display"))
     }else if (plot == "月"){
-      backup_interval.css("display", "")
+      //backup_interval.css("display", "")
       interval_title.css("display", "");
       show_month_options(backup_interval)
       // console.log(backup_interval.css("display"))
@@ -194,4 +196,12 @@
   function show_month_options(backup_interval){
     backup_interval.html($("#month_options").html())
   }
+  $(function(){
+      $(".timepicker").timepicker({
+          showInputs: false,
+          defaultTime: false,
+          showMeridian: false,
+          showSeconds: true
+      })
+  })
   </script>

@@ -54,8 +54,8 @@ class GuideHandler(ApplyHandler):
         data.update(publish_res=publish_res,
                     loadbalance_res=loadbalance_res,
                     backups_res=backups_res)
-        # backups = backups_res.data
-        # logger.info(backups)
+        backups = backups_res.data
+        logger.info(backups)
         # if backups:
         #     logger.info(backups.plot)
         # else:
@@ -100,9 +100,13 @@ class GuideHandler(ApplyHandler):
             self.add_message(u"负载均衡申请成功！", level="success")
         else:
             self.add_message(u"负载均衡申请失败！(%s)(%s)" % (loadbalance_res.return_code, loadbalance_res.return_message), level="warning")
+        svc = ApplyPublish(self)
+        publish_res = svc.get_publish()
+        svc = ApplyBackups(self)
+        backups_res = svc.get_backups()
         pro_id = self.args.get("pro_id")
         data = self.get_pro_data(pro_id=pro_id)
-        data.update({"loadbalance_res": loadbalance_res})
+        data.update(loadbalance_res=loadbalance_res, backups_res=backups_res, publish_res=publish_res)
         logger.info(loadbalance_res)
         tmpl = self.render_to_string("admin/apply/service/add_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))

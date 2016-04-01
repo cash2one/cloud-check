@@ -38,6 +38,7 @@
     <link rel="stylesheet" href="{{ handler.static_url('default/plugins/datepicker/datepicker3.css') }}">
     <!-- Daterange picker -->
     <link rel="stylesheet" href="{{ handler.static_url('default/plugins/daterangepicker/daterangepicker-bs3.css') }}">
+    <link rel="stylesheet" href="{{ handler.static_url('default/plugins/timepicker/bootstrap-timepicker.min.css') }}">
     <!-- bootstrap wysihtml5 - text editor -->
     <link rel="stylesheet" href="{{ handler.static_url('default/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}">
 
@@ -54,8 +55,8 @@
 <!-- <i class="fa fa-spinner fa-spin"></i> -->
 </div>
     <!-- jQuery 2.1.4 -->
-    <script src="{{ handler. static_url('default/plugins/jQuery/jQuery-2.1.4.min.js') }}"></script>
-    <script src="{{ handler. static_url('js/jquery.animateToClass.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/jQuery/jQuery-2.1.4.min.js') }}"></script>
+    <script src="{{ handler.static_url('js/jquery.animateToClass.js') }}"></script>
     <!-- jQuery UI 1.11.4 -->
     <script src="{{ handler.static_url('default/plugins/jQueryUI/jquery-ui.min.js') }}"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
@@ -67,27 +68,28 @@
     <!-- Morris.js charts -->
     <!--script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script-->
     <script src="{{ handler.static_url('js/raphael-min.js') }}"></script>
-    <!--script src="{{ handler. static_url('default/plugins/morris/morris.min.js') }}"></script-->
+    <!--script src="{{ handler.static_url('default/plugins/morris/morris.min.js') }}"></script-->
     <!-- Sparkline -->
-    <script src="{{ handler. static_url('default/plugins/sparkline/jquery.sparkline.min.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/sparkline/jquery.sparkline.min.js') }}"></script>
     <!-- jvectormap -->
-    <script src="{{ handler. static_url('default/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
-    <script src="{{ handler. static_url('default/plugins/jvectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/jvectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
     <!-- jQuery Knob Chart -->
-    <script src="{{ handler. static_url('default/plugins/knob/jquery.knob.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/knob/jquery.knob.js') }}"></script>
     <!-- daterangepicker -->
     <script src="{{ handler.static_url('default/plugins/moment/min/moment.min.js') }}"></script>
-    <script src="{{ handler. static_url('default/plugins/daterangepicker/daterangepicker.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/daterangepicker/daterangepicker.js') }}"></script>
     <!-- datepicker -->
-    <script src="{{ handler. static_url('default/plugins/datepicker/bootstrap-datepicker.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/datepicker/bootstrap-datepicker.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/timepicker/bootstrap-timepicker.min.js') }}"></script>
     <!-- Bootstrap WYSIHTML5 -->
-    <script src="{{ handler. static_url('default/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
     <!-- Slimscroll -->
-    <script src="{{ handler. static_url('default/plugins/slimScroll/jquery.slimscroll.min.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/slimScroll/jquery.slimscroll.min.js') }}"></script>
     <!-- FastClick -->
-    <script src="{{ handler. static_url('default/plugins/fastclick/fastclick.min.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/fastclick/fastclick.min.js') }}"></script>
     <!-- Select2 -->
-    <script src="{{ handler. static_url('default/plugins/select2/select2.full.min.js') }}"></script>
+    <script src="{{ handler.static_url('default/plugins/select2/select2.full.min.js') }}"></script>
     <script src="{{ handler.static_url('default/plugins/iCheck/icheck.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ handler.static_url('default/dist/js/app.min.js') }}"></script>
@@ -109,5 +111,13 @@
       <!-- source -->
       <source src="{{ handler.static_url('notify.ogg') }}" type="audio/ogg"> 
     </audio>
+<script type="text/javascript">
+// $(function(){
+//   //Timepicker
+//   $(".timepicker").timepicker({
+//     showInputs: false
+//   });
+// });
+</script>
   </body>
 </html>

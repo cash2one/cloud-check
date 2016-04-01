@@ -100,6 +100,7 @@ class Pro_User(BaseModel, BaseModelMixin):
     u"""项目用户"""
     __tablename__ = "pro_user"
     pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
+    status = Column(Integer, default=0, info=u"申请状态")
     email = Column(Unicode, default=u'', info=u"邮箱")
     username = Column(Unicode, default=u'', info=u"用户名") 
     is_enable = Column(Integer, default=1, info=u"是否可用")
@@ -110,6 +111,7 @@ class Pro_Publish(BaseModel, BaseModelMixin):
     u"""项目发布"""
     __tablename__ = "pro_publish"
     pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
+    status = Column(Integer, default=0, info=u"申请状态")
     domain = Column("domain", Unicode, default=u'', info=u"域名")
     domain_port = Column("domain_port", Integer, default=80, info=u"互联网端口")
     network_address = Column("network_address", Unicode, default=u'', info=u"内网地址" )
@@ -125,6 +127,7 @@ class Pro_Balance(BaseModel, BaseModelMixin):
     ]
     pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
     res_apply_id = Column("res_apply_id", Integer, ForeignKey("pro_resource_apply.id"), default=0,info=u"所属资源申请")
+    status = Column(Integer, default=0, info=u"申请状态")
     members = Column("members", Unicode, default=u'', info=u"成员")
     plot = Column("plot", Integer, default=0, info=u"策略")
     health = Column("health", Integer, default=0, info=u"策略")
@@ -142,6 +145,7 @@ class Pro_Backup(BaseModel, BaseModelMixin):
     ]
     pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
     res_apply_id = Column("res_apply_id", Integer, ForeignKey("pro_resource_apply.id"), default=0, info=u"所属资源申请")
+    status = Column(Integer, default=0, info=u"申请状态")
     plot = Column("plot", Unicode, default=u'', info=u"策略(json)")
     res_apply = relationship("Pro_Resource_Apply", backref=backref("backups_plot", uselist=False))
 
