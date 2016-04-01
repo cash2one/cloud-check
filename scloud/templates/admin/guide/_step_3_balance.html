@@ -36,7 +36,8 @@
         {% set members = [] %}
         {% endif %}
         {% for member in members %}
-          {{ base.loadbalance_member(member, loop=loop.index) }}
+          {% set failures = member.failures %}
+          {{ base.loadbalance_member(member, loop=loop.index, failures=failures, ERR=ERR) }}
         {% endfor %}
         <div class="form-group" id="member_add_button">
           <!-- button -->

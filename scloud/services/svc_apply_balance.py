@@ -41,26 +41,37 @@ class ApplyLoadBalance(BaseService):
         res_apply_id = self.params.get("res_apply_id")
         member = self.params.get("members", "")
         members = simplejson.loads(member)
+        g_plot_messages = []
         for mem in members:
+            plot_messages = []
             port = mem['port']
             if not port:
-                return self.failure(ERROR.pro_balance_member_port_empty_err)
+                plot_messages.append(self.failure(ERROR.pro_balance_member_port_empty_err))
+                g_plot_messages.append(self.failure(ERROR.pro_balance_member_port_empty_err))
             address = mem['address']
             if not address:
-                return self.failure(ERROR.pro_balance_member_address_empty_err)
+                plot_messages.append(self.failure(ERROR.pro_balance_member_address_empty_err))
+                g_plot_messages.append(self.failure(ERROR.pro_balance_member_address_empty_err))
+            mem["failures"] = plot_messages
         plot = self.params.get("plot", 0)
         health = self.params.get("health", 0)
         url = self.params.get("url")
         keyword = self.params.get("keyword")
         desc = self.params.get("desc", "")
         do_balance_info, created = Pro_Balance.get_or_create_obj(self.db, pro_id=pro_id, res_apply_id=res_apply_id)
-        do_balance_info.members = member
         do_balance_info.plot = plot
         do_balance_info.health = health
         do_balance_info.url = url
         do_balance_info.keyword = keyword
         do_balance_info.desc = desc
-        self.db.add(do_balance_info)
-        self.db.flush()
-        return self.success(data=do_balance_info)
- 
+        if len(g_plot_messages) == 0:
+            do_balance_info.status = 0
+            do_balance_info.members = member
+            self.db.add(do_balance_info)
+            self.db.flush()
+            return self.success(data=do_balance_info)
+        else:
+            do_balance_info.status = -1
+            do_balance_info.members= simplejson.dumps(members)
+            return self.failures(g_plot_messages, data=do_balance_info)
+

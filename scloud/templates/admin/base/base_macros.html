@@ -167,8 +167,12 @@
               </div><!-- /.box -->
 {%- endmacro %}
 
-{% macro loadbalance_member(member=None, loop=1) %}
-    <div class="form-group">
+{% macro loadbalance_member(member=None, loop=1, failures=[], ERR=None) %}
+{% set check_codes = [
+  ERR.PRO_BALANCE_MEMBER_ADDRESS_EMPTY_ERR,
+  ERR.PRO_BALANCE_MEMBER_PORT_EMPTY_ERR
+] %}
+<div class="form-group{% for f in failures %}{% if f.return_code in check_codes %} has-warning{% endif %}{% endfor %}">
       <label for="disk" class="col-sm-2 control-label">成员{{ loop }}</label>
       <div class="col-sm-6 input-group">
         <div class="input-group-unit">IP</div>
@@ -179,6 +183,13 @@
         <button class="btn btn-box-tool" onclick="$(this).parent().parent().parent().remove();loop-=1;set_member_tip()"><i class="fa fa-times"></i></button>
         </div>
       </div>
+      {% for f in failures %}
+      {% if f.return_code in check_codes %}
+      <div class="form-group has-warning col-sm-12">
+      <label class="col-sm-offset-2 control-label" for="inputWarning"><i class="fa fa-bell-o"></i> {{ f.return_message }}</label>
+      </div>
+      {% endif %}
+      {% endfor %}
     </div>
 {% endmacro %}
 
