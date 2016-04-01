@@ -82,7 +82,11 @@ class GuideHandler(ApplyHandler):
             self.add_message(u"互联网发布信息添加失败！(%s)(%s)" % (publish_res.return_code, publish_res.return_message), level="warning")
         pro_id = self.args.get("pro_id")
         data = self.get_pro_data(pro_id=pro_id)
-        data.update({"publish_res": publish_res})
+        svc = ApplyLoadBalance(self)
+        loadbalance_res = svc.get_loadbalance()
+        svc = ApplyBackups(self)
+        backups_res = svc.get_backups()
+        data.update(publish_res=publish_res, loadbalance_res=loadbalance_res, backups_res=backups_res)
         logger.info(publish_res)
         tmpl = self.render_to_string("admin/apply/service/add_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))
@@ -123,7 +127,7 @@ class GuideHandler(ApplyHandler):
         if backups_res.return_code == 0:
             self.add_message(u"定期备份申请成功！", level="success")
         else:
-            self.add_message(u"负载均衡申请失败！(%s)(%s)" % (backups_res.return_code, backups_res.return_message), level="warning")
+            self.add_message(u"定期备份申请失败！(%s)(%s)" % (backups_res.return_code, backups_res.return_message), level="warning")
         pro_id = self.args.get("pro_id")
         svc = ApplyLoadBalance(self)
         loadbalance_res = svc.get_loadbalance()
