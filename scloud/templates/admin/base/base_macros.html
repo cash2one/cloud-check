@@ -257,10 +257,10 @@
             </div>
           </div>
         </div>
-        <!--span class="input-group-unit">
-          <button class="btn btn-box-tool" onclick="$(this).parent().parent().parent().parent().remove();bloop-=1;set_backup_tip()"><i class="fa fa-times"></i></button>
-        </span-->
       </div>
+      <span class="input-group-unit">
+        <button class="btn btn-box-tool" onclick="$(this).parent().parent().remove();bloop-=1;set_backup_tip()"><i class="fa fa-times"></i></button>
+      </span>
       {% for f in failures %}
       {% if f.return_code in check_codes %}
       <div class="form-group has-warning col-sm-12">
