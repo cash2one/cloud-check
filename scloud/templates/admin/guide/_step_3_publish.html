@@ -9,14 +9,26 @@
       <div class="box-body">
       {% if publish_res %}
       {% set data = publish_res.data %}
+      {% set ST = STATUS_PRO_TABLES.get(data.status) %}
+      {{ base.tip_message(message="您{}的互联网发布内容{}，{}。".format(ST.act_value, ST.value, ST.todo_value), level=ST.level) }}
       {% else %}
       {% set data = {} %}
       {% endif %}
-      {% set domain = data.domain or handler.args.get("domain", "") %}
-      {% set domain_port = data.domain_port or handler.args.get("domain_port", "") %}
-      {% set network_address = data.network_address or handler.args.get("network_address", "") %}
-      {% set network_port = data.network_port or handler.args.get("network_port", "") %}
-      {% set use_vpn = data.use_vpn or handler.args.get("use_vpn", "-1") %}
+      {% if handler.request.method == "POST" %}
+        {% set domain = handler.args.get("domain", "") %}
+        {% set domain_port = handler.args.get("domain_port", "") %}
+        {% set network_address = handler.args.get("network_address", "") %}
+        {% set network_port = handler.args.get("network_port", "") %}
+        {% set use_ssl = handler.args.get("use_ssl", "-1")|string %}
+        {% set status = handler.args.get("status", "0")|int %}
+      {% else %}
+        {% set domain = data.domain %}
+        {% set domain_port = data.domain_port %}
+        {% set network_address = data.network_address %}
+        {% set network_port = data.network_port %}
+        {% set use_ssl = data.use_ssl|string %}
+        {% set status = data.status|int %}
+      {% endif %}
 
       {{ base.form_input("域名", "domain", res=publish_res, value=domain,
             check_codes=[ERR.PRO_PUBLISH_DOMAIN_EMPTY_ERR, ERR.PRO_PUBLISH_DOMAIN_INVALID_ERR]) }}
@@ -30,13 +42,13 @@
           <label for="loadbalance" class="col-sm-2 control-label">SSL卸载</label>
           <div class="radio col-sm-offset-2 col-sm-10">
               <label>
-              <input type="radio" name="use_vpn" id="use_vpn" value="1"{% if use_vpn|int == 1 %} checked="checked"{% endif %}>
+              <input type="radio" name="use_ssl" id="use_ssl" value="1"{% if use_ssl|int == 1 %} checked="checked"{% endif %}>
                 需要
               </label>
           </div>
           <div class="radio col-sm-offset-2 col-sm-10">
               <label>
-                <input type="radio" name="use_vpn" id="use_vpn" value="0"{% if use_vpn|int == 0 %} checked="checked"{% endif %}>
+                <input type="radio" name="use_ssl" id="use_ssl" value="0"{% if use_ssl|int == 0 %} checked="checked"{% endif %}>
                 不需要
               </label>
           </div>

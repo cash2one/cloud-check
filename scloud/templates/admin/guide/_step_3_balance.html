@@ -32,12 +32,14 @@
         {% set loadbalance = last_apply.loadbalance %}
         {% if loadbalance_plot %}
         {% set members = loadbalance_plot.as_dict().members %}
+        {% set ST = STATUS_PRO_TABLES.get(loadbalance_plot.status) %}
+        {{ base.tip_message(message="您{}的负载均衡内容{}，{}。".format(ST.act_value, ST.value, ST.todo_value), level=ST.level) }}
         {% else %}
         {% set members = [] %}
         {% endif %}
         {% for member in members %}
-          {% set failures = member.failures %}
-          {{ base.loadbalance_member(member, loop=loop.index, failures=failures, ERR=ERR) }}
+          {#{ member }#}
+          {{ base.loadbalance_member(member, loop=loop.index, failures=member.failures, ERR=ERR) }}
         {% endfor %}
         <div class="form-group" id="member_add_button">
           <!-- button -->

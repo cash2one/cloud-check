@@ -32,6 +32,8 @@ act_actions = {
     3: IndexMark(value=u"删除%s数据", value_en="", level="danger"),
 }
 
+# Pro_Resource_Apply
+# 资源申请状态
 pro_resource_apply_status_types = {
     # 未申请状态，可修改，可删除，可提交
     None:ApplyMark(value=u"未申请", todo_value="待提交", act_value=u"申请", value_en="unknown", level="warning", bg_color="yellow"),
@@ -53,6 +55,23 @@ def init_status_resource():
         setattr(STATUS_RESOURCE, v.value_en.upper(), k)
         setattr(STATUS_RESOURCE, v.value_en.lower(), v)
         STATUS_RESOURCE[k] = v
+init_status_resource()
+
+# pro_publish, pro_user, pro_backup, pro_balance
+# 互联网发布、负载均衡、定期备份、权限申请状态
+pro_tables_status_types = {
+    # 未申请状态，可修改，可删除，可提交
+    -2:ApplyMark(value=u"审核未通过", todo_value="待修改", act_value=u"保存", value_en="refused", level="danger", bg_color="red"),
+    -1:ApplyMark(value=u"未提交", todo_value="待修改", act_value=u"保存", value_en="revoked", level="warning", bg_color="yellow"),
+    0: ApplyMark(value=u"已提交", todo_value="受理中", act_value=u"保存", value_en="applied", level="info", bg_color="teal disabled"),
+    1: ApplyMark(value=u"已处理", todo_value="已处理", act_value=u"提交", value_en="checked", level="success", bg_color="light-blue"),
+}
+STATUS_PRO_TABLES = ObjectDict()
+def init_status_resource():
+    for k, v in pro_tables_status_types.items():
+        setattr(STATUS_PRO_TABLES, v.value_en.upper(), k)
+        setattr(STATUS_PRO_TABLES, v.value_en.lower(), v)
+        STATUS_PRO_TABLES[k] = v
 init_status_resource()
 
 admin_emails = ["zhangpeng1@infohold.com.cn"]

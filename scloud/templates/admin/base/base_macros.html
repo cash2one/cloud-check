@@ -176,9 +176,9 @@
       <label for="disk" class="col-sm-2 control-label">成员{{ loop }}</label>
       <div class="col-sm-6 input-group">
         <div class="input-group-unit">IP</div>
-        <input type="text" class="form-control" name="address" placeholder="10"{% if member %} value="{{ member.address }}"{% endif %}>
+        <input type="text" class="form-control" name="address" placeholder="127.0.0.1"{% if member %} value="{{ member.address }}"{% endif %}>
         <div class="input-group-unit">PORT</div>
-        <input type="text" class="form-control" name="port" placeholder="10"{% if member %} value="{{ member.port }}"{% endif %}>
+        <input type="text" class="form-control" name="port" placeholder="8080"{% if member %} value="{{ member.port }}"{% endif %}>
         <div class="input-group-unit">
         <button class="btn btn-box-tool" onclick="$(this).parent().parent().parent().remove();loop-=1;set_member_tip()"><i class="fa fa-times"></i></button>
         </div>
@@ -281,3 +281,21 @@
       {% endfor %}
     </div>
 {% endmacro %}
+
+{% macro tip_message(message="", level="info") -%}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="alert alert-{{ level }} alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <!-- <h4>    <i class="icon fa fa-check"></i> Alert!</h4> -->
+            {% set icon = "fa-{}".format(level) %}
+            {% if level == "success" %}
+                {% set icon = "fa-check" %}
+            {% elif level == "danger" %}
+                {% set icon = "fa-ban" %}
+            {% endif %}
+            <i class="icon fa {{ icon }}"></i> {{ message }}
+        </div>
+    </div>
+</div>
+{%- endmacro %}

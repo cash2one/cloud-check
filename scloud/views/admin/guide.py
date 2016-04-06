@@ -18,6 +18,10 @@ from scloud.utils.permission import check_perms
 from scloud.services.svc_project import ProjectService
 from scloud.services.svc_env import EnvService
 from scloud.services.svc_pro_resource_apply import ProResourceApplyService
+from scloud.services.svc_apply_user import ProUserService
+from scloud.services.svc_apply_publish import ApplyPublish
+from scloud.services.svc_apply_balance import ApplyLoadBalance
+from scloud.services.svc_apply_backups import ApplyBackups
 from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
 from scloud.utils.error import SystemError
@@ -161,6 +165,22 @@ class GuideStep3Handler(GuideStepGetHandler):
     def get(self, **kwargs):
         data = self.get_pro_info_res(kwargs["pro_id"])
         applies = data["pro_info_res"].data.pro_resource_applies
+        svc = ProUserService(self, {"pro_id": kwargs["pro_id"]})
+        pro_users_res = svc.get_list()
+        pro_user_res = svc.get_info()
+        svc = ApplyPublish(self, {"pro_id": kwargs["pro_id"]})
+        publish_res = svc.get_publish()
+        svc = ApplyLoadBalance(self, {"pro_id": kwargs["pro_id"]})
+        loadbalance_res = svc.get_loadbalance()
+        svc = ApplyBackups(self, {"pro_id": kwargs["pro_id"]})
+        backups_res = svc.get_backups()
+        data.update(
+            pro_users_res=pro_users_res,
+            pro_user_res=pro_user_res,
+            publish_res=publish_res,
+            loadbalance_res=loadbalance_res,
+            backups_res=backups_res,
+        )
         if len(applies) > 0:
             last_apply = applies[-1]
             if not last_apply.start_date:

@@ -4,7 +4,7 @@ import scloud
 #from torweb.urls import url
 from scloud.shortcuts import url
 from scloud.config import logger, thrownException
-from scloud.const import pro_resource_apply_status_types, STATUS_RESOURCE
+from scloud.const import pro_resource_apply_status_types, STATUS_RESOURCE, STATUS_PRO_TABLES
 from scloud.handlers import Handler, AuthHandler
 import requests
 import urlparse
@@ -77,7 +77,7 @@ class GuideHandler(ApplyHandler):
         svc = ApplyPublish(self)
         publish_res = svc.do_publish()
         if publish_res.return_code == 0:
-            self.add_message(u"互联网发布信息添加成功！", level="success")
+            self.add_message(u"互联网发布信息添加成功！%s" % STATUS_PRO_TABLES.get(publish_res.data.status).todo_value, level="success")
         else:
             self.add_message(u"互联网发布信息添加失败！(%s)(%s)" % (publish_res.return_code, publish_res.return_message), level="warning")
         pro_id = self.args.get("pro_id")
@@ -101,7 +101,7 @@ class GuideHandler(ApplyHandler):
         svc = ApplyLoadBalance(self)
         loadbalance_res = svc.do_loadbalance()
         if loadbalance_res.return_code == 0:
-            self.add_message(u"负载均衡申请成功！", level="success")
+            self.add_message(u"负载均衡申请成功！%s" % STATUS_PRO_TABLES.get(loadbalance_res.data.status).todo_value, level="success")
         else:
             self.add_message(u"负载均衡申请失败！(%s)(%s)" % (loadbalance_res.return_code, loadbalance_res.return_message), level="warning")
         svc = ApplyPublish(self)
@@ -125,7 +125,7 @@ class GuideHandler(ApplyHandler):
         svc = ApplyBackups(self)
         backups_res = svc.do_backups()
         if backups_res.return_code == 0:
-            self.add_message(u"定期备份申请成功！", level="success")
+            self.add_message(u"定期备份申请成功！%s" % STATUS_PRO_TABLES.get(backups_res.data.status).todo_value, level="success")
         else:
             self.add_message(u"定期备份申请失败！(%s)(%s)" % (backups_res.return_code, backups_res.return_message), level="warning")
         pro_id = self.args.get("pro_id")

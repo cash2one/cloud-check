@@ -2,7 +2,7 @@
 
 from scloud.handlers import AuthHandler
 from scloud.services.svc_project import ProjectService
-from scloud.const import STATUS_RESOURCE
+from scloud.const import STATUS_RESOURCE, STATUS_PRO_TABLES
 
 
 class ApplyHandler(AuthHandler):
@@ -17,6 +17,7 @@ class ApplyHandler(AuthHandler):
         data = {
             "pro_list_res": pro_list_res,
             "STATUS_RESOURCE": STATUS_RESOURCE,
+            "STATUS_PRO_TABLES": STATUS_PRO_TABLES,
         }
         if "pro_id" in kw:
             data.update({"pro_info_res": pro_info_res})

@@ -18,6 +18,8 @@
     {% endif %}
     {% if backup_plot %}
       {% set backup_list = backup_plot.as_dict().plot %}
+      {% set ST = STATUS_PRO_TABLES.get(backup_plot.status) %}
+      {{ base.tip_message(message="您{}的定期备份内容{}，{}。".format(ST.act_value, ST.value, ST.todo_value), level=ST.level) }}
     {% else %}
       {% set backup_list = [] %}
     {% endif %}
