@@ -59,6 +59,7 @@ $(function(){
     });
     $(document).on('pjax:end', function(xhr, options) {
         // console.log(options);
+        try{
         var title = decodeURI(options.getResponseHeader('title'));
         var origin_title = $(document).find('title').text();
         var first = origin_title.split(" - ")[0];
@@ -66,6 +67,9 @@ $(function(){
         var active = decodeURI(options.getResponseHeader('active'));
         $(document).find('ul.sidebar-menu').find('li').removeClass('active');
         $(document).find('ul.sidebar-menu').find('a[name="'+active+'"]').parent().addClass('active');
+        }catch(e){
+          console.log(e)
+        }
 
         console.log('end');
         hide_loading();

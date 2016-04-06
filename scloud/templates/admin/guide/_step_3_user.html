@@ -22,7 +22,7 @@
         <span class="text">{{ user.username }}</span>
         <span class="text">{{ user.email }}</span>
         <!-- Emphasis label -->
-        <span class="label label-primary"></span>
+        <span class="label label-primary">{{ STATUS_PRO_TABLES.get(user.status).todo_value }}</span>
         <!-- General tools such as edit or delete-->
         <div class="tools">
           <!-- tools -->
