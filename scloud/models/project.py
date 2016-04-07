@@ -118,6 +118,7 @@ class Pro_Publish(BaseModel, BaseModelMixin):
     network_address = Column("network_address", Unicode, default=u'', info=u"内网地址" )
     network_port = Column("network_port", Integer, default=80, info=u"内网端口")
     use_ssl = Column("use_ssl", Integer, default=0, info=u"是否需要SSL卸载")
+    project = relationship("Pro_Info", backref=backref("pro_publish_list", order_by="Pro_Publish.update_time"))
 
 
 class Pro_Balance(BaseModel, BaseModelMixin):
@@ -136,6 +137,7 @@ class Pro_Balance(BaseModel, BaseModelMixin):
     keyword = Column("keyword", Unicode, default=u'', info=u"关键字（仅限HTTP方式）")
     desc = Column("desc", Unicode, default=u'', info=u"特殊说明")
     res_apply = relationship("Pro_Resource_Apply", backref=backref("loadbalance_plot", uselist=False))
+    project = relationship("Pro_Info", backref=backref("pro_balance_list", order_by="Pro_Balance.update_time"))
 
 
 class Pro_Backup(BaseModel, BaseModelMixin):
@@ -149,4 +151,5 @@ class Pro_Backup(BaseModel, BaseModelMixin):
     status = Column(Integer, default=0, info=u"申请状态")
     plot = Column("plot", Unicode, default=u'', info=u"策略(json)")
     res_apply = relationship("Pro_Resource_Apply", backref=backref("backups_plot", uselist=False))
+    project = relationship("Pro_Info", backref=backref("pro_backup_list", order_by="Pro_Backup.update_time"))
 

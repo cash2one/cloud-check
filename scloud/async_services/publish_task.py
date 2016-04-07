@@ -4,29 +4,17 @@
 
 import os
 import requests
+import simplejson
 from scloud.const import act_actions
 from scloud.config import logger, CONF
 from scloud.celeryapp import celery
-# from scloud.models.act import Act_History, Act_Pro_History
-# from scloud.models.base import DataBaseService
-# from scloud.shortcuts import render_to_string
-# from scloud.utils.publish import publish_notice_checker, publish_notice_user
-# 
-# 
-# @celery.task
-# def task_notice_checker(user_id):
-#     publish_notice_checker(user_id)
-# 
-# @celery.task
-# def task_notice_user(user_id):
-#     publish_notice_user(user_id)
-# -*- coding: utf-8 -*-
-
-import simplejson
 from scloud.models.base import DataBaseService
 from scloud.services.svc_pt_user import PtUserService
-from scloud.services.svc_apply_user import ProUserService
 from scloud.services.svc_act import ActHistoryService
+from scloud.services.svc_apply_user import ProUserService
+from scloud.services.svc_apply_publish import ApplyPublish
+from scloud.services.svc_apply_balance import ApplyLoadBalance
+from scloud.services.svc_apply_backups import ApplyBackups
 from scloud.const import STATUS_RESOURCE, STATUS_PRO_TABLES
 from scloud.shortcuts import render_to_string
 from scloud.utils.publish.base import r
@@ -87,23 +75,66 @@ def publish_tasks(user_id, action="on_task"):
 
         # 获取用户申请列表
         svc = ProUserService(DBSvc, {"user_id": user_id})
-        pro_users_res = svc.get_list()
+        pro_user_list_res = svc.get_list()
         if imchecker:
-            pro_users = [i for i in pro_users_res.data[::-1] if i.status == STATUS_PRO_TABLES.APPLIED]
+            pro_user_list = [i for i in pro_user_list_res.data[::-1] if i.status == STATUS_PRO_TABLES.APPLIED]
         else:
-            pro_users = [i for i in pro_users_res.data[::-1] if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
+            pro_user_list = [i for i in pro_user_list_res.data[::-1] if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
         data.update({
-            "pro_users": pro_users,
+            "pro_user_list": pro_user_list,
             "imchecker": imchecker,
             "STATUS_PRO_TABLES": STATUS_PRO_TABLES
         })
-        logger.info(pro_users)
+        logger.info(pro_user_list)
+
+        # 获取互联网发布申请列表
+        svc = ApplyPublish(DBSvc, {"user_id": user_id})
+        pro_publish_list_res = svc.get_list()
+        logger.info(pro_publish_list_res.data)
+        if imchecker:
+            pro_publish_list = [i for i in pro_publish_list_res.data[::-1] if i.status == STATUS_PRO_TABLES.APPLIED]
+        else:
+            pro_publish_list = [i for i in pro_publish_list_res.data[::-1] if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
+        data.update({
+            "pro_publish_list": pro_publish_list,
+            "imchecker": imchecker,
+            "STATUS_PRO_TABLES": STATUS_PRO_TABLES
+        })
+
+        # 获取负载均衡申请列表
+        svc = ApplyLoadBalance(DBSvc, {"user_id": user_id})
+        pro_balance_list_res = svc.get_list()
+        logger.info(pro_balance_list_res.data)
+        if imchecker:
+            pro_balance_list = [i for i in pro_balance_list_res.data[::-1] if i.status == STATUS_PRO_TABLES.APPLIED]
+        else:
+            pro_balance_list = [i for i in pro_balance_list_res.data[::-1] if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
+        data.update({
+            "pro_balance_list": pro_balance_list,
+            "imchecker": imchecker,
+            "STATUS_PRO_TABLES": STATUS_PRO_TABLES
+        })
+
+        # 获取定期备份申请列表
+        svc = ApplyBackups(DBSvc, {"user_id": user_id})
+        pro_backup_list_res = svc.get_list()
+        logger.info(pro_backup_list_res.data)
+        if imchecker:
+            pro_backup_list = [i for i in pro_backup_list_res.data[::-1] if i.status == STATUS_PRO_TABLES.APPLIED]
+        else:
+            pro_backup_list = [i for i in pro_backup_list_res.data[::-1] if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
+        data.update({
+            "pro_backup_list": pro_backup_list,
+            "imchecker": imchecker,
+            "STATUS_PRO_TABLES": STATUS_PRO_TABLES
+        })
 
         # 获取任务列表总和
-        total = len(tasks_res.data) + len(pro_users)
+        total = len(tasks_res.data) + len(pro_user_list) + len(pro_publish_list) + len(pro_balance_list) + len(pro_backup_list)
         data["total"] = total
         logger.info("tasks length: %s" % len(tasks_res.data))
-        logger.info("pro_users length : %s" % len(pro_users))
+        logger.info("pro_user_list length : %s" % len(pro_user_list))
+        logger.info("pro_publish_list length : %s" % len(pro_publish_list))
         logger.info("total: %s" % total)
 
         chat = {

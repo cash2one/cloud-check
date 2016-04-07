@@ -1,4 +1,5 @@
 {% set tasks = tasks_res.data %}
+{% import "admin/base/base_macros.html" as base %}
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-flag-o"></i>
                   {% if total > 0 %}
@@ -44,7 +45,10 @@
                         </a>
                       </li><!-- end task item -->
                       {% endfor %}
-                      {% for pro_user in pro_users %}
+                      {% for pro_user in pro_user_list %}
+                        {{ base.pro_table_task(pro_user, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES) }}
+
+                        {#
                           {% set percent = (pro_user.status+1) / 2 %}
                           {% if percent < 0 %}
                             {% set percent = 0 %}
@@ -65,6 +69,16 @@
                           </div>
                         </a>
                       </li><!-- end task item -->
+                      #}
+                      {% endfor %}
+                      {% for pro_publish in pro_publish_list %}
+                        {{ base.pro_table_task(pro_publish, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES) }}
+                      {% endfor %}
+                      {% for pro_balance in pro_balance_list %}
+                        {{ base.pro_table_task(pro_balance, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES) }}
+                      {% endfor %}
+                      {% for pro_backup in pro_backup_list %}
+                        {{ base.pro_table_task(pro_backup, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES) }}
                       {% endfor %}
                     </ul>
                   </li>

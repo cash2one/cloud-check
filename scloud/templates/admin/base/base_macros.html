@@ -299,3 +299,38 @@
     </div>
 </div>
 {%- endmacro %}
+
+{% macro pro_table_task(pro_table, imchecker=True, STATUS_PRO_TABLES=None) -%}
+  {% set percent = (pro_table.status+1) / 2 %}
+  {% if percent < 0 %}
+    {% set percent = 0 %}
+  {% endif %}
+  {% set percent = (percent * 100)|int %}
+  {% set ST = STATUS_PRO_TABLES.get(pro_table.status) %}
+  {# 设置提示语 #}
+  {% if imchecker %}
+    {% if pro_table.__table__|string == "pro_user" %}
+      {% set message = "{} 申请的项目用户{}{}，请受理".format(pro_table.project.user.email, pro_table.username, ST.value) %}
+    {% elif pro_table.__table__|string == "pro_publish" %}
+      {% set message = "{} 申请的互联网发布内容{}，请受理".format(pro_table.project.user.email, ST.value) %}
+    {% elif pro_table.__table__|string == "pro_balance" %}
+      {% set message = "{} 申请的负载均衡内容{}，请受理".format(pro_table.project.user.email, ST.value) %}
+    {% elif pro_table.__table__|string == "pro_backup" %}
+      {% set message = "{} 申请的定期备份内容{}，请受理".format(pro_table.project.user.email, ST.value) %}
+    {% endif %}
+  {% else %}
+  {% endif %}
+  <li><!-- Task item -->
+    <a data-pjax href="javascript:;">
+      <h3>{{ message }}
+        <small class="pull-right">{{ percent }}%</small>
+      </h3>
+      <div class="progress xs">
+        <div class="progress-bar progress-bar-aqua" style="width: {{ percent }}%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+          <span class="sr-only">{{ percent }}% Complete</span>
+        </div>
+      </div>
+    </a>
+  </li><!-- end task item -->
+{%- endmacro %}
+

@@ -30,6 +30,19 @@ class ApplyBackups(BaseService):
         return self.success(data=backups_plot)
 
     @thrownException
+    def get_list(self):
+        pro_id = self.params.get("pro_id")
+        conditions = and_()
+        if pro_id:
+            conditions.append(Pro_Backup.pro_id == pro_id)
+        pro_backup_list = self.db.query(
+            Pro_Backup
+        ).filter(
+            conditions
+        ).all()
+        return self.success(data=pro_backup_list)
+
+    @thrownException
     def do_backups(self):
         pro_id = self.params.get("pro_id")
         res_apply_id = self.params.get("res_apply_id")

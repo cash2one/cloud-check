@@ -36,6 +36,19 @@ class ApplyLoadBalance(BaseService):
         return self.success(data=loadbalance_plot)
 
     @thrownException
+    def get_list(self):
+        pro_id = self.params.get("pro_id")
+        conditions = and_()
+        if pro_id:
+            conditions.append(Pro_Balance.pro_id == pro_id)
+        pro_balance_list = self.db.query(
+            Pro_Balance
+        ).filter(
+            conditions
+        ).all()
+        return self.success(data=pro_balance_list)
+
+    @thrownException
     def do_loadbalance(self):
         pro_id = self.params.get("pro_id")
         res_apply_id = self.params.get("res_apply_id")

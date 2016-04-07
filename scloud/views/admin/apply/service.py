@@ -20,6 +20,7 @@ from scloud.services.svc_apply_publish import ApplyPublish
 from scloud.services.svc_apply_balance import ApplyLoadBalance
 from scloud.services.svc_apply_backups import ApplyBackups
 from scloud.services.svc_pro_resource_apply import ProResourceApplyService
+from scloud.async_services.publish_task import publish_notice_checker
 from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
 from scloud.utils.error import SystemError
@@ -78,6 +79,7 @@ class GuideHandler(ApplyHandler):
         publish_res = svc.do_publish()
         if publish_res.return_code == 0:
             self.add_message(u"互联网发布信息添加成功！%s" % STATUS_PRO_TABLES.get(publish_res.data.status).todo_value, level="success")
+            publish_notice_checker.delay(self.current_user.id)
         else:
             self.add_message(u"互联网发布信息添加失败！(%s)(%s)" % (publish_res.return_code, publish_res.return_message), level="warning")
         pro_id = self.args.get("pro_id")
@@ -102,6 +104,7 @@ class GuideHandler(ApplyHandler):
         loadbalance_res = svc.do_loadbalance()
         if loadbalance_res.return_code == 0:
             self.add_message(u"负载均衡申请成功！%s" % STATUS_PRO_TABLES.get(loadbalance_res.data.status).todo_value, level="success")
+            publish_notice_checker.delay(self.current_user.id)
         else:
             self.add_message(u"负载均衡申请失败！(%s)(%s)" % (loadbalance_res.return_code, loadbalance_res.return_message), level="warning")
         svc = ApplyPublish(self)
@@ -126,6 +129,7 @@ class GuideHandler(ApplyHandler):
         backups_res = svc.do_backups()
         if backups_res.return_code == 0:
             self.add_message(u"定期备份申请成功！%s" % STATUS_PRO_TABLES.get(backups_res.data.status).todo_value, level="success")
+            publish_notice_checker.delay(self.current_user.id)
         else:
             self.add_message(u"定期备份申请失败！(%s)(%s)" % (backups_res.return_code, backups_res.return_message), level="warning")
         pro_id = self.args.get("pro_id")

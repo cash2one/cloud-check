@@ -27,6 +27,19 @@ class ApplyPublish(BaseService):
         return self.success(data=publish)
 
     @thrownException
+    def get_list(self):
+        pro_id = self.params.get("pro_id")
+        conditions = and_()
+        if pro_id:
+            conditions.append(Pro_Publish.pro_id == pro_id)
+        publish_list = self.db.query(
+            Pro_Publish
+        ).filter(
+            conditions
+        ).all()
+        return self.success(data=publish_list)
+
+    @thrownException
     def do_publish(self):
         pro_id = self.params.get("pro_id")
         domain = self.params.get("domain")
@@ -64,21 +77,4 @@ class ApplyPublish(BaseService):
         do_publish_info.use_ssl = use_ssl
         self.db.add(do_publish_info)
         return self.success(data=do_publish_info) 
-
-
-
-        
-
-
-
-        
-
-
-        
-
-
-
-        
-
-
 
