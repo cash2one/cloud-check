@@ -59,6 +59,14 @@ class Handler(BaseHandler):
     def __str__(self):
         return self.__doc__ or self.__class__.__name__
 
+    def initialize(self, **kwargs):
+        super(Handler, self).initialize(**kwargs)
+        self.svc = DataBaseService()
+        self.svc.__enter__()
+        self.db = self.svc.db
+        logger.warning("<" + "="*25 + " [initialize] " + "="*25 + ">")
+
+
     def init_messages(self):
         if "messages" not in self.session:
             self.session["messages"] = []
@@ -120,9 +128,6 @@ class Handler(BaseHandler):
 
     def prepare(self):
         logger.warning("<" + "="*25 + " [prepare] " + "="*25 + ">")
-        self.svc = DataBaseService()
-        self.svc.__enter__()
-        self.db = self.svc.db
         # self.svc._db_init()
         # self.svc.db.begin_nested()
         # self.svc.db.begin()

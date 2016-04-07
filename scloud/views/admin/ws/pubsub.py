@@ -13,7 +13,10 @@ from scloud.shortcuts import url
 from scloud.config import logger, logThrown, CONF
 from scloud.views.admin.ws.index import MySocketHandler
 from scloud.utils.publish.base import r
-from scloud.utils.publish.tasks import publish_tasks
+# from scloud.utils.publish.tasks import publish_tasks
+from scloud.async_services.publish_task import publish_tasks
+from scloud.utils.publish.publish_pro_user import publish_pro_user
+from scloud.const import STATUS_PRO_TABLES
 
 
 LISTENERS = dict()
@@ -48,10 +51,9 @@ class RealtimeHandler(MySocketHandler):
         }
         params = "&".join(["%s=%s" % (k, v) for k, v in data.items()])
         logger.info("#"*30+" [user %s init tasks] "%self.user_id+"#"*30)
-        request_result = publish_tasks(self.user_id)
-        # url = "%s?%s" % (os.path.join(CONF("PUB_HOST"), self.reverse_url("comet.tasks")[1:]), params)
-        # request_result = requests.get(url)
-        logger.info(request_result)
+        # request_result = publish_tasks(self.user_id)
+        request_result = publish_tasks.delay(self.user_id)
+        # logger.info(request_result)
         logger.info("#"*30+" [user %s init tasks finished] "%self.user_id+"#"*30)
 
     def on_message(self, message):

@@ -17,9 +17,9 @@ function init_ws_pubsub(){
     // console.log("onopen");
   };
   ws_pubsub.onmessage = function (evt) {
-    // console.log("onmessage");
+    console.log("onmessage");
     var response = JSON.parse(evt.data);
-    // console.log(response)
+    console.log(response)
     var action = response.action;
     if ( action == "on_task" ){
       on_task(response)

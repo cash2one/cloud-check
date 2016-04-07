@@ -105,6 +105,7 @@ class Pro_User(BaseModel, BaseModelMixin):
     username = Column(Unicode, default=u'', info=u"用户名") 
     is_enable = Column(Integer, default=1, info=u"是否可用")
     use_vpn = Column(Integer, default=0, info=u"是否需要开通VPN远程访问")
+    project = relationship("Pro_Info", backref=backref("pro_users", order_by="Pro_User.update_time"))
 
 
 class Pro_Publish(BaseModel, BaseModelMixin):

@@ -47,12 +47,16 @@ class ProUserService(BaseService):
 
     @thrownException
     def get_list(self):
-        pro_id = int(self.params.get("pro_id"))
+        pro_id = int(self.params.get("pro_id", 0))
+        conditions = and_()
+        if pro_id:
+            conditions.append(Pro_User.pro_id == pro_id)
         pro_users = self.db.query(
             Pro_User
         ).filter(
-            Pro_User.pro_id == pro_id    
+            conditions
         ).all()
+        # logger.info([i.as_dict() for i in pro_users])
         return self.success(data=pro_users)
 
     @thrownException
