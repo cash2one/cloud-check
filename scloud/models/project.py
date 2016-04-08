@@ -97,7 +97,7 @@ class Pro_Resource_Apply(BaseModel, BaseModelMixin, Pro_Resource_Apply_Mixin):
 
 
 class Pro_User(BaseModel, BaseModelMixin):
-    u"""项目用户"""
+    u"""权限用户"""
     __tablename__ = "pro_user"
     pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
     status = Column(Integer, default=0, info=u"申请状态")

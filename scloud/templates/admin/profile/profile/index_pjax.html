@@ -213,12 +213,12 @@
 
         </section><!-- /.content -->
         <script type="text/javascript">
-        $(function(){
-            ws_pubsub.send("on_init_profile_tasks")
-        })
-        function on_init_profile_tasks(response){
-          $("#activity").html(response.html)
-        }
+        // $(function(){
+        //     ws_pubsub.send("on_init_profile_tasks")
+        // })
+        // function on_init_profile_tasks(response){
+        //   $("#activity").html(response.html)
+        // }
         function do_confirm_start_date(){
           generate_ajax_post({
               form: "#task_confirm_form",
