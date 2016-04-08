@@ -15,6 +15,10 @@ from tornado.web import asynchronous
 from tornado import gen
 from scloud.utils.permission import check_perms, GROUP
 from scloud.services.svc_project import ProjectService
+from scloud.services.svc_apply_publish import ApplyPublish
+from scloud.services.svc_apply_balance import ApplyLoadBalance
+from scloud.services.svc_apply_backups import ApplyBackups
+from scloud.services.svc_apply_user import ProUserService
 from scloud.services.svc_pro_resource_apply import ProResourceCheckService
 from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
@@ -24,26 +28,19 @@ from scloud.const import STATUS_RESOURCE
 from scloud.pubs.pub_tasks import TaskPublish
 
 
-@url("/pro/resource/(?P<res_id>\d+)/detail", name="pro_table_check_detail", active="resource_check_list")
+@url("/pro/pro_publish/(?P<id>\d+)/detail", name="pro_publish_detail", active="pro_table_check_list")
 class ResourceCheckListHandler(AuthHandler):
-    u'待审核资源'
+    u'互联网发布申请内容明细'
     @check_perms('pro_resource_apply.check')
     @unblock
     def get(self, **kwargs):
-        # res_status = self.args.get()
-        svc = ProResourceCheckService(self, kwargs)
-        resource_apply = svc.get_resource()
-        resource_res = svc.get_resources_by_status()
-        if isinstance(resource_res, Exception):
-            raise resource_res
+        svc = ApplyPublish(self, {"id": kwargs["id"]})
+        pro_publish_res = svc.get_publish()
         data = {
-            "resource_apply": resource_apply.data,
-            "resource_res": resource_res,
-            "getattr": getattr,
-            "STATUS_RESOURCE": STATUS_RESOURCE,
-            "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if isinstance(i, int)]
+            "pro_publish_res": pro_publish_res
         }
-        return self.render_to_string("admin/check/check_detail.html", **data)
+        logger.info(pro_publish_res.data)
+        return self.render_to_string("admin/check/_event_pro_publish_detail.html", **data)
 
 
 @url("/pro/event/check_list", name="pro_table_check_list", active="pro_table_check_list")

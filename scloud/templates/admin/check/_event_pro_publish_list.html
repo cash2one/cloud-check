@@ -11,10 +11,15 @@
 <tr>
   <td><input type="checkbox" value="{{ pro_table.id }}"></td>
   <td class="mailbox-star"><a href="javascript:;"><i class="fa fa-star text-yellow"></i></a></td>
-  <!--td class="mailbox-name"><a data-pjax href="{{ reverse_url('pro_table_check_detail', pro_table.id) }}">{{ pro_table.project.user.email or pro_table.project.user.mobile }}</a></td-->
-  <td class="mailbox-subject"><b>{{ pro_table.project.name }}</b></td>
+  <td class="mailbox-subject"><b><a data-pjax href="javascript:;" onclick="load_pro_publish('{{ reverse_url("pro_publish_detail", pro_table.id) }}')">{{ pro_table.project.name }} <i class="fa fa-eye"></a></a></b></td>
   <td class="mailbox-subject">{{ pro_table.domain }}:{{ pro_table.domain_port }}</td>
   <td class="mailbox-subject">{{ pro_table.network_address }}:{{ pro_table.network_port }}</td>
   <td class="mailbox-date">{{ pro_table.update_time }}</td>
 </tr>
 {% endfor %}
+<script type="text/javascript">
+function load_pro_publish(url){
+  console.log(url)
+  $("#pro_table_content").load(url)
+}
+</script>

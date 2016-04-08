@@ -73,9 +73,9 @@
                     </div>
                   </div><!-- /.box-tools -->
                 </div><!-- /.box-header -->
-                <div class="box-body no-padding">
+                <div class="box-body no-padding" id="pro_table_content">
                   <div class="mailbox-controls">
-                    {% include "admin/check/_check_list_buttons.html" %}  
+                    {% include "admin/check/_event_list_buttons.html" %}  
                   </div>
                   <div class="table-responsive mailbox-messages">
                     <table class="table table-hover table-striped" id="pro_table_check_list_table">
@@ -85,11 +85,11 @@
                     </table><!-- /.table -->
                   </div><!-- /.mail-box-messages -->
                 </div><!-- /.box-body -->
-                <div class="box-footer no-padding">
+                <!--div class="box-footer no-padding">
                   <div class="mailbox-controls">
                     {% include "admin/check/_check_list_buttons.html" %}  
                   </div>
-                </div>
+                </div-->
                 {% include "admin/base/base_paginator.html" %}
               </div><!-- /. box -->
             </div><!-- /.col -->

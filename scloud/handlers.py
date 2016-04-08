@@ -18,6 +18,8 @@ from scloud.async_services.svc_act import task_post_action
 from sqlalchemy.exc import SQLAlchemyError
 from scloud.utils.error_code import ERR
 from scloud.utils.error import SystemError
+from scloud.const import STATUS_RESOURCE, STATUS_PRO_TABLES
+from scloud.utils.permission import GROUP, OP
 
 
 def check_exception(method):
@@ -170,6 +172,10 @@ class Handler(BaseHandler):
             "request": self.request,
             "reverse_url": self.application.reverse_url,
             "ERR": ERR,
+            "STATUS_RESOURCE": STATUS_RESOURCE,
+            "STATUS_PRO_TABLES": STATUS_PRO_TABLES,
+            "GROUP": GROUP,
+            "OP": OP,
             "s": s+"&" if s else ""
         })
         # logger.info("\t [render_to_string kwargs]: %s" % kwargs)

@@ -1,0 +1,34 @@
+<div class="mailbox-controls">
+  {% include "admin/check/_event_detail_buttons.html" %}  
+</div>
+<div class="table-responsive mailbox-messages">
+  <table class="table table-hover table-striped" id="pro_table_check_list_table">
+    <tbody>
+      {% set pro_publish = pro_publish_res.data %}
+      <tr>
+        <th>项目名称</th>
+        <td class="mailbox-subject">{{ pro_publish.project.name }}</td>
+      </tr>
+      <tr>
+        <th>域名</th>
+        <td class="mailbox-subject">{{ pro_publish.domain }}</td>
+      </tr>
+      <tr>
+        <th>端口域名</th>
+        <td class="mailbox-subject">{{ pro_publish.domain_port }}</td>
+      </tr>
+      <tr>
+        <th>内网地址</th>
+        <td class="mailbox-subject">{{ pro_publish.network_address }}</td>
+      </tr>
+      <tr>
+        <th>内网端口</th>
+        <td class="mailbox-subject">{{ pro_publish.network_port }}</td>
+      </tr>
+      <tr>
+        <th>是否使用SSL</th>
+        <td class="mailbox-subject">{{ pro_publish.use_ssl }}</td>
+      </tr>
+    </tbody>
+  </table><!-- /.table -->
+</div><!-- /.mail-box-messages -->

@@ -18,11 +18,18 @@ class ApplyPublish(BaseService):
 
     @thrownException
     def get_publish(self):
+        conditions = and_()
+
         pro_id = self.params.get("pro_id")
+        if pro_id:
+            conditions.append(Pro_Publish.pro_id == pro_id)
+        id = self.params.get("id")
+        if pro_id:
+            conditions.append(Pro_Publish.id == id)
         publish = self.db.query(
             Pro_Publish
         ).filter(
-            Pro_Publish.pro_id == pro_id
+            conditions
         ).first()
         return self.success(data=publish)
 
