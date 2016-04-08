@@ -109,7 +109,7 @@ class Pro_User(BaseModel, BaseModelMixin):
 
 
 class Pro_Publish(BaseModel, BaseModelMixin):
-    u"""项目发布"""
+    u"""互联网发布"""
     __tablename__ = "pro_publish"
     pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
     status = Column(Integer, default=0, info=u"申请状态")
@@ -141,7 +141,7 @@ class Pro_Balance(BaseModel, BaseModelMixin):
 
 
 class Pro_Backup(BaseModel, BaseModelMixin):
-    u"""项目备份"""
+    u"""定期备份"""
     __tablename__ = "pro_backup"
     json_columns = [
         "plot"

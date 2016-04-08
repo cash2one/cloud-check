@@ -14,6 +14,7 @@ import time
 from tornado.web import asynchronous
 from tornado import gen
 from scloud.utils.permission import check_perms
+from scloud.pubs.pub_tasks import TaskPublish
 from scloud.services.svc_profile import ProfileService
 from scloud.services.svc_act import ActHistoryService
 from scloud.utils.unblock import unblock
@@ -25,16 +26,20 @@ class ProfileHandler(AuthHandler):
     def get_index_page(self, **kwargs):
         svc = ActHistoryService(self, kwargs)
         act_histories_res = svc.get_list()
-        apply_tasks_res = svc.get_res_tasks()
+        # apply_tasks_res = svc.get_res_tasks()
         last_apply_res = svc.get_last_apply()
         if isinstance(act_histories_res, Exception):
             raise act_histories_res
         data = {
             "STATUS_RESOURCE": STATUS_RESOURCE,
             "act_histories_res": act_histories_res,
-            "apply_tasks_res": apply_tasks_res,
+            # "apply_tasks_res": apply_tasks_res,
             "last_apply_res": last_apply_res,
         }
+        pub_svc = TaskPublish(self)
+        pub_data = pub_svc.publish_tasks(self.current_user.id, do_publish=False)
+        logger.info(pub_data.data)
+        data.update(pub_data.data)
         return data
 
     @unblock

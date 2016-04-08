@@ -29,6 +29,9 @@ function init_ws_pubsub(){
     }else if ( action == "on_notice_checker" ){
       // $("#chatAudio")[0].play();
       on_task(response)
+    }else if ( action == "on_init_profile_tasks" ){
+      // $("#chatAudio")[0].play();
+      on_init_profile_tasks(response)
     }
   };
   ws_pubsub.onclose = function() {

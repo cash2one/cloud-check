@@ -57,6 +57,12 @@ class RealtimeHandler(MySocketHandler):
         logger.info("#"*30+" [user %s init tasks finished] "%self.user_id+"#"*30)
 
     def on_message(self, message):
+        if message == "on_init_profile_tasks":
+            logger.info("#"*30+" [user %s %s] "%(self.user_id, message)+"#"*30)
+            # request_result = publish_tasks(self.user_id)
+            request_result = publish_tasks.delay(self.user_id, action="on_init_profile_tasks", template="admin/notice/profile_tasks.html")
+            logger.info(request_result)
+            logger.info("#"*30+" [user %s %s finished] "%(self.user_id, message)+"#"*30)
         pass
 
     def on_close(self):

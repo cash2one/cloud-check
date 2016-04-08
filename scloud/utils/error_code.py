@@ -9,6 +9,8 @@ error = namedtuple("operate", ["errvalue", "errcode"])
 
 class ERROR(object):
     system_err = error(errcode=-999999, errvalue=u"系统错误")
+    params_err = error(errcode=-999406, errvalue=u"参数错误")
+    params_empty_err = error(errcode=-999405, errvalue=u"参数不能为空")
     not_found_err = error(errcode=-999404, errvalue=u"对不起！您正在访问的数据资源未找到")
     xsrf_err = error(errcode=-999403, errvalue=u"缺少xsrf参数，禁止提交表单")
     database_save_err = error(errcode=-999402, errvalue=u"数据库保存错误")

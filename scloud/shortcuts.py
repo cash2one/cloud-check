@@ -59,11 +59,12 @@ cache = get_cache()
 # application = make_application(scloud)
 
 def render_to_string(tmpl, **kwargs):
-    from scloud.app import reverse_url
+    from scloud.app import reverse_url, static_url
     template = env.get_template(tmpl)
     kwargs.update({
         "CONF": CONF,
         "reverse_url": reverse_url,
+        "static_url": static_url,
         "ERR": ERR,
     })
     template_string = template.render(**kwargs)

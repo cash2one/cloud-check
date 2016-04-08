@@ -11,8 +11,10 @@ class BaseService(object):
         self.db = handler.db
         self.handler = handler
         self.params = {}
-        if handler:
+        if handler and hasattr(handler, "args"):
             self.params.update(self.handler.args)
+        else:
+            setattr(handler, "args", {})
         if params:
             self.params.update(params)
         else:

@@ -3,7 +3,7 @@
 {% from "admin/base/base_macros.html" import get_profile with context %}
 {% from "admin/base/base_macros.html" import get_history_module with context %}
 
-{% import "admin/base/base_macros.html" as mbase %}
+{% import "admin/base/base_macros.html" as base %}
         {% set current_user = handler.current_user %}
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -56,7 +56,14 @@
                 </ul>
                 <div class="tab-content">
                   <div class="active tab-pane" id="activity">
-                    {% set task_list = apply_tasks_res.data %}
+                    {# 该页面改为websocket+redis pub/sub推送数据方式 #}
+                    {#
+                    <div class="post">
+                    加载数据中
+                    </div>
+                    #}
+                    
+                    {#% set task_list = apply_tasks_res.data %#}
                     {% set last_apply = last_apply_res.data %}
                     {% if task_list|length <= 0 %}
                       {% if "pro_resource_apply.view" in current_user.current_perms %}
@@ -77,12 +84,24 @@
                         </div>
                       {% endif %}
                     {% endif %}
-                    {% for task in apply_tasks_res.data %}
+                    {% for task in task_list %}
                       {% if "pro_resource_apply.view" in current_user.current_perms %}
                         {{ get_task_module(task, STATUS_RESOURCE, user=task.user, imchecker=False) }}
                       {% elif "pro_resource_apply.check" in current_user.current_perms %}
                         {{ get_task_module(task, STATUS_RESOURCE, user=task.user, imchecker=True) }}
                       {% endif %}
+                    {% endfor %}
+                    {% for pro_user in pro_user_list %}
+                      {{ base.pro_table_profile_task(pro_user, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES, handler=handler) }}
+                    {% endfor %}
+                    {% for pro_publish in pro_publish_list %}
+                    {{ base.pro_table_profile_task(pro_publish, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES, handler=handler) }}
+                    {% endfor %}
+                    {% for pro_balance in pro_balance_list %}
+                    {{ base.pro_table_profile_task(pro_balance, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES, handler=handler) }}
+                    {% endfor %}
+                    {% for pro_backup in pro_backup_list %}
+                      {{ base.pro_table_profile_task(pro_backup, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES, handler=handler) }}
                     {% endfor %}
                   </div><!-- /.tab-pane -->
                   <div class="tab-pane" id="timeline">
@@ -194,6 +213,12 @@
 
         </section><!-- /.content -->
         <script type="text/javascript">
+        $(function(){
+            ws_pubsub.send("on_init_profile_tasks")
+        })
+        function on_init_profile_tasks(response){
+          $("#activity").html(response.html)
+        }
         function do_confirm_start_date(){
           generate_ajax_post({
               form: "#task_confirm_form",
