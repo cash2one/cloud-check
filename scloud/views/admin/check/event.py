@@ -91,3 +91,18 @@ class ProBalanceDetailHandler(AuthHandler):
         }
         logger.info(pro_balance_res.data)
         return self.render_to_string("admin/check/_event_pro_balance_detail.html", **data)
+
+
+@url("/pro/pro_backup/(?P<id>\d+)/detail", name="pro_backup_detail", active="pro_table_check_list")
+class ProBackupDetailHandler(AuthHandler):
+    u'互联网发布申请内容明细'
+    @check_perms('pro_resource_apply.check')
+    @unblock
+    def get(self, **kwargs):
+        svc = ApplyBackups(self, {"id": kwargs["id"]})
+        pro_backup_res = svc.get_info()
+        data = {
+            "pro_backup_res": pro_backup_res
+        }
+        logger.info(pro_backup_res.data)
+        return self.render_to_string("admin/check/_event_pro_backup_detail.html", **data)

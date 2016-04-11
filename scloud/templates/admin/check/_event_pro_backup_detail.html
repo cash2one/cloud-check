@@ -1,0 +1,66 @@
+<div class="box-header with-border">
+  <h3 class="box-title">
+    定期备份详情
+  </h3>
+</div><!-- /.box-header -->
+<div class="box-body no-padding">
+  <div class="mailbox-controls">
+  <a data-pjax href="" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-reply"></i> 返回</a>
+    {% include "admin/check/_event_detail_buttons.html" %}
+  </div>
+  <div class="table-responsive mailbox-messages">
+    <table class="table table-hover table-striped" id="pro_table_check_list_table">
+      <tbody>
+        {% set pro_backup = pro_backup_res.data %}
+        <tr>
+          <th>项目名称</th>
+          <td class="mailbox-subject">{{ pro_backup.project.name }}</td>
+        </tr>
+        <tr>
+          <th>资源申请</th>
+          <td class="mailbox-subject">{{ pro_backup.res_apply.desc }}</td>
+        </tr>
+        <tr>
+          <th>状态</th>
+          <td class="mailbox-subject">
+          <span class="label label-{{ STATUS_PRO_TABLES.get(pro_backup.status).level }}">
+          {{ STATUS_PRO_TABLES.get(pro_backup.status).value }}
+          </span>
+          </td>
+        </tr>
+        <tr>
+          <th>资源申请定期备份数量</th>
+          <td class="mailbox-subject">{{ pro_backup.res_apply.disk_backup }}</td>
+        </tr>
+        <tr>
+          <th>磁盘</th>
+          <th>策略</th>
+        </tr>
+        {% for member in pro_backup.as_dict().plot %}
+        <tr>
+          <td class="mailbox-subject">{{ member.disk }}</td>
+          <td class="mailbox-subject">每
+          <span class="label label-info">
+          {{ member.plot }}
+          </span>
+          {% if member.interval %}
+          <span class="label label-warning">
+          {{ member.interval }}
+          </span>
+          {% endif %}
+          的
+          <span class="label label-danger">
+          {{ member.backup_time }}
+          </span>
+          备份</td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <th>申请时间</th>
+          <td class="mailbox-subject">{{ pro_backup.create_time|getGoodTime }}</td>
+        </tr>
+      </tbody>
+    </table><!-- /.table -->
+  </div><!-- /.mail-box-messages -->
+</div>
+
