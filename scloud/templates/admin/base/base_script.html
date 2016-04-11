@@ -135,9 +135,17 @@ function check_response(response){
  * 必填参数：dom_container, url
  */
 function load_page(dom_container, url){
+  console.log("load_page start");
   show_loading();
+  console.log($(dom_container));
+  console.log(url);
   $(dom_container).load(url, function(response, status, xhr){
-    hide_loading();
+    if (status == 'timeout'){
+      load_page(dom_container, url);
+    }else{
+      hide_loading();
+      console.log("load_page finish");
+    }
   })
 }
 

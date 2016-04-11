@@ -1,0 +1,77 @@
+<div class="box-header with-border">
+  <h3 class="box-title">
+    负载均衡详情
+  </h3>
+</div><!-- /.box-header -->
+<div class="box-body no-padding">
+  <div class="mailbox-controls">
+  <a data-pjax href="" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-reply"></i> 返回</a>
+    {% include "admin/check/_event_detail_buttons.html" %}
+  </div>
+  <div class="table-responsive mailbox-messages">
+    <table class="table table-hover table-striped" id="pro_table_check_list_table">
+      <tbody>
+        {% set pro_balance = pro_balance_res.data %}
+        <tr>
+          <th>项目名称</th>
+          <td class="mailbox-subject">{{ pro_balance.project.name }}</td>
+        </tr>
+        <tr>
+          <th>资源申请</th>
+          <td class="mailbox-subject">{{ pro_balance.res_apply.desc }}</td>
+        </tr>
+        
+        <tr>
+          <th>健康检查</th>
+          <td class="mailbox-subject">{{ pro_balance.health }}</td>
+        </tr>
+        <tr>
+          <th>url</th>
+          <td class="mailbox-subject">{{ pro_balance.url }}</td>
+        </tr>
+        <tr>
+          <th>关键字</th>
+          <td class="mailbox-subject">{{ pro_balance.keyword }}</td>
+        </tr>
+        <tr>
+          <th>描述</th>
+          <td class="mailbox-subject">{{ pro_balance.desc }}</td>
+        </tr>
+        <tr>
+          <th>状态</th>
+          <td class="mailbox-subject">
+          <span class="label label-{{ STATUS_PRO_TABLES.get(pro_balance.status).level }}">
+          {{ STATUS_PRO_TABLES.get(pro_balance.status).value }}
+          </span>
+          </td>
+        </tr>
+        <tr>
+          <th>策略</th>
+          <td class="mailbox-subject">{{ pro_balance.plot }}</td>
+        </tr>
+        <tr>
+          <th>是否使用SSL</th>
+          <td class="mailbox-subject">{{ pro_balance.use_ssl }}</td>
+        </tr>
+        <tr>
+          <th>资源申请负载均衡数量</th>
+          <td class="mailbox-subject">{{ pro_balance.res_apply.loadbalance }}</td>
+        </tr>
+        <tr>
+          <th>地址</th>
+          <th>端口</th>
+        </tr>
+        {% for member in pro_balance.as_dict().members %}
+        <tr>
+          <td class="mailbox-subject">{{ member.address }}</td>
+          <td class="mailbox-subject">{{ member.port }}</td>
+        {% endfor %}
+        <tr>
+          <th>申请时间</th>
+          <td class="mailbox-subject">{{ pro_balance.create_time|getGoodTime }}</td>
+        </tr>
+      </tbody>
+    </table><!-- /.table -->
+  </div><!-- /.mail-box-messages -->
+</div>
+

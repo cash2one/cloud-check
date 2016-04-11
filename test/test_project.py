@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 
+import uuid
 from os.path import abspath, dirname, join
 current_path = abspath(dirname(__file__))
 import sys
@@ -13,7 +15,6 @@ from scloud.models.project import Pro_Info
 
 
 if __name__ == '__main__':
-    import uuid
     logger.info("-----[0 post_act_history]------")
     # try:
     with DataBaseService({}) as svc:

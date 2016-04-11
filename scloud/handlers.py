@@ -20,6 +20,7 @@ from scloud.utils.error_code import ERR
 from scloud.utils.error import SystemError
 from scloud.const import STATUS_RESOURCE, STATUS_PRO_TABLES
 from scloud.utils.permission import GROUP, OP
+from sqlalchemy.orm.session import SessionTransaction
 
 
 def check_exception(method):
@@ -98,24 +99,20 @@ class Handler(BaseHandler):
         return self.messages
 
     def on_finish(self):
-        logger.info("\t" + "====[EXIT]====")
-        # s = self.svc.db
-        # from code import interact
-        # interact(local=locals())
-        # session_dict = s.__dict__
-        # logger.error("session_dict: %s" % session_dict)
-        try:
-            # transaction = session_dict.get("transaction")
-            # logger.error("transaction: %s" % transaction)
-            #if transaction:
-            # dispatch = session_dict.get("dispatch")
-            self.db.commit()
-            # self.db.flush()
-            logger.info("\t" + "====[COMMIT]====")
-        except Exception:
-            logThrown()
-            self.db.rollback()
-            logger.info("\t" + "====[ROLLBACK]====")
+        # logger.info("\t" + "====[EXIT]====")
+        # self.svc.__exit__(None, None, None)
+        # try:
+        #     # transaction = session_dict.get("transaction")
+        #     # logger.error("transaction: %s" % transaction)
+        #     #if transaction:
+        #     # dispatch = session_dict.get("dispatch")
+        #     self.db.commit()
+        #     # self.db.flush()
+        #     logger.info("\t" + "====[COMMIT]====")
+        # except Exception:
+        #     logThrown()
+        #     self.db.rollback()
+        #     logger.info("\t" + "====[ROLLBACK]====")
         # self.db.remove()
         self.db.close()
         logger.info("\t" + "====[CLOSE]====")
