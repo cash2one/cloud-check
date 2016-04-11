@@ -131,6 +131,17 @@ function check_response(response){
 }
 
 /**
+ * LOAD page
+ * 必填参数：dom_container, url
+ */
+function load_page(dom_container, url){
+  show_loading();
+  $(dom_container).load(url, function(response, status, xhr){
+    hide_loading();
+  })
+}
+
+/**
  *  常用ajax提交表单
  *  必填参数：form, button
  *  选填参数：method, pjax_container, onSuccess, onTimeout

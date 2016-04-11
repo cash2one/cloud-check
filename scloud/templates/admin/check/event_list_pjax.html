@@ -42,6 +42,7 @@
                   </ul>
                 </div><!-- /.box-body -->
               </div><!-- /. box -->
+              {#
               <div class="box box-solid">
                 <div class="box-header with-border">
                   <h3 class="box-title">Labels</h3>
@@ -57,23 +58,18 @@
                   </ul>
                 </div><!-- /.box-body -->
               </div><!-- /.box -->
+              #}
             </div><!-- /.col -->
             <div class="col-md-9">
-              <div class="box box-primary">
+              <div class="box box-primary" id="pro_table_content">
                 <div class="box-header with-border">
-                <h3 class="box-title">
-                  {% if g %}
-                    {{ g.name }}
-                  {% endif %}
-                </h3>
-                  <div class="box-tools pull-right">
-                    <div class="has-feedback">
-                      <input type="text" class="form-control input-sm" placeholder="Search Mail">
-                      <span class="glyphicon glyphicon-search form-control-feedback"></span>
-                    </div>
-                  </div><!-- /.box-tools -->
+                  <h3 class="box-title">
+                    {% if g %}
+                      {{ g.name }}
+                    {% endif %}
+                  </h3>
                 </div><!-- /.box-header -->
-                <div class="box-body no-padding" id="pro_table_content">
+                <div class="box-body no-padding">
                   <div class="mailbox-controls">
                     {% include "admin/check/_event_list_buttons.html" %}  
                   </div>
@@ -85,13 +81,15 @@
                     </table><!-- /.table -->
                   </div><!-- /.mail-box-messages -->
                 </div><!-- /.box-body -->
+                {#
                 <!--div class="box-footer no-padding">
                   <div class="mailbox-controls">
                     {% include "admin/check/_check_list_buttons.html" %}  
                   </div>
                 </div-->
-                {% include "admin/base/base_paginator.html" %}
+                #}
               </div><!-- /. box -->
+                  {% include "admin/base/base_paginator.html" %}
             </div><!-- /.col -->
           </div><!-- /.row -->
         </section><!-- /.content -->
