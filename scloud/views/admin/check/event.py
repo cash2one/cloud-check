@@ -144,6 +144,6 @@ class ProTableDoCheckHandler(EventCheckListHandler):
             users = [u.user_id for u in pro_users]
             for user_id in set(users):
                 publish_notice_user.delay(user_id)
-        data = self.get_index_page("pro_user")
+        data = self.get_index_page(pro_table)
         tmpl = self.render_to_string("admin/check/event_list_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))

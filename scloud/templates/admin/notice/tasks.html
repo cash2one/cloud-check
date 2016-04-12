@@ -1,5 +1,5 @@
 {% set tasks = tasks_res.data %}
-{% import "admin/base/base_macros.html" as base %}
+{% import "admin/base/base_macros.html" as base with context %}
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-flag-o"></i>
                   {% if total > 0 %}
@@ -9,7 +9,8 @@
                 {% if total > 0 %}
                 <ul class="dropdown-menu" style="width:580px;">
                   <!-- tip -->
-                  <li class="header">You have {{ tasks|length }} tasks</li>
+                  <!-- <li class="header">You have {{ tasks|length }} tasks</li> -->
+                  <li class="header">You have {{ total }} tasks</li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">

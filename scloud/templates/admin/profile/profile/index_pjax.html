@@ -2,6 +2,7 @@
 {% from "admin/base/base_macros.html" import get_task_module with context %}
 {% from "admin/base/base_macros.html" import get_profile with context %}
 {% from "admin/base/base_macros.html" import get_history_module with context %}
+{% from "admin/base/base_macros.html" import pro_table_profile_task with context %}
 
 {% import "admin/base/base_macros.html" as base %}
         {% set current_user = handler.current_user %}
@@ -92,16 +93,16 @@
                       {% endif %}
                     {% endfor %}
                     {% for pro_user in pro_user_list %}
-                      {{ base.pro_table_profile_task(pro_user, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES, handler=handler) }}
+                      {{ pro_table_profile_task(pro_user, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES, handler=handler) }}
                     {% endfor %}
                     {% for pro_publish in pro_publish_list %}
-                    {{ base.pro_table_profile_task(pro_publish, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES, handler=handler) }}
+                    {{ pro_table_profile_task(pro_publish, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES, handler=handler) }}
                     {% endfor %}
                     {% for pro_balance in pro_balance_list %}
-                    {{ base.pro_table_profile_task(pro_balance, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES, handler=handler) }}
+                    {{ pro_table_profile_task(pro_balance, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES, handler=handler) }}
                     {% endfor %}
                     {% for pro_backup in pro_backup_list %}
-                      {{ base.pro_table_profile_task(pro_backup, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES, handler=handler) }}
+                      {{ pro_table_profile_task(pro_backup, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES, handler=handler) }}
                     {% endfor %}
                   </div><!-- /.tab-pane -->
                   <div class="tab-pane" id="timeline">

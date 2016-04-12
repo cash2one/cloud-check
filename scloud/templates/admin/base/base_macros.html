@@ -326,7 +326,7 @@
     {% endif %}
   {% endif %}
   <li><!-- Task item -->
-    <a data-pjax href="javascript:;">
+    <a data-pjax href="{{ reverse_url('pro_table_check_list') }}?pro_table={{ pro_table.__table__ }}">
       <h3>{{ message }}
         <small class="pull-right">{{ percent }}%</small>
       </h3>
@@ -378,11 +378,11 @@
     {% if imchecker %}
         <!-- (用户<span class='label label-{{ ST.level }}'>{{ ST.value }}</span>) -->
         {{ message }}
-        <a data-pjax href='javascript:;' class='pull-right btn-box-tool'><i class='fa fa-check'> 去处理</i></a>
+        <a data-pjax href="{{ reverse_url('pro_table_check_list') }}?pro_table={{ pro_table.__table__ }}" class='pull-right btn-box-tool'><i class='fa fa-check'> 去处理</i></a>
     {% else %}
         <!-- (管理员<span class='label label-{{ ST.level }}'>{{ ST.value }}</span>) -->
         {{ message }}
-        <a data-pjax href='javascript:;' class='pull-right btn-box-tool'><i class='fa fa-check'> 确认</i></a>
+        <a data-pjax href="javascript:;" class='pull-right btn-box-tool'><i class='fa fa-check'> 确认</i></a>
     {% endif %}
   </p>
 </div><!-- /.post -->
