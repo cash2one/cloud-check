@@ -116,7 +116,7 @@ class TaskPublish(BaseService):
 
     @thrownException
     def do_publish(self, user_id, action, template="admin/notice/tasks.html", **data):
-        # logger.info(data)
+        logger.info("[ %s: %s ]" % (action, user_id))
         chat = {
             "user_id": user_id,
             "action": action,

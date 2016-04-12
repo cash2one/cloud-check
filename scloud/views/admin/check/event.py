@@ -123,18 +123,25 @@ class ProBackupDetailHandler(AuthHandler):
 @url("/pro/pro_table/do_check", name="pro_table_do_check")
 class ProTableDoCheckHandler(EventCheckListHandler):
     u'''受理通过'''
+
     SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("PRO_USER", "PRO_PUBLISH")
 
     @check_perms('pro_resource_apply.check')
     @unblock
     def pro_user(self):
-        # pro_table = self.args.get("pro_table")
         pro_table = ProUserService(self)
         check_res = pro_table.do_check()
+        return self.do_return(check_res)
+
+    def do_return(self, check_res):
+        method = self.request.method
+        logger.info(method)
+        doc = GROUP.get(method.lower()).name
+        logger.info(doc)
         data = self.get_index_page("pro_user")
         tmpl = self.render_to_string("admin/check/event_list_pjax.html", **data)
         if check_res.return_code == 0:
-            self.add_message(u"所选申请全选用户已处理完毕", level="success")
+            self.add_message(u"所选申请%s已处理完毕" % doc, level="success")
             pro_users = check_res.data
             users = [u.user_id for u in pro_users]
             for user_id in set(users):

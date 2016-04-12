@@ -46,12 +46,12 @@ def publish_notice_checker(this_id=0):
 def publish_notice_user(user_id=0):
     logger.info("#"*30+" [user %s notice_user tasks] "%user_id+"#"*30)
     action = "on_notice_user"
-    publish_tasks(user_id, action)
     with DataBaseService({}) as DBSvc:
         svc = PtUserService(DBSvc)
         pt_users_res = svc.get_list()
         user_ids = [u.id for u in pt_users_res.data if "pro_resource_apply.check" in u.get_current_perms()]
         pub_svc = TaskPublish(DBSvc)
+        pub_svc.publish_tasks(user_id, action)
         for this_id in user_ids:
             # 通知所有审核员
             pub_svc.publish_tasks(this_id)

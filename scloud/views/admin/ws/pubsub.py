@@ -15,8 +15,8 @@ from scloud.views.admin.ws.index import MySocketHandler
 from scloud.utils.publish.base import r
 # from scloud.utils.publish.tasks import publish_tasks
 from scloud.async_services.publish_task import publish_tasks
-from scloud.utils.publish.publish_pro_user import publish_pro_user
-from scloud.const import STATUS_PRO_TABLES
+# from scloud.utils.publish.publish_pro_user import publish_pro_user
+# from scloud.const import STATUS_PRO_TABLES
 
 
 LISTENERS = dict()
@@ -42,29 +42,29 @@ def redis_listener():
 class RealtimeHandler(MySocketHandler):
     def check_origin(self, origin):
         return True
+
     def open(self, *args, **kwargs):
         self.user_id = self.get_argument("user_id", 0)
         LISTENERS[str(self.user_id)] = self
         logger.info(LISTENERS)
-        data = {
-            "this_id": self.user_id
-        }
-        params = "&".join(["%s=%s" % (k, v) for k, v in data.items()])
-        logger.info("#"*30+" [user %s init tasks] "%self.user_id+"#"*30)
+        # data = {
+        #     "this_id": self.user_id
+        # }
+        # params = "&".join(["%s=%s" % (k, v) for k, v in data.items()])
+        logger.info("#" * 30 + " [user %s init tasks] " % self.user_id + "#" * 30)
         # request_result = publish_tasks(self.user_id)
         request_result = publish_tasks.delay(self.user_id)
         # logger.info(request_result)
-        logger.info("#"*30+" [user %s init tasks finished] "%self.user_id+"#"*30)
+        logger.info("#" * 30 + " [user %s init tasks finished] %s " % (self.user_id, request_result) + "#" * 30)
 
     def on_message(self, message):
-        if message == "on_init_profile_tasks":
-            logger.info("#"*30+" [user %s %s] "%(self.user_id, message)+"#"*30)
-            # request_result = publish_tasks(self.user_id)
-            request_result = publish_tasks.delay(self.user_id, action="on_init_profile_tasks", template="admin/notice/profile_tasks.html")
-            logger.info(request_result)
-            logger.info("#"*30+" [user %s %s finished] "%(self.user_id, message)+"#"*30)
+        # if message == "on_init_profile_tasks":
+        #     logger.info("#"*30+" [user %s %s] "%(self.user_id, message)+"#"*30)
+        #     # request_result = publish_tasks(self.user_id)
+        #     request_result = publish_tasks.delay(self.user_id, action="on_init_profile_tasks", template="admin/notice/profile_tasks.html")
+        #     logger.info(request_result)
+        #     logger.info("#"*30+" [user %s %s finished] "%(self.user_id, message)+"#"*30)
         pass
 
     def on_close(self):
         del LISTENERS[str(self.user_id)]
-
