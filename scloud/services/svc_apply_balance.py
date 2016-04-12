@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
-from tornado import gen
+# from datetime import datetime
+# from tornado import gen
 from scloud.services.base import BaseService
-from scloud.models.base import MYSQL_POOL
-from scloud.models.pt_user import PT_User
+# from scloud.models.base import MYSQL_POOL
+# from scloud.models.pt_user import PT_User
 from scloud.models.project import Pro_Info
 from scloud.config import logger, thrownException
-from sqlalchemy import and_, or_
+from sqlalchemy import and_
 from scloud.utils.error_code import ERROR
-from scloud.utils.error import NotFoundError
-from scloud.const import pro_resource_apply_status_types
-from scloud.models.project import Pro_Info, Pro_Balance 
+# from scloud.utils.error import NotFoundError
+# from scloud.const import pro_resource_apply_status_types
+from scloud.models.project import Pro_Balance 
 import simplejson
 
 
@@ -19,6 +19,7 @@ class ApplyLoadBalance(BaseService):
 
     @thrownException
     def get_loadbalance(self):
+        logger.info("------get_loadbalance------")
         pro_id = self.params.get("pro_id")
         pro_info = self.db.query(
             Pro_Info
@@ -87,6 +88,7 @@ class ApplyLoadBalance(BaseService):
         do_balance_info.url = url
         do_balance_info.keyword = keyword
         do_balance_info.desc = desc
+        do_balance_info.user_id = self.handler.current_user.id
         if len(g_plot_messages) == 0:
             do_balance_info.status = 0
             do_balance_info.members = member
@@ -95,6 +97,5 @@ class ApplyLoadBalance(BaseService):
             return self.success(data=do_balance_info)
         else:
             do_balance_info.status = -1
-            do_balance_info.members= simplejson.dumps(members)
+            do_balance_info.members = simplejson.dumps(members)
             return self.failures(g_plot_messages, data=do_balance_info)
-

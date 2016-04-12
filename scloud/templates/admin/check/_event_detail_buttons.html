@@ -68,13 +68,13 @@ function do_pro_table_action(options){
   console.log(checked_values)
   var params = {
     _xsrf: $cookie("_xsrf"),
-    res_ids: checked_values.join(","),
+    ids: checked_values.join(","),
     action: action,
     _: Math.random()
   }
   $.ajax({
-    url: "{{ reverse_url('resource_check_list') }}?res_status={{ handler.args.get('res_status', 0)}}",
-    type: "POST",
+    url: "{{ reverse_url('pro_table_do_check') }}",
+    type: "{{ pro_table }}",
     dataType: "json",
     data: params,
     beforeSend: function(xhr, settings){
@@ -89,7 +89,7 @@ function do_pro_table_action(options){
     },
     error: function(xhr, Status){
       if (Status == "timeout"){
-        do_resource_action({action: action});
+        do_pro_table_action({action: action});
       }
     }
   })

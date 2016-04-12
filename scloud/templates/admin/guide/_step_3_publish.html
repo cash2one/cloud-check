@@ -22,12 +22,12 @@
         {% set use_ssl = handler.args.get("use_ssl", "-1")|string %}
         {% set status = handler.args.get("status", "0")|int %}
       {% else %}
-        {% set domain = data.domain %}
-        {% set domain_port = data.domain_port %}
-        {% set network_address = data.network_address %}
-        {% set network_port = data.network_port %}
-        {% set use_ssl = data.use_ssl|string %}
-        {% set status = data.status|int %}
+        {% set domain = data.domain if data else "" %}
+        {% set domain_port = data.domain_port if data else "" %}
+        {% set network_address = data.network_address if data else "" %}
+        {% set network_port = data.network_port if data else "" %}
+        {% set use_ssl = data.use_ssl|string if data else "" %}
+        {% set status = data.status|int if data else "" %}
       {% endif %}
 
       {{ base.form_input("域名", "domain", res=publish_res, value=domain,

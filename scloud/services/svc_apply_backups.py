@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
-from tornado import gen
+# from datetime import datetime
+# from tornado import gen
 from scloud.services.base import BaseService
-from scloud.models.base import MYSQL_POOL
-from scloud.models.pt_user import PT_User
+# from scloud.models.base import MYSQL_POOL
+# from scloud.models.pt_user import PT_User
 from scloud.models.project import Pro_Info
 from scloud.config import logger, thrownException
-from sqlalchemy import and_, or_
+from sqlalchemy import and_
 from scloud.utils.error_code import ERROR
-from scloud.utils.error import NotFoundError
-from scloud.const import pro_resource_apply_status_types
-from scloud.models.project import Pro_Info, Pro_Backup 
+# from scloud.utils.error import NotFoundError
+# from scloud.const import pro_resource_apply_status_types
+from scloud.models.project import Pro_Backup 
 import simplejson
+
 
 class ApplyBackups(BaseService):
 
@@ -80,12 +81,13 @@ class ApplyBackups(BaseService):
             if not backup_time:
                 plot_messages.append(self.failure(ERROR.pro_backups_backup_time_empty_err))
                 g_plot_messages.append(self.failure(ERROR.pro_backups_backup_time_empty_err))
-            plot_mem["failures"] = plot_messages
                 # return self.failure(ERROR.pro_backups_backup_time_empty_err)
+            plot_mem["failures"] = plot_messages
         logger.info(plot_s)
         do_backups_info, created = Pro_Backup.get_or_create_obj(self.db, pro_id=pro_id)
         do_backups_info.pro_id = pro_id
         do_backups_info.res_apply_id = res_apply_id
+        do_backups_info.user_id = self.handler.current_user.id
         logger.info("len(plot_messages): %s" % len(g_plot_messages))
         if len(g_plot_messages) == 0:
             do_backups_info.status = 0
@@ -98,4 +100,3 @@ class ApplyBackups(BaseService):
             do_backups_info.status = -1
             do_backups_info.plot = simplejson.dumps(plot_s)
             return self.failures(g_plot_messages, data=do_backups_info)
-

@@ -340,20 +340,26 @@
   {# 设置提示语 #}
   {% if imchecker %}
     {% if pro_table.__table__|string == "pro_user" %}
-      {% set message = "{} 申请的项目用户{}{}，请受理".format(pro_table.project.user.email, pro_table.username, ST.value) %}
+      {% set message = "{} 申请的项目用户{}{}，请受理".format(pro_table.user.email, pro_table.username, ST.value) %}
     {% elif pro_table.__table__|string in ["pro_publish", "pro_balance", "pro_backup"] %}
-    {% set message = "{} 申请的{}内容{}，请受理".format(pro_table.project.user.email, pro_table.__doc__, ST.value) %}
+      {% set message = "{} 申请的{}内容{}，请受理".format(pro_table.user.email, pro_table.__doc__, ST.value) %}
     {% endif %}
   {% else %}
+    {% if pro_table.__table__|string == "pro_user" %}
+      {% set message = "{} 受理的项目用户{}{}".format(pro_table.checker.email, pro_table.username, ST.value) %}
+    {% elif pro_table.__table__|string in ["pro_publish", "pro_balance", "pro_backup"] %}
+      {% set message = "{} 受理的{}内容{}".format(pro_table.checker.email, pro_table.__doc__, ST.value) %}
+    {% endif %}
   {% endif %}
 <div class="post">
   <div class="user-block">
     <img class="img-circle img-bordered-sm" src="{{ handler.static_url('default/dist/img/user2-160x160.jpg') }} " alt="user image">
     <span class='username'>
-      {% set user = pro_table.project.user %}
       {% if imchecker %}
+        {% set user = pro_table.user %}
         <a href="#">用户：{{ user.email or user.mobile or user.username or "匿名用户" }}</a>
-      {% elif user %}
+      {% else %}
+        {% set checker = pro_table.checker %}
         <a href="#">管理员：{{ checker.email or checker.mobile or checker.username or "匿名用户" }}</a>
       {% endif %}
     </span>
@@ -364,6 +370,10 @@
         (用户{{ STATUS_PRO_TABLES.get(pro_table.status).value.upper() }})
         {{ message }}
         <a data-pjax href='javascript:;' class='pull-right btn-box-tool'><i class='fa fa-check'> 去处理</i></a>
+    {% else %}
+        (管理员{{ STATUS_PRO_TABLES.get(pro_table.status).value.upper() }})
+        {{ message }}
+        <a data-pjax href='javascript:;' class='pull-right btn-box-tool'><i class='fa fa-check'> 确认</i></a>
     {% endif %}
   </p>
 </div><!-- /.post -->

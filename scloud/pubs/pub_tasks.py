@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
 
 import simplejson
-from datetime import datetime
-from tornado import gen
+# from datetime import datetime
+# from tornado import gen
 from scloud.services.base import BaseService
 from scloud.services.svc_pt_user import PtUserService
-from scloud.models.base import MYSQL_POOL
-from scloud.models.pt_user import PT_User
-from scloud.models.act import Act_History, Act_Pro_History
-from scloud.models.project import Pro_Resource_Apply
+# from scloud.models.base import MYSQL_POOL
+# from scloud.models.pt_user import PT_User
+# from scloud.models.act import Act_History, Act_Pro_History
+# from scloud.models.project import Pro_Resource_Apply
 from scloud.config import logger, thrownException
-from sqlalchemy import and_, or_
-from scloud.utils.error_code import ERROR
-from scloud.utils.error import NotFoundError
-from scloud.const import pro_resource_apply_status_types, STATUS_RESOURCE
+# from sqlalchemy import and_, or_
+# from scloud.utils.error_code import ERROR
+# from scloud.utils.error import NotFoundError
 
-from scloud.services.svc_pt_user import PtUserService
 from scloud.services.svc_act import ActHistoryService
 from scloud.services.svc_apply_user import ProUserService
 from scloud.services.svc_apply_publish import ApplyPublish
@@ -34,6 +32,7 @@ class TaskPublish(BaseService):
 
         user_svc = PtUserService(self, {"user_id": user_id})
         pt_user_res = user_svc.get_info()
+        logger.info(pt_user_res)
         if "pro_resource_apply.check" in pt_user_res.data.get_current_perms():
             imchecker = True
         else:
@@ -60,12 +59,12 @@ class TaskPublish(BaseService):
             "imchecker": imchecker,
             "STATUS_PRO_TABLES": STATUS_PRO_TABLES
         })
-        logger.info(pro_user_list)
+        # logger.info(pro_user_list)
 
         # 获取互联网发布申请列表
         svc = ApplyPublish(self, {"user_id": user_id})
         pro_publish_list_res = svc.get_list()
-        logger.info(pro_publish_list_res.data)
+        # logger.info(pro_publish_list_res.data)
         if imchecker:
             pro_publish_list = [i for i in pro_publish_list_res.data[::-1] if i.status == STATUS_PRO_TABLES.APPLIED]
         else:
@@ -79,7 +78,7 @@ class TaskPublish(BaseService):
         # 获取负载均衡申请列表
         svc = ApplyLoadBalance(self, {"user_id": user_id})
         pro_balance_list_res = svc.get_list()
-        logger.info(pro_balance_list_res.data)
+        # logger.info(pro_balance_list_res.data)
         if imchecker:
             pro_balance_list = [i for i in pro_balance_list_res.data[::-1] if i.status == STATUS_PRO_TABLES.APPLIED]
         else:
@@ -93,7 +92,7 @@ class TaskPublish(BaseService):
         # 获取定期备份申请列表
         svc = ApplyBackups(self, {"user_id": user_id})
         pro_backup_list_res = svc.get_list()
-        logger.info(pro_backup_list_res.data)
+        # logger.info(pro_backup_list_res.data)
         if imchecker:
             pro_backup_list = [i for i in pro_backup_list_res.data[::-1] if i.status == STATUS_PRO_TABLES.APPLIED]
         else:

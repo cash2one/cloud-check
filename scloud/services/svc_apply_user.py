@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
-from tornado import gen
+# from tornado import gen
 from scloud.services.base import BaseService
-from scloud.models.base import MYSQL_POOL
-from scloud.models.pt_user import PT_User
-from scloud.models.project import Pro_Info
+# from scloud.models.base import MYSQL_POOL
+# from scloud.models.pt_user import PT_User
+# from scloud.models.project import Pro_Info
 from scloud.config import logger, thrownException
-from sqlalchemy import and_, or_
+from sqlalchemy import and_
 from scloud.utils.error_code import ERROR
-from scloud.utils.error import NotFoundError
-from scloud.const import pro_resource_apply_status_types
+# from scloud.utils.error import NotFoundError
+from scloud.const import STATUS_PRO_TABLES
 from scloud.models.project import Pro_User 
 
 
@@ -41,6 +41,7 @@ class ProUserService(BaseService):
         pro_user.email = email
         pro_user.is_enable = is_enable
         pro_user.use_vpn = use_vpn
+        pro_user.user_id = self.handler.current_user.id
         self.db.add(pro_user)
         self.db.flush()
         return self.success(data=pro_user)
@@ -85,3 +86,23 @@ class ProUserService(BaseService):
             self.db.flush()
         return self.success(data=None)
 
+    @thrownException
+    def do_check(self):
+        ids = self.params.get("ids")
+        id_list = [int(i) for i in ids.split(",") if i.strip().isdigit()]
+        logger.info(id_list)
+        pro_users = []
+        for id in id_list:
+            pro_user = self.db.query(
+                Pro_User
+            ).filter(
+                Pro_User.id == id
+            ).first()
+            if pro_user:
+                pro_user.status = STATUS_PRO_TABLES.CHECKED
+                pro_user.checker_id = self.handler.current_user.id
+                pro_user.check_time = datetime.now()
+                self.db.add(pro_user)
+                self.db.flush()
+                pro_users.append(pro_user)
+        return self.success(data=pro_users)

@@ -92,7 +92,7 @@ class DataBaseService(ModelServiceMixin):
             self.db.rollback()
             logger.info("====[ROLLBACK]====")
         else:
-            self.db.commit()
+            # self.db.commit()
             # self.db.flush()
             logger.info("====[COMMIT]====")
         # self.db.remove()

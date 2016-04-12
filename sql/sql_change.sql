@@ -7,6 +7,9 @@ CREATE TABLE `pro_user` (
     `username` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '用户名',
     `is_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1' COMMENT '是否可用',
     `use_vpn` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '是否需要开通VPN远程访问',
+    `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+    `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核者ID',
+    `check_time` INT(11) NOT NULL DEFAULT '0' COMMENT '审核时间',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
@@ -25,6 +28,9 @@ CREATE TABLE `pro_publish` (
     `network_address` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '内网地址',
     `network_port` INT(11) NOT NULL DEFAULT '80' COMMENT '内网端口',
     `use_ssl` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '是否需要SSL卸载',
+    `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+    `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核者ID',
+    `check_time` INT(11) NOT NULL DEFAULT '0' COMMENT '审核时间',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
@@ -45,6 +51,9 @@ CREATE TABLE `pro_balance` (
     `url` VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'URL（仅限HTTP方式）',
     `keyword` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '关键字（仅限HTTP方式）',
     `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '特殊说明',
+    `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+    `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核者ID',
+    `check_time` INT(11) NOT NULL DEFAULT '0' COMMENT '审核时间',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
@@ -60,6 +69,9 @@ CREATE TABLE `pro_backup` (
     `res_apply_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属资源申请',
     `status` INT(11) NOT NULL DEFAULT '0' COMMENT '提交状态 0:已提交（受理中），1：已处理（已处理）,-1:已拒绝（已拒绝）',
     `plot` VARCHAR(1024) NOT NULL DEFAULT '' COMMENT '策略(json格式)',
+    `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+    `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核者ID',
+    `check_time` INT(11) NOT NULL DEFAULT '0' COMMENT '审核时间',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)

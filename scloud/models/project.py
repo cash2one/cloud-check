@@ -105,6 +105,12 @@ class Pro_User(BaseModel, BaseModelMixin):
     username = Column(Unicode, default=u'', info=u"用户名") 
     is_enable = Column(Integer, default=1, info=u"是否可用")
     use_vpn = Column(Integer, default=0, info=u"是否需要开通VPN远程访问")
+    user_id = Column("user_id", Integer, ForeignKey("pt_user.id"), default=0)
+    checker_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
+    check_time = Column(DateTime, default='0000-00-00 00:00:00')
+
+    user = relationship("PT_User", foreign_keys=[user_id], backref="pro_users")
+    checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_users")
     project = relationship("Pro_Info", backref=backref("pro_users", order_by="Pro_User.update_time"))
 
 
@@ -118,6 +124,12 @@ class Pro_Publish(BaseModel, BaseModelMixin):
     network_address = Column("network_address", Unicode, default=u'', info=u"内网地址" )
     network_port = Column("network_port", Integer, default=80, info=u"内网端口")
     use_ssl = Column("use_ssl", Integer, default=0, info=u"是否需要SSL卸载")
+    user_id = Column("user_id", Integer, ForeignKey("pt_user.id"), default=0)
+    checker_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
+    check_time = Column(DateTime, default='0000-00-00 00:00:00')
+
+    user = relationship("PT_User", foreign_keys=[user_id], backref="pro_publishs")
+    checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_publishs")
     project = relationship("Pro_Info", backref=backref("pro_publish_list", order_by="Pro_Publish.update_time"))
 
 
@@ -136,6 +148,12 @@ class Pro_Balance(BaseModel, BaseModelMixin):
     url = Column("url", Unicode, default=u'', info=u"URL（仅限HTTP方式）")
     keyword = Column("keyword", Unicode, default=u'', info=u"关键字（仅限HTTP方式）")
     desc = Column("desc", Unicode, default=u'', info=u"特殊说明")
+    user_id = Column("user_id", Integer, ForeignKey("pt_user.id"), default=0)
+    checker_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
+    check_time = Column(DateTime, default='0000-00-00 00:00:00')
+
+    user = relationship("PT_User", foreign_keys=[user_id], backref="pro_balances")
+    checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_balances")
     res_apply = relationship("Pro_Resource_Apply", backref=backref("loadbalance_plot", uselist=False))
     project = relationship("Pro_Info", backref=backref("pro_balance_list", order_by="Pro_Balance.update_time"))
 
@@ -150,6 +168,12 @@ class Pro_Backup(BaseModel, BaseModelMixin):
     res_apply_id = Column("res_apply_id", Integer, ForeignKey("pro_resource_apply.id"), default=0, info=u"所属资源申请")
     status = Column(Integer, default=0, info=u"申请状态")
     plot = Column("plot", Unicode, default=u'', info=u"策略(json)")
+    user_id = Column("user_id", Integer, ForeignKey("pt_user.id"), default=0)
+    checker_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
+    check_time = Column(DateTime, default='0000-00-00 00:00:00')
+
+    user = relationship("PT_User", foreign_keys=[user_id], backref="pro_backups")
+    checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_backups")
     res_apply = relationship("Pro_Resource_Apply", backref=backref("backups_plot", uselist=False))
     project = relationship("Pro_Info", backref=backref("pro_backup_list", order_by="Pro_Backup.update_time"))
 

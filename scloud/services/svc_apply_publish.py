@@ -1,30 +1,31 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
-from tornado import gen
+# from datetime import datetime
+# from tornado import gen
 from scloud.services.base import BaseService
-from scloud.models.base import MYSQL_POOL
-from scloud.models.pt_user import PT_User
-from scloud.models.project import Pro_Info
+# from scloud.models.base import MYSQL_POOL
+# from scloud.models.pt_user import PT_User
+# from scloud.models.project import Pro_Info
 from scloud.config import logger, thrownException
-from sqlalchemy import and_, or_
+from sqlalchemy import and_
 from scloud.utils.error_code import ERROR
-from scloud.utils.error import NotFoundError
-from scloud.const import pro_resource_apply_status_types
-from scloud.models.project import Pro_Publish, Pro_Balance 
+# from scloud.utils.error import NotFoundError
+# from scloud.const import pro_resource_apply_status_types
+from scloud.models.project import Pro_Publish
 
 
 class ApplyPublish(BaseService):
 
     @thrownException
     def get_publish(self):
+        logger.info("------get_publish------")
         conditions = and_()
 
         pro_id = self.params.get("pro_id")
         if pro_id:
             conditions.append(Pro_Publish.pro_id == pro_id)
         id = self.params.get("id")
-        if pro_id:
+        if id:
             conditions.append(Pro_Publish.id == id)
         publish = self.db.query(
             Pro_Publish
@@ -82,6 +83,6 @@ class ApplyPublish(BaseService):
         do_publish_info.network_address = network_address
         do_publish_info.network_port = network_port
         do_publish_info.use_ssl = use_ssl
+        do_publish_info.user_id = self.handler.current_user.id
         self.db.add(do_publish_info)
         return self.success(data=do_publish_info) 
-

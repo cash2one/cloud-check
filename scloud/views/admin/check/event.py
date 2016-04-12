@@ -9,7 +9,7 @@ from scloud.handlers import AuthHandler
 # import urlparse
 # import urllib
 # import urllib2
-# import simplejson
+import simplejson
 # import time
 # from tornado.web import asynchronous
 # from tornado import gen
@@ -26,16 +26,14 @@ from scloud.utils.unblock import unblock
 # from scloud.views.admin.guide import GuideStepGetHandler
 # from scloud.const import STATUS_RESOURCE
 from scloud.pubs.pub_tasks import TaskPublish
+from scloud.async_services.publish_task import publish_notice_user
 
 
 @url("/pro/event/check_list", name="pro_table_check_list", active="pro_table_check_list")
 class EventCheckListHandler(AuthHandler):
     u'待处理任务'
-    @check_perms('pro_resource_apply.check')
-    @unblock
-    def get(self, **kwargs):
-        pro_table = self.args.get("pro_table", "pro_user")
-        pub_svc = TaskPublish(self)
+    def get_index_page(self, pro_table):
+        pub_svc = TaskPublish(self, {"pro_table": pro_table})
         pub_data = pub_svc.publish_tasks(self.current_user.id, do_publish=False)
         data = pub_data.data
         _pro_table = data.get("%s_list" % pro_table, [])
@@ -45,7 +43,21 @@ class EventCheckListHandler(AuthHandler):
         for keyword in ["pro_user", "pro_publish", "pro_balance", "pro_backup"]:
             groups.append(GROUP.get(keyword))
         logger.info(pub_data.data)
-        return self.render_to_string("admin/check/event_list.html", g=g, groups=groups, page=page, pro_table=pro_table, pub_data=pub_data.data, **data)
+        data.update(
+            g=g,
+            groups=groups,
+            page=page,
+            pro_table=pro_table,
+            pub_data=pub_data.data
+        )
+        return data
+
+    @check_perms('pro_resource_apply.check')
+    @unblock
+    def get(self):
+        pro_table = self.args.get("pro_table", "pro_user")
+        data = self.get_index_page(pro_table)
+        return self.render_to_string("admin/check/event_list.html", **data)
 
 
 @url("/pro/pro_publish/(?P<id>\d+)/detail", name="pro_publish_detail", active="pro_table_check_list")
@@ -106,3 +118,25 @@ class ProBackupDetailHandler(AuthHandler):
         }
         logger.info(pro_backup_res.data)
         return self.render_to_string("admin/check/_event_pro_backup_detail.html", **data)
+
+
+@url("/pro/pro_table/do_check", name="pro_table_do_check")
+class ProTableDoCheckHandler(EventCheckListHandler):
+    u'''受理通过'''
+    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("PRO_USER", "PRO_PUBLISH")
+
+    @check_perms('pro_resource_apply.check')
+    @unblock
+    def pro_user(self):
+        # pro_table = self.args.get("pro_table")
+        pro_table = ProUserService(self)
+        check_res = pro_table.do_check()
+        data = self.get_index_page("pro_user")
+        tmpl = self.render_to_string("admin/check/event_list_pjax.html", **data)
+        if check_res.return_code == 0:
+            self.add_message(u"所选申请全选用户已处理完毕", level="success")
+            pro_users = check_res.data
+            users = [u.user_id for u in pro_users]
+            for user_id in set(users):
+                publish_notice_user.delay(user_id)
+        return simplejson.dumps(self.success(data=tmpl))
