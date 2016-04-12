@@ -86,9 +86,9 @@
                     {% endif %}
                     {% for task in task_list %}
                       {% if "pro_resource_apply.view" in current_user.current_perms %}
-                        {{ get_task_module(task, STATUS_RESOURCE, user=task.user, imchecker=False) }}
+                        {{ get_task_module(task, STATUS_RESOURCE, user=task.user, checker=task.checker, imchecker=False) }}
                       {% elif "pro_resource_apply.check" in current_user.current_perms %}
-                        {{ get_task_module(task, STATUS_RESOURCE, user=task.user, imchecker=True) }}
+                        {{ get_task_module(task, STATUS_RESOURCE, user=task.user, checker=task.checker, imchecker=True) }}
                       {% endif %}
                     {% endfor %}
                     {% for pro_user in pro_user_list %}

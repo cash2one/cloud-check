@@ -85,24 +85,3 @@ class ProUserService(BaseService):
             self.db.delete(pro_user)
             self.db.flush()
         return self.success(data=None)
-
-    @thrownException
-    def do_check(self):
-        ids = self.params.get("ids")
-        id_list = [int(i) for i in ids.split(",") if i.strip().isdigit()]
-        logger.info(id_list)
-        pro_users = []
-        for id in id_list:
-            pro_user = self.db.query(
-                Pro_User
-            ).filter(
-                Pro_User.id == id
-            ).first()
-            if pro_user:
-                pro_user.status = STATUS_PRO_TABLES.CHECKED
-                pro_user.checker_id = self.handler.current_user.id
-                pro_user.check_time = datetime.now()
-                self.db.add(pro_user)
-                self.db.flush()
-                pro_users.append(pro_user)
-        return self.success(data=pro_users)

@@ -7,8 +7,7 @@ from scloud.config import logger, logThrown
 from scloud.models.pt_user import PT_User, PT_Role
 from scloud.models.project import (Pro_Info, Pro_Resource_Apply,
                                    Pro_User, Pro_Publish,
-                                   Pro_Balance, Pro_Backup
-                                  )
+                                   Pro_Balance, Pro_Backup)
 from scloud.models.environment import Env_Info, Env_Internet_Ip_Types, Env_Resource_Fee, Env_Resource_Value
 from tornado.util import ObjectDict
 

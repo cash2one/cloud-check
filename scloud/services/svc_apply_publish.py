@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# from datetime import datetime
+from datetime import datetime
 # from tornado import gen
 from scloud.services.base import BaseService
 # from scloud.models.base import MYSQL_POOL
@@ -10,7 +10,7 @@ from scloud.config import logger, thrownException
 from sqlalchemy import and_
 from scloud.utils.error_code import ERROR
 # from scloud.utils.error import NotFoundError
-# from scloud.const import pro_resource_apply_status_types
+from scloud.const import STATUS_PRO_TABLES
 from scloud.models.project import Pro_Publish
 
 
@@ -83,6 +83,8 @@ class ApplyPublish(BaseService):
         do_publish_info.network_address = network_address
         do_publish_info.network_port = network_port
         do_publish_info.use_ssl = use_ssl
+        do_publish_info.status = STATUS_PRO_TABLES.APPLIED
         do_publish_info.user_id = self.handler.current_user.id
         self.db.add(do_publish_info)
-        return self.success(data=do_publish_info) 
+        self.db.flush()
+        return self.success(data=do_publish_info)

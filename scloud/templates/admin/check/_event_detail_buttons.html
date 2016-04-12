@@ -69,12 +69,13 @@ function do_pro_table_action(options){
   var params = {
     _xsrf: $cookie("_xsrf"),
     ids: checked_values.join(","),
+    pro_table: "{{ pro_table }}",
     action: action,
     _: Math.random()
   }
   $.ajax({
     url: "{{ reverse_url('pro_table_do_check') }}",
-    type: "{{ pro_table }}",
+    type: "do_check",
     dataType: "json",
     data: params,
     beforeSend: function(xhr, settings){

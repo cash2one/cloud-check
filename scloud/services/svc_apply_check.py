@@ -1,0 +1,48 @@
+# -*- coding: utf-8 -*-
+
+from datetime import datetime
+# from tornado import gen
+from scloud.services.base import BaseService
+# from scloud.models.base import MYSQL_POOL
+# from scloud.models.pt_user import PT_User
+# from scloud.models.project import Pro_Info
+from scloud.config import logger, thrownException
+from sqlalchemy import and_
+from scloud.utils.error_code import ERROR
+# from scloud.utils.error import NotFoundError
+from scloud.const import STATUS_PRO_TABLES
+from scloud.models.project import (Pro_User, Pro_Publish, Pro_Balance, Pro_Backup)
+
+
+class ApplyCheckService(BaseService):
+    pro_tables = {
+        "pro_user": Pro_User,
+        "pro_publish": Pro_Publish,
+        "pro_balance": Pro_Balance,
+        "pro_backup": Pro_Backup,
+    }
+
+    @thrownException
+    def do_check(self):
+        pro_table = self.params.get("pro_table")
+        ProTable = self.pro_tables.get(pro_table)
+        if not ProTable:
+            return self.failure(ERROR.not_found_err)
+        ids = self.params.get("ids")
+        id_list = [int(i) for i in ids.split(",") if i.strip().isdigit()]
+        logger.info(id_list)
+        pro_table_objs = []
+        for id in id_list:
+            pro_table_obj = self.db.query(
+                ProTable
+            ).filter(
+                ProTable.id == id
+            ).first()
+            if pro_table_obj:
+                pro_table_obj.status = STATUS_PRO_TABLES.CHECKED
+                pro_table_obj.checker_id = self.handler.current_user.id
+                pro_table_obj.check_time = datetime.now()
+                self.db.add(pro_table_obj)
+                self.db.flush()
+                pro_table_objs.append(pro_table_obj)
+        return self.success(data=pro_table_objs)

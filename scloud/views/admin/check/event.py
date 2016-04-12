@@ -19,6 +19,7 @@ from scloud.services.svc_apply_publish import ApplyPublish
 from scloud.services.svc_apply_balance import ApplyLoadBalance
 from scloud.services.svc_apply_backups import ApplyBackups
 from scloud.services.svc_apply_user import ProUserService
+from scloud.services.svc_apply_check import ApplyCheckService
 # from scloud.services.svc_pro_resource_apply import ProResourceCheckService
 # from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
@@ -124,26 +125,25 @@ class ProBackupDetailHandler(AuthHandler):
 class ProTableDoCheckHandler(EventCheckListHandler):
     u'''受理通过'''
 
-    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("PRO_USER", "PRO_PUBLISH")
+    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("DO_CHECK",)
 
     @check_perms('pro_resource_apply.check')
     @unblock
-    def pro_user(self):
-        pro_table = ProUserService(self)
+    def do_check(self):
+        pro_table = ApplyCheckService(self)
         check_res = pro_table.do_check()
         return self.do_return(check_res)
 
     def do_return(self, check_res):
-        method = self.request.method
-        logger.info(method)
-        doc = GROUP.get(method.lower()).name
+        pro_table = self.args.get("pro_table")
+        doc = GROUP.get(pro_table).name
         logger.info(doc)
-        data = self.get_index_page("pro_user")
-        tmpl = self.render_to_string("admin/check/event_list_pjax.html", **data)
         if check_res.return_code == 0:
             self.add_message(u"所选申请%s已处理完毕" % doc, level="success")
             pro_users = check_res.data
             users = [u.user_id for u in pro_users]
             for user_id in set(users):
                 publish_notice_user.delay(user_id)
+        data = self.get_index_page("pro_user")
+        tmpl = self.render_to_string("admin/check/event_list_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))

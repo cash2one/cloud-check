@@ -92,7 +92,7 @@ class ActHistoryService(BaseService):
             )
             task_list = []
             for resource in resource_list:
-                histories = resource.act_histories
+                histories = resource.act_pro_histories
                 if len(histories) > 0:
                     last_history = histories[-1]
                     if "pro_resource_apply.check" in current_perms:
