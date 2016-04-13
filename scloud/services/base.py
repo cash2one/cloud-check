@@ -46,6 +46,7 @@ class BaseService(object):
         return result
 
     def render_to_string(self, template, **kwargs):
+        # return self.handler.render_to_string(template, **kwargs)
         tmpl = env.get_template(template)
         kwargs.update({
             "CONF": CONF,

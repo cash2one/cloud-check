@@ -104,12 +104,12 @@ class TaskPublish(BaseService):
         })
 
         # 获取任务列表总和
-        total = len(tasks_res.data) + len(pro_user_list) + len(pro_publish_list) + len(pro_balance_list) + len(pro_backup_list)
-        data["total"] = total
-        logger.info("tasks length: %s" % len(tasks_res.data))
+        pro_tables_total = len(pro_user_list) + len(pro_publish_list) + len(pro_balance_list) + len(pro_backup_list)
+        data["pro_tables_total"] = pro_tables_total
+        data["tasks_total"] = len(tasks_res.data)
         logger.info("pro_user_list length : %s" % len(pro_user_list))
         logger.info("pro_publish_list length : %s" % len(pro_publish_list))
-        logger.info("total: %s" % total)
+        logger.info("total: %s" % pro_tables_total)
         if do_publish:
             self.do_publish(user_id, action, **data)
         return self.success(data=data)
@@ -120,7 +120,16 @@ class TaskPublish(BaseService):
         chat = {
             "user_id": user_id,
             "action": action,
-            "html": render_to_string(template, **data)
+
+            "pro_user_num": len(data["pro_user_list"]),
+            "pro_publish_num": len(data["pro_publish_list"]),
+            "pro_balance_num": len(data["pro_balance_list"]),
+            "pro_backup_num": len(data["pro_backup_list"]),
+            "tasks_total": data["tasks_total"],
+            "pro_tables_total": data["pro_tables_total"],
+            # "html": render_to_string(template, **data),
+            "tmpl_tasks": render_to_string("admin/notice/tasks.html", **data),
+            "tmpl_pro_tables": render_to_string("admin/notice/pro_tables.html", **data)
         }
         # from scloud.app import reverse_url
         # html = request.get(reverse_url("callback_%s" % template))
@@ -128,4 +137,3 @@ class TaskPublish(BaseService):
         logger.info(template)
         r.publish("test_realtime", simplejson.dumps(chat))
         return True
-

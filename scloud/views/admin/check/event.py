@@ -27,7 +27,7 @@ from scloud.utils.unblock import unblock
 # from scloud.views.admin.guide import GuideStepGetHandler
 # from scloud.const import STATUS_RESOURCE
 from scloud.pubs.pub_tasks import TaskPublish
-from scloud.async_services.publish_task import publish_notice_user
+from scloud.async_services.publish_task import publish_notice_user, publish_tasks
 
 
 @url("/pro/event/check_list", name="pro_table_check_list", active="pro_table_check_list")
@@ -159,4 +159,5 @@ class ProTableDoConfirmHandler(AuthHandler):
         pro_table = ApplyCheckService(self)
         confirm_res = pro_table.do_confirm()
         logger.info(confirm_res)
+        publish_tasks.delay(self.current_user.id)
         return simplejson.dumps(self.success(data=confirm_res))

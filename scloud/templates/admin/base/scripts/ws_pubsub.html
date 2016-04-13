@@ -47,6 +47,31 @@ function on_task(response){
     // console.log(response.action)
     $("#chatAudio")[0].play();
   }
-  $("#tasks-menu").html(response.html)
+  $("#tasks-menu").html(response.tmpl_tasks)
+  $("#pro_tables-menu").html(response.tmpl_pro_tables)
+  if (parseInt(response.tasks_total) > 0){
+    $(".treeview-menu a[name=resource_check_list] span").html(response.tasks_total);
+  }else{
+    $(".treeview-menu a[name=resource_check_list] span").html("");
+  }
+  if (parseInt(response.pro_tables_total) > 0){
+    $(".treeview-menu a[name=pro_table_check_list] span").html(response.pro_tables_total)
+  }else{
+    $(".treeview-menu a[name=pro_table_check_list] span").html("")
+  }
+  
+  if (parseInt(response.pro_user_num) > 0){
+    $(".sidebar-menu a[name='apply.user'] span.label").html(response.pro_user_num);
+  }else{
+    $(".sidebar-menu a[name='apply.user'] span.label").html("");
+  }
+  
+  var service_total_num = parseInt(response.pro_publish_num)+parseInt(response.pro_balance_num)+parseInt(response.pro_backup_num);
+  if (service_total_num > 0){
+    $(".sidebar-menu a[name='apply.service'] span.label").html(service_total_num);
+  }else{
+    $(".sidebar-menu a[name='apply.service'] span.label").html("");
+
+  }
 }
 </script>

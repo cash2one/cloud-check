@@ -53,3 +53,7 @@ class Filters(object):
             return t.strftime("%Y-%m-%d %H:%M:%S")
         else:
             return ''
+
+    def filter_status_filter(self, values, status=0):
+        values = [i for i in values if i.status == status]
+        return values

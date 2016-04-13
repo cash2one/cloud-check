@@ -33,6 +33,10 @@
                       <li name="pro_{{ pro.id }}"><a data-pjax href="{{ reverse_url('apply.user.add') }}?pro_id={{ pro.id }}"><i class="fa fa-inbox"></i> {{ pro.name }}
                       <span class="pull-right">
                       <span class="label label-primary">{{ STATUS_RESOURCE.get(last_apply.status).value }}</span>
+                      {% set pro_users = pro.pro_users|status_filter(STATUS_PRO_TABLES.CHECKED) %}
+                      {% if pro_users|length > 0 %}
+                      <span class="label label-warning">{{ pro_users|length }}个等待确认</span>
+                      {% endif %}
                       </span>
                       </a></li>
                       {% endif %}

@@ -1,90 +1,70 @@
 {% set tasks = tasks_res.data %}
 {% import "admin/base/base_macros.html" as base with context %}
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <i class="fa fa-flag-o"></i>
-                  {% if total > 0 %}
-                  <span class="label label-danger">{{ total }}</span>
-                  {% endif %}
-                </a>
-                {% if total > 0 %}
-                <ul class="dropdown-menu" style="width:580px;">
-                  <!-- tip -->
-                  <!-- <li class="header">You have {{ tasks|length }} tasks</li> -->
-                  <li class="header">You have {{ total }} tasks</li>
-                  <li>
-                    <!-- inner menu: contains the actual data -->
-                    <ul class="menu">
-                      {% for task in tasks %}
-                      {% set global_vars = task.res_apply.get_global_vars() %}
-                      <li><!-- Task item -->
-                        {% if not imchecker %}
-                          {% if task.status <= STATUS_RESOURCE.APPLIED %}
-                            {% set act_url = reverse_url('guide_step_1', task.pro.id) %}
-                          {% elif task.status == STATUS_RESOURCE.CHECKED %}
-                            {% set act_url = reverse_url('guide_step_2', task.pro.id) %}
-                          {% elif task.status >= STATUS_RESOURCE.PAYED %}
-                            {% set act_url = reverse_url('guide_step_3', task.pro.id) %}
-                          {% endif %}
-                        {% else %}
-                          {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id == 0 %}
-                            {% set act_url = reverse_url('user_profile') %}
-                          {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id != 0 %}
-                            {% set act_url = "javascript:;" %}
-                          {% else %}
-                            {% set act_url = "{}?res_status={}".format(reverse_url('resource_check_list'), task.status) %}
-                          {% endif %}
-                        {% endif %}
-                        <a data-pjax href="{{ act_url }}">
-                          <h3>{{ task.desc }}
-                            <small class="pull-right">{{ global_vars.progress_percent }}</small>
-                          </h3>
-                          <div class="progress xs">
-                            <div class="progress-bar progress-bar-aqua" style="width: {{ global_vars.progress_percent }}" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                              <span class="sr-only">{{ global_vars.progress_percent }} Complete</span>
-                            </div>
-                          </div>
-                        </a>
-                      </li><!-- end task item -->
-                      {% endfor %}
-                      {% for pro_user in pro_user_list %}
-                        {{ base.pro_table_task(pro_user, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES) }}
-
-                        {#
-                          {% set percent = (pro_user.status+1) / 2 %}
-                          {% if percent < 0 %}
-                            {% set percent = 0 %}
-                          {% endif %}
-                          {% set percent = (percent * 100)|int %}
-                      <li><!-- Task item -->
-                        <a data-pjax href="javascript:;">
-                          {% if imchecker %}
-                          {% set ST = STATUS_PRO_TABLES.get(pro_user.status) %}
-                          <h3>{{ "{} 申请的项目用户{}{}，请受理".format(pro_user.project.user.email, pro_user.username, ST.value) }}
-                            <small class="pull-right">{{ percent }}%</small>
-                          </h3>
-                          {% endif %}
-                          <div class="progress xs">
-                            <div class="progress-bar progress-bar-aqua" style="width: {{ percent }}%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                              <span class="sr-only">{{ percent }}% Complete</span>
-                            </div>
-                          </div>
-                        </a>
-                      </li><!-- end task item -->
-                      #}
-                      {% endfor %}
-                      {% for pro_publish in pro_publish_list %}
-                        {{ base.pro_table_task(pro_publish, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES) }}
-                      {% endfor %}
-                      {% for pro_balance in pro_balance_list %}
-                        {{ base.pro_table_task(pro_balance, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES) }}
-                      {% endfor %}
-                      {% for pro_backup in pro_backup_list %}
-                        {{ base.pro_table_task(pro_backup, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES) }}
-                      {% endfor %}
-                    </ul>
-                  </li>
-                  <li class="footer">
-                    <a data-pjax href="{{ reverse_url('user_profile') }}">View all tasks</a>
-                  </li>
-                </ul>
-                {% endif %}
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+  <i class="fa fa-flag-o"></i>
+  {% if tasks_total > 0 %}
+  <span class="label label-danger">{{ tasks_total }}</span>
+  {% endif %}
+</a>
+{% if tasks_total > 0 %}
+<ul class="dropdown-menu" style="width:580px;">
+  <!-- tip -->
+  <!-- <li class="header">You have {{ tasks|length }} tasks</li> -->
+  <li class="header">You have {{ tasks_total }} tasks</li>
+  <li>
+    <!-- inner menu: contains the actual data -->
+    <ul class="menu">
+      {% for task in tasks %}
+      {% set global_vars = task.res_apply.get_global_vars() %}
+      <li><!-- Task item -->
+        {% if not imchecker %}
+          {% if task.status <= STATUS_RESOURCE.APPLIED %}
+            {% set act_url = reverse_url('guide_step_1', task.pro.id) %}
+          {% elif task.status == STATUS_RESOURCE.CHECKED %}
+            {% set act_url = reverse_url('guide_step_2', task.pro.id) %}
+          {% elif task.status >= STATUS_RESOURCE.PAYED %}
+            {% set act_url = reverse_url('guide_step_3', task.pro.id) %}
+          {% endif %}
+        {% else %}
+          {% if task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id == 0 %}
+            {% set act_url = reverse_url('user_profile') %}
+          {% elif task.status == STATUS_RESOURCE.CONFIRMPAYED and task.checker_id != 0 %}
+            {% set act_url = "javascript:;" %}
+          {% else %}
+            {% set act_url = "{}?res_status={}".format(reverse_url('resource_check_list'), task.status) %}
+          {% endif %}
+        {% endif %}
+        <a data-pjax href="{{ act_url }}">
+          <h3>{{ task.desc }}
+            <small class="pull-right">{{ global_vars.progress_percent }}</small>
+          </h3>
+          <div class="progress xs">
+            <div class="progress-bar progress-bar-aqua" style="width: {{ global_vars.progress_percent }}" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+              <span class="sr-only">{{ global_vars.progress_percent }} Complete</span>
+            </div>
+          </div>
+        </a>
+      </li><!-- end task item -->
+      {% endfor %}
+      
+      {#
+      {% for pro_user in pro_user_list %}
+        {{ base.pro_table_task(pro_user, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES) }}
+      {% endfor %}
+      {% for pro_publish in pro_publish_list %}
+        {{ base.pro_table_task(pro_publish, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES) }}
+      {% endfor %}
+      {% for pro_balance in pro_balance_list %}
+        {{ base.pro_table_task(pro_balance, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES) }}
+      {% endfor %}
+      {% for pro_backup in pro_backup_list %}
+        {{ base.pro_table_task(pro_backup, imchecker=imchecker, STATUS_PRO_TABLES=STATUS_PRO_TABLES) }}
+      {% endfor %}
+      #}
+    </ul>
+  </li>
+  <li class="footer">
+    <a data-pjax href="{{ reverse_url('user_profile') }}">View all tasks</a>
+  </li>
+</ul>
+{% endif %}

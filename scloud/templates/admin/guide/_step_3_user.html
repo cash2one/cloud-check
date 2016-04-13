@@ -26,7 +26,7 @@
         <!-- Emphasis label -->
         <span class="label label-{{ ST.level }}">{{ ST.todo_value }}</span>
         {% if user.status == STATUS_PRO_TABLES.CHECKED %}
-        <span class="label label-warning"><a href="javascript:;" style="color:#FFFFFF" onclick="pro_table_do_confirm({_this:this, pro_table:'pro_user', ids:[{{ user.id }}]})"> {{ NEXT_ST.act_value }}</a></span>
+        <a class="btn btn-warning btn-sm" href="javascript:;" style="color:#FFFFFF" onclick="pro_table_do_confirm({_this:this, pro_table:'pro_user', ids:[{{ user.id }}]})"> {{ NEXT_ST.act_value }}</a>
         {% endif %}
         <!-- General tools such as edit or delete-->
         <div class="tools">

@@ -32,19 +32,19 @@
             <li class="">
               <a data-pjax name="apply.user" href="{{ reverse_url('apply.user') }}">
                 <i class="fa fa-user"></i> <span>权限申请</span>
-                <span class="label label-primary pull-right">2</span>
+                <span class="label label-primary pull-right"></span>
               </a>
             </li>
             <li class="">
               <a data-pjax name="apply.service" href="{{ reverse_url('apply.service') }}">
                 <i class="fa fa-cutlery"></i> <span>服务申请</span>
-                <span class="label label-primary pull-right">2</span>
+                <span class="label label-primary pull-right"></span>
               </a>
             </li>
             <li class="">
               <a data-pjax name="apply.resource" href="{{ reverse_url('apply.resource') }}">
                 <i class="fa fa-database"></i> <span>资源申请</span>
-                <span class="label label-primary pull-right">2</span>
+                <span class="label label-primary pull-right"></span>
               </a>
             </li>
             {% endif %}
@@ -55,8 +55,8 @@
                 <i class="fa fa-pencil-square"></i> <span>项目审核</span> <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
-                <li><a data-pjax name="resource_check_list" href="{{ reverse_url('resource_check_list') }}"><i class="fa fa-circle-o"></i> 资源审核</a></li>
-                <li><a data-pjax name="pro_table_check_list" href="{{ reverse_url('pro_table_check_list') }}"><i class="fa fa-circle-o"></i> 待处理任务</a></li>
+                <li><a data-pjax name="resource_check_list" href="{{ reverse_url('resource_check_list') }}"><i class="fa fa-circle-o"></i> 资源审核 <span class="label label-warning pull-right">0</span></a></li>
+                <li><a data-pjax name="pro_table_check_list" href="{{ reverse_url('pro_table_check_list') }}"><i class="fa fa-circle-o"></i> 待处理任务 <span class="label label-warning pull-right">0</span></a></li>
               </ul>
             </li>
             {% endif %}
@@ -76,7 +76,7 @@
               <a href="#">
                 <i class="fa fa-files-o"></i>
                 <span>事件管理</span>
-                <span class="label label-primary pull-right">4</span>
+                <span class="label label-primary pull-right"></span>
               </a>
               <ul class="treeview-menu">
                 <li><a data-pjax href="{{ reverse_url('event.index') }}"><i class="fa fa-circle-o"></i>创建事件</a></li>
