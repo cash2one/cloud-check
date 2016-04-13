@@ -1,0 +1,33 @@
+<script type="text/javascript">
+function pro_table_do_confirm(options){
+    options = options || {};
+    var pro_table = options.pro_table || null;
+    var ids = options.ids || [];
+    var _this = options._this || null;
+    if (!pro_table){
+        $MsgBox({message: "pro_table参数不能为空"}).show();
+        return false;
+    }
+    if (!_this){
+        $MsgBox({message: "_this参数不能为空"}).show();
+        return false;
+    }
+    var data = {
+        _xsrf: $cookie("_xsrf"),
+        pro_table: pro_table,
+        ids: ids.join(",")
+    }
+    var data_params = [];
+    $.each(data,function(name,value) {
+    data_params.push(name+"="+value)
+    });
+    generate_ajax_post({
+        url: "{{ reverse_url('pro_table_do_confirm') }}",
+        pjax_container: false,
+        params: data_params.join("&"),
+        onSuccess: function(response){
+            $(_this).html("<i class='fa fa-check'> 已确认</i>");
+        }
+    })
+}
+</script>
