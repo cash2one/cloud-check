@@ -147,3 +147,16 @@ class ProTableDoCheckHandler(EventCheckListHandler):
         data = self.get_index_page(pro_table)
         tmpl = self.render_to_string("admin/check/event_list_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))
+
+
+@url("/pro/pro_table/do_confirm", name="pro_table_do_confirm")
+class ProTableDoConfirmHandler(AuthHandler):
+    u'''确认结果'''
+
+    @check_perms('pro_resource_apply.view')
+    @unblock
+    def post(self):
+        pro_table = ApplyCheckService(self)
+        confirm_res = pro_table.do_confirm()
+        logger.info(confirm_res)
+        return simplejson.dumps(self.success(data=confirm_res))

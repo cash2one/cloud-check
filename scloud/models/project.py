@@ -121,7 +121,7 @@ class Pro_Publish(BaseModel, BaseModelMixin):
     status = Column(Integer, default=0, info=u"申请状态")
     domain = Column("domain", Unicode, default=u'', info=u"域名")
     domain_port = Column("domain_port", Integer, default=80, info=u"互联网端口")
-    network_address = Column("network_address", Unicode, default=u'', info=u"内网地址" )
+    network_address = Column("network_address", Unicode, default=u'', info=u"内网地址")
     network_port = Column("network_port", Integer, default=80, info=u"内网端口")
     use_ssl = Column("use_ssl", Integer, default=0, info=u"是否需要SSL卸载")
     user_id = Column("user_id", Integer, ForeignKey("pt_user.id"), default=0)
@@ -140,7 +140,7 @@ class Pro_Balance(BaseModel, BaseModelMixin):
         "members"
     ]
     pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
-    res_apply_id = Column("res_apply_id", Integer, ForeignKey("pro_resource_apply.id"), default=0,info=u"所属资源申请")
+    res_apply_id = Column("res_apply_id", Integer, ForeignKey("pro_resource_apply.id"), default=0, info=u"所属资源申请")
     status = Column(Integer, default=0, info=u"申请状态")
     members = Column("members", Unicode, default=u'', info=u"成员")
     plot = Column("plot", Integer, default=0, info=u"策略")
@@ -176,4 +176,3 @@ class Pro_Backup(BaseModel, BaseModelMixin):
     checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_backups")
     res_apply = relationship("Pro_Resource_Apply", backref=backref("backups_plot", uselist=False))
     project = relationship("Pro_Info", backref=backref("pro_backup_list", order_by="Pro_Backup.update_time"))
-

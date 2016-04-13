@@ -65,7 +65,16 @@
         </div>
       </div><!-- /.box-body -->
       <div class="box-footer text-center">
-        <button type="button" id="form_backup_btn" onclick="do_form_backup()" class="btn btn-info">提交申请</button>
+        {% if not backup_plot %}
+        <button type="button" id="form_backup_btn" onclick="do_form_backup()" class="btn btn-warning">提 交</button>
+        {% elif backup_plot.status == STATUS_PRO_TABLES.APPLIED %}
+        <button type="button" id="form_backup_btn" onclick="javascript:;" class="btn btn-info">受理中</button>
+        {% elif backup_plot.status == STATUS_PRO_TABLES.CHECKED %}
+        <button type="button" id="form_backup_btn" onclick="pro_table_do_confirm({_this: this, pro_table: 'pro_backup', ids: [{{ backup_plot.id }}]})" class="btn btn-warning">确 认</button>
+        {% elif backup_plot.status == STATUS_PRO_TABLES.CONFIRMED %}
+        <button type="button" id="form_backup_btn" onclick="javascript:;" class="btn btn-warning">已确认</button>
+        <button type="button" id="form_backup_btn" onclick="do_form_backup()" class="btn btn-warning">重 新 提 交</button>
+        {% endif %}
       </div><!-- /.box-footer -->
     </form>
   </div><!-- /.box -->

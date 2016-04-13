@@ -10,7 +10,9 @@
       {% if publish_res %}
       {% set data = publish_res.data %}
       {% set ST = STATUS_PRO_TABLES.get(data.status) %}
+      {% if data %}
       {{ base.tip_message(message="您{}的互联网发布内容{}，{}。".format(ST.act_value, ST.value, ST.todo_value), level=ST.level) }}
+      {% endif %}
       {% else %}
       {% set data = {} %}
       {% endif %}
@@ -55,7 +57,16 @@
         </div>
       </div>
       <div class="box-footer text-center">
-        <button type="button" id="form_publish_btn" onclick="do_form_publish()" class="btn btn-info">提 交</button>
+        {% if not data %}
+        <button type="button" id="form_publish_btn" onclick="do_form_publish()" class="btn btn-warning">提 交</button>
+        {% elif data.status == STATUS_PRO_TABLES.APPLIED %}
+        <button type="button" id="form_publish_btn" onclick="javascript:;" class="btn btn-info">受理中</button>
+        {% elif data.status == STATUS_PRO_TABLES.CHECKED %}
+        <button type="button" id="form_publish_btn" onclick="pro_table_do_confirm({_this: this, pro_table: 'pro_publish', ids: [{{ data.id }}]})" class="btn btn-warning">确 认</button>
+        {% elif data.status == STATUS_PRO_TABLES.CONFIRMED %}
+        <button type="button" id="form_publish_btn" onclick="javascript:;" class="btn btn-warning">已确认</button>
+        <button type="button" id="form_publish_btn" onclick="do_form_publish()" class="btn btn-warning">重 新 提 交</button>
+        {% endif %}
       </div><!-- /.box-footer -->
     </form>
   </div><!-- /.box -->

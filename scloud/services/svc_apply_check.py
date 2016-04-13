@@ -46,3 +46,29 @@ class ApplyCheckService(BaseService):
                 self.db.flush()
                 pro_table_objs.append(pro_table_obj)
         return self.success(data=pro_table_objs)
+
+    @thrownException
+    def do_confirm(self):
+        pro_table = self.params.get("pro_table")
+        ProTable = self.pro_tables.get(pro_table)
+        if not ProTable:
+            return self.failure(ERROR.not_found_err)
+        ids = self.params.get("ids")
+        id_list = [int(i) for i in ids.split(",") if i.strip().isdigit()]
+        logger.info(id_list)
+        # pro_table_objs = []
+        for id in id_list:
+            pro_table_obj = self.db.query(
+                ProTable
+            ).filter(
+                ProTable.id == id
+            ).first()
+            if pro_table_obj:
+                pro_table_obj.status = STATUS_PRO_TABLES.CONFIRMED
+                pro_table_obj.checker_id = self.handler.current_user.id
+                pro_table_obj.check_time = datetime.now()
+                self.db.add(pro_table_obj)
+                self.db.flush()
+                logger.info(pro_table_obj)
+                # pro_table_objs.append(pro_table_obj)
+        return self.success(data=id_list)

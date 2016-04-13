@@ -382,7 +382,7 @@
     {% else %}
         <!-- (管理员<span class='label label-{{ ST.level }}'>{{ ST.value }}</span>) -->
         {{ message }}
-        <a data-pjax href="javascript:;" class='pull-right btn-box-tool'><i class='fa fa-check'> 确认</i></a>
+        <a data-pjax href="javascript:;" onclick="pro_table_do_confirm({_this:this, pro_table: '{{ pro_table.__table__ }}', ids: [{{ pro_table.id }}]})" class='pull-right btn-box-tool'><i class='fa fa-check'> 确认</i></a>
     {% endif %}
   </p>
 </div><!-- /.post -->

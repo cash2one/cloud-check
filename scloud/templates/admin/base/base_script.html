@@ -157,9 +157,11 @@ function load_page(dom_container, url){
 function generate_ajax_post(options){
   options = options || {};
   options = $.extend({pjax_container: true}, options);
+
   console.log(options)
   var button = options.button || "";
   var form = options.form || "form";
+  var url = options.url || $(form).attr("action");
   var method = options.method || "POST";
   var pjax_container = $chk(options.pjax_container) != false ? true:false;
   console.log("pjax_container: "+pjax_container)
@@ -168,7 +170,7 @@ function generate_ajax_post(options){
     $(button).button("loading");
   }
   show_loading();
-  var params = $(form).serialize();
+  var params = options.params || $(form).serialize();
   if (params.indexOf("_xsrf") < 0){
     $MsgBox({message: "_xsrf不能为空", appendTo:$("#main")}).show();
     hide_loading();
@@ -176,7 +178,7 @@ function generate_ajax_post(options){
     return false
   }
   $.ajax($.extend({
-    url: $(form).attr("action"),
+    url: url,
     type: method,
     dataType: "JSON",
     data: params,
@@ -216,7 +218,5 @@ function CheckBoxListener(){
   })
 }
 </script>
-{#% include "admin/base/scripts/ws_notice.html" %#}
-{#% include "admin/base/scripts/ws_comet.html" %#}
-{#% include "admin/base/scripts/ws_status.html" %#}
 {% include "admin/base/scripts/ws_pubsub.html" %}
+{% include "admin/base/scripts/pro_table_do_confirm.html" %}

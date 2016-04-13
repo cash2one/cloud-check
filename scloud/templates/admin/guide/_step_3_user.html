@@ -15,6 +15,8 @@
           <a data-pjax id="user_res_del_btn" style="display: none" href="javascript:;" onclick="do_del_user();" class="btn btn-danger btn-sm">删除</a>
       </li>
       {% for user in pro_users_res.data %}
+        {% set ST = STATUS_PRO_TABLES.get(user.status) %}
+        {% set NEXT_ST = STATUS_PRO_TABLES.get(user.status+1) %}
       <li{% if pro_user_res and pro_user_res.data.id == user.id %} class="done"{% endif %}>
         <!-- drag handle -->
         <!-- todo text -->
@@ -22,7 +24,10 @@
         <span class="text">{{ user.username }}</span>
         <span class="text">{{ user.email }}</span>
         <!-- Emphasis label -->
-        <span class="label label-primary">{{ STATUS_PRO_TABLES.get(user.status).todo_value }}</span>
+        <span class="label label-{{ ST.level }}">{{ ST.todo_value }}</span>
+        {% if user.status == STATUS_PRO_TABLES.CHECKED %}
+        <span class="label label-warning"><a href="javascript:;" style="color:#FFFFFF" onclick="pro_table_do_confirm({_this:this, pro_table:'pro_user', ids:[{{ user.id }}]})"> {{ NEXT_ST.act_value }}</a></span>
+        {% endif %}
         <!-- General tools such as edit or delete-->
         <div class="tools">
           <!-- tools -->
