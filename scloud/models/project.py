@@ -176,3 +176,38 @@ class Pro_Backup(BaseModel, BaseModelMixin):
     checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_backups")
     res_apply = relationship("Pro_Resource_Apply", backref=backref("backups_plot", uselist=False))
     project = relationship("Pro_Info", backref=backref("pro_backup_list", order_by="Pro_Backup.update_time"))
+
+
+class Pro_Event(BaseModel, BaseModelMixin):
+    u"""定期备份"""
+    __tablename__ = "pro_event"
+
+    pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
+    res_apply_id = Column("res_apply_id", Integer, ForeignKey("pro_resource_apply.id"), default=0, info=u"所属资源申请")
+    status = Column(Integer, default=0, info=u"申请状态")
+    priority = Column(Integer, default=0, info=u"优先级别")
+    title = Column("title", Unicode, default=u'', info=u"事件标题")
+    content = Column(Unicode, default=u'', info=u"事件内容")
+    user_id = Column("user_id", Integer, ForeignKey("pt_user.id"), default=0)
+    checker_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
+    check_time = Column(DateTime, default='0000-00-00 00:00:00')
+
+    user = relationship("PT_User", foreign_keys=[user_id], backref="pro_events")
+    checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_events")
+    res_apply = relationship("Pro_Resource_Apply", backref=backref("pro_events", uselist=False))
+    project = relationship("Pro_Info", backref=backref("pro_events", order_by="Pro_Event.update_time"))
+
+
+class Pro_Event_Detail(BaseModel, BaseModelMixin):
+    u"""定期备份"""
+    __tablename__ = "pro_event_detail"
+
+    event_id = Column(Integer, ForeignKey("pro_event.id"), default=0, info=u"所属项目")
+    content = Column(Unicode, default=u'', info=u"事件内容")
+    user_id = Column("user_id", Integer, ForeignKey("pt_user.id"), default=0)
+    checker_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
+    check_time = Column(DateTime, default='0000-00-00 00:00:00')
+
+    user = relationship("PT_User", foreign_keys=[user_id], backref="pro_event_details")
+    checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_event_details")
+    event = relationship("Pro_Event", backref=backref("pro_event_details", order_by="Pro_Event_Detail.update_time"))

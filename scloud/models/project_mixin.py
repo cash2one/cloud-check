@@ -4,6 +4,7 @@ from __future__ import division
 from scloud.config import logger, thrownException
 from scloud.const import pro_resource_apply_status_types
 
+
 class Pro_Info_Mixin(object):
 
     def get_apply_global_vars(self):
@@ -11,22 +12,27 @@ class Pro_Info_Mixin(object):
             return self._get_apply_global_vars
         logger.info("------[get_last_apply_global_vars]------")
         # logger.info("%s --> %s" % (self.id, self.name))
-        applies = self.pro_resource_applies
-        if len(applies) > 0:
-            last_apply = applies[-1]
-            # logger.info("applies --> %s" % (last_apply))
-            apply_status = last_apply.status
-            percent_status = apply_status + 1
-            if percent_status < 0:
-                percent_status = 0
-            # else:
-            #     last_apply = None
-            #     apply_status = None
-            #     percent_status = 0
-        else:
-            last_apply = None
-            apply_status = None
+        last_apply = self.last_apply
+        apply_status = last_apply.status if last_apply else None
+        percent_status = apply_status + 1 if apply_status else 0
+        if percent_status < 0:
             percent_status = 0
+        # applies = self.pro_resource_applies
+        # if len(applies) > 0:
+        #     last_apply = applies[-1]
+        #     # logger.info("applies --> %s" % (last_apply))
+        #     apply_status = last_apply.status
+        #     percent_status = apply_status + 1
+        #     if percent_status < 0:
+        #         percent_status = 0
+        #     # else:
+        #     #     last_apply = None
+        #     #     apply_status = None
+        #     #     percent_status = 0
+        # else:
+        #     last_apply = None
+        #     apply_status = None
+        #     percent_status = 0
         progress_percent = '%d%%' % ((percent_status / 4) * 100)
         status_desc = pro_resource_apply_status_types.get(apply_status).value
         todo_status_desc = pro_resource_apply_status_types.get(apply_status).todo_value
@@ -46,6 +52,18 @@ class Pro_Info_Mixin(object):
         setattr(self, "_get_apply_global_vars", data)
         return self._get_apply_global_vars
         # return data
+
+    @property
+    def last_apply(self):
+        if hasattr(self, "_last_apply"):
+            return self._last_apply
+        applies = self.pro_resource_applies
+        if len(applies) > 0:
+            _last_apply = applies[-1]
+        else:
+            _last_apply = None
+        setattr(self, '_last_apply', _last_apply)
+        return self._last_apply
 
 
 class Pro_Resource_Apply_Mixin(object):

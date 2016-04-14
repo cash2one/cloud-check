@@ -26,7 +26,7 @@
             </tr>
             {#% for record in pro_info_res.data.pro_resource_applies[::-1] %#}
             {% if last_apply %}
-            {% for record in last_apply.act_histories[::-1] %}
+            {% for record in last_apply.act_pro_histories[::-1] %}
             <tr>
               <td class="text-center">{{ loop.revindex }}</td>
               <td class="text-center"><a data-pjax href="#" onclick="edit_res()">{{ STATUS_RESOURCE.get(record.status).value }}</a></td>

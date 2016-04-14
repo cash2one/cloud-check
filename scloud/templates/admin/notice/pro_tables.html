@@ -13,36 +13,57 @@
     <ul class="menu">
       {% if pro_user_list|length > 0 %}
       <li>
-        {% if imchecker %}
+      {% if imchecker %}
         <a data-pjax href="{{ reverse_url('pro_table_check_list') }}?pro_table=pro_user">
           <i class="fa fa-users text-aqua"></i> {{ pro_user_list|length }} 新申请的权限用户已提交，请受理
         </a>
-        {% else %}
+      {% else %}
         <a data-pjax href="{{ reverse_url('apply.user') }}">
           <i class="fa fa-users text-aqua"></i> 您新申请的权限用户已受理{{ pro_user_list|length }}个，请确认
         </a>
-        {% endif %}
+      {% endif %}
       </li>
       {% endif %}
       {% if pro_publish_list|length > 0 %}
       <li>
+      {% if imchecker %}
         <a data-pjax href="{{ reverse_url('pro_table_check_list') }}?pro_table=pro_publish">
           <i class="fa fa-internet-explorer text-green"></i> {{ pro_publish_list|length }} 新申请的互联网发布内容已提交，请受理
         </a>
+      {% else %}
+        <a data-pjax href="{{ reverse_url('apply.service') }}">
+          <i class="fa fa-internet-explorer text-green"></i>
+          您新申请的互联网发布内容已受理{{ pro_publish_list|length }}个，请确认
+        </a>
+      {% endif %}
       </li>
       {% endif %}
       {% if pro_balance_list|length > 0 %}
       <li>
+      {% if imchecker %}
         <a data-pjax href="{{ reverse_url('pro_table_check_list') }}?pro_table=pro_balance">
           <i class="fa fa-balance-scale text-yellow"></i> {{ pro_balance_list|length }} 新申请的负载均衡内容已提交，请受理
         </a>
+      {% else %}
+        <a data-pjax href="{{ reverse_url('apply.service') }}">
+          <i class="fa fa-balance-scale text-yellow"></i> 
+          您新申请的负载均衡内容已受理{{ pro_balance_list|length }}个，请确认
+        </a>
+      {% endif %}
       </li>
       {% endif %}
       {% if pro_backup_list|length > 0 %}
       <li>
+      {% if imchecker %}
         <a data-pjax href="{{ reverse_url('pro_table_check_list') }}?pro_table=pro_backup">
           <i class="fa fa-hdd-o text-yellow"></i> {{ pro_backup_list|length }} 新申请的定期备份内容已提交，请受理
         </a>
+      {% else %}
+        <a data-pjax href="{{ reverse_url('apply.service') }}">
+          <i class="fa fa-hdd-o text-yellow"></i>
+          您新申请的定期备份内容已受理{{ pro_publish_list|length }}个，请确认
+        </a>
+      {% endif %}
       </li>
       {% endif %}
     </ul>

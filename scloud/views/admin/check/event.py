@@ -43,7 +43,7 @@ class EventCheckListHandler(AuthHandler):
         groups = []
         for keyword in ["pro_user", "pro_publish", "pro_balance", "pro_backup"]:
             groups.append(GROUP.get(keyword))
-        logger.info(pub_data.data)
+        # logger.info(pub_data.data)
         data.update(
             g=g,
             groups=groups,
@@ -72,7 +72,7 @@ class ProPublishDetailHandler(AuthHandler):
         data = {
             "pro_publish_res": pro_publish_res
         }
-        logger.info(pro_publish_res.data)
+        # logger.info(pro_publish_res.data)
         return self.render_to_string("admin/check/_event_pro_publish_detail.html", **data)
 
 
@@ -87,7 +87,7 @@ class ProUsersDetailHandler(AuthHandler):
         data = {
             "pro_users_res": pro_users_res
         }
-        logger.info(pro_users_res.data)
+        # logger.info(pro_users_res.data)
         return self.render_to_string("admin/check/_event_pro_user_detail.html", **data)
 
 
@@ -102,7 +102,7 @@ class ProBalanceDetailHandler(AuthHandler):
         data = {
             "pro_balance_res": pro_balance_res
         }
-        logger.info(pro_balance_res.data)
+        # logger.info(pro_balance_res.data)
         return self.render_to_string("admin/check/_event_pro_balance_detail.html", **data)
 
 
@@ -117,7 +117,7 @@ class ProBackupDetailHandler(AuthHandler):
         data = {
             "pro_backup_res": pro_backup_res
         }
-        logger.info(pro_backup_res.data)
+        # logger.info(pro_backup_res.data)
         return self.render_to_string("admin/check/_event_pro_backup_detail.html", **data)
 
 
@@ -137,7 +137,7 @@ class ProTableDoCheckHandler(EventCheckListHandler):
     def do_return(self, check_res):
         pro_table = self.args.get("pro_table")
         doc = GROUP.get(pro_table).name
-        logger.info(doc)
+        # logger.info(doc)
         if check_res.return_code == 0:
             self.add_message(u"所选申请%s已处理完毕" % doc, level="success")
             pro_users = check_res.data
@@ -158,6 +158,6 @@ class ProTableDoConfirmHandler(AuthHandler):
     def post(self):
         pro_table = ApplyCheckService(self)
         confirm_res = pro_table.do_confirm()
-        logger.info(confirm_res)
+        # logger.info(confirm_res)
         publish_tasks.delay(self.current_user.id)
         return simplejson.dumps(self.success(data=confirm_res))
