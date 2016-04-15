@@ -57,3 +57,7 @@ class Filters(object):
     def filter_status_filter(self, values, status=0):
         values = [i for i in values if i.status == status]
         return values
+
+    def filter_status_list(self, STATUS):
+        values = [STATUS.get(i) for i in STATUS.keys() if isinstance(i, int)]
+        return values

@@ -68,11 +68,27 @@ pro_tables_status_types = {
     2: ApplyMark(value=u"已确认", todo_value="已完成", act_value=u"确认", value_en="confirmed", level="warning", bg_color="yellow"),
 }
 STATUS_PRO_TABLES = ObjectDict()
-def init_status_resource():
+def init_status_pro_tables():
     for k, v in pro_tables_status_types.items():
         setattr(STATUS_PRO_TABLES, v.value_en.upper(), k)
         setattr(STATUS_PRO_TABLES, v.value_en.lower(), v)
         STATUS_PRO_TABLES[k] = v
-init_status_resource()
+init_status_pro_tables()
+
+# 互联网发布、负载均衡、定期备份、权限申请状态
+priority_status_types = {
+    # 未申请状态，可修改，可删除，可提交
+    0: IndexMark(value=u"低", value_en="low", level="info"),
+    1: IndexMark(value=u"中", value_en="normal", level="success"),
+    2: IndexMark(value=u"高", value_en="high", level="warning"),
+    3: IndexMark(value=u"紧急", value_en="urgent", level="danger"),
+}
+STATUS_PRIORITY = ObjectDict()
+def init_status_priority():
+    for k, v in priority_status_types.items():
+        setattr(STATUS_PRIORITY, v.value_en.upper(), k)
+        setattr(STATUS_PRIORITY, v.value_en.lower(), v)
+        STATUS_PRIORITY[k] = v
+init_status_priority()
 
 admin_emails = ["zhangpeng1@infohold.com.cn"]

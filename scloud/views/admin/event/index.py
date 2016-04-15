@@ -1,50 +1,15 @@
-# #!/usr/bin/env python
-# # -*- coding: utf-8 -*-
-# # created: zhangpeng <zhangpeng1@infohold.com.cn>
-# 
-# import scloud
-# from scloud.shortcuts import url
-# from scloud.shortcuts import *
-# from scloud.handlers import Handler
-# import requests
-# import urlparse
-# import urllib
-# import urllib2
-# import time
-# 
-# 
-# @url("/event/index", name="event.index", active="event.index")
-# class GuideHandler(Handler):
-#     u'事件管理'
-#     def get(self):
-#         data = {}
-#         return self.render("admin/event/index.html", **data)
-# 
-# 
-# @url("/event/add", name="event.add", active="event.add")
-# class GuideHandler(Handler):
-#     u'添加事件'
-#     def get(self):
-#         data = {}
-#         return self.render("admin/event/add.html", **data)
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# created: zhangpeng <zhangpeng1@infohold.com.cn>
 
-import scloud
-#from torweb.urls import url
-from scloud.shortcuts import url
-from scloud.config import logger, thrownException
-from scloud.const import pro_resource_apply_status_types, STATUS_RESOURCE
-from scloud.handlers import Handler, AuthHandler
-import requests
-import urlparse
-import urllib
-import urllib2
 import simplejson
-import time
-from tornado.web import asynchronous
-from tornado import gen
+from scloud.shortcuts import url
+from scloud.config import logger
+from scloud.const import STATUS_PRO_TABLES
+from scloud.handlers import AuthHandler
 from scloud.utils.permission import check_perms
 from scloud.services.svc_project import ProjectService
+from scloud.services.svc_pro_event import EventService
 from scloud.services.svc_pro_resource_apply import ProResourceApplyService
 from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
@@ -66,8 +31,8 @@ class GuideStepGetHandler(AuthHandler):
 
 
 @url("/event/index", name="event.index", active="event.index")
-class GuideHandler(GuideStepGetHandler):
-    u'服务申请'
+class EventIndexHandler(GuideStepGetHandler):
+    u'事件列表'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -78,25 +43,39 @@ class GuideHandler(GuideStepGetHandler):
         logger.info(pro_list_res)
         data = {
             "pro_list_res": pro_list_res,
-            "STATUS_RESOURCE": STATUS_RESOURCE
         }
         return self.render_to_string("admin/event/index.html", **data)
 
 
-@url("/event/add", name="event.add", active="event.add")
-class GuideHandler(GuideStepGetHandler):
-    u'服务申请'
+@url("/event/add", name="event.add", active="event.index")
+class EventAddHandler(GuideStepGetHandler):
+    u'创建事件'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
         svc = ProjectService(self)
-        pro_id = self.args.get("pro_id")
-        data = self.get_pro_info_res(pro_id)
         pro_list_res = svc.get_project_list()
         if pro_list_res.return_code < 0:
             raise SystemError(pro_list_res.return_code, pro_list_res.return_message)
         logger.info(pro_list_res)
-        data.update({
-            "pro_list_res": pro_list_res
-        })
+        data = dict(pro_list_res=pro_list_res)
         return self.render_to_string("admin/event/add.html", **data)
+
+    @check_perms('pro_info.view')
+    @unblock
+    def post(self):
+        svc = EventService(self)
+        do_event_res = svc.do_event()
+        if do_event_res.return_code < 0:
+            self.add_message(u"事件提交失败 %s(%s)" % (do_event_res.return_code, do_event_res.return_message), level="warning")
+        else:
+            self.add_message(u"事件提交成功", level="success")
+
+        svc = ProjectService(self)
+        pro_list_res = svc.get_project_list()
+        if pro_list_res.return_code < 0:
+            raise SystemError(pro_list_res.return_code, pro_list_res.return_message)
+        logger.info(pro_list_res)
+        data = dict(pro_list_res=pro_list_res, do_event_res=do_event_res)
+        tmpl = self.render_to_string("admin/event/add_pjax.html", **data)
+        return simplejson.dumps(self.success(data=tmpl))

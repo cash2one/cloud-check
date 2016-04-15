@@ -15,74 +15,96 @@
         <section class="content">
           {% include "admin/base/base_messages.html" %}
           <div class="row">
-            <div class="col-md-4">
-            <a data-pjax href="{{ reverse_url('event.add') }}" class="btn btn-primary btn-block margin-bottom">添加新事件</a>
-              <div class="box box-solid">
-                <div class="box-header with-border">
-                  <h3 class="box-title">事件列表</h3>
-                  <div class="box-tools">
-                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                  </div>
-                </div>
-                <div class="box-body no-padding">
-                <form data-pjax id="env_res_form" action="{{ reverse_url('defaultset.env_info.del') }}">
-                  {{ handler.xsrf_form_html() }}
-                  <ul class="todo-list" id="env_list_res">
-                    <li{% if env_res and env_res.data.id == env.id %} class="done"{% endif %}>
-                      <!-- drag handle -->
-                      <!-- todo text -->
-                      <input type="checkbox" id="env_1" value="" name="env_id" onclick="check_done('1')">
-                      <span class="text">事件1</span>
-                      <!-- Emphasis label -->
-                      <span class="label label-primary">已处理</span>
-                      <!-- General tools such as edit or delete-->
-                      <div class="tools">
-                        <!-- tools -->
-                        <a data-pjax href=""><i class="fa fa-edit"></i></a>
-                        <a data-pjax href="javascript:;" onclick="do_del_env()"><i class="fa fa-trash-o"></i></a>
+            <div class="col-xs-12">
+              <div class="box">
+                <div class="box-header">
+                  <h3 class="box-title">
+                    <div class="input-group" style="width: 300px;">
+                      <input type="text" name="table_search" class="form-control input-sm pull-right" placeholder="Search">
+                      <div class="input-group-btn">
+                        <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                        <a data-pjax href="{{ reverse_url('event.add') }}" class="btn btn-sm btn-warning"><i class="fa fa-plus"></i> 创建新事件</a>
                       </div>
-                    </li>
-                    <!-- li -->
-                    <li id="li-btns" style="display: none">
-                        <!-- li -->
-                        <a id="env_list_edit_btn" data-pjax href="{{ reverse_url('defaultset.env_info.edit_info') }}" class="btn btn-success">编辑</a>
-                        <a data-pjax id="env_res_del_btn" href="javascript:;" onclick="do_del_env();" class="btn btn-danger">删除</a>
-                    </li>
-                  </ul>
-                </form>
+                    </div>
+                  </h3>
+                  <div class="box-tools">
+                    <a data-pjax href="{{ reverse_url('event.index') }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
+                  </div>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                  <table class="table table-hover table-striped table-bordered">
+                    <tr>
+                      <th>事件编号</th>
+                      <th style="width: 20%">标题</th>
+                      <th>所属项目</th>
+                      <th>优先级</th>
+                      <th>状态</th>
+                      <th>创建时间</th>
+                      <th>操作</th>
+                    </tr>
+                    <tr>
+                      <td>183</td>
+                      <td>John Doe</td>
+                      <td>11-7-2014</td>
+                      <td><span class="label label-success">Approved</span></td>
+                      <td><span class="label label-success">Approved</span></td>
+                      <td>11-7-2014</td>
+                      <td>
+                        <div class="input-group-btn">
+                          <button class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</button>
+                          <button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> 删除</button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>219</td>
+                      <td>Alexander Pierce</td>
+                      <td>11-7-2014</td>
+                      <td><span class="label label-warning">Pending</span></td>
+                      <td><span class="label label-warning">Pending</span></td>
+                      <td>11-7-2014</td>
+                      <td>
+                        <div class="input-group-btn">
+                          <button class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</button>
+                          <button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> 删除</button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>657</td>
+                      <td>Bob Doe</td>
+                      <td>11-7-2014</td>
+                      <td><span class="label label-primary">Approved</span></td>
+                      <td><span class="label label-primary">Approved</span></td>
+                      <td>11-7-2014</td>
+                      <td>
+                        <div class="input-group-btn">
+                          <button class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</button>
+                          <button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> 删除</button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>175</td>
+                      <td>Mike Doe</td>
+                      <td>11-7-2014</td>
+                      <td><span class="label label-danger">Denied</span></td>
+                      <td><span class="label label-danger">Denied</span></td>
+                      <td>11-7-2014</td>
+                      <td>
+                        <div class="input-group-btn">
+                          <button class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</button>
+                          <button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> 删除</button>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
                 </div><!-- /.box-body -->
-              </div><!-- /. box -->
-            </div><!-- /.col -->
-            <div class="col-md-8">
-            {% block edit_content %}
-            {% endblock %}
-            </div><!-- /.col -->
+              </div><!-- /.box -->
+            </div>
           </div><!-- /.row -->
         </section><!-- /.content -->
         <script type="text/javascript">
-        function check_done(env_id){
-          var _this = $("#env_"+env_id)
-          console.log(_this)
-          if(_this.prop("checked")){
-            _this.parent().addClass("done");
-          }else{
-            _this.parent().removeClass("done");
-          }
-          var checked_values = $getCheckValues("#env_list_res")
-          console.log(checked_values)
-          if (checked_values.length > 0){
-            if (checked_values.length == 1){
-              $("#env_list_edit_btn").css("display", "")
-              var href = "{{ reverse_url('defaultset.env_info.edit_info') }}" + "?env_id=" + checked_values[0]
-              $("#env_list_edit_btn").attr("href", href)
-            }else{
-              $("#env_list_edit_btn").css("display", "none")
-            }
-            $("#li-btns").css("display", "");
-          }else{
-            $("#li-btns").css("display", "none");
-          }
-        }
         function do_del_env(){
           var checked_values = $getCheckValues("#env_list_res")
           var names = []
@@ -103,14 +125,4 @@
               }
           })
         }
-        {% if env_res %}
-          $(function(){
-              init_status()
-              check_done()
-          })
-          function init_status(){
-            var env_id = "{{ env_res.data.id }}";
-            $("li[name=env_"+env_id+"]").addClass("active");
-          }
-        {% endif %}
         </script>

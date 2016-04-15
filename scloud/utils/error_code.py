@@ -34,7 +34,6 @@ class ERROR(object):
     repeat_password_empty_err = error(errcode=-100013, errvalue=u"重复密码不能为空")
     repeat_password_err     = error(errcode=-100014, errvalue=u"重复密码与新密码不一致")
 
-
     # 创建项目
     pro_name_empty_err        = error(errcode=-100020, errvalue=u"项目名称不能为空")
     pro_owner_empty_err       = error(errcode=-100021, errvalue=u"项目负责人不能为空")
@@ -56,7 +55,8 @@ class ERROR(object):
     res_period_empty_err          = error(errcode=-100051, errvalue=u"申请资源运行期限不能为空")
     res_unit_fee_empty_err        = error(errcode=-100052, errvalue=u"申请资源费用不能为空")
     res_total_fee_empty_err       = error(errcode=-100053, errvalue=u"申请资源总费用不能为空")
-    
+    res_apply_id_empty_err       = error(errcode=-100054, errvalue=u"资源申请不能为空")
+
     res_computer_invalid_err        = error(errcode=-100060, errvalue=u"申请云主机数据不合法")
     res_cpu_invalid_err             = error(errcode=-100061, errvalue=u"申请CPU数据不合法")
     res_memory_invalid_err          = error(errcode=-100062, errvalue=u"申请内存数据不合法")
@@ -102,16 +102,20 @@ class ERROR(object):
     pro_publish_network_port_empty_err = error(errcode=-100166, errvalue=u"内网端口不能为空")
     pro_publish_network_port_invalid_err = error(errcode=-100167, errvalue=u"内网端口必须为大于1024小于65535的正整数")
 
-    #定期备份
+    # 定期备份
     pro_backups_disk_empty_err = error(errcode=-100180, errvalue=u"磁盘不能为空") 
     pro_backups_plot_empty_err = error(errcode=-100181, errvalue=u"备份策略不能为空")
     pro_backups_interval_empty_err = error(errcode=-100182, errvalue=u"时间间隔不能为空")
     pro_backups_backup_time_empty_err =error(errcode=-100183, errvalue=u"备份时间不能为空")
 
-    #负载均衡
+    # 负载均衡
     pro_balance_member_port_empty_err = error(errcode=-100200, errvalue=u"端口不能为空")
     pro_balance_member_address_empty_err = error(errcode=-100201, errvalue=u"ip不能为空")
 
+    # 事件
+    pro_event_title_empty_err = error(errcode=-100220, errvalue=u"事件标题不能为空")
+    pro_event_title_duplicate_err = error(errcode=-100221, errvalue=u"不允许提交重复事件")
+    pro_event_content_empty_err = error(errcode=-100222, errvalue=u"事件内容不能为空")
 
 
 ERR = ObjectDict()

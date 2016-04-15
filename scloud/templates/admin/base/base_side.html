@@ -74,12 +74,16 @@
             {% endif %}
             <li class="treeview">
               <a href="#">
+                <i class="fa fa-files-o"></i> <span>事件管理</span> <i class="fa fa-angle-left pull-right"></i>
+                <span class="label label-primary pull-right"></span>
+              </a>
+              <!--a href="#">
                 <i class="fa fa-files-o"></i>
                 <span>事件管理</span>
                 <span class="label label-primary pull-right"></span>
-              </a>
+              </a-->
               <ul class="treeview-menu">
-                <li><a data-pjax href="{{ reverse_url('event.index') }}"><i class="fa fa-circle-o"></i>创建事件</a></li>
+                <li><a data-pjax name="event.index" href="{{ reverse_url('event.index') }}"><i class="fa fa-circle-o"></i>创建事件</a></li>
                 <li><a data-pjax href="{{ reverse_url('event.calendar') }}"><i class="fa fa-circle-o"></i>日历</a></li>
               </ul>
             </li>
