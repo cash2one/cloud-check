@@ -48,6 +48,7 @@ class ProfileService(BaseService):
             user.email = email
             user.mobile = mobile
             self.db.add(user)
+            self.db.flush()
             logger.info("*"*60)
             logger.info(user.username)
             logger.info("*"*60)
@@ -89,6 +90,7 @@ class ProfileService(BaseService):
         if user:
             user.password = new_password
             self.db.add(user)
+            self.db.flush()
             return self.success(data=user)
         else:
             return self.failure(ERROR.not_found_err)

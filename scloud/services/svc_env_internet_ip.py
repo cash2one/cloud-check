@@ -50,6 +50,7 @@ class EnvInternetIpService(BaseService):
             env_internet_ip.fee = fee
             env_internet_ip.desc = desc
             self.db.add(env_internet_ip)
+            self.db.flush()
             return self.success(data=env_internet_ip)
         else:
             return self.failure(ERROR.env_internet_ip_name_duplicate_err)
@@ -94,6 +95,7 @@ class EnvInternetIpService(BaseService):
             env_internet_ip.fee = fee
             env_internet_ip.desc = desc
             self.db.add(env_internet_ip)
+            self.db.flush()
             return self.success(data=env_internet_ip)
 
     @thrownException

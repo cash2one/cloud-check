@@ -63,4 +63,5 @@ class ProjectService(BaseService):
         project.desc = desc
         project.user_id = user_id
         self.db.add(project)
+        self.db.flush()
         return self.success(data=project)

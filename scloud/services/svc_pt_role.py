@@ -122,6 +122,7 @@ class PtRoleService(BaseService):
         role_info.desc = desc
         role_info.remark = remark
         self.db.add(role_info)
+        self.db.flush()
         return self.success()
 
     @thrownException
@@ -141,6 +142,7 @@ class PtRoleService(BaseService):
             role.desc = desc
             role.remark = remark
             self.db.add(role)
+            self.db.flush()
             return self.success(data={"is_success": True})
         else:
             return NotFoundError()

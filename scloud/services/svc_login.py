@@ -52,6 +52,7 @@ class LoginService(BaseService):
             result = self.success(data=user_info)
             user_info.last_login = datetime.now()
             self.db.add(user_info)
+            self.db.flush()
             #self.db.commit()
             return result
         else:

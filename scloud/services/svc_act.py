@@ -138,6 +138,7 @@ class ActHistoryService(BaseService):
         if act:
             act.checker_id = self.handler.current_user.id
             self.db.add(act)
+            self.db.flush()
             return self.success()
         else:
             return NotFoundError()

@@ -75,6 +75,7 @@ class EnvService(BaseService):
         env.name = name
         env.desc = desc
         self.db.add(env)
+        self.db.flush()
         return self.success(data=env)
 
     @thrownException
@@ -113,4 +114,3 @@ class EnvService(BaseService):
         # )
         # self.db.delete(env_info_query_list)
         return self.success(data=messages)
-
