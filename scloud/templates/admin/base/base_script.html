@@ -186,12 +186,12 @@ function generate_ajax_post(options){
     success: function(response){
       hide_loading();
       $(button).button("reset");
-      if (check_response(response)){
         if(pjax_container == true){
-          $("#pjax-container").html(response.data);
+          if (check_response(response)){
+            $("#pjax-container").html(response.data);
+          }
         }
         if (options.onSuccess) {(options.onSuccess)(response);}
-      }
     },
     error: function(xhr, Status){
       if (Status == "timeout"){
@@ -217,6 +217,12 @@ function CheckBoxListener(){
     console.log($(this))
   })
 }
+
+function refresh_captcha(){
+  $("#captcha").val("");
+  $('#captcha-img').attr("src", "{{ reverse_url('captcha') }}?"+Math.random());
+}
 </script>
 {% include "admin/base/scripts/ws_pubsub.html" %}
 {% include "admin/base/scripts/pro_table_do_confirm.html" %}
+{% include "admin/base/scripts/login.html" %}

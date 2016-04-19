@@ -1,9 +1,9 @@
   <p class="login-box-msg"></p>
-  <form id="register_form" action="{{ reverse_url('register') }}" method="post" onsubmit="return check_form()">
+  <form id="register_form" action="{{ reverse_url('register') }}" method="post">
     <p class="login-box-msg">注册新用户</p>
     {{ handler.xsrf_form_html() }}
     <div class="form-group has-feedback">
-      <input type="text" id="email" name="email" class="form-control" placeholder="邮箱" onblur="generate_username();" value="{{ handler.session.get('post_email', '') }}">
+      <input type="text" id="email" name="email" class="form-control" placeholder="邮箱" onblur="generate_username();" value="{{ handler.args.get('email', '') }}">
       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
     </div>
     {% if result %}
@@ -21,7 +21,7 @@
       {% endif %}
     {% endif %}
     <div class="form-group has-feedback">
-      <input type="text" class="form-control" name="mobile" placeholder="常用手机号" data-inputmask="'mask': ['999 9999 9999']" data-mask value="{{ handler.session.get('post_mobile', '')}}">
+      <input type="text" class="form-control" name="mobile" placeholder="常用手机号" data-inputmask="'mask': ['999 9999 9999']" data-mask value="{{ handler.args.get('mobile', '')}}">
       <span class="glyphicon glyphicon-phone form-control-feedback"></span>
     </div>
     {% if result %}
@@ -44,17 +44,29 @@
       <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
     </div>
     <p class="text-red" for="repeat_password"></p>
+    <div class="form-group has-feedback">
+      <div class="input-group">
+        <input type="text" id="captcha" name="captcha" class="form-control" placeholder="验证码" value="">
+        <img id="captcha-img" onclick="refresh_captcha();" class="captcha-img" src="{{ reverse_url('captcha') }}" />
+        <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+      </div>
+    </div>
+    {% if result %}
+      {% if result.return_code|int in [ERR.CAPTCHA_ERR, ERR.CAPTCHA_EMPTY_ERR, ERR.CAPTCHA_EXPIRED_ERR] %}
+        <p class="text-red">{{ result.return_message }}</p>
+      {% endif %}
+    {% endif %}
     <div class="row">
       <div class="col-xs-8">
         <div class="checkbox icheck">
           <label>
-            <input type="checkbox" id="agree" name="agree"{% if handler.session.get('post_agree', 0)|int == 1 %} checked="checked" {% endif %}> 同意<a href="#">协议</a>
+            <input type="checkbox" id="agree" name="agree"{% if handler.args.get('agree', 0)|int == 1 %} checked="checked" {% endif %}> 同意<a href="#">协议</a>
           </label>
           <p class="text-red" for="agree"></p>
         </div>
       </div><!-- /.col -->
       <div class="col-xs-4">
-        <button type="submit" class="btn btn-primary btn-block btn-flat">注册</button>
+        <button type="button" id="register_form_btn" onclick="do_register()" class="btn btn-primary btn-block btn-flat">注册</button>
       </div><!-- /.col -->
     </div>
   <a data-pjax href="{{ reverse_url('login') }}" class="text-center">已有帐号，直接登录</a>
@@ -91,12 +103,22 @@ function check_form(){
   }
   var password = $("#password").val();
   var repeat_password = $("#repeat_password").val();
+  // if (password == ""){
+  //   $("p[for=repeat_password]").text("密码不能为空");
+  //   return false;
+  // }
   if (password != repeat_password){
     $("p[for=repeat_password]").text("重复密码不一致");
     return false;
   }
   var password = $('#password').val();
-  $('input[name=password]').val(MD5(password));
+  if (password == ""){
+    $('input[name=password]').val("");
+  }else{
+    $('input[name=password]').val(MD5(password));
+  }
   return true;
 }
+
+
 </script>

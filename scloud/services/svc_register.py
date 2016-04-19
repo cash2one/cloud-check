@@ -21,6 +21,13 @@ class RegisterService(BaseService):
 
     @thrownException
     def do_register(self):
+        captcha = self.params.get("captcha")
+        if not captcha:
+            return self.failure(ERROR.captcha_empty_err)
+        if not self.handler.session.get("captcha"):
+            return self.failure(ERROR.captcha_expired_err)
+        if captcha != self.handler.session.get("captcha"):
+            return self.failure(ERROR.captcha_err)
         email = self.params.get("email", "").strip()
         username = self.params.get("username", "").strip()
         mobile = self.params.get("mobile", "").strip().replace(' ', '')

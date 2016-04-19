@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import simplejson
 from scloud.shortcuts import url
 from scloud.config import logger, thrownException
 from scloud.handlers import Handler
@@ -30,13 +31,15 @@ class RegisterHandler(Handler):
             logger.info("login session saved!")
             self.add_message(u"欢迎%s,您已注册成功！" % result.data.username)
             if next:
-                return self.redirect(next)
+                return simplejson.dumps(self.success(data=next))
             else:
-                return self.redirect(self.reverse_url('pt_user'))
+                return simplejson.dumps(self.success(data=self.reverse_url('pt_user')))
         else:
-            self.session["post_email"] = self.args.get("email", u"")
-            self.session["post_mobile"] = self.args.get("mobile", u"")
-            self.session["post_agree"] = self.args.get("agree", 0)
-            self.save_session()
-            return self.render_to_string("admin/register.html", result=result)
+            # self.session["post_email"] = self.args.get("email", u"")
+            # self.session["post_mobile"] = self.args.get("mobile", u"")
+            # self.session["post_agree"] = self.args.get("agree", 0)
+            # self.save_session()
+            tmpl = self.render_to_string("admin/register_pjax.html", result=result)
+            result["data"] = tmpl
+            return simplejson.dumps(result)
             # return self.redirect(self.reverse_url('login'))

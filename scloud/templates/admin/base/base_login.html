@@ -13,7 +13,7 @@
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Theme style -->
-    <link rel="stylesheet" href="{{ handler.static_url('default/dist/css/AdminLTE.min.css') }}">
+    <link rel="stylesheet" href="{{ handler.static_url('default/dist/css/AdminLTE.css') }}">
     <!-- iCheck -->
     <link rel="stylesheet" href="{{ handler.static_url('default/plugins/iCheck/square/blue.css') }}">
 
@@ -46,7 +46,7 @@
       {% block content %}
       {% endblock %}
     </div><!-- /.login-box -->
-
+    {% include "admin/base/base_script.html" %}
     <!-- jQuery 2.1.4 -->
     <script>
       $(function () {
@@ -57,6 +57,7 @@
         });
         $("[data-mask]").inputmask();
       });
+
     </script>
   </body>
 </html>

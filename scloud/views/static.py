@@ -5,7 +5,7 @@
 from scloud.shortcuts import *
 from scloud.handlers import Handler
 
-@url(r'/captcha')
+@url(r'/captcha', name="captcha")
 class CaptchaHandler(Handler):
     def get(self):
         import os
