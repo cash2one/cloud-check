@@ -15,99 +15,59 @@
         <section class="content">
           {% include "admin/base/base_messages.html" %}
           <div class="row">
-            <div class="col-md-4">
-            <a data-pjax href="{{ reverse_url('guide') }}" class="btn btn-primary btn-block margin-bottom">申请新项目</a>
-              <div class="box box-solid">
-                <div class="box-header with-border">
-                  <h3 class="box-title">项目列表</h3>
-                  <div class="box-tools">
-                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                  </div>
-                </div>
-                <div class="box-body no-padding">
-                  <ul class="nav nav-pills nav-stacked">
-                    {% for pro in pro_list_res.data %}
-                      {% set applies = pro.pro_resource_applies %}
-                      {% set last_apply = applies[-1] %}
-                      {% if last_apply.status >= STATUS_RESOURCE.CONFIRMPAYED %}
-                      <li name="pro_{{ pro.id }}"><a data-pjax href="{{ reverse_url('apply.user.add') }}?pro_id={{ pro.id }}"><i class="fa fa-inbox"></i> {{ pro.name }}
-                      <span class="pull-right">
-                      <span class="label label-primary">{{ STATUS_RESOURCE.get(last_apply.status).value }}</span>
-                      {% set pro_users = pro.pro_users|status_filter(STATUS_PRO_TABLES.CHECKED) %}
-                      {% if pro_users|length > 0 %}
-                      <span class="label label-warning">{{ pro_users|length }}个等待确认</span>
-                      {% endif %}
-                      </span>
-                      </a></li>
-                      {% endif %}
-                    {% endfor %}
-                  </ul>
-                {#
-                <form data-pjax id="env_res_form" action="{{ reverse_url('defaultset.env_info.del') }}">
-                  {{ handler.xsrf_form_html() }}
-                  <ul class="todo-list" id="env_list_res">
-                    {% for pro in pro_list_res.data %}
-                      {% set applies = pro.pro_resource_applies %}
-                      {% set last_apply = applies[-1] %}
-                      {% if last_apply.status >= STATUS_RESOURCE.CONFIRMPAYED %}
-                    <li{% if pro_info_res and pro_info_res.data.id == pro.id %} class="done"{% endif %}>
-                      <!-- drag handle -->
-                      <!-- todo text -->
-                      <input type="checkbox" id="pro_{{ pro.id }}" value="{{ pro.id }}" name="pro_id" onclick="check_done('{{ pro.id }}')"{% if pro_info_res and pro_info_res.data.id == pro.id %} checked{% endif %}>
-                      <span class="text">{{ pro.name }}</span>
-                      <!-- Emphasis label -->
-                      <span class="label label-primary">{{ STATUS_RESOURCE.get(last_apply.status).value }}</span>
-                      <!-- General tools such as edit or delete-->
-                      <div class="tools">
-                        <!-- tools -->
-                        <a data-pjax href=""><i class="fa fa-edit"></i></a>
-                        <a data-pjax href="javascript:;" onclick="do_del_env()"><i class="fa fa-trash-o"></i></a>
+            <div class="col-xs-12">
+              <div class="box">
+                <div class="box-header">
+                  <h3 class="box-title">
+                    <div class="input-group" style="width: 300px;">
+                      <input type="text" name="table_search" class="form-control input-sm pull-right" placeholder="Search">
+                      <div class="input-group-btn">
+                        <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                        <a data-pjax href="{{ reverse_url('apply.user.add') }}" class="btn btn-sm btn-warning"><i class="fa fa-plus"></i> 创建新权限用户</a>
                       </div>
-                    </li>
+                    </div>
+                  </h3>
+                  <div class="box-tools">
+                    <a data-pjax href="{{ reverse_url('apply.user') }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
+                  </div>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                  <table class="table table-hover table-striped table-bordered">
+                    <tr>
+                      <th>事件编号</th>
+                      <th style="width: 20%">标题</th>
+                      <th>所属项目</th>
+                      <th>状态</th>
+                      <th>创建时间</th>
+                      <th>操作</th>
+                    </tr>
+                    {% for user in page.object_list %}
+                    <tr>
+                      <td>{{ user.id }}</td>
+                      <td>{{ user.title }}</td>
+                      <td>{{ user.project.name }}</td>
+                      <td><span class="label label-{{ STATUS_PRO_TABLES.get(user.status).level }}">{{ STATUS_PRO_TABLES.get(user.status).value }}</span>
+                      {% if user.status == STATUS_PRO_TABLES.CHECKED %}
+                      <a class="btn btn-warning btn-xs" href="javascript:;" style="color:#FFFFFF" onclick="pro_table_do_confirm({_this:this, pro_table:'pro_user', ids:[{{ user.id }}]})"> 确认</a>
                       {% endif %}
-                      {% endfor %}
-                    <!-- li -->
-                    <li id="li-btns" style="display: none">
-                        <!-- li -->
-                        <a id="env_list_edit_btn" data-pjax href="{{ reverse_url('apply.user.add') }}" class="btn btn-success">权限申请</a>
-                        <a data-pjax id="env_res_del_btn" href="javascript:;" onclick="do_del_env();" class="btn btn-danger">删除</a>
-                    </li>
-                  </ul>
-                </form>
-                #}
+                      </td>
+                      <td>{{ user.create_time|getGoodTime }}</td>
+                      <td>
+                        <div class="input-group-btn">
+                          <a data-pjax href="{{ reverse_url('apply.user.detail') }}?id={{ user.id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</a>
+                          <button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> 删除</button>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </table>
                 </div><!-- /.box-body -->
-              </div><!-- /. box -->
-            </div><!-- /.col -->
-            <div class="col-md-8">
-            {% block edit_content %}
-            {% endblock %}
-            </div><!-- /.col -->
+                  {% include "admin/base/base_paginator.html" %}
+              </div><!-- /.box -->
+            </div>
           </div><!-- /.row -->
         </section><!-- /.content -->
         <script type="text/javascript">
-        function check_done(env_id){
-          var _this = $("#pro_"+env_id)
-          console.log(_this)
-          if(_this.prop("checked")){
-            _this.parent().addClass("done");
-          }else{
-            _this.parent().removeClass("done");
-          }
-          var checked_values = $getCheckValues("#env_list_res")
-          console.log(checked_values)
-          if (checked_values.length > 0){
-            if (checked_values.length == 1){
-              $("#env_list_edit_btn").css("display", "")
-              var href = "{{ reverse_url('apply.user.add') }}" + "?pro_id=" + checked_values[0]
-              $("#env_list_edit_btn").attr("href", href)
-            }else{
-              $("#env_list_edit_btn").css("display", "none")
-            }
-            $("#li-btns").css("display", "");
-          }else{
-            $("#li-btns").css("display", "none");
-          }
-        }
         function do_del_env(){
           var checked_values = $getCheckValues("#env_list_res")
           var names = []
@@ -128,14 +88,4 @@
               }
           })
         }
-        {% if pro_info_res %}
-          $(function(){
-              init_status()
-              check_done()
-          })
-          function init_status(){
-            var pro_id = "{{ pro_info_res.data.id }}";
-            $("li[name=pro_"+pro_id+"]").addClass("active");
-          }
-        {% endif %}
         </script>

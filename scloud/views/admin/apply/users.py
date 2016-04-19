@@ -32,7 +32,29 @@ class GuideHandler(ApplyHandler):
     @unblock
     def get(self):
         data = self.get_pro_data()
+        svc = ProUserService(self, {"user_id": self.current_user.id})
+        pro_users_res = svc.get_list()
+        page = self.getPage(pro_users_res.data)
+        data.update(page=page)
         return self.render_to_string("admin/apply/user/index.html", **data)
+
+
+@url("/apply/user/detail", name="apply.user.detail", active="apply.user.index")
+class ProUserDetailHandler(ApplyHandler):
+    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
+    u'事件详情'
+    @check_perms('pro_info.view')
+    @unblock
+    def get(self):
+        svc = ProUserService(self)
+        pro_user_res = svc.get_info()
+        if pro_user_res.return_code < 0:
+            raise SystemError(pro_user_res.return_code, pro_user_res.return_message)
+        logger.info(pro_user_res)
+        data = {
+            "pro_user_res": pro_user_res,
+        }
+        return self.render_to_string("admin/user/detail.html", **data)
 
 
 #@url("/apply/pro_(?P<pro_id>\d+)/user/add", name="apply.user.add", active="apply.user.add")
@@ -42,9 +64,9 @@ class GuideHandler(ApplyHandler):
     @check_perms('pro_info.view')
     @unblock
     def get(self):
-        pro_id = self.args.get("pro_id")
-        user_id = self.args.get("user_id", 0)
-        data = self.get_pro_data(pro_id=pro_id)
+        # pro_id = self.args.get("pro_id")
+        # user_id = self.args.get("user_id", 0)
+        data = self.get_pro_data()
         svc = ProUserService(self)
         pro_users_res = svc.get_list()
         pro_user_res = svc.get_info()

@@ -165,6 +165,9 @@ class GuideStep3Handler(GuideStepGetHandler):
     def get(self, **kwargs):
         data = self.get_pro_info_res(kwargs["pro_id"])
         applies = data["pro_info_res"].data.pro_resource_applies
+        svc = ProjectService(self)
+        pro_list_res = svc.get_project_list()
+        logger.info(pro_list_res)
         svc = ProUserService(self, {"pro_id": kwargs["pro_id"]})
         pro_users_res = svc.get_list()
         pro_user_res = svc.get_info()
@@ -175,6 +178,7 @@ class GuideStep3Handler(GuideStepGetHandler):
         svc = ApplyBackups(self, {"pro_id": kwargs["pro_id"]})
         backups_res = svc.get_backups()
         data.update(
+            pro_list_res=pro_list_res,
             pro_users_res=pro_users_res,
             pro_user_res=pro_user_res,
             publish_res=publish_res,

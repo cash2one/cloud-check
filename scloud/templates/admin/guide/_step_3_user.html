@@ -1,154 +1,90 @@
+{% import "admin/base/base_macros.html" as base with context %}
+{% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
 
-{% import "admin/base/base_macros.html" as base %}
-{% set pro_user = pro_user_res.data %}
-  <!-- Horizontal Form -->
-  <form data-pjax id="user_res_form" action="{{ reverse_url('apply.user.del') }}">
-    {{ handler.xsrf_form_html() }}
-    <input type="hidden" name="pro_id" value="{{ pro_info_res.data.id }}">
-    <ul class="todo-list" id="user_list_res">
-      <!-- li -->
-      <li id="li-users-btns">
-          <!-- li -->
-          <!--a id="user_list_add_btn" onclick="$('#form_user').parent().parent().css('display', '')" data-pjax href="javascript:;" class="btn btn-info btn-sm">添加</a-->
-          <a id="user_list_add_btn" data-pjax href="{{ reverse_url('apply.user.add') }}?pro_id={{ pro_info_res.data.id }}&action=add" class="btn btn-info btn-sm">添加</a>
-          <a id="user_list_edit_btn" style="display: none" data-pjax href="{{ reverse_url('apply.user.add') }}" class="btn btn-warning btn-sm">编辑</a>
-          <a data-pjax id="user_res_del_btn" style="display: none" href="javascript:;" onclick="do_del_user();" class="btn btn-danger btn-sm">删除</a>
-      </li>
-      {% for user in pro_users_res.data %}
-        {% set ST = STATUS_PRO_TABLES.get(user.status) %}
-        {% set NEXT_ST = STATUS_PRO_TABLES.get(user.status+1) %}
-      <li{% if pro_user_res and pro_user_res.data.id == user.id %} class="done"{% endif %}>
-        <!-- drag handle -->
-        <!-- todo text -->
-        <input type="checkbox" id="user_{{ user.id }}" value="{{ user.id }}" name="user_id" onclick="check_users('{{ user.id }}')"{% if pro_user_res and pro_user_res.data.id == user.id %} checked{% endif %}>
-        <span class="text">{{ user.username }}</span>
-        <span class="text">{{ user.email }}</span>
-        <!-- Emphasis label -->
-        <span class="label label-{{ ST.level }}">{{ ST.todo_value }}</span>
-        {% if user.status == STATUS_PRO_TABLES.CHECKED %}
-        <a class="btn btn-warning btn-sm" href="javascript:;" style="color:#FFFFFF" onclick="pro_table_do_confirm({_this:this, pro_table:'pro_user', ids:[{{ user.id }}]})"> {{ NEXT_ST.act_value }}</a>
-        {% endif %}
-        <!-- General tools such as edit or delete-->
-        <div class="tools">
-          <!-- tools -->
-          <a data-pjax href=""><i class="fa fa-edit"></i></a>
-          <a data-pjax href="javascript:;" onclick="do_del_user()"><i class="fa fa-trash-o"></i></a>
-        </div>
-      </li>
-      {% endfor %}
-    </ul>
-  </form>
-
-  <div{% if not handler.args.get("action") %} style="display: none"{% endif %}>
-    <div class="box-header with-border">
-      <h3 class="box-title">{{ pro_info_res.data.name }}管理授权</h3>
-      <!-- tools box -->
-      <div class="pull-right box-tools">
-      <button class="btn btn-info btn-sm" data-toggle="tooltip" onclick="$('#form_user').parent().parent().css('display', 'none')"><i class="fa fa-times"></i></button>
-      </div><!-- /. tools -->
-    </div><!-- /.box-header -->
-    <!-- form start -->
-    <div class="box-body">
-      <form id="form_user" data-pjax action="{{ reverse_url('apply.user.add') }}" class="form-horizontal" method="POST">
-        {{ handler.xsrf_form_html() }}
-        {% if pro_user %}
-          <input type="hidden" name="user_id" value="{{ pro_user.id }}">
-          {% set username = pro_user.username %}
-          {% set email = pro_user.email %}
-          {% set is_enable = pro_user.is_enable %}
-          {% set use_vpn = pro_user.use_vpn %}
-        {% else %}
-          {% set username = handler.args.get("username", "") %}
-          {% set email = handler.args.get("email", "") %}
-          {% set is_enable = handler.args.get("is_enable", "") %}
-          {% set use_vpn = handler.args.get("use_vpn", "") %}
-        {% endif %}
-        <input type="hidden" name="pro_id" value="{{ pro_info_res.data.id }}">
-        <!-- form input -->
-        {{ base.form_input("用户名", "username", res=pro_user_res, value=username,
-              check_codes=[ERR.USERNAME_EMPTY_ERR, ERR.USERNAME_DUPLICATE_ERR]) }}
-        {{ base.form_input("邮箱", "email", res=pro_user_res, value=email,
+      <!-- Horizontal Form -->
+      <div class="box box-info">
+        <div class="box-header with-border">
+          <h3 class="box-title">添加新用户</h3>
+          {#
+          <div class="pull-right box-tools">
+            <a data-pjax href="{{ reverse_url('apply.user.add') }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
+            <button class="btn btn-info btn-sm" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
+          </div><!-- /. tools -->
+          #}
+        </div><!-- /.box-header -->
+        <!-- form start -->
+        <form data-pjax id="event_form" class="form-horizontal" action="{{ reverse_url('event.add') }}">
+          {{ handler.xsrf_form_html() }}
+          {% if handler.request.method == "POST" %}
+              {% set username = handler.args.get("username", "") %}
+              {% set email = handler.args.get("email", "") %}
+              {% set is_enable = handler.args.get("is_enable", "") %}
+              {% set use_vpn = handler.args.get("use_vpn", "") %}
+          {% else %}
+              {% set username = handler.args.get("username", "") %}
+              {% set email = handler.args.get("email", "") %}
+              {% set is_enable = handler.args.get("is_enable", "") %}
+              {% set use_vpn = handler.args.get("use_vpn", "") %}
+          {% endif %}
+          <input type="hidden" id="res_apply_id" name="res_apply_id" value="{{ res_apply_id }}"/>
+          <div class="box-body">
+            {{ pro_macro.get_pro_info_select() }}
+            {{ base.form_input("用户名", "username", right_col=6, value=username, res=do_event_res, check_codes=[ERR.USERNAME_EMPTY_ERR, ERR.USERNAME_DUPLICATE_ERR]) }}
+            {{ base.form_input("邮箱", "email", right_col=6, res=pro_user_res, value=email,
               check_codes=[ERR.EMAIL_EMPTY_ERR, ERR.EMAIL_FORMAT_ERR, ERR.EMAIL_DUPLICATE_ERR]) }}
-        {{ base.form_select("是否有效", "is_enable", value=is_enable, options=[{"value": 1, "desc": "是"}, {"value":0, "desc": "否"}], res=pro_user_res) }}
-        <div class="form-group">
-          <div class="radio col-sm-offset-2 col-sm-10">
-              <label>
-              <input type="radio" name="use_vpn" id="use_vpn" value="1"{% if use_vpn|int == 1 %} checked="checked"{% endif %}>
-                需要为此用户开通VPN远程访问，并接受用户安全协议。<a href="#">查看协议</a>
-              </label>
-          </div>
-          <div class="radio col-sm-offset-2 col-sm-10">
-              <label>
-              <input type="radio" name="use_vpn" id="use_vpn" value="0"{% if use_vpn|int == 0 %} checked="checked"{% endif %}>
-                不需开通VPN，管理员于操作间使用资源
-              </label>
-          </div>
-        </div>
-        <div class="box-footer text-center">
-          <button type="button" id="form_user_btn" onclick="do_form_user()" class="btn btn-info">提交</button>
-        </div><!-- /.box-footer -->
-      </form>
-    </div>
-  </div><!-- /.box -->
-  <script type="text/javascript">
-  $(function(){
-    $(".select2").select2();
-  })
-  function do_form_user(){
+            {{ base.form_select("是否有效", "is_enable", value=is_enable, options=[{"value": 1, "desc": "是"}, {"value":0, "desc": "否"}], res=pro_user_res) }}
+            <div class="form-group">
+              <div class="radio col-sm-offset-2 col-sm-10">
+                  <label>
+                  <input type="radio" name="use_vpn" id="use_vpn" value="1"{% if use_vpn|int == 1 %} checked="checked"{% endif %}>
+                    需要为此用户开通VPN远程访问，并接受用户安全协议。<a href="#">查看协议</a>
+                  </label>
+              </div>
+              <div class="radio col-sm-offset-2 col-sm-10">
+                  <label>
+                  <input type="radio" name="use_vpn" id="use_vpn" value="0"{% if use_vpn|int == 0 %} checked="checked"{% endif %}>
+                    不需开通VPN，管理员于操作间使用资源
+                  </label>
+              </div>
+            </div>
+          </div><!-- /.box-body -->
+          <div class="box-footer text-center">
+            <button type="button" id="event_form_btn" onclick="do_add_env()" class="btn btn-info">提 交</button>
+          </div><!-- /.box-footer -->
+        </form>
+      </div><!-- /.box -->
+    
+<script text="text/javascript">
+  function formatPro(state){
+    if (!state.id) { return state.text; }
+    var res_apply_id = $(state.element).attr("res_apply_id");
+    var status_bg_color = $(state.element).attr("status_bg_color");
+    var status_value = $(state.element).attr("status_value");
+    var status_disabled = $(state.element).attr("disabled");
+    if (status_disabled == "disabled"){
+      var disabled_text = "<span class='badge'>不可选</span>";
+    }else{
+      var disabled_text = "";
+    }
+    var $state = $("<span>" + state.text + " <span class='badge bg-"+status_bg_color+"'>"+status_value+"</span> " + disabled_text + "</span>");
+    return $state;
+  }
+  $("select").select2();
+  $("select[name=pro_id]").select2({
+      templateResult: formatPro,
+      templateSelection: formatPro
+  });
+  function do_add_env(){
     generate_ajax_post({
-      form: "#form_user",
-      btn: "#form_user_btn"
+        form: "#event_form",
+        button: "#event_form_btn",
+        onTimeout: function(){ do_add_env();}
     })
   }
-  function check_users(user_id){
-    var _this = $("#user_"+user_id)
-    console.log(_this)
-    if(_this.prop("checked")){
-      _this.parent().addClass("done");
-    }else{
-      _this.parent().removeClass("done");
-    }
-    var checked_values = $getCheckValues("#user_list_res")
-    console.log(checked_values)
-    if (checked_values.length > 0){
-      if (checked_values.length == 1){
-        $("#user_list_edit_btn").css("display", "")
-        var href = "{{ reverse_url('apply.user.add') }}" + "?pro_id={{ handler.args.get('pro_id') }}&user_id=" + checked_values[0] + "&action=edit";
-        $("#user_list_edit_btn").attr("href", href)
-      }else{
-        $("#user_list_edit_btn").css("display", "none")
-      }
-      $("#li-users-btns").find("a").css("display", "");
-    }else{
-      $("#li-users-btns").find("#user_list_edit_btn").css("display", "none");
-      $("#li-users-btns").find("#user_res_del_btn").css("display", "none");
-    }
-  }
-  {% if pro_user %}
-    $(function(){
-        init_user_status()
-        check_users()
-    })
-    function init_user_status(){
-      var pro_id = "{{ pro_user.id }}";
-      $("li[name=pro_"+pro_id+"]").addClass("active");
-    }
-  {% endif %}
-  function do_del_user(){
-    // var checked_values = $getCheckValues("#user_list_res")
-    confirmBox({
-        message: "确定删除该用户吗？",
-        onConfirm: function(){
-          generate_ajax_post({
-            form: "#user_res_form",
-            btn: "#user_res_del_btn",
-            onSuccess: function(response){
-              $("#confirmBox").tClose()
-            }
-            //method: "DELETE"
-          })
-        }
-    })
-  }
-  </script>
-  
+</script>
+        <script type="text/javascript">
+          $(function () {
+            //Add text editor
+            $("#content").wysihtml5();
+          });
+        </script>
