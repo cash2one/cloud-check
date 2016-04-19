@@ -26,6 +26,7 @@ class ERROR(object):
     email_err               = error(errcode=-100006, errvalue=u"邮箱错误")
     mobile_empty_err        = error(errcode=-100007, errvalue=u"手机号不能为空")
     mobile_duplicate_err    = error(errcode=-100018, errvalue=u"该手机号已经被使用")
+    mobile_format_err       = error(errcode=-100019, errvalue=u"手机号格式不正确")
     mobile_err              = error(errcode=-100008, errvalue=u"手机号错误")
     user_empty_err          = error(errcode=-100009, errvalue=u"操作用户不能为空")
     checker_empty_err       = error(errcode=-100010, errvalue=u"审核用户不能为空")

@@ -21,14 +21,18 @@ class RegisterService(BaseService):
 
     @thrownException
     def do_register(self):
-        username = self.params.get("username", "").strip()
         email = self.params.get("email", "").strip()
+        username = self.params.get("username", "").strip()
         mobile = self.params.get("mobile", "").strip().replace(' ', '')
         password = self.params.get("password", "").strip()
         if email == "":
             return self.failure(ERROR.email_empty_err)
         if mobile == "":
             return self.failure(ERROR.mobile_empty_err)
+        regex = re.compile(r'1\d{10}', re.IGNORECASE)
+        match_result = re.match(regex, mobile)
+        if not match_result:
+            return self.failure(ERROR.mobile_format_err)
         if password == "":
             return self.failure(ERROR.password_empty_err)
         if self.email_check(email) == 0:
@@ -83,7 +87,7 @@ class RegisterService(BaseService):
             result = self.success(data=user_info)
             user_info.last_login = datetime.now()
             self.db.add(user_info)
-            self.db.commit()
+            self.db.flush()
             return result
         else:
             return self.failure(ERROR.username_err)

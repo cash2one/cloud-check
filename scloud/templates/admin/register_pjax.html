@@ -1,13 +1,22 @@
   <p class="login-box-msg"></p>
-  <form id="register_form" action="{{ reverse_url('register') }}" method="post" onsubmit="return check_form()">
+  <form data-pjax id="register_form" action="{{ reverse_url('register') }}" method="post" onsubmit="return check_form()">
     <p class="login-box-msg">注册新用户</p>
     {{ handler.xsrf_form_html() }}
     <div class="form-group has-feedback">
-      <input type="text" id="email" name="email" class="form-control" placeholder="邮箱" value="{{ handler.session.get('post_email', '') }}">
+      <input type="text" id="email" name="email" class="form-control" placeholder="邮箱" onblur="generate_username();" value="{{ handler.session.get('post_email', '') }}">
       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
     </div>
     {% if result %}
-      {% if result.return_code|int in [-100005, -100006] %}
+      {% if result.return_code|int in [ERR.EMAIL_ERR, ERR.EMAIL_EMPTY_ERR, ERR.EMAIL_DUPLICATE_ERR, ERR.EMAIL_FORMAT_ERR] %}
+        <p class="text-red">{{ result.return_message }}</p>
+      {% endif %}
+    {% endif %}
+    <div class="form-group has-feedback">
+      <input type="text" id="username" name="username" class="form-control" placeholder="用户名" value="{{ handler.args.get('username', '') }}">
+      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+    </div>
+    {% if result %}
+      {% if result.return_code|int in [ERR.USERNAME_ERR, ERR.USERNAME_EMPTY_ERR, ERR.USERNAME_DUPLICATE_ERR] %}
         <p class="text-red">{{ result.return_message }}</p>
       {% endif %}
     {% endif %}
@@ -16,7 +25,7 @@
       <span class="glyphicon glyphicon-phone form-control-feedback"></span>
     </div>
     {% if result %}
-      {% if result.return_code|int in [-100007, -100008] %}
+      {% if result.return_code|int in [ERR.MOBILE_ERR, ERR.MOBILE_EMPTY_ERR, ERR.MOBILE_DUPLICATE_ERR, ERR.MOBILE_FORMAT_ERR] %}
         <p class="text-red">{{ result.return_message }}</p>
       {% endif %}
     {% endif %}
@@ -26,7 +35,7 @@
       <span class="glyphicon glyphicon-lock form-control-feedback"></span>
     </div>
     {% if result %}
-      {% if result.return_code|int in [-100003, -100004] %}
+      {% if result.return_code|int in [ERR.PASSWORD_ERR, ERR.PASSWORD_EMPTY_ERR] %}
         <p class="text-red">{{ result.return_message }}</p>
       {% endif %}
     {% endif %}
@@ -61,6 +70,16 @@
           increaseArea: '20%' // optional
         });
       });
+
+function generate_username(){
+  var email = $("#email").val()
+  if (email.indexOf("@") > 0){
+    var username = email.split("@")[0];
+  }else{
+    var username = email;
+  }
+  $("#username").val(username);
+}
 
 function check_form(){
   $("p.text-red").text("");
