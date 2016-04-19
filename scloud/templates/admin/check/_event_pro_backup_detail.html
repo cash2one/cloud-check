@@ -12,6 +12,12 @@
     <table class="table table-hover table-striped" id="pro_table_check_list_table">
       <tbody>
         {% set pro_backup = pro_backup_res.data %}
+        <tr style="display: none">
+          <th></th>
+          <td>
+            <input type="checkbox" value="{{ pro_backup.id }}" checked="checked">
+          </td>
+        </tr>
         <tr>
           <th>项目名称</th>
           <td class="mailbox-subject">{{ pro_backup.project.name }}</td>

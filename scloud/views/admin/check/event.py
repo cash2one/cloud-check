@@ -71,7 +71,8 @@ class ProPublishDetailHandler(AuthHandler):
         svc = ApplyPublish(self, {"id": kwargs["id"]})
         pro_publish_res = svc.get_publish()
         data = {
-            "pro_publish_res": pro_publish_res
+            "pro_publish_res": pro_publish_res,
+            "pro_table": "pro_publish",
         }
         # logger.info(pro_publish_res.data)
         return self.render_to_string("admin/check/_event_pro_publish_detail.html", **data)
@@ -86,7 +87,8 @@ class ProUsersDetailHandler(AuthHandler):
         svc = ProUserService(self, {"pro_id": kwargs["pro_id"]})
         pro_users_res = svc.get_list()
         data = {
-            "pro_users_res": pro_users_res
+            "pro_users_res": pro_users_res,
+            "pro_table": "pro_user",
         }
         # logger.info(pro_users_res.data)
         return self.render_to_string("admin/check/_event_pro_user_detail.html", **data)
@@ -101,7 +103,8 @@ class ProBalanceDetailHandler(AuthHandler):
         svc = ApplyLoadBalance(self, {"id": kwargs["id"]})
         pro_balance_res = svc.get_info()
         data = {
-            "pro_balance_res": pro_balance_res
+            "pro_balance_res": pro_balance_res,
+            "pro_table": "pro_balance",
         }
         # logger.info(pro_balance_res.data)
         return self.render_to_string("admin/check/_event_pro_balance_detail.html", **data)
@@ -116,7 +119,8 @@ class ProBackupDetailHandler(AuthHandler):
         svc = ApplyBackups(self, {"id": kwargs["id"]})
         pro_backup_res = svc.get_info()
         data = {
-            "pro_backup_res": pro_backup_res
+            "pro_backup_res": pro_backup_res,
+            "pro_table": "pro_backup",
         }
         # logger.info(pro_backup_res.data)
         return self.render_to_string("admin/check/_event_pro_backup_detail.html", **data)
@@ -131,7 +135,8 @@ class ProEventDetailHandler(AuthHandler):
         svc = EventService(self, {"id": kwargs["id"]})
         pro_event_res = svc.get_info()
         data = {
-            "pro_event_res": pro_event_res
+            "pro_event_res": pro_event_res,
+            "pro_table": "pro_event",
         }
         # logger.info(pro_event_res.data)
         return self.render_to_string("admin/check/_event_pro_event_detail.html", **data)
@@ -163,7 +168,6 @@ class ProTableDoCheckHandler(EventCheckListHandler):
         if pro_table == "pro_event":
             ids = self.args.get("ids")
             id_list = [int(i) for i in ids.split(",") if i.strip().isdigit()]
-            pro_table_objs = []
             for id in id_list:
                 svc = EventService(self, {"id": id, "reply_content": STATUS_PRO_TABLES.checked.value, "status": STATUS_PRO_TABLES.CHECKED})
                 svc.do_reply()

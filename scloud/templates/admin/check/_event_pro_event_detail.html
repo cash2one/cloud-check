@@ -10,6 +10,15 @@
   <a data-pjax href="" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-reply"></i> 返回</a>
     {% include "admin/check/_event_detail_buttons.html" %}
   </div>
+  <table class="table table-hover table-striped" style="display: none" id="pro_table_check_list_table">
+    {% set pro_event = pro_event_res.data %}
+    <tr>
+      <th></th>
+      <td>
+        <input type="checkbox" value="{{ pro_event.id }}" checked="checked">
+      </td>
+    </tr>
+  </table>
 </div>
 {% include "admin/event/_pro_event_detail.html" %}
 <script type="text/javascript">
