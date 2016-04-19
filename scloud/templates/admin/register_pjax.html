@@ -1,5 +1,5 @@
   <p class="login-box-msg"></p>
-  <form data-pjax id="register_form" action="{{ reverse_url('register') }}" method="post" onsubmit="return check_form()">
+  <form id="register_form" action="{{ reverse_url('register') }}" method="post" onsubmit="return check_form()">
     <p class="login-box-msg">注册新用户</p>
     {{ handler.xsrf_form_html() }}
     <div class="form-group has-feedback">
@@ -13,7 +13,7 @@
     {% endif %}
     <div class="form-group has-feedback">
       <input type="text" id="username" name="username" class="form-control" placeholder="用户名" value="{{ handler.args.get('username', '') }}">
-      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+      <span class="glyphicon glyphicon-user form-control-feedback"></span>
     </div>
     {% if result %}
       {% if result.return_code|int in [ERR.USERNAME_ERR, ERR.USERNAME_EMPTY_ERR, ERR.USERNAME_DUPLICATE_ERR] %}

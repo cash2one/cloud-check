@@ -27,6 +27,8 @@ class RegisterService(BaseService):
         password = self.params.get("password", "").strip()
         if email == "":
             return self.failure(ERROR.email_empty_err)
+        if self.email_check(email) == 0:
+            return self.failure(ERROR.email_format_err) 
         if mobile == "":
             return self.failure(ERROR.mobile_empty_err)
         regex = re.compile(r'1\d{10}', re.IGNORECASE)
@@ -35,8 +37,6 @@ class RegisterService(BaseService):
             return self.failure(ERROR.mobile_format_err)
         if password == "":
             return self.failure(ERROR.password_empty_err)
-        if self.email_check(email) == 0:
-            return self.failure(ERROR.email_format_err) 
         pt_user = self.db.query(
            PT_User 
         ).filter(
@@ -44,7 +44,6 @@ class RegisterService(BaseService):
         ).first()
         if pt_user:
             return self.failure(ERROR.email_duplicate_err) 
-        
         pt_user = self.db.query(
            PT_User 
         ).filter(
