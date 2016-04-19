@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# from tornado import gen
+from datetime import datetime
 from scloud.services.base import BaseService
 # from scloud.models.base import MYSQL_POOL
 # from scloud.models.pt_user import PT_User
@@ -9,7 +9,8 @@ from scloud.config import logger, thrownException
 from sqlalchemy import and_
 from scloud.utils.error_code import ERROR
 # from scloud.utils.error import NotFoundError
-from scloud.models.project import Pro_Event
+from scloud.models.project import Pro_Event, Pro_Event_Detail
+from scloud.const import STATUS_PRO_TABLES
 
 
 class EventService(BaseService):
@@ -76,6 +77,34 @@ class EventService(BaseService):
             return self.success(data=pro_event)
         else:
             return self.failure(ERROR.not_found_err)
+
+    @thrownException
+    def do_reply(self):
+        event_id = self.params.get("id")
+        if not event_id:
+            return self.failure(ERROR.pro_event_id_empty_err)
+        reply_content = self.params.get("reply_content")
+        if not reply_content:
+            return self.failure(ERROR.pro_event_reply_content_empty_err)
+        pro_event = self.db.query(
+            Pro_Event
+        ).filter(
+            Pro_Event.id == event_id
+        ).first()
+        logger.info(pro_event)
+        # logger.info("self.handler.current_user.imchecker: %s" % self.handler.current_user.imchecker)
+        if self.handler.current_user.imchecker:
+            pro_event.status = STATUS_PRO_TABLES.CHECKED
+            pro_event.checker_id = self.handler.current_user.id
+            pro_event.check_time = datetime.now()
+        else:
+            pro_event.status = STATUS_PRO_TABLES.APPLIED
+        self.db.add(pro_event)
+        event_detail, created = Pro_Event_Detail.get_or_create_obj(self.db, event_id=event_id, content=reply_content)
+        event_detail.user_id = self.handler.current_user.id
+        self.db.add(event_detail)
+        self.db.flush()
+        return self.success(data=event_detail)
 
     @thrownException
     def do_del_pro_user(self):

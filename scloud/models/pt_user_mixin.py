@@ -22,3 +22,22 @@ class PT_User_Mixin(object):
                 current_perms.update({"%s.%s" % (g_keyword, op_keyword): "%s.%s" % (g_keycode, op_keycode)})
         setattr(self, "current_perms", current_perms)
         return getattr(self, "current_perms")
+
+    @property
+    def imchecker(self):
+        if hasattr(self, "_imchecker"):
+            return self._imchecker
+        if "pro_info.check" in self.get_current_perms():
+            _imchecker = True
+        else:
+            _imchecker = False
+        setattr(self, "_imchecker", _imchecker)
+        return self._imchecker
+
+    @property
+    def avatar(self):
+        if self.imchecker:
+            _avatar = "/scloud/static/default/dist/img/avatar.png"
+        else:
+            _avatar = "/scloud/static/default/dist/img/avatar5.png"
+        return _avatar

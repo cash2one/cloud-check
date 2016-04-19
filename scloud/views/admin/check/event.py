@@ -19,13 +19,14 @@ from scloud.services.svc_apply_publish import ApplyPublish
 from scloud.services.svc_apply_balance import ApplyLoadBalance
 from scloud.services.svc_apply_backups import ApplyBackups
 from scloud.services.svc_apply_user import ProUserService
+from scloud.services.svc_pro_event import EventService
 from scloud.services.svc_apply_check import ApplyCheckService
 # from scloud.services.svc_pro_resource_apply import ProResourceCheckService
 # from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
 # from scloud.utils.error import SystemError
 # from scloud.views.admin.guide import GuideStepGetHandler
-# from scloud.const import STATUS_RESOURCE
+from scloud.const import STATUS_PRO_TABLES
 from scloud.pubs.pub_tasks import TaskPublish
 from scloud.async_services.publish_task import publish_notice_user, publish_tasks
 
@@ -41,7 +42,7 @@ class EventCheckListHandler(AuthHandler):
         g = GROUP.get(pro_table)
         page = self.getPage(_pro_table)
         groups = []
-        for keyword in ["pro_user", "pro_publish", "pro_balance", "pro_backup"]:
+        for keyword in ["pro_user", "pro_publish", "pro_balance", "pro_backup", "pro_event"]:
             groups.append(GROUP.get(keyword))
         # logger.info(pub_data.data)
         data.update(
@@ -121,6 +122,21 @@ class ProBackupDetailHandler(AuthHandler):
         return self.render_to_string("admin/check/_event_pro_backup_detail.html", **data)
 
 
+@url("/pro/pro_event/(?P<id>\d+)/detail", name="pro_event_detail", active="pro_table_check_list")
+class ProEventDetailHandler(AuthHandler):
+    u'互联网发布申请内容明细'
+    @check_perms('pro_resource_apply.check')
+    @unblock
+    def get(self, **kwargs):
+        svc = EventService(self, {"id": kwargs["id"]})
+        pro_event_res = svc.get_info()
+        data = {
+            "pro_event_res": pro_event_res
+        }
+        # logger.info(pro_event_res.data)
+        return self.render_to_string("admin/check/_event_pro_event_detail.html", **data)
+
+
 @url("/pro/pro_table/do_check", name="pro_table_do_check")
 class ProTableDoCheckHandler(EventCheckListHandler):
     u'''受理通过'''
@@ -144,6 +160,13 @@ class ProTableDoCheckHandler(EventCheckListHandler):
             users = [u.user_id for u in pro_users]
             for user_id in set(users):
                 publish_notice_user.delay(user_id)
+        if pro_table == "pro_event":
+            ids = self.args.get("ids")
+            id_list = [int(i) for i in ids.split(",") if i.strip().isdigit()]
+            pro_table_objs = []
+            for id in id_list:
+                svc = EventService(self, {"id": id, "reply_content": STATUS_PRO_TABLES.checked.value})
+                svc.do_reply()
         data = self.get_index_page(pro_table)
         tmpl = self.render_to_string("admin/check/event_list_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))

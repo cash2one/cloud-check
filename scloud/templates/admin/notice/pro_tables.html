@@ -66,6 +66,20 @@
       {% endif %}
       </li>
       {% endif %}
+      {% if pro_event_list|length > 0 %}
+      <li>
+      {% if imchecker %}
+        <a data-pjax href="{{ reverse_url('pro_table_check_list') }}?pro_table=pro_event">
+          <i class="fa fa-hdd-o text-yellow"></i> {{ pro_event_list|length }} 新申请的事件已提交，请受理
+        </a>
+      {% else %}
+        <a data-pjax href="{{ reverse_url('event.index') }}">
+          <i class="fa fa-warning text-yellow"></i>
+          您新申请的事件已受理{{ pro_publish_list|length }}个，请确认
+        </a>
+      {% endif %}
+      </li>
+      {% endif %}
     </ul>
   </li>
   <li class="footer"><a href="#">View all</a></li>

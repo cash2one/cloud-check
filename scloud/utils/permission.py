@@ -7,7 +7,7 @@ from scloud.config import logger, logThrown
 from scloud.models.pt_user import PT_User, PT_Role
 from scloud.models.project import (Pro_Info, Pro_Resource_Apply,
                                    Pro_User, Pro_Publish,
-                                   Pro_Balance, Pro_Backup)
+                                   Pro_Balance, Pro_Backup, Pro_Event)
 from scloud.models.environment import Env_Info, Env_Internet_Ip_Types, Env_Resource_Fee, Env_Resource_Value
 from tornado.util import ObjectDict
 
@@ -72,6 +72,12 @@ sys_groups = [
     _group(
         name = Pro_Backup.__doc__,
         keyword = Pro_Backup.__tablename__,
+        keycode = 1106,
+        ops = [op_view, op_insert, op_update, op_delete, op_check]
+    ),
+    _group(
+        name = Pro_Event.__doc__,
+        keyword = Pro_Event.__tablename__,
         keycode = 1106,
         ops = [op_view, op_insert, op_update, op_delete, op_check]
     ),

@@ -1,0 +1,43 @@
+<div class="box-body no-padding">
+  <div class="mailbox-read-info">
+    <h3>{{ pro_event.title }}</h3>
+    <h5><span class="label label-{{ STATUS_PRIORITY.get(pro_event.priority).level }}">优先级：{{ STATUS_PRIORITY.get(pro_event.priority).value }}</span>
+    <span class="label label-{{ STATUS_PRO_TABLES.get(pro_event.status).level }}">状态：{{ STATUS_PRO_TABLES.get(pro_event.status).value }}</span>
+
+    <span class="mailbox-read-time pull-right">{{ pro_event.create_time|getGoodTime }}</span></h5>
+  </div><!-- /.mailbox-read-info -->
+  <div class="mailbox-read-message">
+    {{ pro_event.content }}
+  </div><!-- /.mailbox-read-message -->
+</div><!-- /.box-body -->
+<div class="box-body chat">
+  <!-- Conversations are loaded here -->
+  <div class="direct-chat-messages">
+{% for detail in pro_event.pro_event_details %}
+    <!-- Message. Default to the left -->
+    {% set user = detail.user or detail.checker %}
+    <!-- Message to the right -->
+    <div class="direct-chat-msg{% if user and user.imchecker == False %}{% else %} right{% endif %}">
+      <div class="direct-chat-info clearfix">
+        <span class="direct-chat-name{% if user and user.imchecker == False %} pull-left{% else %} pull-right{% endif %}">{{ detail.user.email or detail.user.username }}</span>
+        <span class="direct-chat-timestamp{% if user and user.imchecker == False %} pull-right{% else %} pull-left{% endif %}">{{ detail.create_time|getGoodTime }}</span>
+      </div><!-- /.direct-chat-info -->
+      <img class="direct-chat-img" src="{{ user.avatar }}" alt="message user image"><!-- /.direct-chat-img -->
+      <div class="direct-chat-text">
+        {{ detail.content }}
+      </div><!-- /.direct-chat-text -->
+    </div><!-- /.direct-chat-msg -->
+{% endfor %}
+  </div><!--/.direct-chat-messages-->
+</div><!-- /.box-footer -->
+
+<div class="box-footer">
+  <form data-pjax id="form_event_reply" action="{{ reverse_url('event.detail') }}" method="CHECK">
+    {{ handler.xsrf_form_html() }}
+    <input type="hidden" id="id" name="id" value="{{ pro_event.id }}">
+    <textarea class="col-sm-8" id="reply_content" name="reply_content" style="height: 150px"></textarea>
+    <div class="col-sm-4">
+      <button type="button" id="form_event_reply_btn" onclick="do_event_reply()" class="btn btn-default"><i class="fa fa-reply"></i> 回复</button>
+    </div>
+  </form>
+</div><!-- /.box-footer -->

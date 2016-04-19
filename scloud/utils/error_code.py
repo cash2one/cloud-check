@@ -113,9 +113,11 @@ class ERROR(object):
     pro_balance_member_address_empty_err = error(errcode=-100201, errvalue=u"ip不能为空")
 
     # 事件
-    pro_event_title_empty_err = error(errcode=-100220, errvalue=u"事件标题不能为空")
-    pro_event_title_duplicate_err = error(errcode=-100221, errvalue=u"不允许提交重复事件")
-    pro_event_content_empty_err = error(errcode=-100222, errvalue=u"事件内容不能为空")
+    pro_event_id_empty_err = error(errcode=-100220, errvalue=u"事件编码不能为空")
+    pro_event_title_empty_err = error(errcode=-100221, errvalue=u"事件标题不能为空")
+    pro_event_title_duplicate_err = error(errcode=-100222, errvalue=u"不允许提交重复事件")
+    pro_event_content_empty_err = error(errcode=-100223, errvalue=u"事件内容不能为空")
+    pro_event_reply_content_empty_err = error(errcode=-100224, errvalue=u"事件回复内容不能为空")
 
 
 ERR = ObjectDict()

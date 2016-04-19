@@ -179,7 +179,7 @@ class Pro_Backup(BaseModel, BaseModelMixin):
 
 
 class Pro_Event(BaseModel, BaseModelMixin):
-    u"""定期备份"""
+    u"""事件工单"""
     __tablename__ = "pro_event"
 
     pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
@@ -199,14 +199,13 @@ class Pro_Event(BaseModel, BaseModelMixin):
 
 
 class Pro_Event_Detail(BaseModel, BaseModelMixin):
-    u"""定期备份"""
+    u"""事件工单详情"""
     __tablename__ = "pro_event_detail"
 
     event_id = Column(Integer, ForeignKey("pro_event.id"), default=0, info=u"所属项目")
     content = Column(Unicode, default=u'', info=u"事件内容")
     user_id = Column("user_id", Integer, ForeignKey("pt_user.id"), default=0)
     checker_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
-    check_time = Column(DateTime, default='0000-00-00 00:00:00')
 
     user = relationship("PT_User", foreign_keys=[user_id], backref="pro_event_details")
     checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_event_details")

@@ -11,7 +11,7 @@ from sqlalchemy import and_
 from scloud.utils.error_code import ERROR
 # from scloud.utils.error import NotFoundError
 from scloud.const import STATUS_PRO_TABLES
-from scloud.models.project import (Pro_User, Pro_Publish, Pro_Balance, Pro_Backup)
+from scloud.models.project import (Pro_User, Pro_Publish, Pro_Balance, Pro_Backup, Pro_Event)
 
 
 class ApplyCheckService(BaseService):
@@ -20,6 +20,7 @@ class ApplyCheckService(BaseService):
         "pro_publish": Pro_Publish,
         "pro_balance": Pro_Balance,
         "pro_backup": Pro_Backup,
+        "pro_event": Pro_Event,
     }
 
     @thrownException
