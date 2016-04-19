@@ -156,7 +156,8 @@
     $("#backup_block").find("input[name=disk]").attr("value", "disk"+backups);
     $("#backup_block").find("input[name=disk]").attr("placeholder", "disk"+backups);
     var html = $("#backup_block").html();
-    $("#backup_add_button").before(html)
+    $("#backup_add_button").before(html);
+    init_timepicker();
   }
   function do_form_backup(){
     var disks = $("#form_backup").find("div[name=disk_backup_plot]");
@@ -210,11 +211,14 @@
     backup_interval.html($("#month_options").html())
   }
   $(function(){
+    init_timepicker();
+  });
+  function init_timepicker(){
       $(".timepicker").timepicker({
           showInputs: false,
           defaultTime: false,
           showMeridian: false,
           showSeconds: true
-      })
-  })
+      });
+  }
   </script>
