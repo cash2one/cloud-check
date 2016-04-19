@@ -31,6 +31,7 @@ def restart():
     env.password = "smt_app"
     #with cd("/usr/api-root/supervisor/"):
     run("supervisorctl restart scloud")
+    run("supervisorctl restart scloud_ws")
 
 
 @hosts("smt_app@192.168.3.145")

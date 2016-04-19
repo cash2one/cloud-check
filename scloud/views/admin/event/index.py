@@ -124,14 +124,16 @@ class EventAddHandler(GuideStepGetHandler):
         do_event_res = svc.do_event()
         if do_event_res.return_code < 0:
             self.add_message(u"事件提交失败 %s(%s)" % (do_event_res.return_code, do_event_res.return_message), level="warning")
+            template = "admin/event/add_pjax.html"
         else:
             self.add_message(u"事件提交成功", level="success")
+            template = "admin/event/detail_pjax.html"
 
         svc = ProjectService(self)
         pro_list_res = svc.get_project_list()
         if pro_list_res.return_code < 0:
             raise SystemError(pro_list_res.return_code, pro_list_res.return_message)
         logger.info(pro_list_res)
-        data = dict(pro_list_res=pro_list_res, do_event_res=do_event_res)
-        tmpl = self.render_to_string("admin/event/detail_pjax.html", **data)
+        data = dict(pro_list_res=pro_list_res, pro_event_res=do_event_res)
+        tmpl = self.render_to_string(template, **data)
         return simplejson.dumps(self.success(data=tmpl))

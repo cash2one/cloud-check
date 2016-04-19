@@ -3,6 +3,7 @@
 # created: zhangpeng <zhangpeng1@infohold.com.cn>
 
 from datetime import datetime
+from scloud.config import logger
 import urllib2
 
 
@@ -24,6 +25,9 @@ class Filters(object):
         return urllib2.unquote(value)
 
     def filter_getGoodTime(self, time_str):
+        logger.info(time_str)
+        if not time_str:
+            return ""
         if isinstance(time_str, datetime):
             t = time_str
         else:

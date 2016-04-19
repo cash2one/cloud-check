@@ -45,7 +45,7 @@ CREATE TABLE `pro_user` (
     `use_vpn` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '是否需要开通VPN远程访问',
     `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
     `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核者ID',
-    `check_time` INT(11) NOT NULL DEFAULT '0' COMMENT '审核时间',
+    `check_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '审核时间',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
@@ -66,7 +66,7 @@ CREATE TABLE `pro_publish` (
     `use_ssl` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '是否需要SSL卸载',
     `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
     `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核者ID',
-    `check_time` INT(11) NOT NULL DEFAULT '0' COMMENT '审核时间',
+    `check_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '审核时间',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
@@ -89,7 +89,7 @@ CREATE TABLE `pro_balance` (
     `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '特殊说明',
     `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
     `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核者ID',
-    `check_time` INT(11) NOT NULL DEFAULT '0' COMMENT '审核时间',
+    `check_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '审核时间',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
@@ -107,7 +107,7 @@ CREATE TABLE `pro_backup` (
     `plot` VARCHAR(1024) NOT NULL DEFAULT '' COMMENT '策略(json格式)',
     `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
     `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核者ID',
-    `check_time` INT(11) NOT NULL DEFAULT '0' COMMENT '审核时间',
+    `check_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '审核时间',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)

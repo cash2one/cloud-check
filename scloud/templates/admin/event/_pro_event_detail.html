@@ -10,10 +10,11 @@
     {{ pro_event.content }}
   </div><!-- /.mailbox-read-message -->
 </div><!-- /.box-body -->
+{% if pro_event.pro_event_details|length > 0 %}
 <div class="box-body chat">
   <!-- Conversations are loaded here -->
   <div class="direct-chat-messages">
-{% for detail in pro_event.pro_event_details %}
+    {% for detail in pro_event.pro_event_details %}
     <!-- Message. Default to the left -->
     {% set user = detail.user or detail.checker %}
     <!-- Message to the right -->
@@ -27,10 +28,10 @@
         {{ detail.content }}
       </div><!-- /.direct-chat-text -->
     </div><!-- /.direct-chat-msg -->
-{% endfor %}
+    {% endfor %}
   </div><!--/.direct-chat-messages-->
 </div><!-- /.box-footer -->
-
+{% endif %}
 <div class="box-footer">
   <form data-pjax id="form_event_reply" action="{{ reverse_url('event.detail') }}" method="CHECK">
     {{ handler.xsrf_form_html() }}

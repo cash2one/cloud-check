@@ -37,19 +37,19 @@ class EventService(BaseService):
             return self.failure(ERROR.pro_event_title_empty_err)
         if not content:
             return self.failure(ERROR.pro_event_content_empty_err)
-        pro_user, created = Pro_Event.get_or_create_obj(self.db, pro_id=pro_id, res_apply_id=res_apply_id, title=title)
+        pro_event, created = Pro_Event.get_or_create_obj(self.db, pro_id=pro_id, res_apply_id=res_apply_id, title=title)
         if created:
-            pro_user.pro_id = pro_id
-            pro_user.res_apply_id = res_apply_id
-            pro_user.priority = priority
-            pro_user.title = title
-            pro_user.content = content
-            pro_user.user_id = self.handler.current_user.id
-            self.db.add(pro_user)
+            pro_event.pro_id = pro_id
+            pro_event.res_apply_id = res_apply_id
+            pro_event.priority = priority
+            pro_event.title = title
+            pro_event.content = content
+            pro_event.user_id = self.handler.current_user.id
+            self.db.add(pro_event)
             self.db.flush()
         else:
             return self.failure(ERROR.pro_event_title_duplicate_err)
-        return self.success(data=pro_user)
+        return self.success(data=pro_event)
 
     @thrownException
     def get_list(self):
