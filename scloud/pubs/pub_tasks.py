@@ -122,9 +122,8 @@ class TaskPublish(BaseService):
         pro_tables_total = len(pro_user_list) + len(pro_publish_list) + len(pro_balance_list) + len(pro_backup_list) + len(pro_event_list)
         data["pro_tables_total"] = pro_tables_total
         data["tasks_total"] = len(tasks_res.data)
-        logger.info("pro_user_list length : %s" % len(pro_user_list))
-        logger.info("pro_publish_list length : %s" % len(pro_publish_list))
         logger.info("total: %s" % pro_tables_total)
+        logger.info("tasks_total: %s" % len(tasks_res.data))
         if do_publish:
             self.do_publish(user_id, action, **data)
         return self.success(data=data)
