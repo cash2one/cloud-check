@@ -11,7 +11,8 @@ from sqlalchemy import and_
 from scloud.utils.error_code import ERROR
 # from scloud.utils.error import NotFoundError
 from scloud.const import STATUS_PRO_TABLES
-from scloud.models.project import Pro_Backup 
+from scloud.models.project import Pro_Backup
+from scloud.models.pt_user import PT_User 
 import simplejson
 
 
@@ -44,6 +45,15 @@ class ApplyBackups(BaseService):
     def get_list(self):
         pro_id = self.params.get("pro_id")
         conditions = and_()
+        user_id = self.params.get("user_id")
+        if user_id:
+            pt_user = self.db.query(
+                PT_User
+            ).filter(
+                PT_User.id == user_id
+            ).first()
+            if pt_user and not pt_user.imchecker:
+                conditions.append(Pro_Backup.user_id == user_id)
         if pro_id:
             conditions.append(Pro_Backup.pro_id == pro_id)
         pro_backup_list = self.db.query(

@@ -67,7 +67,7 @@ class RegisterService(BaseService):
         if pt_user:
             return self.failure(ERROR.mobile_duplicate_err) 
 
-        instance, created = PT_User.get_or_create_obj(self.db, email=email, mobile=mobile, password=password)
+        instance, created = PT_User.get_or_create_obj(self.db, email=email, mobile=mobile, username=username, password=password)
         PT_User_Role.get_or_create_obj(self.db, user_id=instance.id, role_id=2)
         conditions = and_()
         conditions.append(PT_User.id == instance.id)

@@ -12,6 +12,7 @@ from scloud.utils.error_code import ERROR
 # from scloud.utils.error import NotFoundError
 from scloud.const import STATUS_PRO_TABLES
 from scloud.models.project import Pro_User 
+from scloud.models.pt_user import PT_User
 
 
 class ProUserService(BaseService):
@@ -50,6 +51,15 @@ class ProUserService(BaseService):
     def get_list(self):
         pro_id = int(self.params.get("pro_id", 0))
         conditions = and_()
+        user_id = self.params.get("user_id")
+        if user_id:
+            pt_user = self.db.query(
+                PT_User
+            ).filter(
+                PT_User.id == user_id
+            ).first()
+            if pt_user and not pt_user.imchecker:
+                conditions.append(Pro_User.user_id == user_id)
         if pro_id:
             conditions.append(Pro_User.pro_id == pro_id)
         pro_users = self.db.query(

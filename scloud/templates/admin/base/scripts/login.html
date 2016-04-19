@@ -1,0 +1,21 @@
+<script type="text/javascript">
+function do_register(){
+    if (check_form() == false) {
+      console.log("check_form failure");
+      return false;
+    }
+
+    generate_ajax_post({
+      form: "#register_form",
+      btn: "#register_form_btn",
+      pjax_container: false,
+      onSuccess: function(response){
+        if (response.return_code < 0){
+          $("#pjax-container").html(response.data)
+        }else{
+          top.window.location.href = response.data;
+        }
+      }
+    });
+}
+</script>
