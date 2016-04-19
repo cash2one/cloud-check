@@ -39,7 +39,7 @@ class RegisterService(BaseService):
             PT_User.email == email
         ).first()
         if pt_user:
-            return self.failure(ERROR.email_reused_err) 
+            return self.failure(ERROR.email_duplicate_err) 
         
         pt_user = self.db.query(
            PT_User 
@@ -47,7 +47,7 @@ class RegisterService(BaseService):
             PT_User.username == username
         ).first()
         if pt_user:
-            return self.failure(ERROR.username_reused_err) 
+            return self.failure(ERROR.username_duplicate_err) 
 
         pt_user = self.db.query(
            PT_User 
@@ -55,7 +55,7 @@ class RegisterService(BaseService):
             PT_User.mobile == mobile
         ).first()
         if pt_user:
-            return self.failure(ERROR.mobile_reused_err) 
+            return self.failure(ERROR.mobile_duplicate_err) 
 
         instance, created = PT_User.get_or_create_obj(self.db, email=email, mobile=mobile, password=password)
         PT_User_Role.get_or_create_obj(self.db, user_id=instance.id, role_id=2)
