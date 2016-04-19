@@ -67,6 +67,8 @@
       <div class="box-footer text-center">
         {% if not backup_plot %}
         <button type="button" id="form_backup_btn" onclick="do_form_backup()" class="btn btn-warning">提 交</button>
+        {% elif backup_plot.status <= STATUS_PRO_TABLES.REVOKED %}
+        <button type="button" id="form_backup_btn" onclick="do_form_backup()" class="btn btn-warning">提 交</button>
         {% elif backup_plot.status == STATUS_PRO_TABLES.APPLIED %}
         <button type="button" id="form_backup_btn" onclick="javascript:;" class="btn btn-info">受理中</button>
         {% elif backup_plot.status == STATUS_PRO_TABLES.CHECKED %}

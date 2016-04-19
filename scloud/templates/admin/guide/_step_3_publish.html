@@ -59,6 +59,8 @@
       <div class="box-footer text-center">
         {% if not data %}
         <button type="button" id="form_publish_btn" onclick="do_form_publish()" class="btn btn-warning">提 交</button>
+        {% elif data.status <= STATUS_PRO_TABLES.REVOKED %}
+        <button type="button" id="form_publish_btn" onclick="do_form_publish()" class="btn btn-warning">提 交</button>
         {% elif data.status == STATUS_PRO_TABLES.APPLIED %}
         <button type="button" id="form_publish_btn" onclick="javascript:;" class="btn btn-info">受理中</button>
         {% elif data.status == STATUS_PRO_TABLES.CHECKED %}

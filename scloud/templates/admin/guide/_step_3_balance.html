@@ -110,6 +110,8 @@
       <div class="box-footer text-center">
         {% if not loadbalance_plot %}
         <button type="button" id="form_loadblance_btn" onclick="do_form_loadbalance()" class="btn btn-warning">提 交</button>
+        {% elif loadbalance_plot.status <= STATUS_PRO_TABLES.REVOKED %}
+        <button type="button" id="form_loadblance_btn" onclick="do_form_loadbalance()" class="btn btn-warning">提 交</button>
         {% elif loadbalance_plot.status == STATUS_PRO_TABLES.APPLIED %}
         <button type="button" id="form_loadblance_btn" onclick="javascript:;" class="btn btn-info">受理中</button>
         {% elif loadbalance_plot.status == STATUS_PRO_TABLES.CHECKED %}

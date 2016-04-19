@@ -106,6 +106,6 @@ class ApplyLoadBalance(BaseService):
             self.db.flush()
             return self.success(data=do_balance_info)
         else:
-            do_balance_info.status = -1
+            do_balance_info.status = STATUS_PRO_TABLES.REVOKED
             do_balance_info.members = simplejson.dumps(members)
             return self.failures(g_plot_messages, data=do_balance_info)
