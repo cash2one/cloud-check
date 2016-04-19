@@ -94,7 +94,8 @@ class EventService(BaseService):
         logger.info(pro_event)
         # logger.info("self.handler.current_user.imchecker: %s" % self.handler.current_user.imchecker)
         if self.handler.current_user.imchecker:
-            pro_event.status = STATUS_PRO_TABLES.CHECKED
+            status = self.params.get("status", 0)
+            pro_event.status = status
             pro_event.checker_id = self.handler.current_user.id
             pro_event.check_time = datetime.now()
         else:

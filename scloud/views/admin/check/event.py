@@ -165,7 +165,7 @@ class ProTableDoCheckHandler(EventCheckListHandler):
             id_list = [int(i) for i in ids.split(",") if i.strip().isdigit()]
             pro_table_objs = []
             for id in id_list:
-                svc = EventService(self, {"id": id, "reply_content": STATUS_PRO_TABLES.checked.value})
+                svc = EventService(self, {"id": id, "reply_content": STATUS_PRO_TABLES.checked.value, "status": STATUS_PRO_TABLES.CHECKED})
                 svc.do_reply()
         data = self.get_index_page(pro_table)
         tmpl = self.render_to_string("admin/check/event_list_pjax.html", **data)
