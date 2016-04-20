@@ -185,7 +185,7 @@ class Handler(BaseHandler):
         template_string = self.render_to_string(template, **kwargs)
         self.write(template_string.strip())
 
-    def getPage(self, objects, numsPerpage=20, total_count=0):
+    def getPage(self, objects, numsPerpage=8, total_count=0):
         try:
             page_num = int(self.args.get('page', '1'))
         except ValueError:

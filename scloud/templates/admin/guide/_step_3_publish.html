@@ -73,11 +73,16 @@
         </form>
 
 <script type="text/javascript">
-  function do_add_env(){
+  function do_form_publish(){
     generate_ajax_post({
-        form: "#event_form",
-        button: "#event_form_btn",
-        onTimeout: function(){ do_add_env();}
+        form: "#form_publish",
+        button: "#form_publish_btn",
+        pjax_container: false,
+        onSuccess: function(response){
+            $("section.content").prepend(response.data.messages_tmpl);
+            $("#form_publish").parent().html(response.data.tmpl);
+        },
+        onTimeout: function(){ do_add_pro_user();}
     })
   }
   $(function () {

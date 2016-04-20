@@ -76,22 +76,24 @@ class GuideHandler(ApplyHandler):
     @unblock
     def post(self):
         svc = ApplyPublish(self)
-        publish_res = svc.do_publish()
-        if publish_res.return_code == 0:
-            self.add_message(u"互联网发布信息添加成功！%s" % STATUS_PRO_TABLES.get(publish_res.data.status).todo_value, level="success")
-            publish_notice_checker.delay(self.current_user.id)
-        else:
-            self.add_message(u"互联网发布信息添加失败！(%s)(%s)" % (publish_res.return_code, publish_res.return_message), level="warning")
+        pro_publish_res = svc.do_publish()
         pro_id = self.args.get("pro_id")
         data = self.get_pro_data(pro_id=pro_id)
-        svc = ApplyLoadBalance(self)
-        loadbalance_res = svc.get_loadbalance()
-        svc = ApplyBackups(self)
-        backups_res = svc.get_backups()
-        data.update(publish_res=publish_res, loadbalance_res=loadbalance_res, backups_res=backups_res)
-        logger.info(publish_res)
-        tmpl = self.render_to_string("admin/apply/service/add_pjax.html", **data)
-        return simplejson.dumps(self.success(data=tmpl))
+        # svc = ApplyLoadBalance(self)
+        # loadbalance_res = svc.get_loadbalance()
+        # svc = ApplyBackups(self)
+        # backups_res = svc.get_backups()
+        data.update(pro_publish_res=pro_publish_res) # , loadbalance_res=loadbalance_res, backups_res=backups_res)
+        logger.info(pro_publish_res)
+        if pro_publish_res.return_code == 0:
+            self.add_message(u"互联网发布信息添加成功！%s" % STATUS_PRO_TABLES.get(pro_publish_res.data.status).todo_value, level="success")
+            tmpl = self.render_to_string("admin/guide/_step_3_publish_detail.html", **data)
+            publish_notice_checker.delay(self.current_user.id)
+        else:
+            tmpl = self.render_to_string("admin/guide/_step_3_publish.html", **data)
+            self.add_message(u"互联网发布信息添加失败！(%s)(%s)" % (pro_publish_res.return_code, pro_publish_res.return_message), level="warning")
+        messages_tmpl = self.render_to_string("admin/base/base_messages.html")
+        return simplejson.dumps(self.success(data={"tmpl": tmpl, "messages_tmpl": messages_tmpl}))
 
 
 @url("/apply/service/loadbalance/add", name="apply.service.loadbalance.add", active="apply.service.add")
