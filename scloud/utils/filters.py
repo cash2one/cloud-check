@@ -62,6 +62,8 @@ class Filters(object):
         values = [i for i in values if i.status == status]
         return values
 
-    def filter_status_list(self, STATUS):
+    def filter_status_list(self, STATUS, reverse=False):
         values = [STATUS.get(i) for i in STATUS.keys() if isinstance(i, int)]
+        if reverse:
+            values = values[::-1]
         return values

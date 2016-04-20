@@ -9,15 +9,9 @@ from scloud.config import logger, thrownException
 from sqlalchemy import and_
 from scloud.utils.permission import GROUP, OP
 from scloud.utils.error_code import ERROR
-import re 
+
 
 class RegisterService(BaseService):
-    @thrownException
-    def email_check(self,email):
-        if len(email) > 7:
-            if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) != None:
-                return 1
-        return 0
 
     @thrownException
     def do_register(self):

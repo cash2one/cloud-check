@@ -19,15 +19,22 @@ class ProUserService(BaseService):
 
     @thrownException
     def do_pro_user(self):
-        pro_id = int(self.params.get("pro_id"))
+        try:
+            pro_id = int(self.params.get("pro_id"))
+        except:
+            return self.failure(ERROR.pro_name_empty_err)
         username = self.params.get("username")
         email = self.params.get("email")
         is_enable = int(self.params.get("is_enable", 1))
         use_vpn = int(self.params.get("use_vpn", 0))
+        if not pro_id:
+            return self.failure(ERROR.pro_name_empty_err)
         if not username:
             return self.failure(ERROR.username_empty_err)
         if not email:
             return self.failure(ERROR.email_empty_err)
+        if self.email_check(email) == 0:
+            return self.failure(ERROR.email_format_err) 
         user_id = self.params.get("user_id")
         if user_id:
             pro_user = self.db.query(
@@ -50,6 +57,7 @@ class ProUserService(BaseService):
     @thrownException
     def get_list(self):
         pro_id = int(self.params.get("pro_id", 0))
+        search = self.params.get("search", '')
         conditions = and_()
         user_id = self.params.get("user_id")
         if user_id:
@@ -62,17 +70,19 @@ class ProUserService(BaseService):
                 conditions.append(Pro_User.user_id == user_id)
         if pro_id:
             conditions.append(Pro_User.pro_id == pro_id)
+        if search:
+            conditions.append(Pro_User.username.like('%' + search + '%'))
         pro_users = self.db.query(
             Pro_User
         ).filter(
             conditions
-        ).all()
+        ).order_by(Pro_User.id.desc()).all()
         # logger.info([i.as_dict() for i in pro_users])
         return self.success(data=pro_users)
 
     @thrownException
     def get_info(self):
-        user_id = self.params.get("user_id")
+        user_id = self.params.get("id")
         if user_id:
             pro_user = self.db.query(
                 Pro_User

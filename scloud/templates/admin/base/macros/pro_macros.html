@@ -1,17 +1,38 @@
 
-{% macro get_pro_info_select() %}
-<div class="form-group select2{% if do_event_res and do_event_res.return_code in [ERR.PRO_NAME_EMPTY_ERR, RES_APPLY_ID_EMPTY_ERR] %} has-warning{% endif %}">
+{% macro get_pro_info_select(pro_res=None, pro_id=0) %}
+<div class="form-group select2{% if pro_res and pro_res.return_code in [ERR.PRO_NAME_EMPTY_ERR, RES_APPLY_ID_EMPTY_ERR] %} has-warning{% endif %}">
   <label for="pro_id" class="col-sm-2 control-label">所属项目</label>
   <div class="col-sm-4">
     <select id="pro_id" name="pro_id" style="width: 100%;" onchange="$('#res_apply_id').val($(this).find('option[value='+$(this).val()+']').attr('res_apply_id'));">
       <option value="" selected="selected"> -- 选择项目 ({{ pro_list_res.data|length}}) -- </option>
       {% for pro in pro_list_res.data %}
-      <option res_apply_id="{{ pro.last_apply.id }}" status="{{ pro.last_apply.status }}" status_level="{{ STATUS_RESOURCE.get(pro.last_apply.status).level }}" status_bg_color="{{ STATUS_RESOURCE.get(pro.last_apply.status).bg_color }}" status_value="{{ STATUS_RESOURCE.get(pro.last_apply.status).value }}" value="{{ pro.id }}"{% if pro.last_apply.status < STATUS_RESOURCE.CONFIRMPAYED %} disabled="disabled"{% endif %}{% if pro.id == pro_id %} selected="selected"{% endif %}>{{ pro.name }}</option>
+      <option res_apply_id="{{ pro.last_apply.id }}" status="{{ pro.last_apply.status }}" status_level="{{ STATUS_RESOURCE.get(pro.last_apply.status).level }}" status_bg_color="{{ STATUS_RESOURCE.get(pro.last_apply.status).bg_color }}" status_value="{{ STATUS_RESOURCE.get(pro.last_apply.status).value }}" value="{{ pro.id }}"{% if pro.last_apply.status < STATUS_RESOURCE.CONFIRMPAYED %} disabled="disabled"{% endif %}{% if pro.id == pro_id|int %} selected="selected"{% endif %}>{{ pro.name }}</option>
       {% endfor %}
     </select>
-    {% if do_event_res and do_event_res.return_code in [ERR.PRO_NAME_EMPTY_ERR, RES_APPLY_ID_EMPTY_ERR] %}
-    <label class="control-label" for="inputWarning"><i class="fa fa-bell-o"></i> {{ do_event_res.return_message }}</label>
+    {% if pro_res and pro_res.return_code in [ERR.PRO_NAME_EMPTY_ERR, RES_APPLY_ID_EMPTY_ERR] %}
+    <label class="control-label" for="inputWarning"><i class="fa fa-bell-o"></i> {{ pro_res.return_message }}</label>
     {% endif %}
   </div>
 </div>
+<script text="text/javascript">
+  function formatPro(state){
+    if (!state.id) { return state.text; }
+    var res_apply_id = $(state.element).attr("res_apply_id");
+    var status_bg_color = $(state.element).attr("status_bg_color");
+    var status_value = $(state.element).attr("status_value");
+    var status_disabled = $(state.element).attr("disabled");
+    if (status_disabled == "disabled"){
+      var disabled_text = "<span class='badge'>不可选</span>";
+    }else{
+      var disabled_text = "";
+    }
+    var $state = $("<span>" + state.text + " <span class='badge bg-"+status_bg_color+"'>"+status_value+"</span> " + disabled_text + "</span>");
+    return $state;
+  }
+  $("select").select2();
+  $("select[name=pro_id]").select2({
+      templateResult: formatPro,
+      templateSelection: formatPro
+  });
+</script>
 {% endmacro %}

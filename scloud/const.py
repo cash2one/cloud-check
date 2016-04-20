@@ -91,4 +91,17 @@ def init_status_priority():
         STATUS_PRIORITY[k] = v
 init_status_priority()
 
+# 是否
+yesno_status_types = {
+    1: IndexMark(value=u"是", value_en="yes", level="success"),
+    0: IndexMark(value=u"否", value_en="no", level="warning"),
+}
+STATUS_YESNO = ObjectDict()
+def init_status_yesno():
+    for k, v in yesno_status_types.items():
+        setattr(STATUS_YESNO, v.value_en.upper(), k)
+        setattr(STATUS_YESNO, v.value_en.lower(), v)
+        STATUS_YESNO[k] = v
+init_status_yesno()
+
 admin_emails = ["zhangpeng1@infohold.com.cn"]

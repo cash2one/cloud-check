@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import re
 from tornado.util import ObjectDict
 from scloud.shortcuts import env
 from scloud.config import CONF, logger
 from scloud.utils.error_code import ERROR
-
+from scloud.config import logger, thrownException
 
 class BaseService(object):
     def __init__(self, handler, params=None):
@@ -22,6 +23,13 @@ class BaseService(object):
         logger.info("self.params : %s" % self.params)
         # if handler:
         #     logger.info("handler args :%s" % self.handler.args)
+
+    @thrownException
+    def email_check(self,email):
+        if len(email) > 7:
+            if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) != None:
+                return 1
+        return 0
 
     def success(self, data=None):
         result = ObjectDict()

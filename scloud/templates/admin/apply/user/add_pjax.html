@@ -15,7 +15,22 @@
   {% include "admin/base/base_messages.html" %}
   <div class="row">
     <div class="col-xs-12">
-      {% include "admin/guide/_step_3_user.html" %}
+
+      <!-- Horizontal Form -->
+      <div class="box box-info">
+        <div class="box-header with-border">
+          <h3 class="box-title"><a data-pjax href="{{ reverse_url('apply.user') }}" class="btn btn-sm btn-default"><i class="fa fa-reply"></i></a> 添加新用户</h3>
+          {#
+          <div class="pull-right box-tools">
+            <a data-pjax href="{{ reverse_url('apply.user.add') }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
+            <button class="btn btn-info btn-sm" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
+          </div><!-- /. tools -->
+          #}
+        </div><!-- /.box-header -->
+        <div id="tab_0">
+            {% include "admin/guide/_step_3_user.html" %}
+        </div>
+      </div><!-- /.box -->
     </div>
   </div><!-- /.row -->
 </section><!-- /.content -->

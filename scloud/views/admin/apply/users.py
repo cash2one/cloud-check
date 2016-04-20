@@ -42,7 +42,7 @@ class GuideHandler(ApplyHandler):
 @url("/apply/user/detail", name="apply.user.detail", active="apply.user.index")
 class ProUserDetailHandler(ApplyHandler):
     SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
-    u'事件详情'
+    u'权限用户详情'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -54,7 +54,7 @@ class ProUserDetailHandler(ApplyHandler):
         data = {
             "pro_user_res": pro_user_res,
         }
-        return self.render_to_string("admin/user/detail.html", **data)
+        return self.render_to_string("admin/apply/user/detail.html", **data)
 
 
 #@url("/apply/pro_(?P<pro_id>\d+)/user/add", name="apply.user.add", active="apply.user.add")
@@ -83,19 +83,19 @@ class GuideHandler(ApplyHandler):
             message = u"修改"
         else:
             message = u"添加"
+        data = {"pro_user_res": pro_user_res}
         if pro_user_res.return_code == 0:
-            self.add_message(u"用户信息%s成功！" % message, level="success", post_action=True)
+            self.add_message(u"权限用户信息%s成功！" % message, level="success", post_action=True)
+            tmpl = self.render_to_string("admin/guide/_step_3_user_detail.html", **data)
             publish_notice_checker.delay(self.current_user.id)
         else:
-            self.add_message(u"用户信息%s失败！(%s)(%s)" % (message, pro_user_res.return_code, pro_user_res.return_message), level="warning")
-        pro_id = self.args.get("pro_id")
-        data = self.get_pro_data(pro_id=pro_id)
-        svc = ProUserService(self) 
-        pro_users_res = svc.get_list() 
-        data.update(pro_users_res=pro_users_res)
-        data.update({"pro_user_res": pro_user_res})
-        tmpl = self.render_to_string("admin/apply/user/add_pjax.html", **data)
-        return simplejson.dumps(self.success(data=tmpl))
+            pro_data = self.get_pro_data()
+            data.update(pro_data)
+            self.add_message(u"权限用户信息%s失败！(%s)(%s)" % (message, pro_user_res.return_code, pro_user_res.return_message), level="warning")
+            tmpl = self.render_to_string("admin/guide/_step_3_user.html", **data)
+
+        messages_tmpl = self.render_to_string("admin/base/base_messages.html")
+        return simplejson.dumps(self.success(data={"tmpl": tmpl, "messages_tmpl": messages_tmpl}))
 
 
 @url("/apply/user/del", name="apply.user.del", active="apply.user.del")

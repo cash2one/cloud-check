@@ -19,13 +19,15 @@
               <div class="box">
                 <div class="box-header">
                   <h3 class="box-title">
+                      <form data-pjax action="{{ reverse_url('apply.user') }}" method="GET">
                     <div class="input-group" style="width: 300px;">
-                      <input type="text" name="table_search" class="form-control input-sm pull-right" placeholder="Search">
+                      <input type="text" name="search" class="form-control input-sm pull-right" placeholder="用户名" value="{{ handler.args.get('search', '')}}">
                       <div class="input-group-btn">
-                        <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                        <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
                         <a data-pjax href="{{ reverse_url('apply.user.add') }}" class="btn btn-sm btn-warning"><i class="fa fa-plus"></i> 创建新权限用户</a>
                       </div>
                     </div>
+                      </form>
                   </h3>
                   <div class="box-tools">
                     <a data-pjax href="{{ reverse_url('apply.user') }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
@@ -35,21 +37,24 @@
                   <table class="table table-hover table-striped table-bordered">
                     <tr>
                       <th>事件编号</th>
-                      <th style="width: 20%">标题</th>
+                      <th style="width: 20%">权限用户</th>
                       <th>所属项目</th>
                       <th>状态</th>
+                      <th>是否可用</th>
                       <th>创建时间</th>
                       <th>操作</th>
                     </tr>
                     {% for user in page.object_list %}
                     <tr>
                       <td>{{ user.id }}</td>
-                      <td>{{ user.title }}</td>
+                      <td>{{ user.username }}</td>
                       <td>{{ user.project.name }}</td>
                       <td><span class="label label-{{ STATUS_PRO_TABLES.get(user.status).level }}">{{ STATUS_PRO_TABLES.get(user.status).value }}</span>
                       {% if user.status == STATUS_PRO_TABLES.CHECKED %}
                       <a class="btn btn-warning btn-xs" href="javascript:;" style="color:#FFFFFF" onclick="pro_table_do_confirm({_this:this, pro_table:'pro_user', ids:[{{ user.id }}]})"> 确认</a>
                       {% endif %}
+                      </td>
+                      <td><span class="label label-{{ STATUS_YESNO.get(user.is_enable).level }}">{{ STATUS_YESNO.get(user.is_enable).value }}</span>
                       </td>
                       <td>{{ user.create_time|getGoodTime }}</td>
                       <td>

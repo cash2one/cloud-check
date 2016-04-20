@@ -1,5 +1,5 @@
 {% import "admin/base/base_macros.html" as base with context %}
-{% set pro_event = pro_event_res.data %}
+{% set pro_user = pro_user_res.data %}
         <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
@@ -19,13 +19,13 @@
               <div class="box box-primary">
                 <div class="box-header with-border">
                   <h3 class="box-title">
-                  <a data-pjax href="{{ reverse_url('event.index') }}" class="btn btn-sm btn-default"><i class="fa fa-reply"></i></a>
-                  {{ pro_event.title }}</h3>
+                  <a data-pjax href="{{ reverse_url('apply.user') }}" class="btn btn-sm btn-default"><i class="fa fa-reply"></i></a>
+                  {{ pro_user.username }}</h3>
                   <div class="box-tools pull-right">
-                    <a data-pjax href="{{ reverse_url('event.detail') }}?id={{ pro_event.id }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
+                    <a data-pjax href="{{ reverse_url('apply.user.detail') }}?id={{ pro_user.id }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
                   </div>
                 </div><!-- /.box-header -->
-                {#% include "admin/event/_pro_event_detail.html" %#}
+                {% include "admin/guide/_step_3_user_detail.html" %}
               </div><!-- /. box -->
             </div><!-- /.col -->
           </div><!-- /.row -->
