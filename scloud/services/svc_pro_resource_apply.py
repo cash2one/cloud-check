@@ -14,6 +14,8 @@ from scloud.utils.error import NotFoundError
 from scloud.async_services.svc_mail import sendMail
 from scloud.async_services.svc_act import task_post_pro_res_apply_history
 from scloud.const import admin_emails, STATUS_RESOURCE
+from scloud.models.environment import Env_Resource_Fee
+
 
 mail_format = u"项目名[%(pro_name)s]-项目编号[%(pro_id)s]-%(user_name)s %(resource_status)s资源申请"
 
@@ -123,10 +125,58 @@ class ProResourceApplyService(BaseService):
     def generate_fee(self):
         logger.info("------[generate_fee]------")
         self.check_form_valid()
+        pro_id = self.params.get("pro_id")
+        pro_info = self.db.query(
+            Pro_Info    
+        ).filter(
+            Pro_Info.id == pro_id          
+        ).first()
+        env_id = pro_info.env_id
+        env_resource_fee = self.db.query(
+            Env_Resource_Fee
+        ).filter(
+            Env_Resource_Fee.env_id == env_id
+        ).first()
+        fee_dict = env_resource_fee.as_dict()
+        cpu_fee = fee_dict["cpu"]
+        mem_fee = fee_dict["memory"]
+        disk_fee = fee_dict["disk"]
+        disk_backup_fee = fee_dict["disk_backup"]
+        out_ip_fee = fee_dict["out_ip"]
+        snapshot_fee = fee_dict["snapshot"]
+        loadbalance_fee = fee_dict["loadbalance"]
+        internet_ip_fee = fee_dict["internet_ip"]
+        internet_ip_ssl_fee = fee_dict["internet_ip_ssl"] 
+
+        cpu = int(self.params.get("cpu"))
+        mem = int(self.params.get("memory"))
+        disk = int(self.params.get("disk"))
+        disk_backup = int(self.params.get("disk_backup"))
+        out_ip = int(self.params.get("out_ip"))
+        snapshot = int(self.params.get("snapshot"))
+        loadbalance = int(self.params.get("loadbalance"))
+        internet_ip_id = int(self.params.get("internet_ip"))
+        internet_ip_ssl = int(self.params.get("internet_ip_ssl"))
+        period = int(self.params.get("period"))
+
+        internet_ip_fee_ = 0 
+        for i in internet_ip_fee:
+            if i["id"] == internet_ip_id:
+               internet_ip_fee_ =  i["fee"]
+               break
+            else:
+                continue
+        
+        unit_fee = cpu_fee * cpu + mem_fee * mem + disk_fee * disk + \
+        disk_backup_fee * disk_backup + out_ip * out_ip_fee +  \
+        snapshot * snapshot_fee + loadbalance * loadbalance_fee + \
+        float(internet_ip_fee_) + \
+        internet_ip_ssl * internet_ip_ssl_fee
+
+        total_fee = unit_fee * period
+
         if self.period == 0:
             return self.failure(ERROR.res_period_empty_err)
-        unit_fee = 10
-        total_fee = 100
         data = {
             "unit_fee": unit_fee,
             "total_fee": total_fee
