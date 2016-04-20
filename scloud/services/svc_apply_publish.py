@@ -59,6 +59,7 @@ class ApplyPublish(BaseService):
 
     @thrownException
     def do_publish(self):
+        publish_id = self.params.get("publish_id")
         pro_id = self.params.get("pro_id")
         domain = self.params.get("domain")
         try:
@@ -74,7 +75,7 @@ class ApplyPublish(BaseService):
         use_ssl = self.params.get("use_ssl", 0)
 
         if not pro_id:
-            return self.failure(ERROR.not_found_err) 
+            return self.failure(ERROR.pro_name_empty_err) 
         if not domain:
             return self.failure(ERROR.pro_publish_domain_empty_err)
         if not domain_port:
@@ -87,7 +88,14 @@ class ApplyPublish(BaseService):
             return self.failure(ERROR.pro_publish_domain_port_invalid_err)
         if network_port < 1024 or network_port > 65535:
             return self.failure(ERROR.pro_publish_network_port_invalid_err)
-        do_publish_info, created = Pro_Publish.get_or_create_obj(self.db, pro_id=pro_id) 
+        if publish_id:
+            do_publish_info = self.db.query(
+                Pro_Publish
+            ).filter(
+                Pro_Publish.id == publish_id
+            ).first()
+        do_publish_info = Pro_Publish()
+        do_publish_info.pro_id = pro_id
         do_publish_info.domain = domain
         do_publish_info.domain_port = domain_port
         do_publish_info.network_address = network_address

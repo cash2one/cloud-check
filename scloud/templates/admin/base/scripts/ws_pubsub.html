@@ -60,12 +60,25 @@ function on_task(response){
     $(".treeview-menu a[name=pro_table_check_list] span").html("")
   }
   
+  console.log(response.pro_user_num);
   if (parseInt(response.pro_user_num) > 0){
     $(".sidebar-menu a[name='apply.user'] span.label").html(response.pro_user_num);
   }else{
     $(".sidebar-menu a[name='apply.user'] span.label").html("");
   }
-  
+
+  if (parseInt(response.pro_publish_num) > 0){
+    $(".sidebar-menu a[name='apply.publish'] span.label").html(response.pro_publish_num);
+  }else{
+    $(".sidebar-menu a[name='apply.publish'] span.label").html("");
+  }
+
+  if (parseInt(response.pro_event_num) > 0){
+    $(".sidebar-menu a[name='event.index'] span.label").html(response.pro_event_num);
+  }else{
+    $(".sidebar-menu a[name='apply.user'] span.label").html("");
+  }
+
   var service_total_num = parseInt(response.pro_publish_num)+parseInt(response.pro_balance_num)+parseInt(response.pro_backup_num);
   if (service_total_num > 0){
     $(".sidebar-menu a[name='apply.service'] span.label").html(service_total_num);

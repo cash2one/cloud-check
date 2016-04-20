@@ -27,7 +27,7 @@
       {% if pro_publish_list|length > 0 %}
       <li>
       {% if imchecker %}
-        <a data-pjax href="{{ reverse_url('pro_table_check_list') }}?pro_table=pro_publish">
+        <a data-pjax href="{{ reverse_url('apply.publish') }}?pro_table=pro_publish">
           <i class="fa fa-internet-explorer text-green"></i> {{ pro_publish_list|length }} 新申请的互联网发布内容已提交，请受理
         </a>
       {% else %}
@@ -61,7 +61,7 @@
       {% else %}
         <a data-pjax href="{{ reverse_url('apply.service') }}">
           <i class="fa fa-hdd-o text-yellow"></i>
-          您新申请的定期备份内容已受理{{ pro_publish_list|length }}个，请确认
+          您新申请的定期备份内容已受理{{ pro_backup_list|length }}个，请确认
         </a>
       {% endif %}
       </li>
@@ -75,7 +75,7 @@
       {% else %}
         <a data-pjax href="{{ reverse_url('event.index') }}">
           <i class="fa fa-warning text-yellow"></i>
-          您新申请的事件已受理{{ pro_publish_list|length }}个，请确认
+          您新申请的事件已受理{{ pro_event_list|length }}个，请确认
         </a>
       {% endif %}
       </li>

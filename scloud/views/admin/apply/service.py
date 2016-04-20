@@ -49,11 +49,11 @@ class GuideHandler(ApplyHandler):
         svc = ApplyPublish(self)
         publish_res = svc.get_publish()
         svc = ApplyLoadBalance(self)
-        loadbalance_res = svc.get_loadbalance()
+        pro_loadbalance_res = svc.get_loadbalance()
         svc = ApplyBackups(self)
         backups_res = svc.get_backups()
         data.update(publish_res=publish_res,
-                    loadbalance_res=loadbalance_res,
+                    pro_loadbalance_res=pro_loadbalance_res,
                     backups_res=backups_res)
         backups = backups_res.data
         logger.info(backups)
@@ -103,22 +103,24 @@ class GuideHandler(ApplyHandler):
     @unblock
     def post(self):
         svc = ApplyLoadBalance(self)
-        loadbalance_res = svc.do_loadbalance()
-        if loadbalance_res.return_code == 0:
-            self.add_message(u"负载均衡申请成功！%s" % STATUS_PRO_TABLES.get(loadbalance_res.data.status).todo_value, level="success")
-            publish_notice_checker.delay(self.current_user.id)
-        else:
-            self.add_message(u"负载均衡申请失败！(%s)(%s)" % (loadbalance_res.return_code, loadbalance_res.return_message), level="warning")
-        svc = ApplyPublish(self)
-        publish_res = svc.get_publish()
-        svc = ApplyBackups(self)
-        backups_res = svc.get_backups()
+        pro_loadbalance_res = svc.do_loadbalance()
+        # svc = ApplyPublish(self)
+        # publish_res = svc.get_publish()
+        # svc = ApplyBackups(self)
+        # backups_res = svc.get_backups()
         pro_id = self.args.get("pro_id")
         data = self.get_pro_data(pro_id=pro_id)
-        data.update(loadbalance_res=loadbalance_res, backups_res=backups_res, publish_res=publish_res)
-        logger.info(loadbalance_res)
-        tmpl = self.render_to_string("admin/apply/service/add_pjax.html", **data)
-        return simplejson.dumps(self.success(data=tmpl))
+        data.update(pro_loadbalance_res=pro_loadbalance_res) # , backups_res=backups_res, publish_res=publish_res)
+        logger.info(pro_loadbalance_res)
+        if pro_loadbalance_res.return_code == 0:
+            self.add_message(u"负载均衡申请成功！%s" % STATUS_PRO_TABLES.get(pro_loadbalance_res.data.status).todo_value, level="success")
+            tmpl = self.render_to_string("admin/guide/_step_3_balance_detail.html", **data)
+            publish_notice_checker.delay(self.current_user.id)
+        else:
+            self.add_message(u"负载均衡申请失败！(%s)(%s)" % (pro_loadbalance_res.return_code, pro_loadbalance_res.return_message), level="warning")
+            tmpl = self.render_to_string("admin/guide/_step_3_balance.html", **data)
+        messages_tmpl = self.render_to_string("admin/base/base_messages.html")
+        return simplejson.dumps(self.success(data={"tmpl": tmpl, "messages_tmpl": messages_tmpl}))
 
 
 @url("/apply/service/backups/add", name="apply.service.backups.add", active="apply.service.add")

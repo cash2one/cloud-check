@@ -1,8 +1,7 @@
+{% import "admin/base/base_macros.html" as base with context %}
+{% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
 
-{% import "admin/base/base_macros.html" as base %}
-  <!-- Horizontal Form -->
-  <div>
-    <!-- form start -->
+        <!-- form start -->
     <form id="form_loadbalance" data-pjax action="{{ reverse_url('apply.service.loadbalance.add' )}}?pro_id={{ pro_info_res.data.id }}&active=tab_2" class="form-horizontal" method="POST">
     {{ handler.xsrf_form_html() }}
     {% set applies = pro_info_res.data.pro_resource_applies %}
@@ -11,11 +10,12 @@
     {% else %}
       {% set last_apply = None %}
     {% endif %}
-    <input type="hidden" name="pro_id" value="{{ pro_info_res.data.id }}">
+    {% set pro_id = handler.args.get("pro_id", "0") %}
+    {{ pro_macro.get_pro_info_select(pro_res=pro_loadbalance_res, pro_id=pro_id) }}
     {% if last_apply %}
     <input type="hidden" name="res_apply_id" value="{{ last_apply.id }}">
     {% endif %}
-    {% set loadbalance_plot = loadbalance_res.data %}
+    {% set loadbalance_plot = pro_loadbalance_res.data %}
       <div class="box-body">
         <!-- form input -->
         <input type="hidden" id="members" name="members" value="">
@@ -33,7 +33,7 @@
         {% if loadbalance_plot %}
         {% set members = loadbalance_plot.as_dict().members %}
         {% set ST = STATUS_PRO_TABLES.get(loadbalance_plot.status) %}
-        {{ base.tip_message(message="您{}的负载均衡内容{}，{}。".format(ST.act_value, ST.value, ST.todo_value), level=ST.level) }}
+        {#{ base.tip_message(message="您{}的负载均衡内容{}，{}。".format(ST.act_value, ST.value, ST.todo_value), level=ST.level) }#}
         {% else %}
         {% set members = [] %}
         {% endif %}
@@ -122,27 +122,11 @@
         {% endif %}
       </div><!-- /.box-footer -->
     </form>
-  </div><!-- /.box -->
-
   <div id="member_block" style="display:none">
     {{ base.loadbalance_member() }}
-    {#
-    <div class="form-group">
-      <label for="disk" class="col-sm-2 control-label">成员A</label>
-      <div class="col-sm-6 input-group">
-        <div class="input-group-unit">IP</div>
-        <input type="text" class="form-control" name="address" placeholder="10">
-        <div class="input-group-unit">PORT</div>
-        <input type="text" class="form-control" name="port" placeholder="10">
-        <div class="input-group-unit">
-        <button class="btn btn-box-tool" onclick="$(this).parent().parent().parent().remove();loop-=1;set_member_tip()"><i class="fa fa-times"></i></button>
-        </div>
-      </div>
-    </div>
-    #}
   </div>
-  
-  <script type="text/javascript">
+
+<script type="text/javascript">
   var max_loop = {{ last_apply.loadbalance - members|length }};
   var loop = 0;
   var members = 0;
@@ -178,6 +162,17 @@
     generate_ajax_post({
         form: "#form_loadbalance",
         btn: "#form_loadbalance_btn",
+        pjax_container: false,
+        onSuccess: function(response){
+            $("section.content").prepend(response.data.messages_tmpl);
+            $("#form_loadbalance").parent().html(response.data.tmpl);
+        },
+        onTimeout: function(){ do_form_loadbalance();}
     })
   }
-  </script>
+
+  $(function () {
+    //Add text editor
+    $("#content").wysihtml5();
+  });
+</script>

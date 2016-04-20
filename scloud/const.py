@@ -62,10 +62,10 @@ init_status_resource()
 pro_tables_status_types = {
     # 未申请状态，可修改，可删除，可提交
     -2:ApplyMark(value=u"审核未通过", todo_value="待修改", act_value=u"保存", value_en="refused", level="danger", bg_color="red"),
-    -1:ApplyMark(value=u"未提交", todo_value="待修改", act_value=u"保存", value_en="revoked", level="danger", bg_color="red"),
-    0: ApplyMark(value=u"已提交", todo_value="受理中", act_value=u"保存", value_en="applied", level="warning", bg_color="yellow"),
+    -1:ApplyMark(value=u"未提交", todo_value="待修改", act_value=u"保存", value_en="revoked", level="warning", bg_color="yellow"),
+    0: ApplyMark(value=u"已提交", todo_value="受理中", act_value=u"保存", value_en="applied", level="info", bg_color="light-blue"),
     1: ApplyMark(value=u"已处理", todo_value="已处理", act_value=u"处理", value_en="checked", level="success", bg_color="light-blue"),
-    2: ApplyMark(value=u"已确认", todo_value="已完成", act_value=u"确认", value_en="confirmed", level="info", bg_color="info"),
+    2: ApplyMark(value=u"已确认", todo_value="已完成", act_value=u"确认", value_en="confirmed", level="success", bg_color="light-blue"),
 }
 STATUS_PRO_TABLES = ObjectDict()
 def init_status_pro_tables():

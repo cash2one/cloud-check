@@ -120,6 +120,11 @@ class TaskPublish(BaseService):
 
         # 获取任务列表总和
         pro_tables_total = len(pro_user_list) + len(pro_publish_list) + len(pro_balance_list) + len(pro_backup_list) + len(pro_event_list)
+        logger.info("len(pro_user_list): %s" % len(pro_user_list))
+        logger.info("len(pro_publish_list): %s" % len(pro_publish_list))
+        logger.info("len(pro_balance_list): %s" % len(pro_balance_list))
+        logger.info("len(pro_backup_list): %s" % len(pro_backup_list))
+        logger.info("len(pro_event_list): %s" % len(pro_event_list))
         data["pro_tables_total"] = pro_tables_total
         data["tasks_total"] = len(tasks_res.data)
         logger.info("total: %s" % pro_tables_total)
