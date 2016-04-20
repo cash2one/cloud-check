@@ -63,6 +63,7 @@
               <div class="box-body">
               <form id="resource_form" data-pjax action="{{ post_action }}" class="form-horizontal" method="POST">
               {{ handler.xsrf_form_html() }}
+              <input type="hidden" name="pro_id" value="{{ last_apply.pro_id  }}">
                 <fieldset>
                   <legend>资源配置</legend>
                   <div class="form-group">
