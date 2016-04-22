@@ -48,12 +48,12 @@
   </div>
 {%- endmacro %}
 
-{% macro form_status_select(label, name, options=[], ST=None, value="", res=None, check_codes=[], label_col=2) -%}
+{% macro form_status_select(label, name, options=[], ST=None, value="", res=None, check_codes=[], label_col=2, style="") -%}
   {% set col2 = 12 - label_col %}
   <div class="form-group{% if res and res.return_code in check_codes %} has-warning{% endif %}">
     <label for="{{ name }}" class="col-sm-{{ label_col }} control-label">{{ label }}</label>
     <div class="col-sm-{{ col2 }}">
-      <select id="{{ name }}" name="{{ name }}">
+      <select id="{{ name }}" name="{{ name }}" style="{{ style  }}">
         {% for option in options %}
         <option value="{{ ST.get(option.value_en|upper) }}"{% if value|int == ST.get(option.value_en|upper) %} selected="selected"{% endif %}>{{ option.value }}</option>
         {% endfor %}

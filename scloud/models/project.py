@@ -158,6 +158,15 @@ class Pro_Balance(BaseModel, BaseModelMixin):
     project = relationship("Pro_Info", backref=backref("pro_balance_list", order_by="Pro_Balance.update_time"))
 
 
+class Pro_Balance_Members(BaseModel, BaseModelMixin):
+    u"""负载均衡成员"""
+    __tablename__ = "pro_balance_members"
+    pro_balance_id = Column(Integer, ForeignKey("pro_balance.id"), default=0, info=u"负载均衡")
+    ip = Column("ip", Unicode, default=u'', info=u"IP地址")
+    port = Column("port", Unicode, default=u'', info=u"端口")
+    loadbalance = relationship("Pro_Balance", backref=backref("pro_loadbalance_members", order_by="Pro_Backup.update_time"))
+
+
 class Pro_Backup(BaseModel, BaseModelMixin):
     u"""定期备份"""
     __tablename__ = "pro_backup"

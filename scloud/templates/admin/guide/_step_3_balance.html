@@ -2,21 +2,18 @@
 {% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
 
         <!-- form start -->
-    <form id="form_loadbalance" data-pjax action="{{ reverse_url('apply.service.loadbalance.add' )}}?pro_id={{ pro_info_res.data.id }}&active=tab_2" class="form-horizontal" method="POST">
+    <form id="form_loadbalance" data-pjax action="{{ reverse_url('apply.loadbalance.add' )}}" class="form-horizontal" method="POST">
     {{ handler.xsrf_form_html() }}
-    {% set applies = pro_info_res.data.pro_resource_applies %}
-    {% if applies|length > 0 %}
-      {% set last_apply = applies[-1] %}
-    {% else %}
-      {% set last_apply = None %}
-    {% endif %}
-    {% set pro_id = handler.args.get("pro_id", "0") %}
-    {{ pro_macro.get_pro_info_select(pro_res=pro_loadbalance_res, pro_id=pro_id) }}
-    {% if last_apply %}
-    <input type="hidden" name="res_apply_id" value="{{ last_apply.id }}">
-    {% endif %}
-    {% set loadbalance_plot = pro_loadbalance_res.data %}
+    {% set loadbalance_plot = pro_loadbalance_res.data if pro_loadbalance_res else {} %}
+    
+    {% set plot = handler.args.get("plot", "") %}
+    {% set health = handler.args.get("health", "") %}
+    {% set url = handler.args.get("url", "") %}
+    {% set keyword = handler.args.get("keyword", "") %}
+    {% set desc = handler.args.get("desc", "") %}
+    {% set pro_id = handler.args.get("pro_id", "") %}
       <div class="box-body">
+        {{ pro_macro.get_pro_info_select(pro_res=pro_loadbalance_res, pro_id=pro_id) }}
         <!-- form input -->
         <input type="hidden" id="members" name="members" value="">
         <!--div class="form-group">
@@ -28,29 +25,16 @@
             <input type="text" class="form-control" name="port" placeholder="10">
           </div>
         </div-->
-        {% if last_apply %}
-        {% set loadbalance = last_apply.loadbalance %}
-        {% if loadbalance_plot %}
-        {% set members = loadbalance_plot.as_dict().members %}
-        {% set ST = STATUS_PRO_TABLES.get(loadbalance_plot.status) %}
-        {#{ base.tip_message(message="您{}的负载均衡内容{}，{}。".format(ST.act_value, ST.value, ST.todo_value), level=ST.level) }#}
-        {% else %}
-        {% set members = [] %}
-        {% endif %}
-        {% for member in members %}
-          {#{ member }#}
-          {{ base.loadbalance_member(member, loop=loop.index, failures=member.failures, ERR=ERR) }}
-        {% endfor %}
+        
         <div class="form-group" id="member_add_button">
           <!-- button -->
           <label class="col-sm-2 control-label">
             <button type="button" onclick="add_member()" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> 添加成员</button>
           </label>
           <div class="col-sm-6 input-group">
-          <div class="input-group-unit" id="members_add_tip">还可以添加{{ loadbalance - members|length }}个成员</div>
+          <div class="input-group-unit" id="members_add_tip"></div>
           </div>
         </div>
-        {% endif %}
         <!--div class="form-group">
           <label for="disk" class="col-sm-2 control-label">成员B</label>
           <div class="col-sm-6 input-group">
@@ -60,40 +44,16 @@
             <input type="text" class="form-control" id="disk_backup" placeholder="10">
           </div>
         </div-->
+        {{ base.form_status_select("策略", "plot", value=plot, options=PLOT_LOADBALANCE|status_list, ST=PLOT_LOADBALANCE, res=pro_loadbalance_res, style="width:30%") }}
+        {{ base.form_status_select("健康检查", "health", value=health, options=LOADBALANCE_HEALTH|status_list, ST=LOADBALANCE_HEALTH, res=pro_loadbalance_res, style="width:30%") }}
+        
         <div class="form-group">
-          <label for="loadbalance" class="col-sm-2 control-label">策略</label>
-          <div class="col-sm-6 input-group">
-            <select class="form-control" name="plot">
-            {% if loadbalance_plot %}
-              {% set plot = loadbalance_plot.plot %}
-            {% else %}
-              {% set plot = -1 %}
-            {% endif %}
-              <option value="0"{% if plot|int == 0 %} selected="selected"{% endif %}>轮询</option>
-              <option value="1"{% if plot|int == 1 %} selected="selected"{% endif %}>最小连接数</option>
-              <option value="2"{% if plot|int == 2 %} selected="selected"{% endif %}>主从</option>
-              <option value="9"{% if plot|int == 9 %} selected="selected"{% endif %}>其他</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="loadbalance" class="col-sm-2 control-label">健康检查</label>
-          <div class="col-sm-6 input-group">
-            <select class="form-control" name="health">
-            {% if loadbalance_plot %}
-              {% set health = loadbalance_plot.health %}
-            {% else %}
-              {% set health = -1 %}
-            {% endif %}
-              <option value="0"{% if health|int == 0 %} selected="selected"{% endif %}>HTTP</option>
-              <option value="1"{% if health|int == 1 %} selected="selected"{% endif %}>TCP</option>
-              <option value="2"{% if health|int == 2 %} selected="selected"{% endif %}>ICMP</option>
-              <option value="9"{% if health|int == 9 %} selected="selected"{% endif %}>其他</option>
-            </select>
+          <label for="loadbalance" class="col-sm-2 control-label"></label>
+          <div class="col-sm-8 input-group">
             <div class="input-group-unit">
               URL:
             </div>
-            <input type="text" class="form-control" id="url" name="url" placeholder="10" value="{{ loadbalance_plot.url }}">
+            <input type="text" class="form-control" id="url" name="url" placeholder="http://" value="{{ loadbalance_plot.url }}">
             <div class="input-group-unit">
               关键字:
             </div>
@@ -103,7 +63,7 @@
         <div class="form-group">
           <label for="desc" class="col-sm-2 control-label">特殊说明</label>
           <div class="col-sm-8 input-group">
-            <textarea class="textarea" name="desc" style="width: 100%; height: 125px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;" placeholder="请填写特殊说明">{{ loadbalance_plot.desc }}</textarea>
+            <textarea class="textarea" name="desc" style="width: 100%; height: 125px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;" placeholder="请填写特殊说明">{{ desc }}</textarea>
           </div>
         </div>
       </div><!-- /.box-body -->
@@ -127,16 +87,28 @@
   </div>
 
 <script type="text/javascript">
-  var max_loop = {{ last_apply.loadbalance - members|length }};
+  var max_loop = 0;
   var loop = 0;
   var members = 0;
+  var loadbalance_members = 0;
   function set_member_tip(){
+    max_loop = parseInt($("#res_apply_id").attr("loadbalance"));
+    loadbalance_members = parseInt($("#res_apply_id").attr("loadbalance_members"));
+    // var remainder = max_loop - loadbalance_members - loop;
     var remainder = max_loop - loop;
-    $("#members_add_tip").html("还可以添加"+ remainder +"个成员")
+    $("#members_add_tip").html("还可以添加"+ remainder +"个成员(已添加"+loadbalance_members+"个成员)");
   }
   function add_member(){
-    if (loop >= max_loop){ 
-      $("#members_add_tip").html("还可以添加0个成员")
+    max_loop = parseInt($("#res_apply_id").attr("loadbalance"));
+    loadbalance_members = parseInt($("#res_apply_id").attr("loadbalance_members"));
+    if (!max_loop){
+      $("#members_add_tip").html("请先选择项目");
+      return false 
+    }
+    console.log("max_loop: "+ max_loop + ", loop: " + loop);
+    // if (loop >= (max_loop - loadbalance_members)){ 
+    if (loop >= (max_loop)){ 
+      $("#members_add_tip").html("还可以添加0个成员(已添加"+loadbalance_members+"个成员)");
       return false 
     };
     members += 1;

@@ -17,7 +17,7 @@
               {% set is_enable = handler.args.get("is_enable", "1") %}
               {% set use_vpn = handler.args.get("use_vpn", "") %}
           {% endif %}
-          <input type="hidden" id="res_apply_id" name="res_apply_id" value="{{ res_apply_id }}"/>
+          <!-- <input type="hidden" id="res_apply_id" name="res_apply_id" value="{{ res_apply_id }}"/> -->
           <div class="box-body">
             {{ pro_macro.get_pro_info_select(pro_res=pro_user_res, pro_id=pro_id) }}
             {{ base.form_input("用户名", "username", right_col=6, value=username, res=pro_user_res, check_codes=[ERR.USERNAME_EMPTY_ERR, ERR.USERNAME_DUPLICATE_ERR]) }}

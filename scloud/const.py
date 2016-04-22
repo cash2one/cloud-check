@@ -91,6 +91,38 @@ def init_status_priority():
         STATUS_PRIORITY[k] = v
 init_status_priority()
 
+# 互联网发布、负载均衡、定期备份、权限申请状态
+loadbalance_plot_types = {
+    # 未申请状态，可修改，可删除，可提交
+    0: IndexMark(value=u"轮循", value_en="cycle", level="info"),
+    1: IndexMark(value=u"最小连接数", value_en="minconnect", level="success"),
+    2: IndexMark(value=u"主从", value_en="master", level="warning"),
+    3: IndexMark(value=u"其他", value_en="other", level="danger"),
+}
+PLOT_LOADBALANCE = ObjectDict()
+def init_loadbalance_plot():
+    for k, v in loadbalance_plot_types.items():
+        setattr(PLOT_LOADBALANCE, v.value_en.upper(), k)
+        setattr(PLOT_LOADBALANCE, v.value_en.lower(), v)
+        PLOT_LOADBALANCE[k] = v
+init_loadbalance_plot()
+
+# 互联网发布、负载均衡、定期备份、权限申请状态
+loadbalance_health_types = {
+    # 未申请状态，可修改，可删除，可提交
+    0: IndexMark(value=u"HTTP", value_en="http", level="info"),
+    1: IndexMark(value=u"TCP", value_en="tcp", level="success"),
+    2: IndexMark(value=u"ICMP", value_en="icmp", level="warning"),
+    3: IndexMark(value=u"其他", value_en="other", level="danger"),
+}
+LOADBALANCE_HEALTH = ObjectDict()
+def init_loadbalance_health():
+    for k, v in loadbalance_health_types.items():
+        setattr(LOADBALANCE_HEALTH, v.value_en.upper(), k)
+        setattr(LOADBALANCE_HEALTH, v.value_en.lower(), v)
+        LOADBALANCE_HEALTH[k] = v
+init_loadbalance_health()
+
 # 是否
 yesno_status_types = {
     1: IndexMark(value=u"是", value_en="yes", level="success"),

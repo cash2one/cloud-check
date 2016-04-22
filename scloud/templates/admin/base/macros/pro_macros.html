@@ -3,15 +3,16 @@
 <div class="form-group select2{% if pro_res and pro_res.return_code in [ERR.PRO_NAME_EMPTY_ERR, RES_APPLY_ID_EMPTY_ERR] %} has-warning{% endif %}">
   <label for="pro_id" class="col-sm-2 control-label">所属项目</label>
   <div class="col-sm-4">
-    <select id="pro_id" name="pro_id" style="width: 100%;" onchange="$('#res_apply_id').val($(this).find('option[value='+$(this).val()+']').attr('res_apply_id'));">
+    <select id="pro_id" name="pro_id" style="width: 100%;" onchange="update_resource_apply(this);">
       <option value="" selected="selected"> -- 选择项目 ({{ pro_list_res.data|length}}) -- </option>
       {% for pro in pro_list_res.data %}
-      <option res_apply_id="{{ pro.last_apply.id }}" status="{{ pro.last_apply.status }}" status_level="{{ STATUS_RESOURCE.get(pro.last_apply.status).level }}" status_bg_color="{{ STATUS_RESOURCE.get(pro.last_apply.status).bg_color }}" status_value="{{ STATUS_RESOURCE.get(pro.last_apply.status).value }}" value="{{ pro.id }}"{% if pro.last_apply.status < STATUS_RESOURCE.CONFIRMPAYED %} disabled="disabled"{% endif %}{% if pro.id == pro_id|int %} selected="selected"{% endif %}>{{ pro.name }}</option>
+      <option res_apply_id="{{ pro.last_apply.id }}" disk_backup="{{ pro.last_apply.disk_backup }}" disk_backup_members="{% if pro.last_apply.backups_plot %}{{ pro.last_apply.backups_plot.as_dict().plot|length }}{% else %}0{% endif %}" status="{{ pro.last_apply.status }}" loadbalance="{{ pro.last_apply.loadbalance }}" loadbalance_members="{% if pro.last_apply.loadbalance_plot %}{{ pro.last_apply.loadbalance_plot.as_dict().members|length }}{% else %}0{% endif %}" status_level="{{ STATUS_RESOURCE.get(pro.last_apply.status).level }}" status_bg_color="{{ STATUS_RESOURCE.get(pro.last_apply.status).bg_color }}" status_value="{{ STATUS_RESOURCE.get(pro.last_apply.status).value }}" value="{{ pro.id }}"{% if pro.last_apply.status < STATUS_RESOURCE.CONFIRMPAYED %} disabled="disabled"{% endif %}{% if pro.id == pro_id|int %} selected="selected"{% endif %}>{{ pro.name }}</option>
       {% endfor %}
     </select>
     {% if pro_res and pro_res.return_code in [ERR.PRO_NAME_EMPTY_ERR, RES_APPLY_ID_EMPTY_ERR] %}
     <label class="control-label" for="inputWarning"><i class="fa fa-bell-o"></i> {{ pro_res.return_message }}</label>
     {% endif %}
+    <input type="hidden" id="res_apply_id" name="res_apply_id" disk_backup="" disk_backup_members="" loadbalance="" loadbalance_members="" value=""/>
   </div>
 </div>
 <script text="text/javascript">
@@ -34,5 +35,12 @@
       templateResult: formatPro,
       templateSelection: formatPro
   });
+  function update_resource_apply(_this){
+    $('#res_apply_id').val($(_this).find('option[value='+$(_this).val()+']').attr('res_apply_id'));
+    $('#res_apply_id').attr("disk_backup", $(_this).find('option[value='+$(_this).val()+']').attr('disk_backup'));
+    $('#res_apply_id').attr("disk_backup_members", $(_this).find('option[value='+$(_this).val()+']').attr('disk_backup_members'));
+    $('#res_apply_id').attr("loadbalance", $(_this).find('option[value='+$(_this).val()+']').attr('loadbalance'));
+    $('#res_apply_id').attr("loadbalance_members", $(_this).find('option[value='+$(_this).val()+']').attr('loadbalance_members'));
+  }
 </script>
 {% endmacro %}

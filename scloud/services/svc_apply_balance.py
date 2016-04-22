@@ -104,6 +104,8 @@ class ApplyLoadBalance(BaseService):
             do_balance_info.members = member
             self.db.add(do_balance_info)
             self.db.flush()
+            # for member in members:
+            #     pro_balance_member, created = Pro_Balance_Members.get_or_create_obj(pro_balance_id=do_balance_info.id, )
             return self.success(data=do_balance_info)
         else:
             do_balance_info.status = STATUS_PRO_TABLES.REVOKED

@@ -18,7 +18,7 @@ from scloud.async_services.svc_act import task_post_action
 from sqlalchemy.exc import SQLAlchemyError
 from scloud.utils.error_code import ERR
 from scloud.utils.error import SystemError
-from scloud.const import STATUS_RESOURCE, STATUS_PRO_TABLES, STATUS_PRIORITY, STATUS_YESNO
+from scloud.const import STATUS_RESOURCE, STATUS_PRO_TABLES, STATUS_PRIORITY, STATUS_YESNO, PLOT_LOADBALANCE, LOADBALANCE_HEALTH
 from scloud.utils.permission import GROUP, OP
 from sqlalchemy.orm.session import SessionTransaction
 
@@ -173,9 +173,11 @@ class Handler(BaseHandler):
             "STATUS_PRO_TABLES": STATUS_PRO_TABLES,
             "STATUS_PRIORITY": STATUS_PRIORITY,
             "STATUS_YESNO": STATUS_YESNO,
+            "PLOT_LOADBALANCE": PLOT_LOADBALANCE,
+            "LOADBALANCE_HEALTH": LOADBALANCE_HEALTH,
             "GROUP": GROUP,
             "OP": OP,
-            "s": s+"&" if s else ""
+            "s": s + "&" if s else ""
         })
         # logger.info("\t [render_to_string kwargs]: %s" % kwargs)
         template_string = tmpl.render(**kwargs)

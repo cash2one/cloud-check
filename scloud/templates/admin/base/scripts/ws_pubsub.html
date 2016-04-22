@@ -73,6 +73,12 @@ function on_task(response){
     $(".sidebar-menu a[name='apply.publish'] span.label").html("");
   }
 
+  if (parseInt(response.pro_balance_num) > 0){
+    $(".sidebar-menu a[name='apply.loadbalance'] span.label").html(response.pro_balance_num);
+  }else{
+    $(".sidebar-menu a[name='apply.loadbalance'] span.label").html("");
+  }
+
   if (parseInt(response.pro_event_num) > 0){
     $(".sidebar-menu a[name='event.index'] span.label").html(response.pro_event_num);
   }else{
