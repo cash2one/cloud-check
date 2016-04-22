@@ -29,12 +29,10 @@
             generate_ajax_post({
                 form:"#resource_set_start_form",
                 button: "#resource_set_start_btn", 
+                pjax_container: false,
                 onSuccess: function(){
-                  $("#guide_step_3_tabs").find("li").removeClass("active");
-                  $("#guide_step_3_tabs").find(".tab-pane").removeClass("active");
-                  $("#guide_step_3_tabs").find("a[href=#tab_4]").parent().addClass("active")
-                  $("#guide_step_3_tabs").find("#tab_4").addClass("active");
-                  // do_notice_checker();
+                  $("section.content").prepend(response.data.messages_tmpl);
+                  $("#resource_set_start_form").parent().html(response.data.tmpl);
                 },
                 onTimeout: function(){
                   resource_set_start();

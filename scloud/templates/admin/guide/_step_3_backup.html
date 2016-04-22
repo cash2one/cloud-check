@@ -1,125 +1,46 @@
 
 {% import "admin/base/base_macros.html" as base %}
-    {% set backup_plot = backups_res.data %}
-  <!-- Horizontal Form -->
-  <div>
+{% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
+    
+
     <!-- form start -->
-    <form id="form_backup" data-pjax action="{{ reverse_url('apply.service.backups.add') }}?pro_id={{ pro_info_res.data.id }}&active=tab_3" class="form-horizontal" method="POST">
+    <form id="form_backup" data-pjax action="{{ reverse_url('apply.backup.add') }}" class="form-horizontal" method="POST">
     {{ handler.xsrf_form_html() }}
-    {% set applies = pro_info_res.data.pro_resource_applies %}
-    {% if applies|length > 0 %}
-      {% set last_apply = applies[-1] %}
-    {% else %}
-      {% set last_apply = None %}
-    {% endif %}
-    <input type="hidden" name="pro_id" value="{{ pro_info_res.data.id }}">
-    {% if last_apply %}
-    <input type="hidden" name="res_apply_id" value="{{ last_apply.id }}">
-    {% endif %}
-    {% if backup_plot %}
-      {% set backup_list = backup_plot.as_dict().plot %}
-      {% set ST = STATUS_PRO_TABLES.get(backup_plot.status) %}
-      {{ base.tip_message(message="您{}的定期备份内容{}，{}。".format(ST.act_value, ST.value, ST.todo_value), level=ST.level) }}
-    {% else %}
-      {% set backup_list = [] %}
-    {% endif %}
+    {% set pro_id = handler.args.get("pro_id", "") %}
+    
       <div class="box-body">
-        <input type="hidden" id="backups" name="backups" value="">
+        {{ pro_macro.get_pro_info_select(pro_res=pro_backup_res, pro_id=pro_id) }}
+        {% if pro_backup_res %}
+          {% set backup_plot = pro_backup_res.data %}
+        {% endif %}
+        {% if backup_plot %}
+          {% set backup_list = backup_plot.as_dict().plot %}
+          {% set ST = STATUS_PRO_TABLES.get(backup_plot.status) %}
+        {% else %}
+          {% set backup_list = [] %}
+        {% endif %}
         {% for member in backup_list %}
           {% set failures = member.failures %}
           {{ base.backup_member(member, loop=loop.index, failures=failures, ERR=ERR) }}
         {% endfor %}
-        <!--div class="form-group">
-          <label for="disk" class="col-sm-1 control-label">硬盘名称</label>
-          <div class="col-sm-10 input-group">
-            <div class="input-group-unit">A</div>
-            <input type="text" class="form-control" id="disk" placeholder="disk1">
-            <div class="input-group-unit">备份策略,每</div>
-            <select class="form-control">
-              <option>天</option>
-              <option>周</option>
-              <option>月</option>
-            </select>
-            <div class="input-group-unit">间隔</div>
-            <select class="form-control">
-              <option>日</option>
-              <option>一</option>
-              <option>二</option>
-              <option>三</option>
-              <option>四</option>
-              <option>五</option>
-              <option>六</option>
-            </select>
-            <div class="input-group-unit">时间</div>
-            <input type="text" class="form-control" id="disk" placeholder="02:00:00">
-          </div>
-        </div-->
+        <input type="hidden" id="backups" name="backups" value="">
         <div class="form-group" id="backup_add_button">
           <!-- button -->
           <label class="col-sm-2 control-label">
             <button type="button" onclick="add_backup()" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> 添加磁盘</button>
           </label>
           <div class="col-sm-6 input-group">
-          <div class="input-group-unit" id="backups_add_tip">还可以添加{{ last_apply.disk_backup - backup_list|length }}个磁盘</div>
+          <div class="input-group-unit" id="backups_add_tip"></div>
           </div>
         </div>
       </div><!-- /.box-body -->
       <div class="box-footer text-center">
-        {% if not backup_plot %}
         <button type="button" id="form_backup_btn" onclick="do_form_backup()" class="btn btn-warning">提 交</button>
-        {% elif backup_plot.status <= STATUS_PRO_TABLES.REVOKED %}
-        <button type="button" id="form_backup_btn" onclick="do_form_backup()" class="btn btn-warning">提 交</button>
-        {% elif backup_plot.status == STATUS_PRO_TABLES.APPLIED %}
-        <button type="button" id="form_backup_btn" onclick="javascript:;" class="btn btn-info">受理中</button>
-        {% elif backup_plot.status == STATUS_PRO_TABLES.CHECKED %}
-        <button type="button" id="form_backup_btn" onclick="pro_table_do_confirm({_this: this, pro_table: 'pro_backup', ids: [{{ backup_plot.id }}]})" class="btn btn-warning">确 认</button>
-        {% elif backup_plot.status == STATUS_PRO_TABLES.CONFIRMED %}
-        <button type="button" id="form_backup_btn" onclick="javascript:;" class="btn btn-warning">已确认</button>
-        <button type="button" id="form_backup_btn" onclick="do_form_backup()" class="btn btn-warning">重 新 提 交</button>
-        {% endif %}
       </div><!-- /.box-footer -->
     </form>
-  </div><!-- /.box -->
 
   <div id="backup_block" style="display:none">
     {{ base.backup_member() }}
-    {#
-    <div class="content row" name="disk_backup_plot" style="min-height:0px">
-      <div class="form-group">
-        <label for="disk" class="col-sm-2 control-label">硬盘名称</label>
-        <div class="col-sm-10 input-group">
-          <!--div class="input-group-unit">A</div-->
-          <input type="text" class="form-control input-sm" id="disk" name="disk" placeholder="disk1">
-          <div class="input-group-unit">备份策略,每</div>
-          <select class="form-control" name="backup_plot" onchange="change_interval(this)">
-            <option value="天" type="day">天</option>
-            <option value="周" type="week">周</option>
-            <option value="月" type="month">月</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="disk" class="col-sm-2 control-label"></label>
-        <div class="col-sm-10 input-group">
-          <div name="interval_title" class="input-group-unit" style="display: none">间隔</div>
-          <select class="form-control" name="backup_interval" style="display: none">
-            <option value="周日">周日</option>
-            <option value="周一">周一</option>
-            <option value="周二">周二</option>
-            <option value="周三">周三</option>
-            <option value="周四">周四</option>
-            <option value="周五">周五</option>
-            <option value="周六">周六</option>
-          </select>
-          <div class="input-group-unit">时间</div>
-          <input type="text" class="form-control" id="backup_time" name="backup_time" placeholder="02:00:00">
-          <div class="input-group-unit">
-            <button class="btn btn-box-tool" onclick="$(this).parent().parent().parent().parent().remove();bloop-=1;set_backup_tip()"><i class="fa fa-times"></i></button>
-          </div>
-        </div>
-      </div>
-    </div>
-    #}
   </div>
   <div id="week_options" style="display: none">
     <option value="周日">周日</option>
@@ -137,14 +58,20 @@
   </div>
   
   <script type="text/javascript">
-  var bmax_loop = {{ last_apply.disk_backup - backup_list|length }};
+  var bmax_loop = 0;
   var bloop = 0;
   var backups = 0;
   function set_backup_tip(){
+    bmax_loop = $("#res_apply_id").attr("disk_backup")
     var remainder = bmax_loop - bloop;
     $("#backups_add_tip").html("还可以添加"+ remainder +"个磁盘")
   }
   function add_backup(){
+    bmax_loop = $("#res_apply_id").attr("disk_backup");
+    if (!bmax_loop){
+      $("#backups_add_tip").html("请先选择所属项目")
+      return false 
+    }
     if (bloop >= bmax_loop){ 
       $("#backups_add_tip").html("还可以添加0个磁盘")
       return false 
@@ -179,6 +106,12 @@
     generate_ajax_post({
         form: "#form_backup",
         btn: "#form_backup_btn",
+        pjax_container: false,
+        onSuccess: function(response){
+            $("section.content").prepend(response.data.messages_tmpl);
+            $("#form_backup").parent().html(response.data.tmpl);
+        },
+        onTimeout: function(){ do_form_backup();}
     })
   }
   function change_interval(_this){

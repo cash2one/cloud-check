@@ -272,8 +272,9 @@ class ProResourceSetStartHandler(GuideStepGetHandler):
         self.add_message("云资源[%s-%s]环境启用时间设置成功！" % (start_res.data.project.name, start_res.data.desc), level="success", post_action=True)
         # logger.info("\t [data]: %s" % data )
         # logger.info("\t [data pro_info_res]: %s" % data["pro_info_res"])
-        tmpl = self.render_to_string("admin/guide/step3_pjax.html", **data)
-        return simplejson.dumps(self.success(data=tmpl))
+        tmpl = self.render_to_string("admin/guide/_step_3_start_date.html", **data)
+        messages_tmpl = self.render_to_string("admin/base/base_messages.html")
+        return simplejson.dumps(self.success(data={"tmpl": tmpl, "messages_tmpl": messages_tmpl}))
 
 
 @url("/demo/mail", name="demo.name")

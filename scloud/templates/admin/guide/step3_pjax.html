@@ -30,9 +30,9 @@
                   <li class="active"><a href="#tab_0" data-toggle="tab">用户授权</a></li>
                   <li><a href="#tab_1" data-toggle="tab">互联网发布</a></li>
                   <li><a href="#tab_2" data-toggle="tab">负载均衡</a></li>
-                  {#
                   <li><a href="#tab_3" data-toggle="tab">定期备份</a></li>
                   <li><a href="#tab_4" data-toggle="tab"{% if last_apply and not last_apply.start_date %} class="alert-warning"{% endif %}>启用时间</a></li>
+                  {#
                   #}
                   <li class="pull-right header"><a data-pjax href=""><i class="fa fa-refresh"></i></a></li>
                 </ul>
@@ -46,13 +46,13 @@
                   <div class="tab-pane" id="tab_2">
                     {% include "admin/guide/_step_3_balance.html" %}
                   </div><!-- /.tab-pane -->
-                  {#
                   <div class="tab-pane" id="tab_3">
                     {% include "admin/guide/_step_3_backup.html" %}
                   </div><!-- /.tab-pane -->
                   <div class="tab-pane" id="tab_4">
                     {% include "admin/guide/_step_3_start_date.html" %}
                   </div><!-- /.tab-pane -->
+                  {#
                   #}
                 </div><!-- /.tab-content -->
               </div><!-- nav-tabs-custom -->
