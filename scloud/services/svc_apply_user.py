@@ -58,6 +58,7 @@ class ProUserService(BaseService):
     def get_list(self):
         pro_id = int(self.params.get("pro_id", 0))
         search = self.params.get("search", '')
+        status = self.params.get("status", '')
         conditions = and_()
         user_id = self.params.get("user_id")
         if user_id:
@@ -72,11 +73,13 @@ class ProUserService(BaseService):
             conditions.append(Pro_User.pro_id == pro_id)
         if search:
             conditions.append(Pro_User.username.like('%' + search + '%'))
+        if status:
+            conditions.append(Pro_User.status == status)
         pro_users = self.db.query(
             Pro_User
         ).filter(
             conditions
-        ).order_by(Pro_User.id.desc()).all()
+        ).order_by(Pro_User.status.desc(), Pro_User.id.desc()).all()
         # logger.info([i.as_dict() for i in pro_users])
         return self.success(data=pro_users)
 

@@ -21,6 +21,7 @@ mail_format = u"项目名[%(pro_name)s]-项目编号[%(pro_id)s]-%(user_name)s %
 
 mail_title_format = u"%(user_name)s %(action)s[%(pro_name)s-%(res_desc)s]%(todo_action)s"
 
+
 class ProResourceApplyService(BaseService):
 
     @thrownException
@@ -145,7 +146,7 @@ class ProResourceApplyService(BaseService):
         out_ip_fee = fee_dict["out_ip"]
         snapshot_fee = fee_dict["snapshot"]
         loadbalance_fee = fee_dict["loadbalance"]
-        internet_ip_fee = fee_dict["internet_ip"]
+        internet_ip_fee_dict = fee_dict["internet_ip"]
         internet_ip_ssl_fee = fee_dict["internet_ip_ssl"] 
 
         cpu = int(self.params.get("cpu"))
@@ -159,24 +160,23 @@ class ProResourceApplyService(BaseService):
         internet_ip_ssl = int(self.params.get("internet_ip_ssl"))
         period = int(self.params.get("period"))
 
-        internet_ip_fee_ = 0 
-        for i in internet_ip_fee:
+        _internet_ip_fee = 0 
+        for i in internet_ip_fee_dict:
             if i["id"] == internet_ip_id:
-               internet_ip_fee_ =  i["fee"]
-               break
+                _internet_ip_fee = i["fee"]
+                break
             else:
                 continue
-        
-        unit_fee = cpu_fee * cpu + mem_fee * mem + disk_fee * disk + \
-        disk_backup_fee * disk_backup + out_ip * out_ip_fee +  \
-        snapshot * snapshot_fee + loadbalance * loadbalance_fee + \
-        float(internet_ip_fee_) + \
-        internet_ip_ssl * internet_ip_ssl_fee
 
-        total_fee = unit_fee * period
+        unit_fee = cpu_fee * cpu + mem_fee * mem + disk_fee * disk \
+            + disk_backup_fee * disk_backup + out_ip * out_ip_fee \
+            + snapshot * snapshot_fee + loadbalance * loadbalance_fee \
+            + float(_internet_ip_fee) + internet_ip_ssl * internet_ip_ssl_fee
 
         if self.period == 0:
             return self.failure(ERROR.res_period_empty_err)
+        total_fee = unit_fee * period
+
         data = {
             "unit_fee": unit_fee,
             "total_fee": total_fee
@@ -203,6 +203,12 @@ class ProResourceApplyService(BaseService):
         ).filter(
             Pro_Info.id == pro_id
         ).first()
+        generate_fee_res = self.generate_fee()
+        if generate_fee_res.return_code == 0:
+            fee_data = generate_fee_res.data
+        else:
+            fee_data = dict(unit_fee=0, total_fee=0)
+            return generate_fee_res
         applies = pro_info.pro_resource_applies
         if len(applies) > 0:
             first_apply = applies[0]
@@ -228,8 +234,8 @@ class ProResourceApplyService(BaseService):
         apply.internet_ip_ssl = self.internet_ip_ssl
         apply.start_date = self.start_date
         apply.period = self.period
-        apply.unit_fee = self.unit_fee
-        apply.total_fee = self.total_fee
+        apply.unit_fee = fee_data["unit_fee"]
+        apply.total_fee = fee_data["total_fee"]
         apply.user_id = user_id
         apply.status = STATUS_RESOURCE.APPLIED
         if first_apply:
@@ -237,7 +243,7 @@ class ProResourceApplyService(BaseService):
         self.db.add(apply)
         self.db.flush()
         mail_html = self.render_to_string("admin/mail/pro_resource_apply_to_admin.html", resource_apply=apply, STATUS_RESOURCE=STATUS_RESOURCE)
-        logger.info("<"+"="*60+">")
+        logger.info("<" + "=" * 60 + ">")
         logger.info(mail_html)
         user_name = apply.user.email or apply.user.mobile
         mail_title = mail_title_format % {

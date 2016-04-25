@@ -1,4 +1,4 @@
-
+{% import "admin/apply/macro_index_page_search.html" as macro_index_page_search with context %}
 
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -19,21 +19,14 @@
               <div class="box">
                 <div class="box-header">
                   <h3 class="box-title">
-                      <form data-pjax action="{{ reverse_url('apply.user') }}" method="GET">
-                    <div class="input-group" style="width: 300px;">
-                      <input type="text" name="search" class="form-control input-sm pull-right" placeholder="用户名" value="{{ handler.args.get('search', '')}}">
-                      <div class="input-group-btn">
-                        <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
-                        <a data-pjax href="{{ reverse_url('apply.user.add') }}" class="btn btn-sm btn-warning"><i class="fa fa-plus"></i> 创建新权限用户</a>
-                      </div>
-                    </div>
-                      </form>
+                    {{ macro_index_page_search.search('apply.user', 'apply.user.add', '权限用户') }}
                   </h3>
                   <div class="box-tools">
                     <a data-pjax href="{{ reverse_url('apply.user') }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
                   </div>
                 </div><!-- /.box-header -->
                 <div class="box-body">
+                  {#{ pro_macro.select_pro_table_status() }#}
                   <table class="table table-hover table-striped table-bordered">
                     <tr>
                       <th>用户编号</th>
@@ -49,7 +42,7 @@
                       <td>{{ user.id }}</td>
                       <td>{{ user.username }}</td>
                       <td>{{ user.project.name }}</td>
-                      <td><span class="label label-{{ STATUS_PRO_TABLES.get(user.status).level }}">{{ STATUS_PRO_TABLES.get(user.status).value }}</span>
+                      <td><span class="label label-{{ STATUS_PRO_TABLES.get(user.status).level }}">{{ STATUS_PRO_TABLES.get(user.status).value }}, {{ STATUS_PRO_TABLES.get(user.status).todo_value }}</span>
                       {% if user.status == STATUS_PRO_TABLES.CHECKED %}
                       <a class="btn btn-warning btn-xs" href="javascript:;" style="color:#FFFFFF" onclick="pro_table_do_confirm({_this:this, pro_table:'pro_user', ids:[{{ user.id }}]})"> 确认</a>
                       {% endif %}
@@ -60,7 +53,11 @@
                       <td>
                         <div class="input-group-btn">
                           <a data-pjax href="{{ reverse_url('apply.user.detail') }}?id={{ user.id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</a>
-                          <button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> 删除</button>
+                          <button class="btn btn-xs btn-danger" id="form_del_pro_user_{{ user.id }}_btn" onclick="do_del_pro_user('{{ user.id }}', '{{ user.username }}')"><i class="fa fa-trash"></i> 删除</button>
+                          <form id="form_del_pro_user_{{ user.id }}" action="{{ reverse_url('apply.user.del') }}">
+                          {{ handler.xsrf_form_html() }}
+                          <input type="hidden" name="user_id" value="{{ user.id }}">
+                          </form>
                         </div>
                       </td>
                     </tr>
@@ -73,21 +70,15 @@
           </div><!-- /.row -->
         </section><!-- /.content -->
         <script type="text/javascript">
-        function do_del_env(){
-          var checked_values = $getCheckValues("#env_list_res")
-          var names = []
-          for(var i in checked_values){
-            names.push($("input[id=env_"+checked_values[i]+"]").next().text());
-          }
+        function do_del_pro_user(id, name){
           confirmBox({
-              message: "确定删除事件"+names.join("、")+"吗？",
+              message: "确定删除权限用户"+name+"吗？",
               onConfirm: function(){
                 generate_ajax_post({
-                    form: "#env_res_form",
-                    method: "DELETE",
-                    button: "#env_res_del_btn",
+                    form: "#form_del_pro_user_"+id,
+                    button: "#form_del_pro_user_"+id+"_btn",
                     onSuccess: function(response){
-                      $("#confirmBox").tClose()
+                      $("#confirmBox").tClose();
                     }
                 })
               }

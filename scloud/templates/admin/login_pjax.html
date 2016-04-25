@@ -25,16 +25,28 @@
           {% if result and result.return_code|int in [ERR.PASSWORD_EMPTY_ERR, ERR.PASSWORD_ERR] %}
               <p class="text-red">{{ result.return_message }}</p>
           {% endif %}
+          <div class="form-group has-feedback">
+            <div class="input-group">
+              <input type="text" id="captcha" name="captcha" class="form-control" placeholder="验证码" value="">
+              <img id="captcha-img" onclick="refresh_captcha();" class="captcha-img" src="{{ reverse_url('captcha') }}" />
+              <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+            </div>
+          </div>
+          {% if result %}
+            {% if result.return_code|int in [ERR.CAPTCHA_ERR, ERR.CAPTCHA_EMPTY_ERR, ERR.CAPTCHA_EXPIRED_ERR] %}
+              <p class="text-red">{{ result.return_message }}</p>
+            {% endif %}
+          {% endif %}
           <div class="row">
-            <div class="col-xs-8">
+            <!--div class="col-xs-8">
               <div class="checkbox icheck">
                 <label>
                   <input type="checkbox"> Remember Me
                 </label>
               </div>
-            </div><!-- /.col -->
-            <div class="col-xs-4">
-              <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+            </div--><!-- /.col -->
+            <div class="col-xs-offset-4 col-xs-4">
+              <button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
             </div><!-- /.col -->
           </div>
         <!-- <a href="#">I forgot my password</a><br> -->

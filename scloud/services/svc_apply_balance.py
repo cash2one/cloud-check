@@ -50,6 +50,8 @@ class ApplyLoadBalance(BaseService):
     @thrownException
     def get_list(self):
         pro_id = self.params.get("pro_id")
+        search = self.params.get("search", "")
+        status = self.params.get("status", -3)
         conditions = and_()
         user_id = self.params.get("user_id")
         if user_id:
@@ -62,6 +64,10 @@ class ApplyLoadBalance(BaseService):
                 conditions.append(Pro_Balance.user_id == user_id)
         if pro_id:
             conditions.append(Pro_Balance.pro_id == pro_id)
+        if search:
+            conditions.append(Pro_Balance.title.like('%' + search + '%'))
+        if status > -3:
+            conditions.append(Pro_Balance.status == status)
         pro_balance_list = self.db.query(
             Pro_Balance
         ).filter(
@@ -111,3 +117,16 @@ class ApplyLoadBalance(BaseService):
             do_balance_info.status = STATUS_PRO_TABLES.REVOKED
             do_balance_info.members = simplejson.dumps(members)
             return self.failures(g_plot_messages, data=do_balance_info)
+
+    @thrownException
+    def do_del_pro_loadbalance(self):
+        id_list = self.params.get("id_list")
+        for id in id_list:
+            pro_balance = self.db.query(
+                Pro_Balance
+            ).filter(
+                Pro_Balance.id == id    
+            ).first()
+            self.db.delete(pro_balance)
+            self.db.flush()
+        return self.success(data=None)

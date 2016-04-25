@@ -55,6 +55,9 @@ class EventService(BaseService):
     @thrownException
     def get_list(self):
         pro_id = int(self.params.get("pro_id", 0))
+        search = self.params.get("search", "")
+        status = self.params.get("status", -3)
+
         conditions = and_()
         user_id = self.params.get("user_id")
         if user_id:
@@ -67,6 +70,10 @@ class EventService(BaseService):
                 conditions.append(Pro_Event.user_id == user_id)
         if pro_id:
             conditions.append(Pro_Event.pro_id == pro_id)
+        if search:
+            conditions.append(Pro_Event.title.like('%' + search + '%'))
+        if status > -3:
+            conditions.append(Pro_Event.status == status)
         pro_users = self.db.query(
             Pro_Event
         ).filter(
@@ -118,7 +125,7 @@ class EventService(BaseService):
         return self.success(data=event_detail)
 
     @thrownException
-    def do_del_pro_user(self):
+    def do_del_pro_event(self):
         id_list = self.params.get("id_list")
         for id in id_list:
             pro_event = self.db.query(

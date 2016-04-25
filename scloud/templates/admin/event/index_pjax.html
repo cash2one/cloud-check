@@ -1,4 +1,4 @@
-
+{% import "admin/apply/macro_index_page_search.html" as macro_index_page_search with context %}
 
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -19,13 +19,14 @@
               <div class="box">
                 <div class="box-header">
                   <h3 class="box-title">
-                    <div class="input-group" style="width: 300px;">
+                    {{ macro_index_page_search.search('event.index', 'event.add', '事件') }}
+                    <!-- <div class="input-group" style="width: 300px;">
                       <input type="text" name="table_search" class="form-control input-sm pull-right" placeholder="Search">
                       <div class="input-group-btn">
                         <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
                         <a data-pjax href="{{ reverse_url('event.add') }}" class="btn btn-sm btn-warning"><i class="fa fa-plus"></i> 创建新事件</a>
                       </div>
-                    </div>
+                    </div> -->
                   </h3>
                   <div class="box-tools">
                     <a data-pjax href="{{ reverse_url('event.index') }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
@@ -57,7 +58,11 @@
                       <td>
                         <div class="input-group-btn">
                           <a data-pjax href="{{ reverse_url('event.detail') }}?id={{ event.id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</a>
-                          <button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> 删除</button>
+                          <button class="btn btn-xs btn-danger" id="form_del_pro_event_{{ event.id }}_btn" onclick="do_del_pro_event('{{ event.id }}', '{{ event.title }}')"><i class="fa fa-trash"></i> 删除</button>
+                          <form id="form_del_pro_event_{{ event.id }}" action="{{ reverse_url('apply.event.del') }}">
+                          {{ handler.xsrf_form_html() }}
+                          <input type="hidden" name="id" value="{{ event.id }}">
+                          </form>
                         </div>
                       </td>
                     </tr>
@@ -70,21 +75,15 @@
           </div><!-- /.row -->
         </section><!-- /.content -->
         <script type="text/javascript">
-        function do_del_env(){
-          var checked_values = $getCheckValues("#env_list_res")
-          var names = []
-          for(var i in checked_values){
-            names.push($("input[id=env_"+checked_values[i]+"]").next().text());
-          }
+        function do_del_pro_event(id, name){
           confirmBox({
-              message: "确定删除事件"+names.join("、")+"吗？",
+              message: "确定删除事件"+name+"吗？",
               onConfirm: function(){
                 generate_ajax_post({
-                    form: "#env_res_form",
-                    method: "DELETE",
-                    button: "#env_res_del_btn",
+                    form: "#form_del_pro_event_"+id,
+                    button: "#form_del_pro_event_"+id+"_btn",
                     onSuccess: function(response){
-                      $("#confirmBox").tClose()
+                      $("#confirmBox").tClose();
                     }
                 })
               }

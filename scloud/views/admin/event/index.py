@@ -137,3 +137,34 @@ class EventAddHandler(GuideStepGetHandler):
         data = dict(pro_list_res=pro_list_res, pro_event_res=do_event_res)
         tmpl = self.render_to_string(template, **data)
         return simplejson.dumps(self.success(data=tmpl))
+
+
+@url("/apply/event/del", name="apply.event.del", active="apply.event")
+class EventDelHandler(GuideStepGetHandler):
+    u'删除事件'
+    @check_perms('pro_info.view')
+    @unblock
+    def post(self):
+        id_list = self.get_arguments("id")
+        svc = EventService(self, {"id_list": id_list})
+        del_res = svc.do_del_pro_event()
+        logger.info(del_res)
+        if del_res.return_code == 0:
+            self.add_message(u"事件信息删除成功！", level="success")
+            publish_notice_checker.delay(self.current_user.id)
+        else:
+            self.add_message(u"事件信息删除失败！(%s)(%s)" % (del_res.return_code, del_res.return_message), level="warning")
+        svc = EventService(self)
+        pro_events_res = svc.get_list()
+        svc = ProjectService(self)
+        pro_list_res = svc.get_project_list()
+        if pro_list_res.return_code < 0:
+            raise SystemError(pro_list_res.return_code, pro_list_res.return_message)
+        logger.info(pro_list_res)
+        data = {
+            "pro_list_res": pro_list_res,
+            "pro_events_res": pro_events_res,
+            "page": self.getPage(pro_events_res.data)
+        }
+        tmpl = self.render_to_string("admin/event/index_pjax.html", **data)
+        return simplejson.dumps(self.success(data=tmpl))

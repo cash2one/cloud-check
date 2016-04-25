@@ -22,7 +22,7 @@ class ApplyBackups(BaseService):
     def get_backups(self):
         pro_id = self.params.get("pro_id")
         pro_info = self.db.query(
-             Pro_Info
+            Pro_Info
         ).filter(
             Pro_Info.id == pro_id
         ).first()
@@ -35,7 +35,7 @@ class ApplyBackups(BaseService):
     def get_info(self):
         id = self.params.get("id")
         pro_backup = self.db.query(
-             Pro_Backup
+            Pro_Backup
         ).filter(
             Pro_Backup.id == id
         ).first()
@@ -44,6 +44,8 @@ class ApplyBackups(BaseService):
     @thrownException
     def get_list(self):
         pro_id = self.params.get("pro_id")
+        search = self.params.get("search", "")
+        status = self.params.get("status", -3)
         conditions = and_()
         user_id = self.params.get("user_id")
         if user_id:
@@ -56,6 +58,10 @@ class ApplyBackups(BaseService):
                 conditions.append(Pro_Backup.user_id == user_id)
         if pro_id:
             conditions.append(Pro_Backup.pro_id == pro_id)
+        if search:
+            conditions.append(Pro_Backup.title.like('%' + search + '%'))
+        if status > -3:
+            conditions.append(Pro_Backup.status == status)
         pro_backup_list = self.db.query(
             Pro_Backup
         ).filter(
@@ -110,3 +116,16 @@ class ApplyBackups(BaseService):
             do_backups_info.status = -1
             do_backups_info.plot = simplejson.dumps(plot_s)
             return self.failures(g_plot_messages, data=do_backups_info)
+
+    @thrownException
+    def do_del_pro_backup(self):
+        id_list = self.params.get("id_list")
+        for id in id_list:
+            pro_backup = self.db.query(
+                Pro_Backup
+            ).filter(
+                Pro_Backup.id == id    
+            ).first()
+            self.db.delete(pro_backup)
+            self.db.flush()
+        return self.success(data=None)

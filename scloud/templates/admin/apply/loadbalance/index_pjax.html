@@ -19,10 +19,10 @@
               <div class="box">
                 <div class="box-header">
                   <h3 class="box-title">
-                  {{ macro_index_page_search.search('apply.publish', 'apply.publish.add', '互联网需求') }}
+                    {{ macro_index_page_search.search('apply.loadbalance', 'apply.loadbalance.add', '负载均衡') }}
                   </h3>
                   <div class="box-tools">
-                    <a data-pjax href="{{ reverse_url('apply.publish') }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
+                    <a data-pjax href="{{ reverse_url('apply.loadbalance') }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
                   </div>
                 </div><!-- /.box-header -->
                 <div class="box-body">
@@ -30,31 +30,30 @@
                     <tr>
                       <th>用户编号</th>
                       <th>所属项目</th>
-                      <th>互联网地址</th>
-                      <th>内网地址</th>
                       <th>状态</th>
+                      <th>策略</th>
                       <th>创建时间</th>
                       <th>操作</th>
                     </tr>
-                    {% for publish in page.object_list %}
+                    {% for loadbalance in page.object_list %}
                     <tr>
-                      <td>{{ publish.id }}</td>
-                      <td>{{ publish.project.name }}</td>
-                      <td>{{ publish.domain }}:{{ publish.domain_port }}</td>
-                      <td>{{ publish.network_address }}:{{ publish.network_port }}</td>
-                      <td><span class="label label-{{ STATUS_PRO_TABLES.get(publish.status).level }}">{{ STATUS_PRO_TABLES.get(publish.status).value }}, {{ STATUS_PRO_TABLES.get(publish.status).todo_value }}</span>
-                      {% if publish.status == STATUS_PRO_TABLES.CHECKED %}
-                      <a class="btn btn-warning btn-xs" href="javascript:;" style="color:#FFFFFF" onclick="pro_table_do_confirm({_this:this, pro_table:'pro_publish', ids:[{{ publish.id }}]})"> 确认</a>
+                      <td>{{ loadbalance.id }}</td>
+                      <td>{{ loadbalance.project.name }}</td>
+                      <td><span class="label label-{{ STATUS_PRO_TABLES.get(loadbalance.status).level }}">{{ STATUS_PRO_TABLES.get(loadbalance.status).value }}</span>
+                      {% if loadbalance.status == STATUS_PRO_TABLES.CHECKED %}
+                      <a class="btn btn-warning btn-xs" href="javascript:;" style="color:#FFFFFF" onclick="pro_table_do_confirm({_this:this, pro_table:'pro_balance', ids:[{{ loadbalance.id }}]})"> 确认</a>
                       {% endif %}
                       </td>
-                      <td>{{ publish.create_time|getGoodTime }}</td>
+                      <td><span class="label label-{{ PLOT_LOADBALANCE.get(loadbalance.plot).level }}">{{ PLOT_LOADBALANCE.get(loadbalance.plot).value }}</span>
+                      </td>
+                      <td>{{ loadbalance.create_time|getGoodTime }}</td>
                       <td>
                         <div class="input-group-btn">
-                          <a data-pjax href="{{ reverse_url('apply.publish.detail') }}?id={{ publish.id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</a>
-                          <button class="btn btn-xs btn-danger" id="form_del_pro_publish_{{ publish.id }}_btn" onclick="do_del_pro_publish('{{ publish.id }}', '{{ publish.domain }}:{{ publish.domain_port }}')"><i class="fa fa-trash"></i> 删除</button>
-                          <form id="form_del_pro_publish_{{ publish.id }}" action="{{ reverse_url('apply.publish.del') }}">
+                          <a data-pjax href="{{ reverse_url('apply.loadbalance.detail') }}?id={{ loadbalance.id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</a>
+                          <button class="btn btn-xs btn-danger" id="form_del_pro_loadbalance_{{ loadbalance.id }}_btn" onclick="do_del_pro_loadbalance('{{ loadbalance.id }}', '{{ loadbalance.project.name }}')"><i class="fa fa-trash"></i> 删除</button>
+                          <form id="form_del_pro_loadbalance_{{ loadbalance.id }}" action="{{ reverse_url('apply.loadbalance.del') }}">
                           {{ handler.xsrf_form_html() }}
-                          <input type="hidden" name="id" value="{{ publish.id }}">
+                          <input type="hidden" name="id" value="{{ loadbalance.id }}">
                           </form>
                         </div>
                       </td>
@@ -68,13 +67,13 @@
           </div><!-- /.row -->
         </section><!-- /.content -->
         <script type="text/javascript">
-        function do_del_pro_publish(id, name){
+        function do_del_pro_loadbalance(id, name){
           confirmBox({
-              message: "确定删除互联网发布需求"+name+"吗？",
+              message: "确定删除项目"+name+"的负载均衡申请吗？",
               onConfirm: function(){
                 generate_ajax_post({
-                    form: "#form_del_pro_publish_"+id,
-                    button: "#form_del_pro_publish_"+id+"_btn",
+                    form: "#form_del_pro_loadbalance_"+id,
+                    button: "#form_del_pro_loadbalance_"+id+"_btn",
                     onSuccess: function(response){
                       $("#confirmBox").tClose();
                     }

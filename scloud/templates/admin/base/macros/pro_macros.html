@@ -44,3 +44,28 @@
   }
 </script>
 {% endmacro %}
+
+
+{% macro select_pro_table_status(status=-3) %}
+<!--div class="form-group select2"-->
+  <!-- <label for="status" class="col-sm-2 control-label">状态筛选</label> -->
+  <!--div class="col-sm-4"-->
+  
+  <!-- <div class="input-group-btn" style="min-width:200px"> -->
+    <select id="status" name="status" class="input-sm" style="width: 100%; height:30px">
+      <option value="" selected="selected"> -- 选择状态 -- </option>
+      {% for ST in STATUS_PRO_TABLES|status_list(reverse=True) %}
+      <option status_level="{{ ST.level }}" status_value="{{ ST.value }}" value="{{ STATUS_PRO_TABLES.get(ST.value_en|upper) }}"{% if STATUS_PRO_TABLES.get(ST.value_en|upper) == status|int %} selected="selected"{% endif %}>{{ ST.value }}, {{ ST.todo_value }}</option>
+      {% endfor %}
+    </select>
+  <!--/div>< /btn-group -->
+  <!--/div>
+</div-->
+<script text="text/javascript">
+  $("select").select2();
+  // $("select[name=pro_id]").select2({
+  //     templateResult: formatPro,
+  //     templateSelection: formatPro
+  // });
+</script>
+{% endmacro %}

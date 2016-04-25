@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from scloud.config import logger
 from scloud.models.base import BaseModel, BaseModelMixin
 from scloud.models.pt_user import PT_User
-from scloud.models.environment import Env_Info
+from scloud.models.environment import Env_Info, Env_Internet_Ip_Types
 from scloud.models.project_mixin import Pro_Info_Mixin, Pro_Resource_Apply_Mixin
 from sqlalchemy import Column, func, ForeignKey, ForeignKeyConstraint
 from sqlalchemy.orm import relationship, backref
@@ -77,7 +77,8 @@ class Pro_Resource_Apply(BaseModel, BaseModelMixin, Pro_Resource_Apply_Mixin):
     out_ip = Column(Integer, default=0, info={"name": u"外部IP", "unit": u"个"})
     snapshot = Column(Integer, default=0, info={"name": u"快照", "unit": u"个"})
     loadbalance = Column(Integer, default=0, info={"name": u"负载均衡", "unit": u"个"})
-    internet_ip = Column(Integer, default=0, info={"name": u"互联网IP"})
+    # internet_ip = Column(Integer, default=0, info={"name": u"互联网IP"})
+    internet_ip = Column(Integer, ForeignKey("env_internet_ip_types.id"), info={"name": u"互联网IP"})
     internet_ip_ssl = Column(Integer, default=0, info={"name": u"是否需要SSL卸载"})
     desc = Column(Unicode, default=u'资源申请', info={"name": u"资源申请描述"})
     start_date = Column(DateTime, default=func.now(), info={"name": u"启用时间"})
@@ -94,6 +95,7 @@ class Pro_Resource_Apply(BaseModel, BaseModelMixin, Pro_Resource_Apply_Mixin):
     user = relationship("PT_User", foreign_keys=[user_id], backref="pro_resource_applies")
     checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_resource_applies")
     project = relationship("Pro_Info", backref=backref("pro_resource_applies", order_by="Pro_Resource_Apply.update_time"))
+    internet_ip_obj = relationship("Env_Internet_Ip_Types", backref=backref("pro_resource_applies", order_by="Pro_Resource_Apply.update_time"))
 
 
 class Pro_User(BaseModel, BaseModelMixin):
@@ -164,7 +166,7 @@ class Pro_Balance_Members(BaseModel, BaseModelMixin):
     pro_balance_id = Column(Integer, ForeignKey("pro_balance.id"), default=0, info=u"负载均衡")
     ip = Column("ip", Unicode, default=u'', info=u"IP地址")
     port = Column("port", Unicode, default=u'', info=u"端口")
-    loadbalance = relationship("Pro_Balance", backref=backref("pro_loadbalance_members", order_by="Pro_Backup.update_time"))
+    loadbalance = relationship("Pro_Balance", backref=backref("pro_loadbalance_members", order_by="Pro_Balance_Members.update_time"))
 
 
 class Pro_Backup(BaseModel, BaseModelMixin):

@@ -1,164 +1,164 @@
 <aside class="main-sidebar">
-        <!-- sidebar: style can be found in sidebar.less -->
-        <section class="sidebar">
-          
-          <!-- sidebar menu: : style can be found in sidebar.less -->
-          {% set current_user = handler.current_user %}
-          {% set current_perms = current_user.current_perms %}
-          <ul class="sidebar-menu">
-            <li class="header">导航</li>
-            {% if "pro_info.view" in current_perms %}
-            <li class="treeview">
-              <a href="#">
-                <i class="fa fa-hand-o-right"></i> <span>项目引导</span> <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                <li><a data-pjax name="guide" href="{{ reverse_url('guide') }}"><i class="fa fa-database"></i>申请资源</a></li>
-              </ul>
-            </li>
-            {% endif %}
-            {#
-            <li class="">
-              <a href="#">
-                <i class="fa fa-dashboard"></i> <span>项目概览</span> <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                <li><a data-pjax name="index1" href="/index1"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-                <li><a data-pjax name="index2" href="/index2"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
-              </ul>
-            </li>
-            #}
-            {% if "pro_info.view" in current_perms %}
-            <li class="">
-              <a data-pjax name="apply.user" href="{{ reverse_url('apply.user') }}">
-                <i class="fa fa-user"></i> <span>权限申请</span>
-                <span class="label label-warning pull-right"></span>
-              </a>
-            </li>
-            <li class="">
-              <a data-pjax name="apply.publish" href="{{ reverse_url('apply.publish') }}">
-                <i class="fa fa-internet-explorer"></i> <span>互联网发布</span>
-                <span class="label label-warning pull-right"></span>
-              </a>
-            </li>
-            <li class="">
-              <a data-pjax name="apply.loadbalance" href="{{ reverse_url('apply.loadbalance') }}">
-                <i class="fa fa-internet-explorer"></i> <span>负载均衡</span>
-                <span class="label label-warning pull-right"></span>
-              </a>
-            </li>
-            <li class="">
-              <a data-pjax name="apply.backup" href="{{ reverse_url('apply.backup') }}">
-                <i class="fa fa-internet-explorer"></i> <span>定期备份</span>
-                <span class="label label-warning pull-right"></span>
-              </a>
-            </li>
-            <li class="">
-              <a data-pjax name="event.index" href="{{ reverse_url('event.index') }}">
-                <i class="fa fa-files-o"></i> <span>事件申请</span>
-                <span class="label label-warning pull-right"></span>
-              </a>
-            </li>
-            <li class="">
-              <a data-pjax name="apply.service" href="{{ reverse_url('apply.service') }}">
-                <i class="fa fa-cutlery"></i> <span>服务申请</span>
-                <span class="label label-warning pull-right"></span>
-              </a>
-            </li>
-            <li class="">
-              <a data-pjax name="apply.resource" href="{{ reverse_url('apply.resource') }}">
-                <i class="fa fa-database"></i> <span>资源申请</span>
-                <span class="label label-warning pull-right"></span>
-              </a>
-            </li>
-            {% endif %}
+  <!-- sidebar: style can be found in sidebar.less -->
+  <section class="sidebar">
+    
+    <!-- sidebar menu: : style can be found in sidebar.less -->
+    {% set current_user = handler.current_user %}
+    {% set current_perms = current_user.current_perms %}
+    <ul class="sidebar-menu">
+      <li class="header">导航</li>
+      {% if "pro_info.view" in current_perms %}
+      <li class="treeview">
+        <a href="#">
+          <i class="fa fa-hand-o-right"></i> <span>项目引导</span> <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+          <li><a data-pjax name="guide" href="{{ reverse_url('guide') }}"><i class="fa fa-database"></i>申请资源</a></li>
+        </ul>
+      </li>
+      {% endif %}
+      {#
+      <li class="">
+        <a href="#">
+          <i class="fa fa-dashboard"></i> <span>项目概览</span> <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+          <li><a data-pjax name="index1" href="/index1"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
+          <li><a data-pjax name="index2" href="/index2"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
+        </ul>
+      </li>
+      #}
+      {% if "pro_info.view" in current_perms %}
+      <li class="">
+        <a data-pjax name="apply.user" href="{{ reverse_url('apply.user') }}">
+          <i class="fa fa-user"></i> <span>权限申请</span>
+          <span class="label label-warning pull-right"></span>
+        </a>
+      </li>
+      <li class="">
+        <a data-pjax name="apply.publish" href="{{ reverse_url('apply.publish') }}">
+          <i class="fa fa-internet-explorer"></i> <span>互联网发布</span>
+          <span class="label label-warning pull-right"></span>
+        </a>
+      </li>
+      <li class="">
+        <a data-pjax name="apply.loadbalance" href="{{ reverse_url('apply.loadbalance') }}">
+          <i class="fa fa-balance-scale"></i> <span>负载均衡</span>
+          <span class="label label-warning pull-right"></span>
+        </a>
+      </li>
+      <li class="">
+        <a data-pjax name="apply.backup" href="{{ reverse_url('apply.backup') }}">
+          <i class="fa fa-hdd-o"></i> <span>定期备份</span>
+          <span class="label label-warning pull-right"></span>
+        </a>
+      </li>
+      <li class="">
+        <a data-pjax name="event.index" href="{{ reverse_url('event.index') }}">
+          <i class="fa fa-files-o"></i> <span>事件申请</span>
+          <span class="label label-warning pull-right"></span>
+        </a>
+      </li>
+      <!--li class="">
+        <a data-pjax name="apply.service" href="{{ reverse_url('apply.service') }}">
+          <i class="fa fa-cutlery"></i> <span>服务申请</span>
+          <span class="label label-warning pull-right"></span>
+        </a>
+      </li-->
+      <li class="">
+        <a data-pjax name="apply.resource" href="{{ reverse_url('apply.resource') }}">
+          <i class="fa fa-database"></i> <span>资源申请</span>
+          <span class="label label-warning pull-right"></span>
+        </a>
+      </li>
+      {% endif %}
 
-            {% if "pro_info.check" in current_perms %}
-            <li class="">
-              <a href="#">
-                <i class="fa fa-pencil-square"></i> <span>项目审核</span> <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                <li><a data-pjax name="resource_check_list" href="{{ reverse_url('resource_check_list') }}"><i class="fa fa-circle-o"></i> 资源审核 <span class="label label-warning pull-right">0</span></a></li>
-                <li><a data-pjax name="pro_table_check_list" href="{{ reverse_url('pro_table_check_list') }}"><i class="fa fa-circle-o"></i> 待处理任务 <span class="label label-warning pull-right">0</span></a></li>
-              </ul>
-            </li>
-            {% endif %}
-            {% if "pt_user.view" in current_perms %}
-            <li class="">
-              <a href="#">
-                <i class="fa fa-puzzle-piece"></i> <span>权限管理</span> <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                <!-- <li><a data-pjax name="pt_perm" href="{{ reverse_url('pt_perm')}}"><i class="fa fa-circle-o"></i> 操作权限管理</a></li> -->
-                <li><a data-pjax name="pt_role" href="{{ reverse_url('pt_role') }}"><i class="fa fa-circle-o"></i> 角色组管理</a></li>
-                <li><a data-pjax name="pt_user" href="{{ reverse_url('pt_user') }}"><i class="fa fa-circle-o"></i> 用户管理</a></li>
-              </ul>
-            </li>
-            {% endif %}
-            {#
-            <li class="treeview">
-              <a href="#">
-                <i class="fa fa-files-o"></i> <span>事件管理</span> <i class="fa fa-angle-left pull-right"></i>
-                <span class="label label-warning pull-right"></span>
-              </a>
-              <!--a href="#">
-                <i class="fa fa-files-o"></i>
-                <span>事件管理</span>
-                <span class="label label-primary pull-right"></span>
-              </a-->
-              <ul class="treeview-menu">
-                <li><a data-pjax name="event.index" href="{{ reverse_url('event.index') }}"><i class="fa fa-circle-o"></i>创建事件</a></li>
-                <li><a data-pjax href="{{ reverse_url('event.calendar') }}"><i class="fa fa-circle-o"></i>日历</a></li>
-              </ul>
-            </li>
-            #}
-            <!--li>
-              <a href="pages/widgets.html">
-                <i class="fa fa-th"></i> <span>Widgets</span> <small class="label pull-right bg-green">new</small>
-              </a>
-            </li-->
-            <li class="treeview">
-              <a href="#">
-                <i class="fa fa-user"></i>
-                <span>个人设置</span>
-                <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                <li><a data-pjax name="user_profile" href="{{ reverse_url('user_profile') }}"><i class="fa fa-circle-o"></i> 用户信息</a></li>
-                <li><a data-pjax name="user_resetpass" href="{{ reverse_url('user_resetpass') }}"><i class="fa fa-circle-o"></i> 修改密码</a></li>
-              </ul>
-            </li>
-            {% if "env_info.view" in current_perms %}
-            <li class="treeview">
-              <a href="#">
-                <i class="fa fa-laptop"></i>
-                <span>默认设置</span>
-                <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                <li><a data-pjax name="defaultset.env_info" href="{{ reverse_url('defaultset.env_info' )}}"><i class="fa fa-circle-o"></i> 环境设置</a></li>
-                <li><a data-pjax name="defaultset.env_internet_ip" href="{{ reverse_url('defaultset.env_internet_ip' )}}"><i class="fa fa-circle-o"></i> 互联网IP类型设置</a></li>
-                <li><a data-pjax name="defaultset.env_resource_value" href="{{ reverse_url('defaultset.env_resource_value' )}}"><i class="fa fa-circle-o"></i> 推荐设置</a></li>
-                <li><a data-pjax name="defaultset.env_resource_fee" href="{{ reverse_url('defaultset.env_resource_fee' )}}"><i class="fa fa-circle-o"></i> 费率设置</a></li>
-              </ul>
-            </li>
-            {% endif %}
-            <!--li class="treeview">
-              <a href="#">
-                <i class="fa fa-laptop"></i>
-                <span>联系我们</span>
-                <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                <li><a href="#"><i class="fa fa-circle-o"></i> 企业介绍</a></li>
-                <li><a href="#"><i class="fa fa-circle-o"></i> 招聘信息</a></li>
-              </ul>
-            </li-->
-          </ul>
-        </section>
-        <!-- /.sidebar -->
-      </aside>
+      {% if "pro_info.check" in current_perms %}
+      <li class="">
+        <a href="#">
+          <i class="fa fa-pencil-square"></i> <span>项目审核</span> <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+          <li><a data-pjax name="resource_check_list" href="{{ reverse_url('resource_check_list') }}"><i class="fa fa-circle-o"></i> 资源审核 <span class="label label-warning pull-right">0</span></a></li>
+          <li><a data-pjax name="pro_table_check_list" href="{{ reverse_url('pro_table_check_list') }}"><i class="fa fa-circle-o"></i> 待处理任务 <span class="label label-warning pull-right">0</span></a></li>
+        </ul>
+      </li>
+      {% endif %}
+      {% if "pt_user.view" in current_perms %}
+      <li class="">
+        <a href="#">
+          <i class="fa fa-puzzle-piece"></i> <span>权限管理</span> <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+          <!-- <li><a data-pjax name="pt_perm" href="{{ reverse_url('pt_perm')}}"><i class="fa fa-circle-o"></i> 操作权限管理</a></li> -->
+          <li><a data-pjax name="pt_role" href="{{ reverse_url('pt_role') }}"><i class="fa fa-circle-o"></i> 角色组管理</a></li>
+          <li><a data-pjax name="pt_user" href="{{ reverse_url('pt_user') }}"><i class="fa fa-circle-o"></i> 用户管理</a></li>
+        </ul>
+      </li>
+      {% endif %}
+      {#
+      <li class="treeview">
+        <a href="#">
+          <i class="fa fa-files-o"></i> <span>事件管理</span> <i class="fa fa-angle-left pull-right"></i>
+          <span class="label label-warning pull-right"></span>
+        </a>
+        <!--a href="#">
+          <i class="fa fa-files-o"></i>
+          <span>事件管理</span>
+          <span class="label label-primary pull-right"></span>
+        </a-->
+        <ul class="treeview-menu">
+          <li><a data-pjax name="event.index" href="{{ reverse_url('event.index') }}"><i class="fa fa-circle-o"></i>创建事件</a></li>
+          <li><a data-pjax href="{{ reverse_url('event.calendar') }}"><i class="fa fa-circle-o"></i>日历</a></li>
+        </ul>
+      </li>
+      #}
+      <!--li>
+        <a href="pages/widgets.html">
+          <i class="fa fa-th"></i> <span>Widgets</span> <small class="label pull-right bg-green">new</small>
+        </a>
+      </li-->
+      <li class="treeview">
+        <a href="#">
+          <i class="fa fa-user"></i>
+          <span>个人设置</span>
+          <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+          <li><a data-pjax name="user_profile" href="{{ reverse_url('user_profile') }}"><i class="fa fa-circle-o"></i> 用户信息</a></li>
+          <li><a data-pjax name="user_resetpass" href="{{ reverse_url('user_resetpass') }}"><i class="fa fa-circle-o"></i> 修改密码</a></li>
+        </ul>
+      </li>
+      {% if "env_info.view" in current_perms %}
+      <li class="treeview">
+        <a href="#">
+          <i class="fa fa-laptop"></i>
+          <span>默认设置</span>
+          <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+          <li><a data-pjax name="defaultset.env_info" href="{{ reverse_url('defaultset.env_info' )}}"><i class="fa fa-circle-o"></i> 环境设置</a></li>
+          <li><a data-pjax name="defaultset.env_internet_ip" href="{{ reverse_url('defaultset.env_internet_ip' )}}"><i class="fa fa-circle-o"></i> 互联网IP类型设置</a></li>
+          <li><a data-pjax name="defaultset.env_resource_value" href="{{ reverse_url('defaultset.env_resource_value' )}}"><i class="fa fa-circle-o"></i> 推荐设置</a></li>
+          <li><a data-pjax name="defaultset.env_resource_fee" href="{{ reverse_url('defaultset.env_resource_fee' )}}"><i class="fa fa-circle-o"></i> 费率设置</a></li>
+        </ul>
+      </li>
+      {% endif %}
+      <!--li class="treeview">
+        <a href="#">
+          <i class="fa fa-laptop"></i>
+          <span>联系我们</span>
+          <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+          <li><a href="#"><i class="fa fa-circle-o"></i> 企业介绍</a></li>
+          <li><a href="#"><i class="fa fa-circle-o"></i> 招聘信息</a></li>
+        </ul>
+      </li-->
+    </ul>
+  </section>
+  <!-- /.sidebar -->
+</aside>
 <script type="text/javascript">
 $(function(){
     $(document).find('ul.sidebar-menu').find('li').removeClass('active');

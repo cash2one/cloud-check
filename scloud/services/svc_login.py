@@ -15,10 +15,17 @@ class LoginService(BaseService):
 
     @thrownException
     def do_login(self):
+        captcha = self.params.get("captcha")
         username = self.params.get("username", "").strip()
         password = self.params.get("password", "").strip()
         if username == "":
             return self.failure(ERROR.username_empty_err)
+        if not captcha:
+            return self.failure(ERROR.captcha_empty_err)
+        if not self.handler.session.get("captcha"):
+            return self.failure(ERROR.captcha_expired_err)
+        if captcha.lower() != self.handler.session.get("captcha").lower():
+            return self.failure(ERROR.captcha_err)
         conditions = and_()
         or_conditions = or_()
         or_conditions.append(PT_User.username == username)

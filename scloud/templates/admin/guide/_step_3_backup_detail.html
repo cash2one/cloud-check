@@ -1,0 +1,72 @@
+{% import "admin/base/base_macros.html" as base with context %}
+
+{% set pro_backup = pro_backup_res.data %}
+<div class="box-body">
+  <div class="form-group">
+    <label for="pro_id" class="col-sm-3 control-label text-right">所属项目：</label>
+    <div class="col-sm-9">
+      <p class="form-control-static">
+      {{ pro_backup.project.name }}
+      {% set ST = STATUS_RESOURCE.get(pro_backup.project.last_apply.status) %}
+      <span class='badge bg-{{ ST.bg_color }}'>{{ ST.value }}</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="domain_port" class="col-sm-3 control-label text-right">资源申请负载均衡数量：</label>
+    <div class="col-sm-9">
+      <p class="form-control-static">{{ pro_backup.res_apply.disk_backup }}</p>
+    </div>
+  </div>
+    {% for member in pro_backup.as_dict().plot %}
+  <div class="form-group">
+<label for="domain" class="col-sm-3 control-label text-right">策略{{ loop.index }}：</label>
+    <div class="col-sm-9">
+    <p class="form-control-static">每
+      <span class="label label-info">
+      {{ member.plot }}
+      </span>
+      {% if member.interval %}
+      <span class="label label-warning">
+      {{ member.interval }}
+      </span>
+      {% endif %}
+      的
+      <span class="label label-danger">
+      {{ member.backup_time }}
+      </span>
+      备份
+    </p>
+    </div>
+  </div>
+    {% endfor %}
+
+  <div class="form-group">
+    <label for="create_time" class="col-sm-3 control-label text-right">创建时间：</label>
+    <div class="col-sm-9">
+      <p class="form-control-static">{{ pro_backup.create_time }} ({{ pro_backup.create_time|getGoodTime }})</p>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="user_id" class="col-sm-3 control-label text-right">创建者：</label>
+    <div class="col-sm-9">
+      <p class="form-control-static">{{ pro_backup.user.username }}</p>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="checker_id" class="col-sm-3 control-label text-right">审核者：</label>
+    <div class="col-sm-9">
+      <p class="form-control-static">{{ pro_backup.checker.username }}</p>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="status" class="col-sm-3 control-label text-right">申请状态：</label>
+    <div class="col-sm-9">
+      <p class="form-control-static">
+        {% set ST = STATUS_PRO_TABLES.get(pro_backup.status) %}
+        <span class='label label-{{ ST.level }}'>{{ ST.value }}</span>
+      </p>
+    </div>
+  </div>
+</div>

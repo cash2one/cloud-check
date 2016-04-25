@@ -171,6 +171,7 @@ function generate_ajax_post(options){
   }
   show_loading();
   var params = options.params || $(form).serialize();
+  console.log(params)
   if (params.indexOf("_xsrf") < 0){
     $MsgBox({message: "_xsrf不能为空", appendTo:$("#main")}).show();
     hide_loading();

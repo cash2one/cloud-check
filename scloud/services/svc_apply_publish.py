@@ -38,6 +38,8 @@ class ApplyPublish(BaseService):
     @thrownException
     def get_list(self):
         pro_id = self.params.get("pro_id")
+        search = self.params.get("search", "")
+        status = self.params.get("status", -3)
         conditions = and_()
         user_id = self.params.get("user_id")
         if user_id:
@@ -50,6 +52,10 @@ class ApplyPublish(BaseService):
                 conditions.append(Pro_Publish.user_id == user_id)
         if pro_id:
             conditions.append(Pro_Publish.pro_id == pro_id)
+        if search:
+            conditions.append(Pro_Publish.title.like('%' + search + '%'))
+        if status > -3:
+            conditions.append(Pro_Publish.status == status)
         publish_list = self.db.query(
             Pro_Publish
         ).filter(
@@ -106,3 +112,16 @@ class ApplyPublish(BaseService):
         self.db.add(do_publish_info)
         self.db.flush()
         return self.success(data=do_publish_info)
+
+    @thrownException
+    def do_del_pro_publish(self):
+        id_list = self.params.get("id_list")
+        for id in id_list:
+            pro_publish = self.db.query(
+                Pro_Publish
+            ).filter(
+                Pro_Publish.id == id    
+            ).first()
+            self.db.delete(pro_publish)
+            self.db.flush()
+        return self.success(data=None)
