@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # created: zhangpeng <zhangpeng1@infohold.com.cn>
 
+import time
 import urllib
 import urlparse
 import functools
@@ -68,7 +69,6 @@ class Handler(BaseHandler):
         self.svc.__enter__()
         self.db = self.svc.db
         logger.warning("<" + "="*25 + " [initialize] " + "="*25 + ">")
-
 
     def init_messages(self):
         if "messages" not in self.session:
@@ -165,6 +165,7 @@ class Handler(BaseHandler):
         s = "&".join(["%s=%s" % (k, v) for k, v in self.args.items() if k not in ["page", "_pjax"]])
         kwargs.update({
             "CONF": CONF,
+            "rand_time": time.time(),
             "handler": self,
             "request": self.request,
             "reverse_url": self.application.reverse_url,

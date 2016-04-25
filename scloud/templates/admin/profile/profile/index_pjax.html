@@ -243,11 +243,13 @@
               form: "#profile_form",
               button: "#profile_form_btn",
               onSuccess: function(response){
-                // console.log(response)
-                $("#card").find("figure.front").html(response.data.tmpl);
-                var user = response.data.user;
-                $("#head_current_user").text(user.username || user.email || user.mobile);
-                do_flip_card()
+                $(".card").find("figure.back").html(response.data.tmpl_form);
+                if(response.return_code == 0){
+                  $(".card").find("figure.front").html(response.data.tmpl);
+                  var user = response.data.user;
+                  $("#head_current_user").text(user.username || user.email || user.mobile);
+                  do_flip_card()
+                }
               }//,
               //onTimeout: function(){ do_profile();}
           })

@@ -53,24 +53,28 @@ class ProfileHandler(AuthHandler):
         user_res = svc.set_profile()
         if isinstance(user_res, Exception):
             raise user_res
-        logger.info("$"*60)
-        logger.info(user_res.data.username)
-        logger.info("$"*60)
-        delattr(self, "_current_user")
-        self.session["current_user"] = user_res.data
-        self.save_session()
-        logger.info("#"*60)
-        logger.info("self.current_user.username: %s" % self.current_user.username)
-        logger.info("self.session['current_user'].username: %s" % self.session["current_user"].username)
-        logger.info("self.session.get('current_user').username: %s" % self.session.get("current_user").username)
-        logger.info("#"*60)
-        #tmpl = self.render_to_string("admin/user/profile/_profile_index.html", user=user_res.data)
-        tmpl = self.render_to_string("admin/profile/profile/_profile_index.html", user=self.current_user)
-        data = {
-            "tmpl": tmpl,
-            "user": self.current_user.as_dict()
-        }
-        return simplejson.dumps(self.success(data=data))
+        tmpl_form = self.render_to_string("admin/profile/profile/_profile_form.html", user_res=user_res, current_user=self.current_user)
+        user_profile_res = svc.get_profile()
+        if user_res.return_code == 0:
+            delattr(self, "_current_user")
+            self.session["current_user"] = user_res.data
+            self.save_session()
+
+            tmpl = self.render_to_string("admin/profile/profile/_profile_index.html")
+            return simplejson.dumps(self.success(data = {
+                "tmpl": tmpl,
+                "tmpl_form": tmpl_form,
+                "user": self.current_user.as_dict()
+            }))
+        else:
+            logger.info(tmpl_form)
+            return simplejson.dumps(self.failure(return_code=user_res.return_code, 
+                return_message=user_res.return_message,
+                data = {
+                "tmpl_form": tmpl_form,
+                "user": user_profile_res.data.as_dict()
+            }))
+        # return simplejson.dumps(self.success(data=data))
 
 
 

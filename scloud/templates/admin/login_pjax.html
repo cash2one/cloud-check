@@ -28,7 +28,7 @@
           <div class="form-group has-feedback">
             <div class="input-group">
               <input type="text" id="captcha" name="captcha" class="form-control" placeholder="验证码" value="">
-              <img id="captcha-img" onclick="refresh_captcha();" class="captcha-img" src="{{ reverse_url('captcha') }}" />
+              <img id="captcha-img" onclick="refresh_captcha();" class="captcha-img" src="{{ reverse_url('captcha') }}?{{ rand_time }}" />
               <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
             </div>
           </div>

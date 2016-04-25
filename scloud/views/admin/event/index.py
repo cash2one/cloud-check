@@ -36,7 +36,7 @@ class EventIndexHandler(GuideStepGetHandler):
     @check_perms('pro_info.view')
     @unblock
     def get(self):
-        svc = EventService(self)
+        svc = EventService(self, {"user_id": self.current_user.id})
         pro_events_res = svc.get_list()
         svc = ProjectService(self)
         pro_list_res = svc.get_project_list()
@@ -154,7 +154,7 @@ class EventDelHandler(GuideStepGetHandler):
             publish_notice_checker.delay(self.current_user.id)
         else:
             self.add_message(u"事件信息删除失败！(%s)(%s)" % (del_res.return_code, del_res.return_message), level="warning")
-        svc = EventService(self)
+        svc = EventService(self, {"user_id": self.current_user.id})
         pro_events_res = svc.get_list()
         svc = ProjectService(self)
         pro_list_res = svc.get_project_list()

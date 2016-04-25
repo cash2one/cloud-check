@@ -20,11 +20,14 @@ class ProfileService(BaseService):
     @thrownException
     def get_profile(self):
         logger.info("------[get_profile]------")
-        current_user = self.handler.current_user
-        if current_user:
-            # res = project.as_dict()
-            # logger.info("project: %s" % res)
-            return self.success(data=current_user)
+        current_user_id = self.handler.current_user.id
+        if current_user_id:
+            pt_user = self.db.query(
+                PT_User
+            ).filter(
+                PT_User.id == current_user_id
+            ).first()
+            return self.success(data=pt_user)
         else:
             return NotFoundError()
 
@@ -39,22 +42,50 @@ class ProfileService(BaseService):
         if current_user:
             if current_user.id != user_id:
                 raise NotFoundError()
+            if not username:
+                return self.failure(ERROR.username_empty_err)
+            if not email:
+                return self.failure(ERROR.email_empty_err)
+            if not mobile:
+                return self.failure(ERROR.mobile_empty_err)
             user = self.db.query(
                 PT_User
             ).filter(
                 PT_User.id == user_id
             ).first()
+            username_duplicate = self.db.query(
+                PT_User
+            ).filter(
+                PT_User.id != user_id, PT_User.username == username
+            ).first()
+            logger.info(username_duplicate)
+            if username_duplicate:
+                return self.failure(ERROR.username_duplicate_err)
+            email_duplicate = self.db.query(
+                PT_User
+            ).filter(
+                PT_User.id != user_id, PT_User.email == email
+            ).first()
+            if email_duplicate:
+                return self.failure(ERROR.email_duplicate_err)
+            mobile_duplicate = self.db.query(
+                PT_User
+            ).filter(
+                PT_User.id != user_id, PT_User.mobile == mobile
+            ).first()
+            if mobile_duplicate:
+                return self.failure(ERROR.mobile_duplicate_err)
             user.username = username
             user.email = email
-            user.mobile = mobile
+            user.mobile = mobile.replace(' ', '')
             self.db.add(user)
             self.db.flush()
-            logger.info("*"*60)
+            logger.info("*" * 60)
             logger.info(user.username)
-            logger.info("*"*60)
+            logger.info("*" * 60)
             login = LoginService(self.handler)
             login.set_user_attrs(user)
-            
+
             # res = project.as_dict()
             # logger.info("project: %s" % res)
             return self.success(data=user)
