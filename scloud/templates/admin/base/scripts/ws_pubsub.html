@@ -64,40 +64,49 @@ function on_task(response){
   
   if (parseInt(response.pro_user_num) > 0){
     $(".sidebar-menu a[name='apply.user'] span.label").html(response.pro_user_num);
+    $(".sidebar-menu a[name='apply.user']").attr("href", "{{ reverse_url('apply.user') }}?status={{ STATUS_PRO_TABLES.CHECKED }}");
   }else{
     $(".sidebar-menu a[name='apply.user'] span.label").html("");
+    $(".sidebar-menu a[name='apply.user']").attr("href", "{{ reverse_url('apply.user') }}");
   }
 
   if (parseInt(response.pro_publish_num) > 0){
     $(".sidebar-menu a[name='apply.publish'] span.label").html(response.pro_publish_num);
+    $(".sidebar-menu a[name='apply.publish']").attr("href", "{{ reverse_url('apply.publish') }}?status={{ STATUS_PRO_TABLES.CHECKED }}");
   }else{
     $(".sidebar-menu a[name='apply.publish'] span.label").html("");
+    $(".sidebar-menu a[name='apply.publish']").attr("href", "{{ reverse_url('apply.publish') }}");
   }
 
   if (parseInt(response.pro_balance_num) > 0){
     $(".sidebar-menu a[name='apply.loadbalance'] span.label").html(response.pro_balance_num);
+    $(".sidebar-menu a[name='apply.loadbalance']").attr("href", "{{ reverse_url('apply.loadbalance') }}?status={{ STATUS_PRO_TABLES.CHECKED }}");
   }else{
     $(".sidebar-menu a[name='apply.loadbalance'] span.label").html("");
+    $(".sidebar-menu a[name='apply.loadbalance']").attr("href", "{{ reverse_url('apply.loadbalance') }}");
   }
 
   if (parseInt(response.pro_backup_num) > 0){
     $(".sidebar-menu a[name='apply.backup'] span.label").html(response.pro_backup_num);
+    $(".sidebar-menu a[name='apply.backup']").attr("href", "{{ reverse_url('apply.backup') }}?status={{ STATUS_PRO_TABLES.CHECKED }}");
   }else{
     $(".sidebar-menu a[name='apply.backup'] span.label").html("");
+    $(".sidebar-menu a[name='apply.backup']").attr("href", "{{ reverse_url('apply.backup') }}");
   }
 
   if (parseInt(response.pro_event_num) > 0){
     $(".sidebar-menu a[name='event.index'] span.label").html(response.pro_event_num);
+    $(".sidebar-menu a[name='event.index']").attr("href", "{{ reverse_url('event.index') }}?status={{ STATUS_PRO_TABLES.CHECKED }}");
   }else{
     $(".sidebar-menu a[name='event.index'] span.label").html("");
+    $(".sidebar-menu a[name='event.index']").attr("href", "{{ reverse_url('event.index') }}");
   }
 
-  var service_total_num = parseInt(response.pro_publish_num)+parseInt(response.pro_balance_num)+parseInt(response.pro_backup_num);
-  if (service_total_num > 0){
-    $(".sidebar-menu a[name='apply.service'] span.label").html(service_total_num);
-  }else{
-    $(".sidebar-menu a[name='apply.service'] span.label").html("");
-
-  }
+  // var service_total_num = parseInt(response.pro_publish_num)+parseInt(response.pro_balance_num)+parseInt(response.pro_backup_num);
+  // if (service_total_num > 0){
+  //   $(".sidebar-menu a[name='apply.service'] span.label").html(service_total_num);
+  // }else{
+  //   $(".sidebar-menu a[name='apply.service'] span.label").html("");
+  // }
 }
 </script>
