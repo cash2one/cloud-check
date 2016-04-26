@@ -28,7 +28,7 @@ from .base import ApplyHandler
 
 @url("/apply/publish/index", name="apply.publish", active="apply.publish")
 class PublishIndexHandler(ApplyHandler):
-    u'权限申请'
+    u'互联网发布'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -43,7 +43,7 @@ class PublishIndexHandler(ApplyHandler):
 @url("/apply/publish/detail", name="apply.publish.detail", active="apply.publish")
 class PublishDetailHandler(ApplyHandler):
     SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
-    u'权限用户详情'
+    u'互联网发布详情'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -62,7 +62,7 @@ class PublishDetailHandler(ApplyHandler):
 @url("/apply/publish/add", name="apply.publish.add", active="apply.publish")
 @url("/apply/publish/edit", name="apply.publish.edit", active="apply.publish")
 class PublishAddHandler(ApplyHandler):
-    u'权限申请'
+    u'互联网发布申请'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -76,7 +76,6 @@ class PublishAddHandler(ApplyHandler):
             data.update(pro_publish_res=pro_publish_res)
         return self.render_to_string("admin/apply/publish/add.html", **data)
 
-    u'互联网发布申请'
     @check_perms('pro_info.view')
     @unblock
     def post(self):
@@ -103,7 +102,7 @@ class PublishAddHandler(ApplyHandler):
 
 @url("/apply/publish/del", name="apply.publish.del", active="apply.publish")
 class PublishDelHandler(ApplyHandler):
-    u'删除用户'
+    u'删除互联网发布'
     @check_perms('pro_info.view')
     @unblock
     def post(self):
@@ -112,10 +111,10 @@ class PublishDelHandler(ApplyHandler):
         del_res = svc.do_del_pro_publish()
         logger.info(del_res)
         if del_res.return_code == 0:
-            self.add_message(u"用户信息删除成功！", level="success")
+            self.add_message(u"互联网发布信息删除成功！", level="success")
             publish_notice_checker.delay(self.current_user.id)
         else:
-            self.add_message(u"用户信息删除失败！(%s)(%s)" % (del_res.return_code, del_res.return_message), level="warning")
+            self.add_message(u"互联网发布信息删除失败！(%s)(%s)" % (del_res.return_code, del_res.return_message), level="warning")
         data = self.get_pro_data()
         svc = ApplyPublish(self, {"user_id": self.current_user.id})
         pro_publishs_res = svc.get_list()

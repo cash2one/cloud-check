@@ -43,7 +43,7 @@ class BackupIndexHandler(ApplyHandler):
 @url("/apply/backup/detail", name="apply.backup.detail", active="apply.backup")
 class BackupDetailHandler(ApplyHandler):
     SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
-    u'权限用户详情'
+    u'定期备份详情'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -62,7 +62,7 @@ class BackupDetailHandler(ApplyHandler):
 @url("/apply/backup/add", name="apply.backup.add", active="apply.backup")
 @url("/apply/backup/edit", name="apply.backup.edit", active="apply.backup")
 class BackupAddHandler(ApplyHandler):
-    u'定期备份'
+    u'定期备份申请'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -76,7 +76,6 @@ class BackupAddHandler(ApplyHandler):
             data.update(pro_backup_res=pro_backup_res)
         return self.render_to_string("admin/apply/backup/add.html", **data)
 
-    u'定期备份申请'
     @check_perms('pro_info.view')
     @unblock
     def post(self):

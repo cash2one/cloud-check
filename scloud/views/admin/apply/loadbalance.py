@@ -28,7 +28,7 @@ from .base import ApplyHandler
 
 @url("/apply/loadbalance/index", name="apply.loadbalance", active="apply.loadbalance")
 class PublishIndexHandler(ApplyHandler):
-    u'权限申请'
+    u'负载均衡'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -43,7 +43,7 @@ class PublishIndexHandler(ApplyHandler):
 @url("/apply/loadbalance/detail", name="apply.loadbalance.detail", active="apply.loadbalance")
 class PublishDetailHandler(ApplyHandler):
     SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
-    u'权限用户详情'
+    u'负载均衡详情'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -62,7 +62,7 @@ class PublishDetailHandler(ApplyHandler):
 @url("/apply/loadbalance/add", name="apply.loadbalance.add", active="apply.loadbalance")
 @url("/apply/loadbalance/edit", name="apply.loadbalance.edit", active="apply.loadbalance")
 class PublishAddHandler(ApplyHandler):
-    u'权限申请'
+    u'负载均衡申请'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -76,7 +76,6 @@ class PublishAddHandler(ApplyHandler):
             data.update(pro_loadbalance_res=pro_loadbalance_res)
         return self.render_to_string("admin/apply/loadbalance/add.html", **data)
 
-    u'互联网发布申请'
     @check_perms('pro_info.view')
     @unblock
     def post(self):
@@ -91,12 +90,12 @@ class PublishAddHandler(ApplyHandler):
         data.update(pro_loadbalance_res=pro_loadbalance_res) # , loadbalance_res=loadbalance_res, backups_res=backups_res)
         logger.info(pro_loadbalance_res)
         if pro_loadbalance_res.return_code == 0:
-            self.add_message(u"互联网发布信息添加成功！%s" % STATUS_PRO_TABLES.get(pro_loadbalance_res.data.status).todo_value, level="success")
+            self.add_message(u"负载均衡信息添加成功！%s" % STATUS_PRO_TABLES.get(pro_loadbalance_res.data.status).todo_value, level="success")
             tmpl = self.render_to_string("admin/guide/_step_3_balance_detail.html", **data)
             publish_notice_checker.delay(self.current_user.id)
         else:
             tmpl = self.render_to_string("admin/guide/_step_3_balance.html", **data)
-            self.add_message(u"互联网发布信息添加失败！(%s)(%s)" % (pro_loadbalance_res.return_code, pro_loadbalance_res.return_message), level="warning")
+            self.add_message(u"负载均衡信息添加失败！(%s)(%s)" % (pro_loadbalance_res.return_code, pro_loadbalance_res.return_message), level="warning")
         messages_tmpl = self.render_to_string("admin/base/base_messages.html")
         return simplejson.dumps(self.success(data={"tmpl": tmpl, "messages_tmpl": messages_tmpl}))
 
@@ -112,10 +111,10 @@ class PublishDelHandler(ApplyHandler):
         del_res = svc.do_del_pro_loadbalance()
         logger.info(del_res)
         if del_res.return_code == 0:
-            self.add_message(u"用户信息删除成功！", level="success")
+            self.add_message(u"负载均衡信息删除成功！", level="success")
             publish_notice_checker.delay(self.current_user.id)
         else:
-            self.add_message(u"用户信息删除失败！(%s)(%s)" % (del_res.return_code, del_res.return_message), level="warning")
+            self.add_message(u"负载均衡信息删除失败！(%s)(%s)" % (del_res.return_code, del_res.return_message), level="warning")
         data = self.get_pro_data()
         svc = ApplyLoadBalance(self, {"user_id": self.current_user.id})
         pro_loadbalances_res = svc.get_list()
