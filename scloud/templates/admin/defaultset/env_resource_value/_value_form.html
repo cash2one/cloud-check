@@ -1,6 +1,7 @@
 
 {% set env = env_res.data %}
-{% import "admin/base/base_macros.html" as base %}
+{% set resource_value = resource_value_res.data %}
+{% import "admin/base/base_macros.html" as base with context %}
       <div class="box box-info">
         <div class="box-header with-border">
           <h3 class="box-title">编辑{{ env_res.data.name }}</h3>
@@ -25,10 +26,16 @@
                 Env_Resource_Value.internet_ip.info.name,
                 "internet_ip",
                 options = internet_ip_options,
-                value=resource_value.internet_ip,
+                value=resource_value.internet_ip if resource_value else "",
                 res=resource_value_res,
                 label_col=4) }}
-          {{ base.form_select(Env_Resource_Value.internet_ip_ssl.info.name, "internet_ip_ssl", options=[{"value": 1, "desc": "是"}, {"value": 0, "desc": "否"}], value=resource_value.internet_ip_ssl, res=env_res, label_col=4) }}
+          {{ base.form_select(
+              Env_Resource_Value.internet_ip_ssl.info.name,
+              "internet_ip_ssl",
+              options=[{"value": 1, "desc": "是"}, {"value": 0, "desc": "否"}],
+              value=resource_value.internet_ip_ssl if resource_value else "",
+              res=env_res,
+              label_col=4) }}
           </div><!-- /.box-body -->
           <div class="box-footer text-center">
             <button type="button" id="env_resource_value_form_btn" onclick="do_edit_env_resource_value()" class="btn btn-warning">确 定</button>
@@ -46,4 +53,7 @@
               ////onTimeout: function(){ do_edit_env_resource_value();}
           })
         }
+        $(function(){
+          $("select").select2();
+        })
       </script>

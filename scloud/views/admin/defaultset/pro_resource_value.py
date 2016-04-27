@@ -54,6 +54,12 @@ class Add_Env_resource_value_Handler(Base_Env_Resource_Value_Handler):
     @unblock
     def get(self, **kwargs):
         data = self.get_index_page(**kwargs)
+
+        svc = EnvResourceValueService(self, kwargs)
+        resource_value_res = svc.get_env_resource_value()
+        data.update({
+            "resource_value_res": resource_value_res
+        })
         return self.render_to_string("admin/defaultset/env_resource_value/edit.html", **data)
 
     @unblock
@@ -64,7 +70,10 @@ class Add_Env_resource_value_Handler(Base_Env_Resource_Value_Handler):
         data.update({
             "resource_value_res": env_resource_value_res,
         })
+        logger.info(env_resource_value_res)
         if env_resource_value_res.return_code == 0:
             self.add_message(u"环境[%s]对应默认值修改成功！" % env_resource_value_res.data.env.name, level="success", post_action=True)
+        else:
+            self.add_message(u"环境默认值修改失败！(%s)%s" % (env_resource_value_res.return_code, env_resource_value_res.return_message), level="warning")
         tmpl = self.render_to_string("admin/defaultset/env_resource_value/edit_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))

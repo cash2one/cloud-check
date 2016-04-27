@@ -6,6 +6,7 @@ from scloud.services.base import BaseService
 from scloud.models.base import MYSQL_POOL
 from scloud.models.pt_user import PT_User
 from scloud.models.project import Pro_Info
+from scloud.models.environment import Env_Resource_Value
 from scloud.config import logger, thrownException
 from sqlalchemy import and_, or_
 from scloud.utils.error_code import ERROR
@@ -14,6 +15,39 @@ from scloud.const import pro_resource_apply_status_types
 
 
 class ProjectService(BaseService):
+
+    @thrownException
+    def load_env_resource_values(self):
+        logger.info("------[get_project]------")
+        pro_id = self.params.get("pro_id", 0)
+        project = self.db.query(Pro_Info).filter(Pro_Info.id == pro_id).first()
+        if project:
+            # res = project.as_dict()
+            # logger.info("project: %s" % res)
+            env = project.env
+            logger.info(env)
+            logger.info(env.env_resource_value)
+            env_resource_value = project.env.env_resource_value
+            return self.success(data=env_resource_value.as_dict())
+        else:
+            return self.failure(ERROR.not_found_err)
+
+    @thrownException
+    def load_env_internet_ip_types(self):
+        logger.info("------[get_project]------")
+        pro_id = self.params.get("pro_id", 0)
+        project = self.db.query(Pro_Info).filter(Pro_Info.id == pro_id).first()
+        if project:
+            # res = project.as_dict()
+            # logger.info("project: %s" % res)
+            env = project.env
+            logger.info(env)
+            logger.info(env.env_resource_value)
+            internet_ip_types = project.env.env_internet_ip_types
+            internet_ip_options = [{"value": i.id, "desc": i.name} for i in internet_ip_types]
+            return self.success(data=internet_ip_options)
+        else:
+            return self.failure(ERROR.not_found_err)
 
     @thrownException
     def get_project(self):

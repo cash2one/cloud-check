@@ -1,0 +1,25 @@
+
+{% import "admin/base/base_macros.html" as base with context %}
+
+{% set env_resource_value = env_resource_value_res.data %}
+
+<select class="form-control" id="internet_ip" name="internet_ip">
+<option value="0"> -- 选择 -- </option>
+{% for internet_ip in internet_ip_options %}
+<option value="{{ internet_ip.value }}"{% if internet_ip.value|string == env_resource_value.internet_ip|string %} selected{% endif %}>{{ internet_ip.desc }}</option>
+{% endfor %}
+</select>
+<div class="input-group-unit">
+    <div class="radio pull-left">
+      <label>
+        <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="1"{% if env_resource_value.internet_ip_ssl|string == "1" %} checked="checked"{% endif %}>
+        需要SSL卸载
+      </label>
+    </div>
+    <div class="radio pull-left">
+      <label>
+        <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="0"{% if env_resource_value.internet_ip_ssl|string == "0" %} checked="checked"{% endif %}>
+        不需要SSL卸载
+      </label>
+    </div>
+</div>

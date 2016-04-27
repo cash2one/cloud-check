@@ -25,6 +25,17 @@ mail_title_format = u"%(user_name)s %(action)s[%(pro_name)s-%(res_desc)s]%(todo_
 class ProResourceApplyService(BaseService):
 
     @thrownException
+    def get_list(self):
+        resources_res = self.db.query(
+            Pro_Resource_Apply
+        ).filter(
+            Pro_Resource_Apply.user_id == self.handler.current_user.id
+        ).order_by(Pro_Resource_Apply.id.desc()).all()
+        if not resources_res:
+            return NotFoundError()
+        return self.success(data=resources_res)
+
+    @thrownException
     def get_resource(self):
         res_id = self.params.get("res_id", 0)
         resource_res = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
@@ -441,6 +452,7 @@ class ProResourceCheckService(BaseService):
         res_id = self.params.get("res_id", 0)
         resource = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
         return self.success(data=resource)
+
     @thrownException
     def get_resources_by_status(self):
         logger.info("\t ==========[ get_resources_by_status ]==========")

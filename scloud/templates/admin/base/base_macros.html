@@ -36,7 +36,7 @@
   <div class="form-group{% if res and res.return_code in check_codes %} has-warning{% endif %}">
     <label for="{{ name }}" class="col-sm-{{ label_col }} control-label">{{ label }}</label>
     <div class="col-sm-{{ col2 }}">
-      <select id="{{ name }}" name="{{ name }}">
+      <select id="{{ name }}" name="{{ name }}" style="width:100%">
         {% for option in options %}
         <option value="{{ option.value }}"{% if value|int == option.value %} selected="selected"{% endif %}>{{ option.desc }}</option>
         {% endfor %}
