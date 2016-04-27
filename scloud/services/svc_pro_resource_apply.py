@@ -86,7 +86,9 @@ class ProResourceApplyService(BaseService):
         except:
             return self.failure(ERROR.res_internet_ip_ssl_invalid_err)
         try:
-            self.period = int(self.params.get("period", 0) or 0)
+            if self.params.get("period", "").strip() == "":
+                return self.failure(ERROR.res_period_empty_err)
+            self.period = int(self.params.get("period"))
         except:
             return self.failure(ERROR.res_period_invalid_err)
         try:
@@ -136,13 +138,20 @@ class ProResourceApplyService(BaseService):
     @thrownException
     def generate_fee(self):
         logger.info("------[generate_fee]------")
-        self.check_form_valid()
+        valid_res = self.check_form_valid()
+        logger.info(valid_res)
+        if valid_res.return_code < 0:
+            return valid_res
         pro_id = self.params.get("pro_id")
+        if not pro_id:
+            return self.failure(ERROR.pro_name_empty_err)
         pro_info = self.db.query(
             Pro_Info    
         ).filter(
             Pro_Info.id == pro_id          
         ).first()
+        if not pro_info:
+            return self.failure(ERROR.pro_name_empty_err)
         env_id = pro_info.env_id
         env_resource_fee = self.db.query(
             Env_Resource_Fee

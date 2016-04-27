@@ -165,6 +165,7 @@ class Handler(BaseHandler):
         s = "&".join(["%s=%s" % (k, v) for k, v in self.args.items() if k not in ["page", "_pjax"]])
         kwargs.update({
             "CONF": CONF,
+            "getattr": getattr,
             "rand_time": time.time(),
             "handler": self,
             "request": self.request,

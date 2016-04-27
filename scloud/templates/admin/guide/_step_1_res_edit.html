@@ -1,22 +1,41 @@
 {% import "admin/base/base_macros.html" as mbase with context %}
 {% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
 
-{% set pro_id = handler.args.get('pro_id', '') %}
-{% set computer = handler.args.get('computer', '') %}
-{% set cpu = handler.args.get('cpu', '') %}
-{% set memory = handler.args.get('memory', '') %}
-{% set disk = handler.args.get('disk', '') %}
-{% set disk_backup = handler.args.get('disk_backup', '') %}
-{% set out_ip = handler.args.get('out_ip', '') %}
-{% set snapshot = handler.args.get('snapshot', '') %}
-{% set loadbalance = handler.args.get('loadbalance', '') %}
-{% set internet_ip = handler.args.get('internet_ip', '') %}
-{% set internet_ip_ssl = handler.args.get('internet_ip_ssl', '') %}
-{% set start_date = handler.args.get('start_date', '') %}
-{% set unit_fee = handler.args.get('unit_fee', '') %}
-{% set period = handler.args.get('period', '') %}
-{% set total_fee = handler.args.get('total_fee', '') %}
-{% set res = pro_resource_apply_res or fee_res %}
+    {% set res = pro_resource_apply_res or fee_res %}
+{% if handler.request.method == "POST" %}
+    {% set pro_id = handler.args.get('pro_id', '') %}
+    {% set computer = handler.args.get('computer', '') %}
+    {% set cpu = handler.args.get('cpu', '') %}
+    {% set memory = handler.args.get('memory', '') %}
+    {% set disk = handler.args.get('disk', '') %}
+    {% set disk_backup = handler.args.get('disk_backup', '') %}
+    {% set out_ip = handler.args.get('out_ip', '') %}
+    {% set snapshot = handler.args.get('snapshot', '') %}
+    {% set loadbalance = handler.args.get('loadbalance', '') %}
+    {% set internet_ip = handler.args.get('internet_ip', '') %}
+    {% set internet_ip_ssl = handler.args.get('internet_ip_ssl', '') %}
+    {% set start_date = handler.args.get('start_date', '') %}
+    {% set unit_fee = handler.args.get('unit_fee', '') %}
+    {% set period = handler.args.get('period', '') %}
+    {% set total_fee = handler.args.get('total_fee', '') %}
+{% else %}
+    {% set pro_resource_apply = pro_resource_apply_res.data %}
+    {% set pro_id = pro_resource_apply.pro_id %}
+    {% set computer = pro_resource_apply.computer %}
+    {% set cpu = pro_resource_apply.cpu %}
+    {% set memory = pro_resource_apply.memory %}
+    {% set disk = pro_resource_apply.disk %}
+    {% set disk_backup = pro_resource_apply.disk_backup %}
+    {% set out_ip = pro_resource_apply.out_ip %}
+    {% set snapshot = pro_resource_apply.snapshot %}
+    {% set loadbalance = pro_resource_apply.loadbalance %}
+    {% set internet_ip = pro_resource_apply.internet_ip %}
+    {% set internet_ip_ssl = pro_resource_apply.internet_ip_ssl %}
+    {% set start_date = pro_resource_apply.start_date %}
+    {% set unit_fee = pro_resource_apply.unit_fee %}
+    {% set period = pro_resource_apply.period %}
+    {% set total_fee = pro_resource_apply.total_fee %}
+{% endif %}
 
 <!-- form start -->
 <form id="resource_form" data-pjax action="{{ reverse_url('apply.resource.add') }}" class="form-horizontal" method="POST">
@@ -110,23 +129,6 @@
             <label for="internet_ip" class="col-sm-2 control-label">互联网IP</label>
             <div class="col-sm-6 input-group">
               {% include "admin/apply/resource/_env_internet_ip_types.html" %}
-              <!-- <select class="form-control" id="internet_ip" name="internet_ip">
-                <option value="0"> -- 选择 -- </option>
-              </select>
-              <div class="input-group-unit">
-                <div class="radio pull-left">
-                  <label>
-                    <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="1"{% if internet_ip_ssl|string == "1" %} checked="checked"{% endif %}>
-                    需要SSL卸载
-                  </label>
-                </div>
-                <div class="radio pull-left">
-                  <label>
-                    <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="0"{% if internet_ip_ssl|string == "0" %} checked="checked"{% endif %}>
-                    不需要SSL卸载
-                  </label>
-                </div>
-              </div> -->
             </div>
           {% if res and res.return_code in [ERR.RES_INTERNET_IP_EMPTY_ERR, ERR.RES_INTERNET_IP_INVALID_ERR, ERR.RES_INTERNET_IP_SSL_EMPTY_ERR, ERR.RES_INTERNET_IP_SSL_INVALID_ERR] %}
           <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
@@ -137,7 +139,7 @@
             <label for="start_date" class="col-sm-2 control-label">云主机启用时间</label>
             <div class="col-sm-6 input-group">
               <div class="input-group">
-                <input type="text" class="form-control pull-right fa-calendar" id="start_date" name="start_date" value="{{ start_date }}" readonly>
+                <input type="text" class="form-control pull-right fa-calendar" id="start_date" name="start_date" value="{{ start_date|default('', True) }}" readonly>
               </div><!-- /.input group -->
             </div>
           {% if res and res.return_code in [ERR.RES_START_DATE_EMPTY_ERR, ERR.RES_START_DATE_INVALID_ERR] %}

@@ -65,25 +65,72 @@ class ProResourceDetailHandler(GuideStepGetHandler):
     @unblock
     def get(self):
         svc = ProResourceApplyService(self)
-        pro_resource_res = svc.get_resource()
-        if pro_resource_res.return_code < 0:
-            raise SystemError(pro_resource_res.return_code, pro_resource_res.return_message)
-        logger.info(pro_resource_res)
+        pro_resource_apply_res = svc.get_resource()
+        if pro_resource_apply_res.return_code < 0:
+            raise SystemError(pro_resource_apply_res.return_code, pro_resource_apply_res.return_message)
+        logger.info(pro_resource_apply_res)
         data = {
-            "pro_resource_res": pro_resource_res,
+            "pro_resource_apply_res": pro_resource_apply_res,
         }
         return self.render_to_string("admin/apply/resource/detail.html", **data)
 
 
 #@url("/apply/pro_(?P<pro_id>\d+)/resource/add", name="apply.resource.add", active="apply.resource.add")
 @url("/apply/resource/add", name="apply.resource.add", active="apply.resource")
+@url("/apply/resource/edit", name="apply.resource.edit", active="apply.resource")
 class GuideHandler(ApplyHandler):
     u'权限申请'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
-        data = self.get_pro_data()
-        return self.render_to_string("admin/apply/resource/add.html", **data)
+        if self.kwargs["name"] == "apply.resource.add":
+            data = self.get_pro_data()
+            return self.render_to_string("admin/apply/resource/add.html", **data)
+        else:
+            data = self.get_pro_data()
+            svc = ProResourceApplyService(self)
+            pro_resource_apply_res = svc.get_resource()
+            svc = ProjectService(self)
+            env_resource_value_res = svc.load_env_resource_values()
+            env_internet_ip_types_res = svc.load_env_internet_ip_types()
+            data.update(dict(
+                pro_resource_apply_res = pro_resource_apply_res,
+                env_internet_ip_types_res = env_internet_ip_types_res,
+                env_resource_value_res = env_resource_value_res,
+            ))
+            return self.render_to_string("admin/apply/resource/edit.html", **data)
+
+    @unblock
+    def post(self):
+        kw = {"user_id": self.current_user.id}
+        svc = ProResourceApplyService(self, kw)
+        # pro_svc = ProjectService(self, kw)
+        # pro_info_res = pro_svc.get_project()
+        if self.kwargs["name"] == "apply.resource.add":
+            pro_resource_apply_res = svc.do_apply()
+        else:
+            pro_resource_apply_res = svc.do_re_apply()
+        pro_info_data = self.get_pro_data(pro_id=self.args.get("pro_id"))
+        data = {
+            "pro_resource_apply_res": pro_resource_apply_res
+        }
+        svc = ProjectService(self)
+        env_resource_value_res = svc.load_env_resource_values()
+        env_internet_ip_types_res = svc.load_env_internet_ip_types()
+        data.update(dict(
+            env_internet_ip_types_res = env_internet_ip_types_res,
+            env_resource_value_res = env_resource_value_res,
+        ))
+
+        data.update(pro_info_data)
+        if pro_resource_apply_res.return_code == 0:
+            self.add_message(u"申请项目[%s-%s]资源成功！" % (pro_resource_apply_res.data.project.name, pro_resource_apply_res.data.desc), level="success", post_action=True)
+            tmpl = self.render_to_string("admin/apply/resource/detail_pjax.html", **data)
+        else:
+            self.add_message(u"申请项目资源失败！(%s)%s" % (pro_resource_apply_res.return_code, pro_resource_apply_res.return_message), level="warning")
+            tmpl = self.render_to_string("admin/guide/_step_1_res_add.html", **data)
+        messages_tmpl = self.render_to_string("admin/base/base_messages.html")
+        return simplejson.dumps(self.success(data={"tmpl": tmpl, "messages_tmpl": messages_tmpl}))
 
 
 @url("/apply/resource/load_env", name="apply.resource.load_env", active="apply.resource")
@@ -93,7 +140,11 @@ class ResourceLoadEnvHandler(AuthHandler):
         svc = ProjectService(self)
         env_resource_value_res = svc.load_env_resource_values()
         env_internet_ip_types_res = svc.load_env_internet_ip_types()
-        env_internet_ip_types_tmpl = self.render_to_string("admin/apply/resource/_env_internet_ip_types.html", internet_ip_options=env_internet_ip_types_res.data if env_internet_ip_types_res.return_code==0 else [], env_resource_value_res=env_resource_value_res)
+        data = dict(
+            env_internet_ip_types_res = env_internet_ip_types_res,
+            env_resource_value_res = env_resource_value_res,
+        )
+        env_internet_ip_types_tmpl = self.render_to_string("admin/apply/resource/_env_internet_ip_types.html", **data)
         return simplejson.dumps(self.success(data=dict(
             env_resource_value = env_resource_value_res.data,
             env_internet_ip_types_tmpl = env_internet_ip_types_tmpl
@@ -101,13 +152,23 @@ class ResourceLoadEnvHandler(AuthHandler):
 
 
 @url("/apply/resource/generate_fee", name="apply.resource.generate_fee", active="apply.resource")
-class GuideGenerateFeeHandler(AuthHandler):
+class GuideGenerateFeeHandler(ApplyHandler):
     @unblock
-    def get(self, **kwargs):
+    def post(self, **kwargs):
+        data = self.get_pro_data()
         svc = ProResourceApplyService(self, self.args)
         fee_res = svc.generate_fee()
-        logger.info(fee_res)
-        return simplejson.dumps(fee_res)
+        svc = ProjectService(self)
+        env_resource_value_res = svc.load_env_resource_values()
+        env_internet_ip_types_res = svc.load_env_internet_ip_types()
+        data.update(dict(
+            fee_res = fee_res,
+            env_internet_ip_types_res = env_internet_ip_types_res,
+            env_resource_value_res = env_resource_value_res,
+        ))
+        # logger.info(fee_res)
+        tmpl = self.render_to_string("admin/apply/resource/add_pjax.html", **data)
+        return simplejson.dumps(self.success(data=tmpl))
 
 
 @url("/apply/resource/del", name="apply.resource.del", active="apply.resource")
