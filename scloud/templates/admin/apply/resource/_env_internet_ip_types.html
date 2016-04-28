@@ -17,8 +17,13 @@
 {% set internet_ip_value = handler.args.get("internet_ip", "") %}
 {% set internet_ip_ssl_value = handler.args.get("internet_ip_ssl", "") %}
 {% else %}
-{% set internet_ip_value = env_resource_value.internet_ip %}
-{% set internet_ip_ssl_value = env_resource_value.internet_ip_ssl %}
+  {% if pro_resource_apply %}
+    {% set internet_ip_value = pro_resource_apply.internet_ip %}
+    {% set internet_ip_ssl_value = pro_resource_apply.internet_ip_ssl %}
+  {% else %}
+    {% set internet_ip_value = env_resource_value.internet_ip %}
+    {% set internet_ip_ssl_value = env_resource_value.internet_ip_ssl %}
+  {% endif %}
 {% endif %}
 
 <select class="form-control" id="internet_ip" name="internet_ip">

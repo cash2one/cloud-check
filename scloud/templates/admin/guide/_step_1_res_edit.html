@@ -1,7 +1,8 @@
 {% import "admin/base/base_macros.html" as mbase with context %}
 {% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
 
-    {% set res = pro_resource_apply_res or fee_res %}
+{% set res = pro_resource_apply_res or fee_res %}
+{% set pro_resource_apply = pro_resource_apply_res.data %}
 {% if handler.request.method == "POST" %}
     {% set pro_id = handler.args.get('pro_id', '') %}
     {% set computer = handler.args.get('computer', '') %}
@@ -19,7 +20,6 @@
     {% set period = handler.args.get('period', '') %}
     {% set total_fee = handler.args.get('total_fee', '') %}
 {% else %}
-    {% set pro_resource_apply = pro_resource_apply_res.data %}
     {% set pro_id = pro_resource_apply.pro_id %}
     {% set computer = pro_resource_apply.computer %}
     {% set cpu = pro_resource_apply.cpu %}
@@ -37,8 +37,29 @@
     {% set total_fee = pro_resource_apply.total_fee %}
 {% endif %}
 
+{% if pro_resource_apply %}
+  {% if pro_resource_apply.status == STATUS_RESOURCE.APPLIED %}
+  {# <============ 撤销申请 =============> #}
+  {% set post_action = reverse_url('apply.resource.revoke') %}
+  {% elif pro_resource_apply.status in [STATUS_RESOURCE.REVOKED, STATUS_RESOURCE.REFUSED] %}
+  {% set delete_action = reverse_url('resource_delete', pro_resource_apply.pro_id, pro_resource_apply.id) %}
+  <form id="resource_delete_form" action="{{ delete_action }}" method="POST">
+    {{ handler.xsrf_form_html() }}
+    <input type="hidden" name="post_res_id" value="{{ pro_resource_apply.id }}">
+  </form>
+  {# <============ 重新提交申请 =============> #}
+  {% set post_action = reverse_url('apply.resource.edit') %}
+  {# <============ 删除申请 =============> #}
+  {% elif pro_resource_apply.status == STATUS_RESOURCE.CHECKED %}
+  {# <============ 完成支付 =============> #}
+  {% endif %}
+{% else %}
+  {# <============ 申请新资源 =============> #}
+  {% set post_action = reverse_url('apply.resource.add') %}
+{% endif %}
+
 <!-- form start -->
-<form id="resource_form" data-pjax action="{{ reverse_url('apply.resource.add') }}" class="form-horizontal" method="POST">
+<form id="resource_form" data-pjax action="{{ post_action }}?res_id={{ pro_resource_apply.id }}&pro_id={{ pro_resource_apply.pro_id }}" class="form-horizontal" method="POST">
 <div class="box-body">
     {{ handler.xsrf_form_html() }}
     {{ pro_macro.get_pro_info_select(pro_res=res, pro_id=pro_id, onchange="load_env()") }}
@@ -181,7 +202,20 @@
   </div>
   <div class="box-foot text-center">
     <button type="button" id="generate_fee_btn" onclick="generate_fee()" class="btn btn-warning btn-sm">试算</button>
-    <button id="do_apply_btn" type="button" onclick="do_apply()" class="btn btn-{{ STATUS_RESOURCE.applied.level }}">提交申请</button>
+    {% if pro_resource_apply %}
+      {% if pro_resource_apply.status|int == STATUS_RESOURCE.APPLIED %}
+      <button id="do_revoke_btn" type="button" onclick="do_revoke()" class="btn btn-{{ STATUS_RESOURCE.revoked.level }}">撤销申请</button>
+      {% elif pro_resource_apply.status|int in [STATUS_RESOURCE.REVOKED, STATUS_RESOURCE.REFUSED] %}
+      <button id="do_re_apply_btn" type="button" onclick="do_re_apply()" class="btn btn-{{ STATUS_RESOURCE.applied.level }}">重新提交申请</button>
+      <button id="do_delete_btn" type="button" onclick="do_delete()" class="btn btn-{{ STATUS_RESOURCE.unknown.level }}">删除申请</button>
+      {% elif pro_resource_apply.status|int == STATUS_RESOURCE.CHECKED %}
+      <a data-pjax href="{{ reverse_url('guide_step_2', pro_resource_apply.project.id) }}" class="btn btn-{{ STATUS_RESOURCE.payed.level }}">去支付</a>
+      {% elif pro_resource_apply.status|int == STATUS_RESOURCE.CONFIRMPAYED %}
+      <a data-pjax href="{{ reverse_url('guide_step_3', pro_resource_apply.project.id) }}" class="btn btn-{{ STATUS_RESOURCE.payed.level }}">去填写运行参数</a>
+      {% endif %}
+    {% else %}
+        <button id="do_apply_btn" type="button" onclick="do_apply()" class="btn btn-{{ STATUS_RESOURCE.applied.level }}">提交申请</button>
+    {% endif %}
   </div>
 </form>
   <script type="text/javascript">
@@ -236,11 +270,15 @@
     })
   }
   function do_re_apply(){
+    $("#pro_id").val($("#pro_id option[selected]").val())
+    $("#res_apply_id").val($("#pro_id option[selected]").attr("res_apply_id"))
     generate_ajax_post({
       form: "#resource_form",
       button: "#do_re_apply_btn",
+      pjax_container: false,
       onSuccess: function(response){
-        // do_notice_checker();
+        $("section.content").prepend(response.data.messages_tmpl);
+        $("#resource_form").parent().html(response.data.tmpl);
       },
       onTimeout: function(){ do_re_apply(); }
     })
@@ -260,8 +298,10 @@
     generate_ajax_post({
       form: "#resource_form",
       button: "#do_revoke_btn",
+      pjax_container: false,
       onSuccess: function(response){
-        // do_notice_checker();
+        $("section.content").prepend(response.data.messages_tmpl);
+        $("#resource_form").parent().html(response.data.tmpl);
       },
       onTimeout: function(){ do_revoke(); }
     })

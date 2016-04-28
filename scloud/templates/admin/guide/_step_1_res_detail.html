@@ -1,3 +1,4 @@
+{% set pro_resource_apply = pro_resource_apply_res.data %}
 <table class="table table-striped" id="resource_check_table">
   <tr style="display: none">
     <td>
@@ -24,7 +25,9 @@
     <tr>
       <td>{{ column.info.name or column.name }}:</td>
       {% set ST = STATUS_RESOURCE.get(pro_resource_apply.status) %}
-      <td><span class="label label-{{ ST.level }}">{{ ST.value }}, {{ ST.todo_value }}</span></td>
+      <td><span class="label label-{{ ST.level }}">{{ ST.value }}, {{ ST.todo_value }}</span>
+      <a data-pjax href="{{ reverse_url('apply.resource.edit') }}?res_id={{ pro_resource_apply.id }}&pro_id={{ pro_resource_apply.pro_id }}"><i class="fa fa-edit"></i> 编辑</a>
+      </td>
     </tr>
     {% elif column.name == "internet_ip" %}
     <tr>

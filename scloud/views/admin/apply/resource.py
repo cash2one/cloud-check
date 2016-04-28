@@ -38,7 +38,7 @@ class GuideStepGetHandler(AuthHandler):
 
 
 @url("/apply/resource/index", name="apply.resource", active="apply.resource")
-class GuideHandler(GuideStepGetHandler):
+class ProResourceApplyIndexHandler(GuideStepGetHandler):
     u'权限申请'
     @check_perms('pro_info.view')
     @unblock
@@ -75,10 +75,10 @@ class ProResourceDetailHandler(GuideStepGetHandler):
         return self.render_to_string("admin/apply/resource/detail.html", **data)
 
 
-#@url("/apply/pro_(?P<pro_id>\d+)/resource/add", name="apply.resource.add", active="apply.resource.add")
 @url("/apply/resource/add", name="apply.resource.add", active="apply.resource")
 @url("/apply/resource/edit", name="apply.resource.edit", active="apply.resource")
-class GuideHandler(ApplyHandler):
+@url("/apply/resource/revoke", name="apply.resource.revoke", active="apply.resource")
+class DoProResourceApplyHandler(ApplyHandler):
     u'权限申请'
     @check_perms('pro_info.view')
     @unblock
@@ -107,9 +107,14 @@ class GuideHandler(ApplyHandler):
         # pro_svc = ProjectService(self, kw)
         # pro_info_res = pro_svc.get_project()
         if self.kwargs["name"] == "apply.resource.add":
+            post_action = u"提交"
             pro_resource_apply_res = svc.do_apply()
-        else:
+        elif self.kwargs["name"] == "apply.resource.edit":
+            post_action = u"重新提交"
             pro_resource_apply_res = svc.do_re_apply()
+        elif self.kwargs["name"] == "apply.resource.revoke":
+            post_action = u"撤销"
+            pro_resource_apply_res = svc.do_revoke()
         pro_info_data = self.get_pro_data(pro_id=self.args.get("pro_id"))
         data = {
             "pro_resource_apply_res": pro_resource_apply_res
@@ -124,10 +129,10 @@ class GuideHandler(ApplyHandler):
 
         data.update(pro_info_data)
         if pro_resource_apply_res.return_code == 0:
-            self.add_message(u"申请项目[%s-%s]资源成功！" % (pro_resource_apply_res.data.project.name, pro_resource_apply_res.data.desc), level="success", post_action=True)
-            tmpl = self.render_to_string("admin/apply/resource/detail_pjax.html", **data)
+            self.add_message(u"申请项目[%s-%s]%s资源成功！" % (pro_resource_apply_res.data.project.name, pro_resource_apply_res.data.desc, post_action), level="success", post_action=True)
+            tmpl = self.render_to_string("admin/guide/_step_1_res_detail.html", **data)
         else:
-            self.add_message(u"申请项目资源失败！(%s)%s" % (pro_resource_apply_res.return_code, pro_resource_apply_res.return_message), level="warning")
+            self.add_message(u"申请项目%s资源失败！(%s)%s" % (post_action, pro_resource_apply_res.return_code, pro_resource_apply_res.return_message), level="warning")
             tmpl = self.render_to_string("admin/guide/_step_1_res_add.html", **data)
         messages_tmpl = self.render_to_string("admin/base/base_messages.html")
         return simplejson.dumps(self.success(data={"tmpl": tmpl, "messages_tmpl": messages_tmpl}))
@@ -171,25 +176,20 @@ class GuideGenerateFeeHandler(ApplyHandler):
         return simplejson.dumps(self.success(data=tmpl))
 
 
-@url("/apply/resource/del", name="apply.resource.del", active="apply.resource")
-class ApplyResourceDelHandler(GuideStepGetHandler):
-    u'删除用户'
-    @check_perms('pro_info.view')
+@url("/apply/resource/delete", name="apply.resource.del", active="guide")
+class ProResourceDeleteHandler(GuideStepGetHandler):
+    u"""删除资源申请"""
+    @check_perms('pro_resource_apply.delete')
     @unblock
-    def post(self):
-        user_id_list = self.get_arguments("user_id")
-        svc = ProUserService(self, {"user_id_list": user_id_list})
-        del_res = svc.do_del_pro_user()
-        logger.info(del_res)
-        if del_res.return_code == 0:
-            self.add_message(u"用户信息删除成功！", level="success")
-            publish_notice_checker.delay(self.current_user.id)
-        else:
-            self.add_message(u"用户信息删除失败！(%s)(%s)" % (del_res.return_code, del_res.return_message), level="warning")
-        data = self.get_pro_data()
-        svc = ProUserService(self, {"user_id": self.current_user.id})
-        pro_users_res = svc.get_list()
-        page = self.getPage(pro_users_res.data)
-        data.update(page=page)
-        tmpl = self.render_to_string("admin/apply/resource/index_pjax.html", **data)
+    def delete(self, **kwargs):
+        svc = ProResourceApplyService(self, kwargs)
+        delete_res = svc.do_delete()
+        resource_res = svc.get_resource()
+        if isinstance(delete_res, Exception):
+            raise resource_res
+        data = self.get_pro_info_res(kwargs["pro_id"])
+        self.add_message("云资源[%s-%s]申请删除成功！"% (delete_res.data.project.name, delete_res.data.desc), level="success")
+        # logger.info("\t [data]: %s" % data )
+        # logger.info("\t [data pro_info_res]: %s" % data["pro_info_res"])
+        tmpl = self.render_to_string("admin/guide/step1_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))
