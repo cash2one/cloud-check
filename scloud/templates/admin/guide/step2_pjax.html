@@ -1,5 +1,7 @@
 
 {% set apply_global_vars = pro_info_res.data.get_apply_global_vars() %}
+{% set pro_info = pro_info_res.data %}
+{% set pro_resource_apply = pro_info.last_apply %}
 <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
@@ -17,5 +19,18 @@
         <section class="content">
           {% include "admin/base/base_messages.html" %}
           {% include "admin/guide/_steps_guide.html" %}
-          {% include "admin/guide/_step_2_pay.html" %}
+          <div class="row">
+            <div class="col-sm-12">
+              <div id="panel_res" class="box box-{{ apply_global_vars.level }} box-solid">
+                <div class="box-header with-border">
+                  <h3 class="box-title">{{ pro_resource_apply.project.name }} - {{ pro_resource_apply.desc }}</h3>
+                  <!--div class="box-tools pull-right">
+                    <button class="btn btn-box-tool" data-widget="remove"><i   class="fa fa-times"></i></button> </div--><!-- /.box-tools -->
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                  {% include "admin/guide/_step_2_pay.html" %}
+                </div><!-- /.box-body -->
+              </div><!-- /.box -->
+            </div>
+          </div><!-- /.box -->
         </section><!-- /.content -->

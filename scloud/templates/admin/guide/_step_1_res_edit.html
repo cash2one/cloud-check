@@ -42,7 +42,7 @@
   {# <============ 撤销申请 =============> #}
   {% set post_action = reverse_url('apply.resource.revoke') %}
   {% elif pro_resource_apply.status in [STATUS_RESOURCE.REVOKED, STATUS_RESOURCE.REFUSED] %}
-  {% set delete_action = reverse_url('resource_delete', pro_resource_apply.pro_id, pro_resource_apply.id) %}
+  {% set delete_action = reverse_url('apply.resource.del') %}
   <form id="resource_delete_form" action="{{ delete_action }}" method="POST">
     {{ handler.xsrf_form_html() }}
     <input type="hidden" name="post_res_id" value="{{ pro_resource_apply.id }}">

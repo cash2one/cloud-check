@@ -376,9 +376,9 @@ class ProResourceApplyService(BaseService):
         if not resource:
             return self.failure(ERROR.not_found_err)
         # 状态只有-1、-2（即：已撤销、申请被拒绝）可以删除
-        # if resource.status <= -1:
-        #     raise self.failure(ERROR.res_delete_err)
-        # resource.status = STATUS_RESOURCE.REVOKED
+        if resource.status > STATUS_RESOURCE.REVOKED:
+            return self.failure(ERROR.res_delete_err)
+        # resource.status = STATUS_RESOURCE.DELETED
         # self.db.add(resource)
         mail_content = mail_format % {
             "pro_name": resource.project.name,
@@ -454,6 +454,7 @@ class ProResourceApplyService(BaseService):
         sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
         task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=self.handler.current_user.id)
         return self.success(data=resource)
+
 
 class ProResourceCheckService(BaseService):
     @thrownException

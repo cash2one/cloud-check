@@ -269,6 +269,7 @@ class ProResourceSetStartHandler(GuideStepGetHandler):
         if isinstance(resource_res, Exception):
             raise resource_res
         data = self.get_pro_info_res(kwargs["pro_id"])
+        data.update(dict(last_apply=data["pro_info_res"].data.last_apply))
         self.add_message("云资源[%s-%s]环境启用时间设置成功！" % (start_res.data.project.name, start_res.data.desc), level="success", post_action=True)
         # logger.info("\t [data]: %s" % data )
         # logger.info("\t [data pro_info_res]: %s" % data["pro_info_res"])

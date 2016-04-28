@@ -20,37 +20,37 @@
     <td>{{ pro_resource_apply.project.env.name }}</td>
   </tr>
   {% for column in pro_resource_apply.__table__.columns %}
-  {% if column.info.name %}
-    {% if column.name == "status" %}
-    <tr>
-      <td>{{ column.info.name or column.name }}:</td>
-      {% set ST = STATUS_RESOURCE.get(pro_resource_apply.status) %}
-      <td><span class="label label-{{ ST.level }}">{{ ST.value }}, {{ ST.todo_value }}</span>
-      <a data-pjax href="{{ reverse_url('apply.resource.edit') }}?res_id={{ pro_resource_apply.id }}&pro_id={{ pro_resource_apply.pro_id }}"><i class="fa fa-edit"></i> 编辑</a>
-      </td>
-    </tr>
-    {% elif column.name == "internet_ip" %}
-    <tr>
-      <td>{{ column.info.name or column.name }}:</td>
-      <td><span class="label label-info">{{ pro_resource_apply.internet_ip_obj.name }}</span></td>
-    </tr>
-    {% elif column.name == "internet_ip_ssl" %}
-    <tr>
-      <td>{{ column.info.name or column.name }}:</td>
-      <td>
-      {% if pro_resource_apply.internet_ip_ssl > 0 %}
-      <span class="label label-info">需要SSL卸载</span>
+    {% if column.info.name %}
+      {% if column.name == "status" %}
+      <tr>
+        <td>{{ column.info.name or column.name }}:</td>
+        {% set ST = STATUS_RESOURCE.get(pro_resource_apply.status) %}
+        <td><span class="label label-{{ ST.level }}">{{ ST.value }}, {{ ST.todo_value }}</span>
+        <a data-pjax href="{{ reverse_url('apply.resource.edit') }}?res_id={{ pro_resource_apply.id }}&pro_id={{ pro_resource_apply.pro_id }}"><i class="fa fa-edit"></i> 编辑</a>
+        </td>
+      </tr>
+      {% elif column.name == "internet_ip" %}
+      <tr>
+        <td>{{ column.info.name or column.name }}:</td>
+        <td><span class="label label-info">{{ pro_resource_apply.internet_ip_obj.name }}</span></td>
+      </tr>
+      {% elif column.name == "internet_ip_ssl" %}
+      <tr>
+        <td>{{ column.info.name or column.name }}:</td>
+        <td>
+        {% if pro_resource_apply.internet_ip_ssl > 0 %}
+        <span class="label label-info">需要SSL卸载</span>
+        {% else %}
+        <span class="label label-default">不需要SSL卸载</span>
+        {% endif %}
+        </td>
+      </tr>
       {% else %}
-      <span class="label label-default">不需要SSL卸载</span>
+      <tr>
+        <td>{{ column.info.name or column.name }}:</td>
+        <td>{{ getattr(pro_resource_apply, column.name)|default('<span class="label label-danger">未设置</span>', True) }} {{ column.info.unit }}</td>
+      </tr>
       {% endif %}
-      </td>
-    </tr>
-    {% else %}
-    <tr>
-      <td>{{ column.info.name or column.name }}:</td>
-      <td>{{ getattr(pro_resource_apply, column.name)|default('<span class="label label-danger">未设置</span>', True) }} {{ column.info.unit }}</td>
-    </tr>
     {% endif %}
-  {% endif %}
   {% endfor %}
 </table>

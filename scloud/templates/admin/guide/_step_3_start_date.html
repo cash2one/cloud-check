@@ -30,7 +30,7 @@
                 form:"#resource_set_start_form",
                 button: "#resource_set_start_btn", 
                 pjax_container: false,
-                onSuccess: function(){
+                onSuccess: function(response){
                   $("section.content").prepend(response.data.messages_tmpl);
                   $("#resource_set_start_form").parent().html(response.data.tmpl);
                 },

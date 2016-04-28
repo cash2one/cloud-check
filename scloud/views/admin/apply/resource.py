@@ -78,6 +78,7 @@ class ProResourceDetailHandler(GuideStepGetHandler):
 @url("/apply/resource/add", name="apply.resource.add", active="apply.resource")
 @url("/apply/resource/edit", name="apply.resource.edit", active="apply.resource")
 @url("/apply/resource/revoke", name="apply.resource.revoke", active="apply.resource")
+@url("/apply/resource/pay", name="apply.resource.pay", active="apply.resource")
 class DoProResourceApplyHandler(ApplyHandler):
     u'权限申请'
     @check_perms('pro_info.view')
@@ -90,6 +91,9 @@ class DoProResourceApplyHandler(ApplyHandler):
             data = self.get_pro_data()
             svc = ProResourceApplyService(self)
             pro_resource_apply_res = svc.get_resource()
+            if self.kwargs["name"] == "apply.resource.pay":
+                data.update(dict(pro_resource_apply_res=pro_resource_apply_res))
+                return self.render_to_string("admin/apply/resource/pay.html", **data)
             svc = ProjectService(self)
             env_resource_value_res = svc.load_env_resource_values()
             env_internet_ip_types_res = svc.load_env_internet_ip_types()
@@ -115,6 +119,9 @@ class DoProResourceApplyHandler(ApplyHandler):
         elif self.kwargs["name"] == "apply.resource.revoke":
             post_action = u"撤销"
             pro_resource_apply_res = svc.do_revoke()
+        elif self.kwargs["name"] == "apply.resource.pay":
+            post_action = u"支付"
+            pro_resource_apply_res = svc.do_pay()
         pro_info_data = self.get_pro_data(pro_id=self.args.get("pro_id"))
         data = {
             "pro_resource_apply_res": pro_resource_apply_res
@@ -130,10 +137,16 @@ class DoProResourceApplyHandler(ApplyHandler):
         data.update(pro_info_data)
         if pro_resource_apply_res.return_code == 0:
             self.add_message(u"申请项目[%s-%s]%s资源成功！" % (pro_resource_apply_res.data.project.name, pro_resource_apply_res.data.desc, post_action), level="success", post_action=True)
-            tmpl = self.render_to_string("admin/guide/_step_1_res_detail.html", **data)
+            if self.kwargs["name"] == "apply.resource.pay":
+                tmpl = self.render_to_string("admin/guide/_step_2_pay_detail.html", **data)
+            else:
+                tmpl = self.render_to_string("admin/guide/_step_1_res_detail.html", **data)
         else:
             self.add_message(u"申请项目%s资源失败！(%s)%s" % (post_action, pro_resource_apply_res.return_code, pro_resource_apply_res.return_message), level="warning")
-            tmpl = self.render_to_string("admin/guide/_step_1_res_add.html", **data)
+            if self.kwargs["name"] == "apply.resource.pay":
+                tmpl = self.render_to_string("admin/guide/_step_2_pay.html", **data)
+            else:
+                tmpl = self.render_to_string("admin/guide/_step_1_res_add.html", **data)
         messages_tmpl = self.render_to_string("admin/base/base_messages.html")
         return simplejson.dumps(self.success(data={"tmpl": tmpl, "messages_tmpl": messages_tmpl}))
 
@@ -177,19 +190,45 @@ class GuideGenerateFeeHandler(ApplyHandler):
 
 
 @url("/apply/resource/delete", name="apply.resource.del", active="guide")
-class ProResourceDeleteHandler(GuideStepGetHandler):
+class ProResourceDeleteHandler(ApplyHandler):
     u"""删除资源申请"""
     @check_perms('pro_resource_apply.delete')
     @unblock
-    def delete(self, **kwargs):
+    def post(self, **kwargs):
         svc = ProResourceApplyService(self, kwargs)
         delete_res = svc.do_delete()
-        resource_res = svc.get_resource()
+        pro_resource_applies_res = svc.get_list()
+        svc = ProjectService(self)
+        pro_list_res = svc.get_project_list()
+        # svc = ProResourceApplyService(self)
+        if pro_list_res.return_code < 0:
+            raise SystemError(pro_list_res.return_code, pro_list_res.return_message)
+        logger.info(pro_list_res)
+        data = dict(
+            pro_list_res = pro_list_res,
+            page = self.getPage(pro_resource_applies_res.data)
+        )
         if isinstance(delete_res, Exception):
-            raise resource_res
-        data = self.get_pro_info_res(kwargs["pro_id"])
-        self.add_message("云资源[%s-%s]申请删除成功！"% (delete_res.data.project.name, delete_res.data.desc), level="success")
+            raise delete_res
+        # data = self.get_pro_info_res(kwargs["pro_id"])
+        if delete_res.return_code == 0:
+            self.add_message("云资源[%s-%s]记录删除成功！"% (delete_res.data.project.name, delete_res.data.desc), level="success")
+        else:
+            self.add_message("云资源记录删除失败！(%s)%s"% (delete_res.return_code, delete_res.return_message), level="warning")
         # logger.info("\t [data]: %s" % data )
         # logger.info("\t [data pro_info_res]: %s" % data["pro_info_res"])
-        tmpl = self.render_to_string("admin/guide/step1_pjax.html", **data)
+        tmpl = self.render_to_string("admin/apply/resource/index_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))
+
+
+@url("/apply/resource/pay_history", name="apply.resource.pay_history", active="apply.resource")
+class ProResourcePayHistoryHandler(ApplyHandler):
+    u"""资源申请支付历史"""
+    @check_perms('pro_resource_apply.view')
+    @unblock
+    def get(self):
+        data = self.get_pro_data(pro_id=self.args.get("pro_id"))
+        svc = ProResourceApplyService(self)
+        pro_resource_apply_res = svc.get_resource()
+        data.update(dict(pro_resource_apply_res=pro_resource_apply_res))
+        return self.render_to_string("admin/apply/resource/pay_history.html", **data)

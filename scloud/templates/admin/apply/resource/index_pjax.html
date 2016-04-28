@@ -19,7 +19,7 @@
               <div class="box">
                 <div class="box-header">
                   <h3 class="box-title">
-                    {{ macro_index_page_search.search('apply.resource', 'apply.resource.add', '资源申请') }}
+                    {{ macro_index_page_search.search('apply.resource', 'apply.resource.add', '资源申请', ST="STATUS_RESOURCE") }}
                   </h3>
                   <div class="box-tools">
                     <a data-pjax href="{{ reverse_url('apply.resource') }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
@@ -42,9 +42,6 @@
                       <td>{{ resource.desc }}</td>
                       <td>{{ resource.project.name }}</td>
                       <td><span class="label label-{{ STATUS_RESOURCE.get(resource.status).level }}">{{ STATUS_RESOURCE.get(resource.status).value }}, {{ STATUS_RESOURCE.get(resource.status).todo_value }}</span>
-                      {% if resource.status == STATUS_RESOURCE.CHECKED %}
-                      <a class="btn btn-warning btn-xs" href="javascript:;" style="color:#FFFFFF" onclick="pro_table_do_confirm({_this:this, pro_table:'pro_resource', ids:[{{ resource.id }}]})"> 确认</a>
-                      {% endif %}
                       </td>
                       <td><span class="label label-{{ STATUS_YESNO.get(resource.is_enable).level }}">{{ STATUS_YESNO.get(resource.is_enable).value }}</span>
                       </td>
@@ -52,11 +49,16 @@
                       <td>
                         <div class="input-group-btn">
                           <a data-pjax href="{{ reverse_url('apply.resource.detail') }}?res_id={{ resource.id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</a>
+                          {% if resource.status == STATUS_RESOURCE.CHECKED %}
+                          <a data-pjax href="{{ reverse_url('apply.resource.pay') }}?res_id={{ resource.id }}&pro_id={{ resource.pro_id }}" class="btn btn-xs btn-info"><i class="fa fa-credit-card"></i> 支付</a>
+                          {% elif resource.status > STATUS_RESOURCE.CHECKED %}
+                          <a data-pjax href="{{ reverse_url('apply.resource.pay_history') }}?res_id={{ resource.id }}&pro_id={{ resource.pro_id }}" class="btn btn-xs btn-info"><i class="fa fa-credit-card"></i> 支付历史</a>
+                          {% endif %}
                           <a data-pjax href="{{ reverse_url('apply.resource.edit') }}?res_id={{ resource.id }}&pro_id={{ resource.pro_id }}" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i> 编辑</a>
-                          <button class="btn btn-xs btn-danger" id="form_del_pro_resource_{{ resource.id }}_btn" onclick="do_del_pro_resource('{{ resource.id }}', '{{ resource.resourcename }}')"><i class="fa fa-trash"></i> 删除</button>
+                          <button class="btn btn-xs btn-danger" id="form_del_pro_resource_{{ resource.id }}_btn" onclick="do_del_pro_resource('{{ resource.id }}', '{{ resource.project.name }}')"><i class="fa fa-trash"></i> 删除</button>
                           <form id="form_del_pro_resource_{{ resource.id }}" action="{{ reverse_url('apply.resource.del') }}">
                           {{ handler.xsrf_form_html() }}
-                          <input type="hidden" name="resource_id" value="{{ resource.id }}">
+                          <input type="hidden" name="res_id" value="{{ resource.id }}">
                           </form>
                         </div>
                       </td>
@@ -72,7 +74,7 @@
         <script type="text/javascript">
         function do_del_pro_resource(id, name){
           confirmBox({
-              message: "确定删除权限用户"+name+"吗？",
+              message: "确定删除资源申请"+name+"吗？",
               onConfirm: function(){
                 generate_ajax_post({
                     form: "#form_del_pro_resource_"+id,

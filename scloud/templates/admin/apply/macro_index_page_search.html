@@ -1,5 +1,5 @@
 {% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
-{% macro search(reverse_url_form="", reverse_url_add="", name="") -%}
+{% macro search(reverse_url_form="", reverse_url_add="", name="", ST="STATUS_PRO_TABLES") -%}
 <form data-pjax action="{{ reverse_url(reverse_url_form) }}" method="GET">
   <div class="input-group col-sm-5" style="width: 500px;">
     <div class="input-group input-group-sm row">
@@ -7,7 +7,11 @@
         <input type="text" name="search" class="form-control input-sm pull-right" placeholder="用户名" value="{{ handler.args.get('search', '')}}">
       </div>
       <div class="col-md-6" style="padding-left:0px; max-height: 30px">
+        {% if ST == "STATUS_PRO_TABLES" %}
         {{ pro_macro.select_pro_table_status(status=handler.args.get("status", -3)) }}
+        {% else %}
+        {{ pro_macro.select_pro_resource_status(status=handler.args.get("status", -3)) }}
+        {% endif %}
       </div>
     </div>
     <div class="input-group-btn">

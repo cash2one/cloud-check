@@ -1,28 +1,18 @@
 {% from "admin/base/base_macros.html" import check_post with context %}
 {% import "admin/base/base_macros.html" as mbase %}
-{% set last_apply = apply_global_vars.last_apply %}
   <!-- Horizontal Form -->
-  {% if last_apply %}
-  <div class="row">
-    <div class="col-sm-12">
-      <div id="panel_res" class="box box-{{ apply_global_vars.level }} box-solid">
-        <div class="box-header with-border">
-          <h3 class="box-title">{{ last_apply.project.name }} - {{ last_apply.desc }}</h3>
-          <!--div class="box-tools pull-right">
-            <button class="btn btn-box-tool" data-widget="remove"><i   class="fa fa-times"></i></button> </div--><!-- /.box-tools -->
-        </div><!-- /.box-header -->
-        <div class="box-body">
-          {% if last_apply %}
+  {% if pro_resource_apply %}
+
+          {% if pro_resource_apply %}
             {# ========== 当前状态为已审核状态，才可以进行支付 ========== #}
-            {% if last_apply.status|int == STATUS_RESOURCE.CHECKED|int %}
-            {% set unit_fee = last_apply.unit_fee %}
-            {% set period = last_apply.period %}
-            {% set total_fee = last_apply.total_fee %}
-            {% set post_action = reverse_url('guide_step_2', pro_info_res.data.id) %}
+            {% if pro_resource_apply.status|int == STATUS_RESOURCE.CHECKED|int %}
+            {% set unit_fee = pro_resource_apply.unit_fee %}
+            {% set period = pro_resource_apply.period %}
+            {% set total_fee = pro_resource_apply.total_fee %}
           <!-- form start -->
-            <form data-pjax action="{{ post_action }}" class="form-horizontal" method="POST">
+            <form id="resource_pay_form" data-pjax action="{{ reverse_url('apply.resource.pay') }}?res_id={{ pro_resource_apply.id }}&pro_id={{ pro_resource_apply.pro_id }}" class="form-horizontal" method="POST">
             {{ handler.xsrf_form_html() }}
-              <input type="hidden" name="res_id" value="{{ last_apply.id }}">
+              <input type="hidden" name="res_id" value="{{ pro_resource_apply.id }}">
               <input type="hidden" name="action" value="{{ STATUS_RESOURCE.payed.value_en }}">
               <div class="box-body">
                 <fieldset>
@@ -49,55 +39,61 @@
                 </fieldset>
               </div><!-- /.box-body -->
               <div class="box-footer text-center">
-                {% if last_apply %}
-                  {% if last_apply.status|int == 1 %}
-                  <button id="btn_do_pay" type="button" onclick="do_pay()" class="btn btn-{{ STATUS_RESOURCE.revoked.level }}">完成支付</button>
+                {% if pro_resource_apply %}
+                  {% if pro_resource_apply.status|int == 1 %}
+                  <button id="resource_pay_form_tn" type="button" onclick="do_pay()" class="btn btn-{{ STATUS_RESOURCE.revoked.level }}">完成支付</button>
                   {% endif %}
                 {% else %}
                 {% endif %}
               </div><!-- /.box-footer -->
             </form>
-            {% elif last_apply.status|int < 1 %}
-            <a data-pjax href="{{ reverse_url('guide_step_1', pro_info_res.data.id) }}" class="btn btn-{{ STATUS_RESOURCE.get(last_apply.status).level }}">返回提交申请</a>
-            {% elif last_apply.status|int > 1 %}
-            <a data-pjax href="{{ reverse_url('guide_step_3', pro_info_res.data.id) }}" class="btn btn-{{ STATUS_RESOURCE.get(last_apply.status).level }}">去填写运行参数</a>
+            {% elif pro_resource_apply.status|int < 1 %}
+            <a data-pjax href="{{ reverse_url('guide_step_1', pro_resource_apply.pro_id) }}" class="btn btn-{{ STATUS_RESOURCE.get(pro_resource_apply.status).level }}">返回提交申请</a>
+            {% elif pro_resource_apply.status|int > 1 %}
+            <a data-pjax href="{{ reverse_url('guide_step_3', pro_resource_apply.pro_id) }}" class="btn btn-{{ STATUS_RESOURCE.get(pro_resource_apply.status).level }}">去填写运行参数</a>
             {% endif %}
           {% else %}
-          <a data-pjax href="{{ reverse_url('guide_step_1', pro_info_res.data.id) }}" class="btn btn-{{ STATUS_RESOURCE.unknown.level }}">返回提交申请</a>
+          <a data-pjax href="{{ reverse_url('guide_step_1', pro_resource_apply.pro_id) }}" class="btn btn-{{ STATUS_RESOURCE.unknown.level }}">返回提交申请</a>
           {% endif %}
-        </div><!-- /.box-body -->
-      </div><!-- /.box -->
-    </div>
-  </div><!-- /.box -->
   {% else %}
-  <a data-pjax href="{{ reverse_url('guide_step_2', pro_info_res.data.id) }}{% if s %}?{{ s }}{% endif %}" class="btn btn-default">刷新重试</a>
+  <a data-pjax href="{{ reverse_url('guide_step_2', pro_resource_apply.pro_id) }}{% if s %}?{{ s }}{% endif %}" class="btn btn-default">刷新重试</a>
   {% endif %}
   <script type="text/javascript">
   function check_form(){
     return true;
   }
   function do_pay(){
-    var params = $("form").serialize();
-    console.log(params)
-    // $("#btn_do_pay").button("loading");
-    $.ajax({
-      url: '{{ reverse_url("guide_step_2_payed", pro_info_res.data.id) }}',
-      type: 'POST',
-      dataType: 'JSON',
-      data: params,
-      success: function(response){
-        $("#btn_do_pay").button("reset");
-        if(check_response(response)){
-          $("#pjax-container").html(response.data);
-          // do_notice_checker();
-        }
+    // var params = $("form").serialize();
+    // console.log(params)
+    // // $("#btn_do_pay").button("loading");
+    // $.ajax({
+    //   url: '{{ reverse_url("guide_step_2_payed", pro_resource_apply.pro_id) }}',
+    //   type: 'POST',
+    //   dataType: 'JSON',
+    //   data: params,
+    //   success: function(response){
+    //     $("#btn_do_pay").button("reset");
+    //     if(check_response(response)){
+    //       $("#pjax-container").html(response.data);
+    //       // do_notice_checker();
+    //     }
+    //   },
+    //   error: function(xhr, textStatus){
+    //     if (textStatus == 'timeout'){
+    //       do_pay();
+    //     }
+    //   },
+    //   timeout: 3000,
+    // })
+    generate_ajax_post({
+      form: $("#resource_pay_form"),
+      button: $("#resource_pay_form_btn"),
+      pjax_container: false,
+      onSuccess: function(response){
+        $("section.content").prepend(response.data.messages_tmpl);
+        $("#resource_pay_form").parent().html(response.data.tmpl);
       },
-      error: function(xhr, textStatus){
-        if (textStatus == 'timeout'){
-          do_pay();
-        }
-      },
-      timeout: 3000,
+      onTimeout: function(){ do_pay(); }
     })
   }
   </script>
