@@ -31,8 +31,8 @@ class ProResourceApplyService(BaseService):
         ).filter(
             Pro_Resource_Apply.user_id == self.handler.current_user.id
         ).order_by(Pro_Resource_Apply.id.desc()).all()
-        if not resources_res:
-            return NotFoundError()
+        # if not resources_res:
+        #     return NotFoundError()
         return self.success(data=resources_res)
 
     @thrownException
