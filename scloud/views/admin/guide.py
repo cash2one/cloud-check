@@ -32,10 +32,12 @@ class GuideStepGetHandler(AuthHandler):
         kw = {"pro_id": pro_id}
         svc = ProjectService(self, kw)
         pro_info_res = svc.get_project()
+        pro_list_res = svc.get_project_list()
         if isinstance(pro_info_res, Exception):
             raise pro_info_res
         data = {
             "pro_info_res": pro_info_res,
+            "pro_list_res": pro_list_res,
             "STATUS_RESOURCE": STATUS_RESOURCE,
         }
         return data

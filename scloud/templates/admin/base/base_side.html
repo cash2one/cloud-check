@@ -30,6 +30,12 @@
       #}
       {% if "pro_info.view" in current_perms %}
       <li class="">
+        <a data-pjax name="apply.resource" href="{{ reverse_url('apply.resource') }}">
+          <i class="fa fa-database"></i> <span>资源申请</span>
+          <span class="label label-warning pull-right"></span>
+        </a>
+      </li>
+      <li class="">
         <a data-pjax name="apply.user" href="{{ reverse_url('apply.user') }}">
           <i class="fa fa-user"></i> <span>权限申请</span>
           <span class="label label-warning pull-right"></span>
@@ -65,12 +71,6 @@
           <span class="label label-warning pull-right"></span>
         </a>
       </li-->
-      <li class="">
-        <a data-pjax name="apply.resource" href="{{ reverse_url('apply.resource') }}">
-          <i class="fa fa-database"></i> <span>资源申请</span>
-          <span class="label label-warning pull-right"></span>
-        </a>
-      </li>
       {% endif %}
 
       {% if "pro_info.check" in current_perms %}

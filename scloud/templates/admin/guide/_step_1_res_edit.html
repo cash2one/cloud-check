@@ -2,7 +2,11 @@
 {% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
 
 {% set res = pro_resource_apply_res or fee_res %}
+{% if pro_resource_apply_res and pro_resource_apply_res.return_code == 0 %}
 {% set pro_resource_apply = pro_resource_apply_res.data %}
+{% else %}
+{% set pro_resource_apply = pro_info_res.data.last_apply %}
+{% endif %}
 {% if handler.request.method == "POST" %}
     {% set pro_id = handler.args.get('pro_id', '') %}
     {% set computer = handler.args.get('computer', '') %}

@@ -1,5 +1,6 @@
 
 {% set apply_global_vars = pro_info_res.data.get_apply_global_vars() %}
+{% set pro_info = pro_info_res.data %}
 <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
@@ -27,7 +28,11 @@
                 </ul>
                 <div class="tab-content">
                   <div class="tab-pane active" id="tab_1">
-                    {% include "admin/guide/_step_1_res.html" %}
+                  {% if pro_info.last_apply %}
+                    {% include "admin/guide/_step_1_res_edit.html" %}
+                  {% else %}
+                    {% include "admin/guide/_step_1_res_add.html" %}
+                  {% endif %}
                   </div><!-- /.tab-pane -->
                 </div><!-- /.tab-content -->
               </div><!-- nav-tabs-custom -->
