@@ -1,18 +1,25 @@
 <tr>
   <th></th>
-  <th class="mailbox-star"></th>
-  <th class="mailbox-subject">申请项目</th>
+  <th class="mailbox-star">事件编号</th>
   <th class="mailbox-attachment">事件标题</th>
-  <th class="mailbox-name">申请用户</th>
-  <th class="mailbox-date">申请时间</th>
+  <th class="mailbox-star">提交时间</th>
+  <th class="mailbox-star">最后更新</th>
+  <!-- <th class="mailbox-subject">所属项目</th> -->
+  <!-- <th class="mailbox-name">申请用户</th> -->
+  <th class="mailbox-date">状态</th>
 </tr>
 {% for pro_table in page.object_list %}
 <tr>
   <td><input type="checkbox" value="{{ pro_table.id }}"></td>
-  <td class="mailbox-star"><a href="javascript:;"><i class="fa fa-star text-yellow"></i></a></td>
-  <td class="mailbox-subject"><b><a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url("pro_event_detail", pro_table.id) }}')">{{ pro_table.project.name }} <i class="fa fa-eye"></a></a></b></td>
+  <td class="mailbox-star"><a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url("pro_event_detail", pro_table.id) }}')">{{ pro_table.id }}</a></td>
   <td class="mailbox-subject">{{ pro_table.title }}</td>
-  <td class="mailbox-subject">{{ pro_table.user.email or pro_table.user.username }}</td>
+  <td class="mailbox-date">{{ pro_table.create_time }}</td>
   <td class="mailbox-date">{{ pro_table.update_time }}</td>
+  <!-- <td class="mailbox-subject"><b><a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url("pro_event_detail", pro_table.id) }}')">{{ pro_table.project.name }} <i class="fa fa-eye"></i></a></b></td> -->
+  <!-- <td class="mailbox-subject">{{ pro_table.user.email or pro_table.user.username }}</td> -->
+  <td class="mailbox-date">
+    {% set ST = STATUS_PRO_TABLES.get(pro_table.status) %}
+    <span class='label label-{{ ST.level }}'>{{ ST.value }}, {{ ST.todo_value }}</span>
+  </td>
 </tr>
 {% endfor %}

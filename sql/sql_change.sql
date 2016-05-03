@@ -1,4 +1,25 @@
 /* ------------------ 2016-04-13 ------------------ */
+CREATE TABLE `pro_notice` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `pro_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属项目',
+    `res_apply_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属资源申请',
+    `status` INT(11) NOT NULL DEFAULT '0' COMMENT '提交状态 0:已提交（受理中），1：已处理（已处理）,-1:已拒绝（已拒绝）',
+    `priority` INT(11) NOT NULL DEFAULT '0' COMMENT '优先级别 0:普通，1：重要,2：紧急',
+    `title` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '事件标题',
+    `content` VARCHAR(1024) NOT NULL DEFAULT '' COMMENT '事件内容/受理回复内容',
+    `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+    `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核者ID',
+    `check_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '审核时间',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)
+COMMENT='项目事件表'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=0;
+
+/* ------------------ 2016-04-13 ------------------ */
 CREATE TABLE `pro_event` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
     `pro_id` INT(11) NOT NULL DEFAULT '0' COMMENT '所属项目',

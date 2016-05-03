@@ -2,7 +2,7 @@
 {% set pro_event = pro_event_res.data %}
 <div class="box-header with-border">
   <h3 class="box-title">
-    事件工单详情
+    事件工单详情(事件编号：{{ pro_event.id }})
   </h3>
 </div><!-- /.box-header -->
 <div class="box-body no-padding">
@@ -11,7 +11,6 @@
     {% include "admin/check/_event_detail_buttons.html" %}
   </div>
   <table class="table table-hover table-striped" style="display: none" id="pro_table_check_list_table">
-    {% set pro_event = pro_event_res.data %}
     <tr>
       <th></th>
       <td>

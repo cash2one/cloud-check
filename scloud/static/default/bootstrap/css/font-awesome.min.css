@@ -5,14 +5,6 @@
     font-weight: normal;
     src: url("../../bootstrap/fonts4.4/fontawesome-webfont.eot?#iefix&v=4.4.0") format("embedded-opentype"), url("../../bootstrap/fonts4.4/fontawesome-webfont.woff2?v=4.4.0") format("woff2"), url("../../bootstrap/fonts4.4/fontawesome-webfont.woff?v=4.4.0") format("woff"), url("../../bootstrap/fonts4.4/fontawesome-webfont.ttf?v=4.4.0") format("truetype"), url("../../bootstrap/fonts4.4/fontawesome-webfont.svg?v=4.4.0#fontawesomeregular") format("svg");
 }
-/*@font-face {
-  font-family: 'FontAwesome';
-  src: url('../../bootstrap-fonts/fontawesome-webfont.eot?v=4.0.3');
-  src: url('../../bootstrap-fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), url('../../bootstrap-fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('../../bootstrap-fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('../../bootstrap-fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
-*/
 
 .fa {
     -moz-font-feature-settings: normal;
