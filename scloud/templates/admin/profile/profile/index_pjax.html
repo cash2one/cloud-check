@@ -6,16 +6,8 @@
 
 {% import "admin/base/base_macros.html" as base %}
         {% set current_user = handler.current_user %}
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-          <h1>
-            个人信息
-          </h1>
-          <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li class="active">User profile</li>
-          </ol>
-        </section>
+
+{% include "admin/base/base_bread.html" %}
 
         <!-- Main content -->
         <section class="content">

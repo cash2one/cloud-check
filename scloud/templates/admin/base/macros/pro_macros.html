@@ -58,7 +58,7 @@
   <!--div class="col-sm-4"-->
   
   <!-- <div class="input-group-btn" style="min-width:200px"> -->
-    <select id="status" name="status" class="input-sm" style="width: 100%; height:30px">
+    <select id="status" name="status" class="input-group-sm input-sm" style="width: 100%; height:30px">
       <option value="" selected="selected"> -- 选择状态 -- </option>
       {% for ST in STATUS_PRO_TABLES|status_list(reverse=True) %}
       <option status_level="{{ ST.level }}" status_value="{{ ST.value }}" value="{{ STATUS_PRO_TABLES.get(ST.value_en|upper) }}"{% if STATUS_PRO_TABLES.get(ST.value_en|upper) == status|int %} selected="selected"{% endif %}>{{ ST.value }}, {{ ST.todo_value }}</option>
@@ -86,17 +86,23 @@
     <select id="status" name="status" class="input-sm" style="width: 100%; height:30px">
       <option value="" selected="selected"> -- 选择状态 -- </option>
       {% for ST in STATUS_RESOURCE|status_list(reverse=True) %}
-      <option status_level="{{ ST.level }}" status_value="{{ ST.value }}" value="{{ STATUS_RESOURCE.get(ST.value_en|upper) }}"{% if STATUS_RESOURCE.get(ST.value_en|upper) == status|int %} selected="selected"{% endif %}>{{ ST.value }}, {{ ST.todo_value }}</option>
+      <option status_level="{{ ST.level }}" value="{{ STATUS_RESOURCE.get(ST.value_en|upper) }}"{% if STATUS_RESOURCE.get(ST.value_en|upper) == status|int %} selected="selected"{% endif %}>{{ ST.value }}, {{ ST.todo_value }}</option>
       {% endfor %}
     </select>
   <!--/div>< /btn-group -->
   <!--/div>
 </div-->
 <script text="text/javascript">
+  function formatST(state){
+    if (!state.id) { return state.text; }
+    var status_level = $(state.element).attr("status_level");
+    var $state = $(" <span class='label label-"+status_level+"'>"+state.text+"</span>");
+    return $state;
+  }
   $("select").select2();
-  // $("select[name=pro_id]").select2({
-  //     templateResult: formatPro,
-  //     templateSelection: formatPro
-  // });
+  $("select[name=status]").select2({
+      templateResult: formatST,
+      templateSelection: formatST
+  });
 </script>
 {% endmacro %}

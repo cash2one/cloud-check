@@ -1,15 +1,5 @@
 
-<!-- Content Header (Page header) -->
-        <section class="content-header">
-          <h1>
-            {{ handler }}
-            <small>Control panel</small>
-          </h1>
-          <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> 权限管理</a></li>
-            <li class="active">{{ handler }}</li>
-          </ol>
-        </section>
+{% include "admin/base/base_bread.html" %}
         <!-- Main content -->
         <section class="content">
           {% include "admin/base/base_messages.html" %}

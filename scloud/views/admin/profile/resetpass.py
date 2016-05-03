@@ -22,11 +22,12 @@ from scloud.utils.error import SystemError
 
 @url("/user/resetpass", name="user_resetpass", active="user_resetpass")
 class ProfileHandler(AuthHandler):
-    u"""充值密码"""
+    u"""重置密码"""
 
     @unblock
     def get(self):
         return self.render_to_string("admin/profile/resetpass/index.html")
+
     @unblock
     def post(self):
         svc = ProfileService(self)
@@ -37,7 +38,5 @@ class ProfileHandler(AuthHandler):
                              post_action=True)
         else:
             self.add_message(u"密码修改失败！(%s)(%s)" % (res.return_code, res.return_message), level="warning")
-        tmpl = self.render_to_string("admin/profile/resetpass/index_pjax.html",
-                                     res=res);
+        tmpl = self.render_to_string("admin/profile/resetpass/index_pjax.html", res=res)
         return simplejson.dumps(self.success(data=tmpl))
- 

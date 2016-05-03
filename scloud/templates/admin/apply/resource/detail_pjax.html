@@ -1,49 +1,41 @@
 {% import "admin/base/base_macros.html" as base with context %}
 {% set pro_resource_apply = pro_resource_apply_res.data %}
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-          <h1>
-            {{ handler }}
-          </h1>
-          <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li class="active">{{ handler }}</li>
-          </ol>
-        </section>
 
-        <!-- Main content -->
-        <section class="content">
-        {% include "admin/base/base_messages.html" %}
-          <div class="row">
-            <div class="col-md-12">
-              <div class="box box-primary">
-                <div class="box-header with-border">
-                  <h3 class="box-title">
-                  <a data-pjax href="{{ reverse_url('apply.resource') }}" class="btn btn-sm btn-default"><i class="fa fa-reply"></i></a>
-                  {{ pro_resource_apply.project.name }}</h3>
-                  <div class="box-tools pull-right">
-                    <a data-pjax href="{{ reverse_url('apply.resource.detail') }}?res_id={{ pro_resource_apply.id }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
-                  </div>
-                </div><!-- /.box-header -->
-                <div class="box-body">
-                    {% include "admin/guide/_step_1_res_detail.html" %}
-                </div>
-              </div><!-- /. box -->
-            </div><!-- /.col -->
-          </div><!-- /.row -->
-        </section><!-- /.content -->
-        <script type="text/javascript">
-          $(function () {
-            //Add text editor
-            // $("#reply_content").wysihtml5();
-          });
-          function do_event_reply(){
-            generate_ajax_post({
-              form: "#form_event_reply",
-              btn: "#form_event_reply_btn",
-              onTimeout: function(){
-                do_event_reply();
-              }
-            });
-          }
-        </script>
+{% include "admin/base/base_bread.html" %}
+
+<!-- Main content -->
+<section class="content">
+{% include "admin/base/base_messages.html" %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">
+          <a data-pjax href="{{ reverse_url('apply.resource') }}" class="btn btn-sm btn-default"><i class="fa fa-reply"></i></a>
+          {{ pro_resource_apply.project.name }}</h3>
+          <div class="box-tools pull-right">
+            <a data-pjax href="{{ reverse_url('apply.resource.detail') }}?res_id={{ pro_resource_apply.id }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
+          </div>
+        </div><!-- /.box-header -->
+        <div class="box-body">
+            {% include "admin/guide/_step_1_res_detail.html" %}
+        </div>
+      </div><!-- /. box -->
+    </div><!-- /.col -->
+  </div><!-- /.row -->
+</section><!-- /.content -->
+<script type="text/javascript">
+  $(function () {
+    //Add text editor
+    // $("#reply_content").wysihtml5();
+  });
+  function do_event_reply(){
+    generate_ajax_post({
+      form: "#form_event_reply",
+      btn: "#form_event_reply_btn",
+      onTimeout: function(){
+        do_event_reply();
+      }
+    });
+  }
+</script>

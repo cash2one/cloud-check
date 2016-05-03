@@ -39,20 +39,20 @@ class GuideStepGetHandler(AuthHandler):
 
 @url("/apply/resource/index", name="apply.resource", active="apply.resource")
 class ProResourceApplyIndexHandler(GuideStepGetHandler):
-    u'权限申请'
+    u'资源申请'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
         svc = ProjectService(self)
         pro_list_res = svc.get_project_list()
+        logger.info(pro_list_res)
         svc = ProResourceApplyService(self)
         pro_resource_applies_res = svc.get_list()
-        if pro_list_res.return_code < 0:
-            raise SystemError(pro_list_res.return_code, pro_list_res.return_message)
-        logger.info(pro_list_res)
+        pro_resource_apply_list = pro_resource_applies_res.data
+        logger.info(pro_resource_apply_list)
         data = dict(
             pro_list_res = pro_list_res,
-            page = self.getPage(pro_resource_applies_res.data)
+            page = self.getPage(pro_resource_apply_list)
         )
         return self.render_to_string("admin/apply/resource/index.html", **data)
 
@@ -60,7 +60,7 @@ class ProResourceApplyIndexHandler(GuideStepGetHandler):
 @url("/apply/resource/detail", name="apply.resource.detail", active="apply.resource")
 class ProResourceDetailHandler(GuideStepGetHandler):
     SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
-    u'权限用户详情'
+    u'资源申请详情'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -80,7 +80,7 @@ class ProResourceDetailHandler(GuideStepGetHandler):
 @url("/apply/resource/revoke", name="apply.resource.revoke", active="apply.resource")
 @url("/apply/resource/pay", name="apply.resource.pay", active="apply.resource")
 class DoProResourceApplyHandler(ApplyHandler):
-    u'权限申请'
+    u'资源申请'
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -171,6 +171,7 @@ class ResourceLoadEnvHandler(AuthHandler):
 
 @url("/apply/resource/generate_fee", name="apply.resource.generate_fee", active="apply.resource")
 class GuideGenerateFeeHandler(ApplyHandler):
+    "资源申请费用试算"
     @unblock
     def post(self, **kwargs):
         data = self.get_pro_data()

@@ -26,13 +26,21 @@ class ProResourceApplyService(BaseService):
 
     @thrownException
     def get_list(self):
+        search = self.params.get("search")
+        status = self.params.get("status")
+        conditions = and_()
+        conditions.append(Pro_Resource_Apply.user_id == self.handler.current_user.id)
+        if search:
+            conditions.append(Pro_Info.name.like('%' + search + '%'))
+        if status:
+            conditions.append(Pro_Resource_Apply.status == status)
         resources_res = self.db.query(
             Pro_Resource_Apply
+        ).join(
+            Pro_Info, Pro_Resource_Apply.pro_id == Pro_Info.id
         ).filter(
-            Pro_Resource_Apply.user_id == self.handler.current_user.id
+            conditions
         ).order_by(Pro_Resource_Apply.id.desc()).all()
-        # if not resources_res:
-        #     return NotFoundError()
         return self.success(data=resources_res)
 
     @thrownException
@@ -265,7 +273,7 @@ class ProResourceApplyService(BaseService):
         mail_html = self.render_to_string("admin/mail/pro_resource_apply_to_admin.html", resource_apply=apply, STATUS_RESOURCE=STATUS_RESOURCE)
         logger.info("<" + "=" * 60 + ">")
         logger.info(mail_html)
-        user_name = apply.user.email or apply.user.mobile
+        # user_name = apply.user.email or apply.user.mobile
         mail_title = mail_title_format % {
             "user_name": apply.user.email or apply.user.mobile,
             "pro_name": apply.project.name,

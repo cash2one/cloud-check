@@ -1,190 +1,181 @@
 
 {% set current_res_status = handler.args.get("res_status", 0)|int %}
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-          <h1>
-            {{ handler }}
-            <small></small>
-          </h1>
-          <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li class="active">{{ handler }}</li>
-          </ol>
-        </section>
 
-        <!-- Main content -->
-        <section class="content">
-          {% include "admin/base/base_messages.html" %}
-          <div class="row">
-            <div class="col-md-3">
-              <div class="box box-solid">
-                <div class="box-header with-border">
-                  <h3 class="box-title">分类</h3>
-                  <div class="box-tools">
-                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                  </div>
-                </div>
-                <div class="box-body no-padding">
-                  <ul class="nav nav-pills nav-stacked">
-                    <!--li class="active"><a href="#"><i class="fa fa-inbox"></i> 待审核 <span class="label label-primary pull-right">12</span></a></li-->
-                    {% for res_status in STATUS_RESOURCE_RANGE %}
-                    <li name="res_status_{{ res_status }}">
-                    <a data-pjax 
-                    href="{{ reverse_url('resource_check_list') }}?res_status={{ res_status }}">
-                    <i class="fa fa-circle-o text-{{ STATUS_RESOURCE.get(res_status).level }}"></i> 
-                    {{ STATUS_RESOURCE.get(res_status).todo_value }} 
-                    {% set status_count = resource_res.data.status_counts.get(res_status, 0) %}
-                    {% if status_count > 0 %}
-                    <span class="label label-{{ STATUS_RESOURCE.get(res_status).level }} pull-right">
-                    {{ status_count }}
-                    </span>
-                    {% endif %}
-                    </a></li>
-                    {% endfor %}
-                  </ul>
-                </div><!-- /.box-body -->
-              </div><!-- /. box -->
-              <div class="box box-solid">
-                <div class="box-header with-border">
-                  <h3 class="box-title">Labels</h3>
-                  <div class="box-tools">
-                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                  </div>
-                </div>
-                <div class="box-body no-padding">
-                  <ul class="nav nav-pills nav-stacked">
-                    <li><a href="#"><i class="fa fa-circle-o text-red"></i> Important</a></li>
-                    <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> Promotions</a></li>
-                    <li><a href="#"><i class="fa fa-circle-o text-light-blue"></i> Social</a></li>
-                  </ul>
-                </div><!-- /.box-body -->
-              </div><!-- /.box -->
-            </div><!-- /.col -->
-            <div class="col-md-9">
-              <div class="box box-primary">
-                <div class="box-header with-border">
-                <h3 class="box-title">{{ STATUS_RESOURCE.get(current_res_status).todo_value }}({{ STATUS_RESOURCE.get(current_res_status).value }})</h3>
-                  <div class="box-tools pull-right">
-                    <div class="has-feedback">
-                      <input type="text" class="form-control input-sm" placeholder="Search Mail">
-                      <span class="glyphicon glyphicon-search form-control-feedback"></span>
-                    </div>
-                  </div><!-- /.box-tools -->
-                </div><!-- /.box-header -->
-                <div class="box-body no-padding">
-                  <div class="mailbox-controls">
-                    {% include "admin/check/_check_list_buttons.html" %}  
-                  </div>
-                  <div class="table-responsive mailbox-messages">
-                    <table class="table table-hover table-striped" id="resource_check_list_table">
-                      <tbody>
-                        {% for resource in page.object_list %}
-                        <tr>
-                          <td><input type="checkbox" value="{{ resource.id }}"></td>
-                          <td class="mailbox-star"><a href="javascript:;"><i class="fa fa-star text-yellow"></i></a></td>
-                          <td class="mailbox-name"><a data-pjax href="{{ reverse_url('resource_check_detail', resource.id) }}">{{ resource.user.email or resource.user.mobile }}</a></td>
-                          <td class="mailbox-subject"><b>{{ resource.project.name }}</b> - {{ resource.desc }}</td>
-                          <td class="mailbox-attachment"></td>
-                          <td class="mailbox-date">{{ resource.update_time }}</td>
-                        </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table><!-- /.table -->
-                  </div><!-- /.mail-box-messages -->
-                </div><!-- /.box-body -->
-                <div class="box-footer no-padding">
-                  <div class="mailbox-controls">
-                    {% include "admin/check/_check_list_buttons.html" %}  
-                  </div>
-                </div>
-                {% include "admin/base/base_paginator.html" %}
-              </div><!-- /. box -->
-            </div><!-- /.col -->
-          </div><!-- /.row -->
-        </section><!-- /.content -->
-    <script>
-      $(function () {
-        //Enable iCheck plugin for checkboxes
-        //iCheck for checkbox and radio inputs
-        $('.mailbox-messages input[type="checkbox"]').iCheck({
-          checkboxClass: 'icheckbox_flat-blue',
-          radioClass: 'iradio_flat-blue'
-        });
+{% include "admin/base/base_bread.html" %}
 
-        //Enable check and uncheck all functionality
-        $(".checkbox-toggle").click(function () {
-          var clicks = $(this).data('clicks');
-          if (clicks) {
-            //Uncheck all checkboxes
-            $(".mailbox-messages input[type='checkbox']").iCheck("uncheck");
-            $(".fa", this).removeClass("fa-check-square-o").addClass('fa-square-o');
-          } else {
-            //Check all checkboxes
-            $(".mailbox-messages input[type='checkbox']").iCheck("check");
-            $(".fa", this).removeClass("fa-square-o").addClass('fa-check-square-o');
-          }
-          $(this).data("clicks", !clicks);
-        });
+<!-- Main content -->
+<section class="content">
+  {% include "admin/base/base_messages.html" %}
+  <div class="row">
+    <div class="col-md-3">
+      <div class="box box-solid">
+        <div class="box-header with-border">
+          <h3 class="box-title">分类</h3>
+          <div class="box-tools">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+          </div>
+        </div>
+        <div class="box-body no-padding">
+          <ul class="nav nav-pills nav-stacked">
+            <!--li class="active"><a href="#"><i class="fa fa-inbox"></i> 待审核 <span class="label label-primary pull-right">12</span></a></li-->
+            {% for res_status in STATUS_RESOURCE_RANGE %}
+            <li name="res_status_{{ res_status }}">
+            <a data-pjax 
+            href="{{ reverse_url('resource_check_list') }}?res_status={{ res_status }}">
+            <i class="fa fa-circle-o text-{{ STATUS_RESOURCE.get(res_status).level }}"></i> 
+            {{ STATUS_RESOURCE.get(res_status).todo_value }} 
+            {% set status_count = resource_res.data.status_counts.get(res_status, 0) %}
+            {% if status_count > 0 %}
+            <span class="label label-{{ STATUS_RESOURCE.get(res_status).level }} pull-right">
+            {{ status_count }}
+            </span>
+            {% endif %}
+            </a></li>
+            {% endfor %}
+          </ul>
+        </div><!-- /.box-body -->
+      </div><!-- /. box -->
+      <div class="box box-solid">
+        <div class="box-header with-border">
+          <h3 class="box-title">Labels</h3>
+          <div class="box-tools">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+          </div>
+        </div>
+        <div class="box-body no-padding">
+          <ul class="nav nav-pills nav-stacked">
+            <li><a href="#"><i class="fa fa-circle-o text-red"></i> Important</a></li>
+            <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> Promotions</a></li>
+            <li><a href="#"><i class="fa fa-circle-o text-light-blue"></i> Social</a></li>
+          </ul>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div><!-- /.col -->
+    <div class="col-md-9">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+        <h3 class="box-title">{{ STATUS_RESOURCE.get(current_res_status).todo_value }}({{ STATUS_RESOURCE.get(current_res_status).value }})</h3>
+          <div class="box-tools pull-right">
+            <div class="has-feedback">
+              <input type="text" class="form-control input-sm" placeholder="Search Mail">
+              <span class="glyphicon glyphicon-search form-control-feedback"></span>
+            </div>
+          </div><!-- /.box-tools -->
+        </div><!-- /.box-header -->
+        <div class="box-body no-padding">
+          <div class="mailbox-controls">
+            {% include "admin/check/_check_list_buttons.html" %}  
+          </div>
+          <div class="table-responsive mailbox-messages">
+            <table class="table table-hover table-striped" id="resource_check_list_table">
+              <tbody>
+                {% for resource in page.object_list %}
+                <tr>
+                  <td><input type="checkbox" value="{{ resource.id }}"></td>
+                  <td class="mailbox-star"><a href="javascript:;"><i class="fa fa-star text-yellow"></i></a></td>
+                  <td class="mailbox-name"><a data-pjax href="{{ reverse_url('resource_check_detail', resource.id) }}">{{ resource.user.email or resource.user.mobile }}</a></td>
+                  <td class="mailbox-subject"><b>{{ resource.project.name }}</b> - {{ resource.desc }}</td>
+                  <td class="mailbox-attachment"></td>
+                  <td class="mailbox-date">{{ resource.update_time }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table><!-- /.table -->
+          </div><!-- /.mail-box-messages -->
+        </div><!-- /.box-body -->
+        <div class="box-footer no-padding">
+          <div class="mailbox-controls">
+            {% include "admin/check/_check_list_buttons.html" %}  
+          </div>
+        </div>
+        {% include "admin/base/base_paginator.html" %}
+      </div><!-- /. box -->
+    </div><!-- /.col -->
+  </div><!-- /.row -->
+</section><!-- /.content -->
+<script>
+  $(function () {
+    //Enable iCheck plugin for checkboxes
+    //iCheck for checkbox and radio inputs
+    $('.mailbox-messages input[type="checkbox"]').iCheck({
+      checkboxClass: 'icheckbox_flat-blue',
+      radioClass: 'iradio_flat-blue'
+    });
 
-        //Handle starring for glyphicon and font awesome
-        $(".mailbox-star").click(function (e) {
-          e.preventDefault();
-          //detect type
-          var $this = $(this).find("a > i");
-          var glyph = $this.hasClass("glyphicon");
-          var fa = $this.hasClass("fa");
-
-          //Switch states
-          if (glyph) {
-            $this.toggleClass("glyphicon-star");
-            $this.toggleClass("glyphicon-star-empty");
-          }
-
-          if (fa) {
-            $this.toggleClass("fa-star");
-            $this.toggleClass("fa-star-o");
-          }
-        });
-        init_status();
-      });
-      function init_status(){
-        var res_status = "{{ current_res_status }}";
-        $("li[name=res_status_"+res_status+"]").addClass("active");
+    //Enable check and uncheck all functionality
+    $(".checkbox-toggle").click(function () {
+      var clicks = $(this).data('clicks');
+      if (clicks) {
+        //Uncheck all checkboxes
+        $(".mailbox-messages input[type='checkbox']").iCheck("uncheck");
+        $(".fa", this).removeClass("fa-check-square-o").addClass('fa-square-o');
+      } else {
+        //Check all checkboxes
+        $(".mailbox-messages input[type='checkbox']").iCheck("check");
+        $(".fa", this).removeClass("fa-square-o").addClass('fa-check-square-o');
       }
-      function do_resource_action(options){
-        options = options || {};
-        var action = options.action || "";
-        if (action == ""){
-          confirmBox({message: "提交参数有误"});
-        }
-        var checked_values = $getCheckValues("#resource_check_list_table");
-        console.log(checked_values)
-        var params = {
-          _xsrf: $cookie("_xsrf"),
-          res_ids: checked_values.join(","),
-          action: action,
-          _: Math.random()
-        }
-        $.ajax({
-            url: "{{ reverse_url('resource_check_list') }}?res_status={{ handler.args.get('res_status', 0)}}",
-          type: "POST",
-          dataType: "json",
-          data: params,
-          beforeSend: function(xhr, settings){
-            xhr.setRequestHeader("_xsrf", $cookie('_xsrf'));
-          },
-          success: function(response){
-            if (check_response(response)){
-              $("#pjax-container").html(response.data);
-              console.log(checked_values)
-              //do_notice_user(checked_values)
-            }
-          },
-          error: function(xhr, Status){
-            if (Status == "timeout"){
-              do_resource_action({action: action});
-            }
-          }
-        })
+      $(this).data("clicks", !clicks);
+    });
+
+    //Handle starring for glyphicon and font awesome
+    $(".mailbox-star").click(function (e) {
+      e.preventDefault();
+      //detect type
+      var $this = $(this).find("a > i");
+      var glyph = $this.hasClass("glyphicon");
+      var fa = $this.hasClass("fa");
+
+      //Switch states
+      if (glyph) {
+        $this.toggleClass("glyphicon-star");
+        $this.toggleClass("glyphicon-star-empty");
       }
-    </script>
+
+      if (fa) {
+        $this.toggleClass("fa-star");
+        $this.toggleClass("fa-star-o");
+      }
+    });
+    init_status();
+  });
+  function init_status(){
+    var res_status = "{{ current_res_status }}";
+    $("li[name=res_status_"+res_status+"]").addClass("active");
+  }
+  function do_resource_action(options){
+    options = options || {};
+    var action = options.action || "";
+    if (action == ""){
+      confirmBox({message: "提交参数有误"});
+    }
+    var checked_values = $getCheckValues("#resource_check_list_table");
+    console.log(checked_values)
+    var params = {
+      _xsrf: $cookie("_xsrf"),
+      res_ids: checked_values.join(","),
+      action: action,
+      _: Math.random()
+    }
+    $.ajax({
+        url: "{{ reverse_url('resource_check_list') }}?res_status={{ handler.args.get('res_status', 0)}}",
+      type: "POST",
+      dataType: "json",
+      data: params,
+      beforeSend: function(xhr, settings){
+        xhr.setRequestHeader("_xsrf", $cookie('_xsrf'));
+      },
+      success: function(response){
+        if (check_response(response)){
+          $("#pjax-container").html(response.data);
+          console.log(checked_values)
+          //do_notice_user(checked_values)
+        }
+      },
+      error: function(xhr, Status){
+        if (Status == "timeout"){
+          do_resource_action({action: action});
+        }
+      }
+    })
+  }
+</script>
