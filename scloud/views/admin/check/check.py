@@ -16,6 +16,7 @@ from tornado import gen
 from scloud.utils.permission import check_perms
 from scloud.services.svc_project import ProjectService
 from scloud.services.svc_pro_resource_apply import ProResourceCheckService
+from scloud.services.svc_env import EnvService
 from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
 from scloud.utils.error import SystemError
@@ -59,11 +60,13 @@ class ResourceCheckListHandler(AuthHandler):
         resource_res = svc.get_resources_by_status()
         if isinstance(resource_res, Exception):
             raise resource_res
+        svc = EnvService(self)
+        env_list_res = svc.get_list()
         page = self.getPage(resource_res.data.resource_list)
         data = {
             "page": page,
+            "env_list_res": env_list_res,
             "resource_res": resource_res,
-            "STATUS_RESOURCE": STATUS_RESOURCE,
             "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if isinstance(i, int)]
         }
         logger.info("\t [page]: %s" % [i.user.email for i in page.object_list])

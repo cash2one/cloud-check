@@ -6,6 +6,7 @@ from tornado.util import ObjectDict
 from scloud.services.base import BaseService
 from scloud.models.base import MYSQL_POOL
 from scloud.models.project import Pro_Info, Pro_Resource_Apply
+from scloud.models.environment import Env_Info
 from scloud.config import logger, thrownException
 from sqlalchemy import and_, or_
 from sqlalchemy import func
@@ -474,20 +475,50 @@ class ProResourceCheckService(BaseService):
     @thrownException
     def get_resources_by_status(self):
         logger.info("\t ==========[ get_resources_by_status ]==========")
-        res_status = self.params.get("res_status", 0)
+        conditions = and_()
+        res_status = self.params.get("res_status")
+        if res_status:
+            conditions.append(Pro_Resource_Apply.status == res_status)
+        env_id = self.params.get("env_id", 0)
+        if env_id:
+            conditions.append(Pro_Info.env_id == env_id)
         logger.info("\t [res_status]: %s" % res_status)
         resource_list = self.db.query(
             Pro_Resource_Apply
+        ).outerjoin(
+            Pro_Info, Pro_Info.id == Pro_Resource_Apply.pro_id
         ).filter(
-            Pro_Resource_Apply.status == res_status
+            conditions
         ).order_by(
             Pro_Resource_Apply.create_time.desc()
         ).all()
-        status_counts = self.db.query(Pro_Resource_Apply.status, func.count(Pro_Resource_Apply.id)).group_by(Pro_Resource_Apply.status).all()
+
+        # 按状态查询申请数量
+        status_counts = self.db.query(
+            Pro_Resource_Apply.status, func.count(Pro_Resource_Apply.id)
+        ).group_by(
+            Pro_Resource_Apply.status
+        ).all()
         status_counts = dict(status_counts)
+        logger.info("status_counts: %s" % status_counts)
+
+        # 按环境查询申请数量
+        env_counts = self.db.query(
+            Pro_Info.env_id, func.count(Pro_Resource_Apply.id)
+        ).outerjoin(
+            Pro_Resource_Apply, Pro_Resource_Apply.pro_id == Pro_Info.id
+        ).outerjoin(
+            Env_Info, Env_Info.id == Pro_Info.env_id
+        ).group_by(
+            Env_Info.id
+        ).all()
+        env_counts = dict(env_counts)
+        logger.info("env_counts: %s" % env_counts)
+
         data = ObjectDict()
         data.resource_list = resource_list
         data.status_counts = status_counts
+        data.env_counts = env_counts
         return self.success(data=data)
 
     @thrownException

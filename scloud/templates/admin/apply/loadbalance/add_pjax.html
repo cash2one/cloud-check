@@ -1,14 +1,5 @@
 
-<!-- Content Header (Page header) -->
-<section class="content-header">
-  <h1>
-    {{ handler }}
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">{{ handler }}</li>
-  </ol>
-</section>
+{% include "admin/base/base_bread.html" %}
 
 <!-- Main content -->
 <section class="content">
@@ -19,7 +10,7 @@
       <!-- Horizontal Form -->
       <div class="box box-info">
         <div class="box-header with-border">
-          <h3 class="box-title"><a data-pjax href="{{ reverse_url('apply.loadbalance') }}" class="btn btn-sm btn-default"><i class="fa fa-reply"></i></a> 添加新定期备份</h3>
+          <h3 class="box-title"><a data-pjax href="{{ reverse_url('apply.loadbalance') }}" class="btn btn-sm btn-default"><i class="fa fa-reply"></i></a> 添加新负载均衡</h3>
           {#
           <div class="pull-right box-tools">
             <a data-pjax href="{{ reverse_url('apply.loadbalance.add') }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>

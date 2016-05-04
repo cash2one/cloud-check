@@ -1,15 +1,6 @@
 {% import "admin/apply/macro_index_page_search.html" as macro_index_page_search with context %}
 
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-          <h1>
-            {{ handler }}
-          </h1>
-          <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li class="active">{{ handler }}</li>
-          </ol>
-        </section>
+{% include "admin/base/base_bread.html" %}
 
         <!-- Main content -->
         <section class="content">
@@ -34,7 +25,7 @@
                       <th>内网地址</th>
                       <th>状态</th>
                       <th>创建时间</th>
-                      <th>操作</th>
+                      <th style="width:10%">操作</th>
                     </tr>
                     {% for publish in page.object_list %}
                     <tr>
