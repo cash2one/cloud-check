@@ -1,5 +1,5 @@
 
-{% set current_res_status = handler.args.get("res_status") %}
+{% set current_res_status = handler.args.get("res_status")|int %}
 {% set current_env_id = handler.args.get("env_id") %}
 {% set env_colors = ["red", "yellow", "blue"] %}
 
@@ -68,7 +68,17 @@
     <div class="col-md-9">
       <div class="box box-primary">
         <div class="box-header with-border">
-        <h3 class="box-title">{{ STATUS_RESOURCE.get(current_res_status).todo_value }}({{ STATUS_RESOURCE.get(current_res_status).value }})</h3>
+        <h3 class="box-title">
+          {% if current_res_status %}
+            {{ STATUS_RESOURCE.get(current_res_status).todo_value }}({{ STATUS_RESOURCE.get(current_res_status).value }})
+          {% else %}
+            {% for env in env_list %}
+              {% if env.id|int == current_env_id|int %}
+                {{ env.name }}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          </h3>
           <div class="box-tools pull-right">
             <div class="has-feedback">
               <input type="text" class="form-control input-sm" placeholder="Search Mail">
@@ -94,17 +104,18 @@
                 {% for resource in page.object_list %}
                 <tr>
                   <td><input type="checkbox" value="{{ resource.id }}"></td>
-                   <td class="mailbox-star"><a data-pjax href="{{ reverse_url('resource_check_detail', resource.id) }}">APY{{ "%04d" % resource.id }}</a></td>
-<!--                   <td class="mailbox-star"><a href="javascript:;"><i class="fa fa-star text-yellow"></i></a></td>
- -->                  <!-- <td class="mailbox-name"><a data-pjax href="{{ reverse_url('resource_check_detail', resource.id) }}">{{ resource.user.email or resource.user.mobile }}</a></td> -->
-                  <td class="mailbox-subject"><a href="javascript:;" data-toggle="popover" title="所属项目" data-content="申请人：{{ resource.user.username }}<br>项目名称：{{ resource.project.name }}<br>项目描述：{{ resource.project.desc }}"><b>{{ resource.project.name }}</b> - {{ resource.desc }}</a>
-
+                  <td class="mailbox-name">
+                    <a data-pjax href="{{ reverse_url('resource_check_detail', resource.id) }}">APY{{ "%04d" % resource.id }}</a>
+                  </td>
+<!--                   <td class="mailbox-star"><a href="javascript:;"><i class="fa fa-star text-yellow"></i></a></td> -->              
+                  <td class="mailbox-subject">
+                    <a href="javascript:;" data-toggle="popover" title="所属项目" data-content="申请人：{{ resource.user.username }}<br>项目名称：{{ resource.project.name }}<br>项目描述：{{ resource.project.desc }}"><b>{{ resource.project.name }}</b> - {{ resource.desc }}</a>
                   </td>
                   <td class="mailbox-subject">
                     <a href="javascript:;" data-toggle="popover" title="申请状态" data-content="{{ resource.project.env.name }}环境，共{{ env_counts.get(resource.project.env_id, 0) }}条记录 <a data-pjax href='{{ reverse_url('resource_check_list') }}?env_id={{ resource.project.env_id }}' data-toggle='tooltip' data-placement='top' title='进入查看'><i class='fa fa-link'></i></a>">
-                    <span class="badge bg-{{ env_colors[resource.project.env_id%3] }}">
-                    {{ resource.project.env.name }}
-                    </span>
+                      <span class="badge bg-{{ env_colors[resource.project.env_id%3] }}">
+                      {{ resource.project.env.name }}
+                      </span>
                     </a>
                   </td>
                   <td class="mailbox-subject">
@@ -139,7 +150,9 @@
             return false;
         });
         $(this).popover({
+            animation: true,
             trigger : 'click',
+            placement: 'auto bottom',
             html: true
         });
     });
@@ -147,6 +160,7 @@
         $('body').find('[data-toggle="popover"]').popover('hide');
     });
 })();
+
 // $(function () {
 //   $('[data-toggle="popover"]').popover({trigger:"click", html: true});
 // });
