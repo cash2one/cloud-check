@@ -88,6 +88,7 @@ class Pro_Resource_Apply(BaseModel, BaseModelMixin, Pro_Resource_Apply_Mixin):
     total_fee = Column(Float, default=0.00, info={"name": u"总费用", "unit": u"元"})
     fee_desc = Column(Unicode, default=u'', info={"name": u"产生费用描述"})
     status = Column(Integer, default=0, info={"name": u"资源申请状态"})
+    reason = Column(Unicode, default=u'', info={"name": u"资源申请拒绝原因"})
     user_id = Column("user_id", Integer, ForeignKey("pt_user.id"), default=0)
     checker_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
     check_time = Column(DateTime, default='0000-00-00 00:00:00')

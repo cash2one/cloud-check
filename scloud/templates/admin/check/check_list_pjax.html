@@ -103,7 +103,7 @@
                 </tr>
                 {% for resource in page.object_list %}
                 <tr>
-                  <td><input type="checkbox" value="{{ resource.id }}"></td>
+                  <td><input type="checkbox" id="{{ resource.id }}" value="{{ resource.project.name }}"></td>
                   <td class="mailbox-name">
                     <a data-pjax href="{{ reverse_url('resource_check_detail', resource.id) }}">APY{{ "%04d" % resource.id }}</a>
                   </td>
@@ -140,26 +140,47 @@
     </div><!-- /.col -->
   </div><!-- /.row -->
 </section><!-- /.content -->
+
+<div id="refuse" style="display: none">
+<form>
+<!-- <div class="form-group">
+  <label for="message" class="col-sm-2 control-label"></label>
+  <p for="message" class="form-group-static col-sm-8">确定拒绝所选<span></span>资源申请吗？</p>
+</div> -->
+<div class="form-group">
+  <label class="col-sm-2 control-label"></label>
+  <p for="message" class="col-sm-8 input-group">确定拒绝所选
+  <span></span>资源申请吗？
+  </p>
+</div>
+<div class="form-group">
+  <label for="reason" class="col-sm-2 control-label">拒绝原因</label>
+  <div class="col-sm-8 input-group">
+    <textarea class="textarea" id="reason" name="reason" style="width: 100%; height: 125px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;" placeholder=""></textarea>
+  </div>
+</div>
+</form>
+</div>
 <script>
-(function(){
-    $("body").find('[data-toggle="popover"]').each(function(){
-        $(this).click(function(e){
-            // $('.popover').remove();
-            $('body').find('[data-toggle="popover"]').popover('hide');
-            e.preventDefault();
-            return false;
-        });
-        $(this).popover({
-            animation: true,
-            trigger : 'click',
-            placement: 'auto bottom',
-            html: true
-        });
-    });
-    $("body").click(function(){
-        $('body').find('[data-toggle="popover"]').popover('hide');
-    });
-})();
+// (function(){
+//     $("body").find('[data-toggle="popover"]').each(function(){
+//         $(this).click(function(e){
+//             // $('.popover').remove();
+//             $('body').find('[data-toggle="popover"]').popover('hide');
+//             e.preventDefault();
+//             return false;
+//         });
+//         $(this).popover({
+//             animation: true,
+//             trigger : 'click',
+//             placement: 'auto bottom',
+//             html: true
+//         });
+//     });
+//     $("body").click(function(){
+//         $('body').find('[data-toggle="popover"]').popover('hide');
+//     });
+// })();
 
 // $(function () {
 //   $('[data-toggle="popover"]').popover({trigger:"click", html: true});
@@ -214,18 +235,30 @@
     var env_id = "{{ current_env_id }}";
     $("li[name=env_id_"+env_id+"]").addClass("active");
   }
+
+  function do_refuse(){
+    var checked_values = $getCheckValues("#resource_check_list_table");
+
+    $("#refuse").find("p[for=message] span").html("["+checked_values.join(",")+"]");
+    var html = $("#refuse").html()
+    confirmBox({message: html, onConfirm: function(){
+      do_resource_action({action:'{{ STATUS_RESOURCE.refused.value_en }}', reason:$("#confirmBox").find("#reason").val()})
+      $("#confirmBox").tClose();
+    }})
+  }
   function do_resource_action(options){
     options = options || {};
     var action = options.action || "";
     if (action == ""){
       confirmBox({message: "提交参数有误"});
     }
-    var checked_values = $getCheckValues("#resource_check_list_table");
-    console.log(checked_values)
+    var reason = options.reason || "";
+    var checked_values = $getCheckIds("#resource_check_list_table");
     var params = {
       _xsrf: $cookie("_xsrf"),
       res_ids: checked_values.join(","),
       action: action,
+      reason: reason,
       _: Math.random()
     }
     $.ajax({

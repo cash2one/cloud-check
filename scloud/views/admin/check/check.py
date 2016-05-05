@@ -86,13 +86,14 @@ class ResourceCheckListHandler(AuthHandler):
         else:
             self.add_message("资源审核失败:(%s)%s" % (resource_action_res.return_code, resource_action_res.return_message))
         resource_res = svc.get_resources_by_status()
+        svc = EnvService(self)
+        env_list_res = svc.get_list()
         page = self.getPage(resource_res.data.resource_list)
         data = {
             "page": page,
+            "env_list_res": env_list_res,
             "resource_res": resource_res,
-            "STATUS_RESOURCE": STATUS_RESOURCE,
             "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if isinstance(i, int)]
         }
         tmpl = self.render_to_string("admin/check/check_list_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))
-

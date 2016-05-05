@@ -529,7 +529,13 @@ class ProResourceCheckService(BaseService):
         res_ids = self.params.get("res_ids", "")
         checker_id = self.params.get("checker_id", 0)
         action = self.params.get("action", "")
-        actions = [ STATUS_RESOURCE.get(i).value_en for i in STATUS_RESOURCE.keys() if isinstance(i, int) ]
+        reason = self.params.get("reason", "")
+        logger.info("\t action: %s, STATUS_RESOURCE.refused.value_en: %s" % (action, STATUS_RESOURCE.refused.value_en))
+        logger.info("\t reason: %s" % reason)
+        if action == STATUS_RESOURCE.refused.value_en:
+            if not reason:
+                return self.failure(ERROR.res_reason_empty_err)
+        actions = [STATUS_RESOURCE.get(i).value_en for i in STATUS_RESOURCE.keys() if isinstance(i, int)]
         logger.info("\t [actions] : %s" % actions)
         if action not in actions:
             return self.failure(ERROR.res_do_resource_action_err)
@@ -556,7 +562,7 @@ class ProResourceCheckService(BaseService):
                 previous_status = STATUS_RESOURCE.APPLIED
             if action == STATUS_RESOURCE.applied.value_en:
                 previous_status = STATUS_RESOURCE.CHECKED
-            logger.info("<"+"#"*60+">")
+            logger.info("<" + "#" * 60 + ">")
             logger.info(resource.status)
             if resource.status != previous_status:
                 if action == STATUS_RESOURCE.checked.value_en:
@@ -573,6 +579,9 @@ class ProResourceCheckService(BaseService):
                     tip_messages.append(_get_message(err=ERROR.res_do_resource_action_err, level="warning"))
                 continue
             resource.status = STATUS_RESOURCE.get(action.upper())
+            # if action == STATUS_RESOURCE.refused.value_en:
+            #     reason = self.params.get("reason", "")
+            resource.reason = reason
             resource.checker_id = checker_id
             # logger.info(resource.status)
             # logger.info("<"+"#"*60+">")

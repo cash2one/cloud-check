@@ -60,6 +60,7 @@ class ERROR(object):
     res_unit_fee_empty_err        = error(errcode=-100052, errvalue=u"申请资源费用不能为空")
     res_total_fee_empty_err       = error(errcode=-100053, errvalue=u"申请资源总费用不能为空")
     res_apply_id_empty_err       = error(errcode=-100054, errvalue=u"资源申请不能为空")
+    res_reason_empty_err       = error(errcode=-100055, errvalue=u"请填写拒绝资源申请的原因")
 
     res_computer_invalid_err        = error(errcode=-100060, errvalue=u"申请云主机数据不合法")
     res_cpu_invalid_err             = error(errcode=-100061, errvalue=u"申请CPU数据不合法")

@@ -67,9 +67,13 @@
 <div class="box-body">
     {{ handler.xsrf_form_html() }}
     {{ pro_macro.get_pro_info_select(pro_res=res, pro_id=pro_id, onchange="load_env()") }}
+    {% if pro_resource_apply.status|int in [STATUS_RESOURCE.REFUSED] %}
+      <div class="form-group has-warning">
+        <label class="control-label col-sm-offset-2" for="inputWarning">申请被拒绝：<i class="fa fa-bell-o"></i> {{ pro_resource_apply.reason }}</label>
+      </div>
+    {% endif %}
     <fieldset>
       <legend>资源配置</legend>
-
           <div class="form-group{% if res and res.return_code in [ERR.RES_COMPUTER_EMPTY_ERR, ERR.RES_COMPUTER_INVALID_ERR] %} has-warning{% endif %}">
             <label for="computer" class="col-sm-2 control-label">云主机数量</label>
             <div class="col-sm-6 input-group">
@@ -80,7 +84,6 @@
           <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
           {% endif %}
           </div>
-
           <div class="form-group{% if res and res.return_code in [ERR.RES_CPU_EMPTY_ERR, ERR.RES_CPU_INVALID_ERR] %} has-warning{% endif %}">
             <label for="cpu" class="col-sm-2 control-label">CPU总量</label>
             <div class="col-sm-6 input-group">

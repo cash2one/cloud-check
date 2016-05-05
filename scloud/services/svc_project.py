@@ -28,7 +28,7 @@ class ProjectService(BaseService):
             logger.info(env)
             logger.info(env.env_resource_value)
             env_resource_value = project.env.env_resource_value
-            return self.success(data=env_resource_value.as_dict())
+            return self.success(data=env_resource_value.as_dict() if env_resource_value else {})
         else:
             return self.failure(ERROR.not_found_err)
 

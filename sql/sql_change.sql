@@ -320,6 +320,7 @@ CREATE TABLE `pro_resource_apply` (
     `total_fee` float(11,4) NOT NULL DEFAULT '0.00' COMMENT '合计费用',
     `fee_desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '费用产生描述（计算结果给出）',
     `status` INT(11) NOT NULL DEFAULT '0' COMMENT '资源申请状态 0:提交（待审核），1：已审核（待支付），2已支付（完成）',
+    `reason` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '资源申请拒绝原因',
     `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '申请人',
     `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核人',
     `check_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '审核时间',
