@@ -229,7 +229,10 @@ function refresh_captcha(){
  * 初始化提示框
  */
 // (function(){
-$(function(){
+// $(function(){
+//   init_popover();
+// });
+function init_popover(){
     $("body").find('[data-toggle="popover"]').each(function(){
         $(this).click(function(e){
             // $('.popover').remove();
@@ -247,7 +250,7 @@ $(function(){
     $("body").click(function(){
         $('body').find('[data-toggle="popover"]').popover('hide');
     });
-  });
+}
 // })();
 </script>
 {% include "admin/base/scripts/ws_pubsub.html" %}

@@ -69,10 +69,10 @@
                   </div>
                   <div class="box-body no-padding">
                     <p>{{ resource_apply.project.desc }}</p>
-                    <table class="table table-striped" id="resource_check_table">
+                    <table class="table table-striped" id="resource_check_list_table">
                       <tr style="display: none">
                         <td>
-                          <input type="checkbox" value="{{ resource_apply.id }}" checked="checked"/>
+                          <input type="checkbox" id="{{ resource_apply.id }}" value="{{ resource_apply.project.name }}" checked="checked"/>
                         </td>
                       </tr>
                       <tr>
@@ -138,87 +138,4 @@
             </div><!-- /.col -->
           </div><!-- /.row -->
         </section><!-- /.content -->
-    <script>
-      $(function () {
-        //Enable iCheck plugin for checkboxes
-        //iCheck for checkbox and radio inputs
-        $('.mailbox-messages input[type="checkbox"]').iCheck({
-          checkboxClass: 'icheckbox_flat-blue',
-          radioClass: 'iradio_flat-blue'
-        });
-
-        //Enable check and uncheck all functionality
-        $(".checkbox-toggle").click(function () {
-          var clicks = $(this).data('clicks');
-          if (clicks) {
-            //Uncheck all checkboxes
-            $(".mailbox-messages input[type='checkbox']").iCheck("uncheck");
-            $(".fa", this).removeClass("fa-check-square-o").addClass('fa-square-o');
-          } else {
-            //Check all checkboxes
-            $(".mailbox-messages input[type='checkbox']").iCheck("check");
-            $(".fa", this).removeClass("fa-square-o").addClass('fa-check-square-o');
-          }
-          $(this).data("clicks", !clicks);
-        });
-
-        //Handle starring for glyphicon and font awesome
-        $(".mailbox-star").click(function (e) {
-          e.preventDefault();
-          //detect type
-          var $this = $(this).find("a > i");
-          var glyph = $this.hasClass("glyphicon");
-          var fa = $this.hasClass("fa");
-
-          //Switch states
-          if (glyph) {
-            $this.toggleClass("glyphicon-star");
-            $this.toggleClass("glyphicon-star-empty");
-          }
-
-          if (fa) {
-            $this.toggleClass("fa-star");
-            $this.toggleClass("fa-star-o");
-          }
-        });
-        init_status();
-      });
-      function init_status(){
-        var res_status = "{{ current_res_status }}";
-        $("li[name=res_status_"+res_status+"]").addClass("active");
-      }
-      function do_resource_action(options){
-        options = options || {};
-        var action = options.action || "";
-        if (action == ""){
-          confirmBox({message: "提交参数有误"});
-        }
-        var checked_values = $getCheckValues("#resource_check_table");
-        console.log(checked_values)
-        var params = {
-          _xsrf: $cookie("_xsrf"),
-          res_ids: checked_values.join(","),
-          action: action,
-          _: Math.random()
-        }
-        $.ajax({
-            url: "{{ reverse_url('resource_check_list') }}?res_status={{ handler.args.get('res_status', 0)}}",
-          type: "POST",
-          dataType: "json",
-          data: params,
-          beforeSend: function(xhr, settings){
-            xhr.setRequestHeader("_xsrf", $cookie('_xsrf'));
-          },
-          success: function(response){
-            if (check_response(response)){
-              $("#pjax-container").html(response.data);
-            }
-          },
-          error: function(xhr, Status){
-            if (Status == "timeout"){
-              do_resource_action({action: action});
-            }
-          }
-        })
-      }
-    </script>
+    

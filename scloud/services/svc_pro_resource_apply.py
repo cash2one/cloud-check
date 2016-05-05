@@ -267,6 +267,7 @@ class ProResourceApplyService(BaseService):
         apply.total_fee = fee_data["total_fee"]
         apply.user_id = user_id
         apply.status = STATUS_RESOURCE.APPLIED
+        apply.reason = u''
         if first_apply:
             apply.desc = u'资源调整'
         self.db.add(apply)
@@ -334,6 +335,7 @@ class ProResourceApplyService(BaseService):
         resource.unit_fee = self.unit_fee
         resource.total_fee = self.total_fee
         resource.status = STATUS_RESOURCE.APPLIED
+        resource.reason = u''
         self.db.flush()
         mail_html = self.render_to_string("admin/mail/pro_resource_apply_to_admin.html", resource_apply=resource, STATUS_RESOURCE=STATUS_RESOURCE)
         mail_title = mail_title_format % {
