@@ -1,7 +1,28 @@
 
 <div class="btn-group">
   <button onclick="do_pro_table_action({action:'{{ STATUS_PRO_TABLES.checked.value_en }}'});" class="btn btn-sm btn-{{ STATUS_PRO_TABLES.checked.level }}"><i class="fa fa-check"></i>   处理通过</button>
-  <button onclick="do_pro_table_action({action:'{{ STATUS_PRO_TABLES.refused.value_en }}'});" class="btn btn-sm btn-{{ STATUS_PRO_TABLES.refused.level }}"><i class="fa fa-check"></i>   拒绝申请</button>
+  <button onclick="do_refuse();" class="btn btn-sm btn-{{ STATUS_PRO_TABLES.refused.level }}"><i class="fa fa-check"></i>   拒绝申请</button>
+</div>
+
+<div id="refuse" style="display: none">
+<form>
+<!-- <div class="form-group">
+  <label for="message" class="col-sm-2 control-label"></label>
+  <p for="message" class="form-group-static col-sm-8">确定拒绝所选<span></span>资源申请吗？</p>
+</div> -->
+<div class="form-group">
+  <label class="col-sm-2 control-label"></label>
+  <p for="message" class="col-sm-8 input-group">确定拒绝所选
+  <span></span>{{ GROUP.get(pro_table).name }}吗？
+  </p>
+</div>
+<div class="form-group">
+  <label for="reason" class="col-sm-2 control-label">拒绝原因</label>
+  <div class="col-sm-8 input-group">
+    <textarea class="textarea" id="reason" name="reason" style="width: 100%; height: 125px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;" placeholder=""></textarea>
+  </div>
+</div>
+</form>
 </div>
 
 <script type="text/javascript">
@@ -58,19 +79,36 @@ function init_status(){
   var pro_table = "{{ pro_table }}";
   $("li[name="+pro_table+"]").addClass("active");
 }
+
+function do_refuse(){
+    var checked_values = $getCheckValues("#pro_table_check_list_table");
+    if (checked_values.length == 0){
+      $MsgBox({message: "未选择任何{{ GROUP.get(pro_table).name }}"}).show();
+      return false;
+    }
+    $("#refuse").find("p[for=message] span").html("["+checked_values.unique().join(",")+"]");
+    var html = $("#refuse").html()
+    confirmBox({message: html, onConfirm: function(){
+      do_pro_table_action({action:'{{ STATUS_PRO_TABLES.refused.value_en }}', reason:$("#confirmBox").find("#reason").val()})
+      $("#confirmBox").tClose();
+    }})
+}
+
 function do_pro_table_action(options){
   options = options || {};
   var action = options.action || "";
   if (action == ""){
     confirmBox({message: "提交参数有误"});
   }
-  var checked_values = $getCheckValues("#pro_table_check_list_table");
+  var reason = options.reason || "";
+  var checked_values = $getCheckIds("#pro_table_check_list_table");
   console.log(checked_values)
   var params = {
     _xsrf: $cookie("_xsrf"),
     ids: checked_values.join(","),
     pro_table: "{{ pro_table }}",
     action: action,
+    reason: reason,
     _: Math.random()
   }
   $.ajax({

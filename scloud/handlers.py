@@ -19,7 +19,7 @@ from scloud.async_services.svc_act import task_post_action
 from sqlalchemy.exc import SQLAlchemyError
 from scloud.utils.error_code import ERR
 from scloud.utils.error import SystemError
-from scloud.const import STATUS_RESOURCE, STATUS_PRO_TABLES, STATUS_PRIORITY, STATUS_YESNO, PLOT_LOADBALANCE, LOADBALANCE_HEALTH
+from scloud.const import STATUS_RESOURCE, STATUS_PRO_TABLES, STATUS_PRIORITY, STATUS_YESNO, PLOT_LOADBALANCE, LOADBALANCE_HEALTH, PRO_USER_TYPES
 from scloud.utils.permission import GROUP, OP
 from sqlalchemy.orm.session import SessionTransaction
 
@@ -166,6 +166,7 @@ class Handler(BaseHandler):
         kwargs.update({
             "CONF": CONF,
             "getattr": getattr,
+            "dir": dir,
             "rand_time": time.time(),
             "handler": self,
             "request": self.request,
@@ -175,6 +176,7 @@ class Handler(BaseHandler):
             "STATUS_PRO_TABLES": STATUS_PRO_TABLES,
             "STATUS_PRIORITY": STATUS_PRIORITY,
             "STATUS_YESNO": STATUS_YESNO,
+            "PRO_USER_TYPES": PRO_USER_TYPES,
             "PLOT_LOADBALANCE": PLOT_LOADBALANCE,
             "LOADBALANCE_HEALTH": LOADBALANCE_HEALTH,
             "GROUP": GROUP,

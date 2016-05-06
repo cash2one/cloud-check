@@ -136,4 +136,17 @@ def init_status_yesno():
         STATUS_YESNO[k] = v
 init_status_yesno()
 
+# （Pro_User）用户类型
+pro_user_types = {
+    1: IndexMark(value=u"dashboard", value_en="dashboard", level="success"),
+    0: IndexMark(value=u"远程控制服务器", value_en="service", level="info"),
+}
+PRO_USER_TYPES = ObjectDict()
+def init_pro_user_types():
+    for k, v in pro_user_types.items():
+        setattr(PRO_USER_TYPES, v.value_en.upper(), k)
+        setattr(PRO_USER_TYPES, v.value_en.lower(), v)
+        PRO_USER_TYPES[k] = v
+init_pro_user_types()
+
 admin_emails = ["zhangpeng1@infohold.com.cn"]

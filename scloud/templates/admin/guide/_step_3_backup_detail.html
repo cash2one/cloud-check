@@ -69,4 +69,11 @@
       </p>
     </div>
   </div>
+  {% if pro_backup.status == STATUS_PRO_TABLES.REFUSED %}
+  <div class="form-group has-warning">
+    <label for="status" class="col-sm-offset-3 col-sm-9 control-label">
+        定期备份拒绝原因:{{ pro_backup.reason }}
+    </label>
+  </div>
+  {% endif %}
 </div>

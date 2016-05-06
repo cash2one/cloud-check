@@ -38,6 +38,13 @@
       <form data-pjax id="form_event_reply" action="{{ reverse_url('event.detail') }}" method="CHECK">
         {{ handler.xsrf_form_html() }}
         <input type="hidden" id="id" name="id" value="{{ pro_event.id }}" />
+        {% if pro_event.status == STATUS_PRO_TABLES.REFUSED %}
+        <div class="form-group has-warning">
+          <label for="status" class="col-sm-offset-3 col-sm-9 control-label">
+              事件拒绝原因:{{ pro_event.reason }}
+          </label>
+        </div>
+        {% endif %}
         {% if handler.current_user.imchecker %}
         <div class="form-group select2{% if do_event_res and do_event_res.return_code in check_codes %} has-warning{% endif %}">
           <label for="stauts" class="col-sm-2 control-label">处理状态</label>

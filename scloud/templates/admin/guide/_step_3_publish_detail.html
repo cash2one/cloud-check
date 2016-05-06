@@ -25,17 +25,18 @@
     </div>
   </div>
   <div class="form-group">
-    <label for="network_address" class="col-sm-3 control-label">内网地址</label>
+    <label for="network_address" class="col-sm-3 control-label">内网发布地址</label>
     <div class="col-sm-9">
       <p class="form-control-static">{{ pro_publish.network_address }}</p>
     </div>
   </div>
-  <div class="form-group">
+<!--   <div class="form-group">
     <label for="network_port" class="col-sm-3 control-label">内网端口</label>
     <div class="col-sm-9">
       <p class="form-control-static">{{ pro_publish.network_port }}</p>
     </div>
   </div>
+ -->
   <div class="form-group">
     <label for="create_time" class="col-sm-3 control-label">创建时间</label>
     <div class="col-sm-9">
@@ -63,4 +64,12 @@
       </p>
     </div>
   </div>
+  {% if pro_publish.status == STATUS_PRO_TABLES.REFUSED %}
+  <div class="form-group has-warning">
+    <label for="status" class="col-sm-offset-3 col-sm-9 control-label">
+        互联网发布拒绝原因:{{ pro_publish.reason }}
+    </label>
+  </div>
+  {% endif %}
 </div>
+

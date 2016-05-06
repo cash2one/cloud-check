@@ -39,10 +39,11 @@ class ERROR(object):
     repeat_password_err     = error(errcode=-100014, errvalue=u"重复密码与新密码不一致")
 
     # 创建项目
-    pro_name_empty_err        = error(errcode=-100020, errvalue=u"项目名称不能为空")
-    pro_owner_empty_err       = error(errcode=-100021, errvalue=u"项目负责人不能为空")
-    pro_owner_email_empty_err = error(errcode=-100022, errvalue=u"项目负责人邮箱不能为空")
-    pro_env_empty_err         = error(errcode=-100023, errvalue=u"项目环境不能为空")
+    pro_id_empty_err        = error(errcode=-100020, errvalue=u"请选择项目")
+    pro_name_empty_err        = error(errcode=-100021, errvalue=u"项目名称不能为空")
+    pro_owner_empty_err       = error(errcode=-100022, errvalue=u"项目负责人不能为空")
+    pro_owner_email_empty_err = error(errcode=-100023, errvalue=u"项目负责人邮箱不能为空")
+    pro_env_empty_err         = error(errcode=-100024, errvalue=u"项目环境不能为空")
 
     # 创建资源
     res_computer_empty_err        = error(errcode=-100040, errvalue=u"申请云主机不能为空")

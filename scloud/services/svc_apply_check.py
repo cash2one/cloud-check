@@ -26,6 +26,11 @@ class ApplyCheckService(BaseService):
     @thrownException
     def do_check(self):
         pro_table = self.params.get("pro_table")
+        action = self.params.get("action")
+        reason = self.params.get("reason")
+        actions = [STATUS_PRO_TABLES.get(i).value_en for i in STATUS_PRO_TABLES.keys() if isinstance(i, int)]
+        if action not in actions:
+            return self.failure(ERROR.res_do_resource_action_err)
         ProTable = self.pro_tables.get(pro_table)
         if not ProTable:
             return self.failure(ERROR.not_found_err)
@@ -40,7 +45,12 @@ class ApplyCheckService(BaseService):
                 ProTable.id == id
             ).first()
             if pro_table_obj:
-                pro_table_obj.status = STATUS_PRO_TABLES.CHECKED
+                if action == STATUS_PRO_TABLES.checked.value_en:
+                    pro_table_obj.status = STATUS_PRO_TABLES.CHECKED
+                    pro_table_obj.reason = u''
+                elif action == STATUS_PRO_TABLES.refused.value_en:
+                    pro_table_obj.status = STATUS_PRO_TABLES.REFUSED
+                    pro_table_obj.reason = reason
                 pro_table_obj.checker_id = self.handler.current_user.id
                 pro_table_obj.check_time = datetime.now()
                 self.db.add(pro_table_obj)

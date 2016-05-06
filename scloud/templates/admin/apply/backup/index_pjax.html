@@ -28,7 +28,12 @@
                     </tr>
                     {% for backup in page.object_list %}
                     <tr>
-                      <td>{{ backup.id }}</td>
+                      <td>
+                      {% if backup.status in [STATUS_PRO_TABLES.CHECKED, STATUS_PRO_TABLES.REFUSED] %}
+                      <i class="fa fa-circle text-{{ STATUS_PRO_TABLES.get(backup.status).level }}"></i>
+                      {% endif %}
+                      BAK{{ "%04d" % backup.id }}
+                      </td>
                       <td>{{ backup.as_dict().plot|length }}</td>
                       <td>{{ backup.project.name }}</td>
                       <td><span class="label label-{{ STATUS_PRO_TABLES.get(backup.status).level }}">{{ STATUS_PRO_TABLES.get(backup.status).value }}</span>

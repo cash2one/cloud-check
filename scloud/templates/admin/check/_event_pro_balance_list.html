@@ -8,7 +8,7 @@
 </tr>
 {% for pro_table in page.object_list %}
 <tr>
-  <td><input type="checkbox" value="{{ pro_table.id }}"></td>
+  <td><input type="checkbox" id="{{ pro_table.id }}" value="{{ pro_table.project.name }}"></td>
   <td class="mailbox-star"><a href="javascript:;"><i class="fa fa-star text-yellow"></i></a></td>
   <td class="mailbox-subject"><b><a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url("pro_balance_detail", pro_table.id) }}')">{{ pro_table.project.name }} <i class="fa fa-eye"></i></a></b></td>
   <td class="mailbox-subject">{{ pro_table.as_dict().members|length }}</td>

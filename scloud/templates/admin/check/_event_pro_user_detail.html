@@ -23,7 +23,7 @@
         <tr>
           <td>
             {% if pro_user.status == STATUS_PRO_TABLES.APPLIED %}
-            <input type="checkbox" value="{{ pro_user.id }}">
+            <input type="checkbox" id="{{ pro_user.id }}" value="{{ pro_user.project.name }}" checked="checked">
             {% endif %}
           </td>
           <td class="mailbox-subject">{{ pro_user.username }}</td>
@@ -38,6 +38,11 @@
           <td class="mailbox-subject">
             <span class="label label-{{ STATUS_PRO_TABLES.get(pro_user.status).level }}">{{ STATUS_PRO_TABLES.get(pro_user.status).value }}</span>
           </td>
+          {% if pro_table.status == STATUS_PRO_TABLES.REFUSED %}
+          <td class="mailbox-subject">
+            {{ pro_table.reason }}
+          </td>
+          {% endif %}
           <td class="mailbox-subject">{{ pro_user.create_time|getGoodTime }}</td>
         </tr>
         {% endfor %}

@@ -15,7 +15,7 @@
         <tr style="display: none">
           <th></th>
           <td>
-            <input type="checkbox" value="{{ pro_publish.id }}" checked="checked">
+            <input type="checkbox" id="{{ pro_publish.id }}" value="{{ pro_publish.project.name }}" checked="checked">
           </td>
         </tr>
         <tr>
@@ -31,14 +31,14 @@
           <td class="mailbox-subject">{{ pro_publish.domain_port }}</td>
         </tr>
         <tr>
-          <th>内网地址</th>
+          <th>内网发布地址</th>
           <td class="mailbox-subject">{{ pro_publish.network_address }}</td>
         </tr>
-        <tr>
+<!--         <tr>
           <th>内网端口</th>
           <td class="mailbox-subject">{{ pro_publish.network_port }}</td>
         </tr>
-        <tr>
+ -->        <tr>
           <th>是否使用SSL</th>
           <td class="mailbox-subject">{{ pro_publish.use_ssl }}</td>
         </tr>

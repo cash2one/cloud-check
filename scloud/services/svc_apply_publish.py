@@ -68,32 +68,38 @@ class ApplyPublish(BaseService):
         publish_id = self.params.get("publish_id")
         pro_id = self.params.get("pro_id")
         domain = self.params.get("domain")
-        try:
-            domain_port = int(self.params.get("domain_port"))
-        except ValueError:
-            return self.failure(ERROR.pro_publish_domain_port_invalid_err)
-
+        domain_port = self.params.get("domain_port")
         network_address = self.params.get("network_address")
-        try:
-            network_port = int(self.params.get("network_port"))
-        except ValueError:
-            return self.failure(ERROR.pro_publish_network_port_invalid_err)
+        # try:
+        #     network_port = int(self.params.get("network_port"))
+        # except ValueError:
+        #     return self.failure(ERROR.pro_publish_network_port_invalid_err)
         use_ssl = self.params.get("use_ssl", 0)
 
-        if not pro_id:
-            return self.failure(ERROR.pro_name_empty_err) 
+        # if not pro_id:
+        #     return self.failure(ERROR.pro_id_empty_err)
+        try:
+            pro_id = int(pro_id)
+            if not pro_id:
+                return self.failure(ERROR.pro_id_empty_err)
+        except ValueError:
+            return self.failure(ERROR.pro_id_empty_err)
         if not domain:
             return self.failure(ERROR.pro_publish_domain_empty_err)
         if not domain_port:
             return self.failure(ERROR.pro_publish_domain_port_empty_err)
+        try:
+            domain_port = int(domain_port)
+        except ValueError:
+            return self.failure(ERROR.pro_publish_domain_port_invalid_err)
         if not network_address:
             return self.failure(ERROR.pro_publish_network_address_empty_err)
-        if not network_port:
-            return self.failure(ERROR.pro_publish_network_port_empty_err)
+        # if not network_port:
+        #     return self.failure(ERROR.pro_publish_network_port_empty_err)
         if domain_port < 80 or domain_port > 65535:
             return self.failure(ERROR.pro_publish_domain_port_invalid_err)
-        if network_port < 1024 or network_port > 65535:
-            return self.failure(ERROR.pro_publish_network_port_invalid_err)
+        # if network_port < 1024 or network_port > 65535:
+        #     return self.failure(ERROR.pro_publish_network_port_invalid_err)
         if publish_id:
             do_publish_info = self.db.query(
                 Pro_Publish
@@ -105,7 +111,7 @@ class ApplyPublish(BaseService):
         do_publish_info.domain = domain
         do_publish_info.domain_port = domain_port
         do_publish_info.network_address = network_address
-        do_publish_info.network_port = network_port
+        # do_publish_info.network_port = network_port
         do_publish_info.use_ssl = use_ssl
         do_publish_info.status = STATUS_PRO_TABLES.APPLIED
         do_publish_info.user_id = self.handler.current_user.id

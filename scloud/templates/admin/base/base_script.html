@@ -1,4 +1,18 @@
 <script type="text/javascript">
+Array.prototype.unique = function(){
+  var res = [];
+  var json = {};
+  for(var i = 0; i < this.length; i++){
+    if(!json[this[i]]){
+      res.push(this[i]);
+      json[this[i]] = 1;
+    }
+  }
+  return res;
+}
+</script>
+
+<script type="text/javascript">
 function show_right(options){
     options = options || {}
     var op = options.op || "";

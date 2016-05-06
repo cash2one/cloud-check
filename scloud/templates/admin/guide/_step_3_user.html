@@ -24,6 +24,7 @@
             {{ base.form_input("邮箱", "email", right_col=6, res=pro_user_res, value=email,
               check_codes=[ERR.EMAIL_EMPTY_ERR, ERR.EMAIL_FORMAT_ERR, ERR.EMAIL_DUPLICATE_ERR]) }}
             {{ base.form_status_select("是否有效", "is_enable", value=is_enable, options=STATUS_YESNO|status_list(reverse=True), ST=STATUS_YESNO, res=pro_user_res) }}
+            {{ base.form_status_select("用户类型", "user_type", value=is_enable, options=PRO_USER_TYPES|status_list(reverse=True), ST=PRO_USER_TYPES, res=pro_user_res) }}
             <div class="form-group">
               <div class="radio col-sm-offset-2 col-sm-10">
                   <label>

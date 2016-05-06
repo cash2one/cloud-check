@@ -36,7 +36,12 @@
                     </tr>
                     {% for event in page.object_list %}
                     <tr>
-                      <td>{{ event.id }}</td>
+                      <td>
+                        {% if event.status in [STATUS_PRO_TABLES.CHECKED, STATUS_PRO_TABLES.REFUSED] %}
+                      <i class="fa fa-circle text-{{ STATUS_PRO_TABLES.get(event.status).level }}"></i>
+                      {% endif %}
+                      EVT{{ "%04d" % event.id }}
+                      </td>
                       <td>{{ event.title }}</td>
                       <td>{{ event.project.name }}</td>
                       <td><span class="label label-{{ STATUS_PRIORITY.get(event.priority).level }}">{{ STATUS_PRIORITY.get(event.priority).value }}</span></td>

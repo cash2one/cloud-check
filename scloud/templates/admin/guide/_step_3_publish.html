@@ -3,7 +3,7 @@
 
 
         <!-- form start -->
-        <form id="form_publish" data-pjax action="{{ reverse_url('apply.service.publish.add') }}" class="form-horizontal" method="POST">
+        <form id="form_publish" data-pjax action="{{ reverse_url('apply.publish.add') }}" class="form-horizontal" method="POST">
         {{ handler.xsrf_form_html() }}
           <div class="box-body">
           {% if pro_publish_res %}
@@ -35,15 +35,29 @@
             {% set status = pro_publish.status|int if pro_publish else "" %}
           {% endif %}
           <input type="hidden" name="publish_id" value="{{ publish_id }}" />
+
+          {% if pro_publish_res.return_code == 0 %}
+            {% set pro_publish = pro_publish_res.data %}
+            {% if pro_publish.status == STATUS_PRO_TABLES.REFUSED %}
+            <div class="form-group">
+              <label for="status" class="col-sm-3 control-label">申请状态</label>
+              <div class="col-sm-9">
+                <p class="form-control-static">
+                  {{ pro_publish.reason }}
+                </p>
+              </div>
+            </div>
+            {% endif %}
+          {% endif %}
           {{ pro_macro.get_pro_info_select(pro_res=pro_publish_res, pro_id=pro_id) }}
-          {{ base.form_input("域名", "domain", res=publish_res, value=domain,
-                check_codes=[ERR.PRO_PUBLISH_DOMAIN_EMPTY_ERR, ERR.PRO_PUBLISH_DOMAIN_INVALID_ERR]) }}
-          {{ base.form_input("互联网端口", "domain_port", res=publish_res, value=domain_port,
-                check_codes=[ERR.PRO_PUBLISH_DOMAIN_PORT_EMPTY_ERR, ERR.PRO_PUBLISH_DOMAIN_PORT_INVALID_ERR]) }}
-          {{ base.form_input("内网地址", "network_address", res=publish_res, value=network_address,
-                check_codes=[ERR.PRO_PUBLISH_NETWORK_ADDRESS_EMPTY_ERR, ERR.PRO_PUBLISH_NETWORK_ADDRESS_INVALID_ERR]) }}
-          {{ base.form_input("内网端口", "network_port", res=publish_res, value=network_port,
-                check_codes=[ERR.PRO_PUBLISH_NETWORK_PORT_EMPTY_ERR, ERR.PRO_PUBLISH_NETWORK_PORT_INVALID_ERR]) }}
+          {{ base.form_input("域名", "domain", res=pro_publish_res, value=domain,
+                check_codes=[ERR.PRO_PUBLISH_DOMAIN_EMPTY_ERR, ERR.PRO_PUBLISH_DOMAIN_INVALID_ERR], placeholder='[http://]www.smallpay.com') }}
+          {{ base.form_input("互联网端口", "domain_port", res=pro_publish_res, value=domain_port,
+                check_codes=[ERR.PRO_PUBLISH_DOMAIN_PORT_EMPTY_ERR, ERR.PRO_PUBLISH_DOMAIN_PORT_INVALID_ERR], placeholder='80') }}
+          {{ base.form_input("内网发布地址", "network_address", res=pro_publish_res, value=network_address,
+                check_codes=[ERR.PRO_PUBLISH_NETWORK_ADDRESS_EMPTY_ERR, ERR.PRO_PUBLISH_NETWORK_ADDRESS_INVALID_ERR], placeholder='格式：[http://IP:PORT/ROOT_PATH] 例：http://127.0.0.1:8080/smallpay') }}
+          {#{ base.form_input("内网端口", "network_port", res=pro_publish_res, value=network_port,
+                check_codes=[ERR.PRO_PUBLISH_NETWORK_PORT_EMPTY_ERR, ERR.PRO_PUBLISH_NETWORK_PORT_INVALID_ERR]) }#}
             <div class="form-group">
               <label for="loadbalance" class="col-sm-2 control-label">SSL卸载</label>
               <div class="radio col-sm-offset-2 col-sm-10">

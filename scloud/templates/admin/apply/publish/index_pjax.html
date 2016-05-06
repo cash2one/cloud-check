@@ -19,7 +19,7 @@
                 <div class="box-body">
                   <table class="table table-hover table-striped table-bordered">
                     <tr>
-                      <th>用户编号</th>
+                      <th>编号</th>
                       <th>所属项目</th>
                       <th>互联网地址</th>
                       <th>内网地址</th>
@@ -29,7 +29,12 @@
                     </tr>
                     {% for publish in page.object_list %}
                     <tr>
-                      <td>{{ publish.id }}</td>
+                      <td>
+                      {% if publish.status in [STATUS_PRO_TABLES.CHECKED, STATUS_PRO_TABLES.REFUSED] %}
+                      <i class="fa fa-circle text-{{ STATUS_PRO_TABLES.get(publish.status).level }}"></i>
+                      {% endif %}
+                      PUB{{ "%04d" % publish.id }}
+                      </td>
                       <td>{{ publish.project.name }}</td>
                       <td>{{ publish.domain }}:{{ publish.domain_port }}</td>
                       <td>{{ publish.network_address }}:{{ publish.network_port }}</td>

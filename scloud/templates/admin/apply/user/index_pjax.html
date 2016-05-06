@@ -30,7 +30,12 @@
                     </tr>
                     {% for user in page.object_list %}
                     <tr>
-                      <td>{{ user.id }}</td>
+                      <td>
+                        {% if user.status in [STATUS_PRO_TABLES.CHECKED, STATUS_PRO_TABLES.REFUSED] %}
+                      <i class="fa fa-circle text-{{ STATUS_PRO_TABLES.get(user.status).level }}"></i>
+                      {% endif %}
+                      USR{{ "%04d" % user.id }}
+                      </td>
                       <td>{{ user.username }}</td>
                       <td>{{ user.project.name }}</td>
                       <td><span class="label label-{{ STATUS_PRO_TABLES.get(user.status).level }}">{{ STATUS_PRO_TABLES.get(user.status).value }}, {{ STATUS_PRO_TABLES.get(user.status).todo_value }}</span>
