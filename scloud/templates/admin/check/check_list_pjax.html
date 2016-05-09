@@ -140,3 +140,25 @@
     </div><!-- /.col -->
   </div><!-- /.row -->
 </section><!-- /.content -->
+
+<script type="text/javascript">
+$(function(){
+  $("body").find('[data-toggle="popover"]').each(function(){
+      $(this).click(function(e){
+          // $('.popover').remove();
+          $('body').find('[data-toggle="popover"]').popover('hide');
+          e.preventDefault();
+          return false;
+      });
+      $(this).popover({
+          animation: true,
+          trigger : 'click',
+          placement: 'auto bottom',
+          html: true
+      });
+  });
+  $("body").click(function(){
+      $('body').find('[data-toggle="popover"]').popover('hide');
+  });
+});
+</script>
