@@ -66,6 +66,8 @@ class ApplyBackups(BaseService):
             Pro_Backup
         ).filter(
             conditions
+        ).order_by(
+            Pro_Backup.id.desc()
         ).all()
         return self.success(data=pro_backup_list)
 

@@ -79,7 +79,7 @@ class ProUserService(BaseService):
             Pro_User
         ).filter(
             conditions
-        ).order_by(Pro_User.status.desc(), Pro_User.id.desc()).all()
+        ).order_by(Pro_User.id.desc()).all()
         # logger.info([i.as_dict() for i in pro_users])
         return self.success(data=pro_users)
 

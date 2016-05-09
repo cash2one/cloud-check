@@ -60,6 +60,8 @@ class ApplyPublish(BaseService):
             Pro_Publish
         ).filter(
             conditions
+        ).order_by(
+            Pro_Publish.id.desc()
         ).all()
         return self.success(data=publish_list)
 

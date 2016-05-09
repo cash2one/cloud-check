@@ -1,7 +1,7 @@
 
 {% macro get_pro_info_select(pro_res=None, pro_id=0, onchange="function(){}") %}
 {% set pro_list = pro_list_res.data %}
-<div class="form-group select2{% if pro_res and pro_res.return_code in [ERR.PRO_ID_EMPTY_ERR, ERR.PRO_NAME_EMPTY_ERR, RES_APPLY_ID_EMPTY_ERR] %} has-warning{% endif %}">
+<div name="select_pro" class="form-group select2{% if pro_res and pro_res.return_code in [ERR.PRO_ID_EMPTY_ERR, ERR.PRO_NAME_EMPTY_ERR, RES_APPLY_ID_EMPTY_ERR] %} has-warning{% endif %}">
   <label for="pro_id" class="col-sm-2 control-label">所属项目</label>
   <div class="col-sm-4">
     <select id="pro_id" name="pro_id" style="width: 100%;" onchange="update_resource_apply(this);">
@@ -9,7 +9,7 @@
       {% for pro in pro_list[::-1] %}
       {% set last_apply = pro.last_apply %}
         {% if last_apply %}
-        <option res_apply_id="{{ last_apply.id }}" disk_backup="{{ last_apply.disk_backup }}" disk_backup_members="{% if last_apply.backups_plot %}{{ last_apply.backups_plot.as_dict().plot|length }}{% else %}0{% endif %}" status="{{ last_apply.status }}" loadbalance="{{ last_apply.loadbalance }}" loadbalance_members="{% if last_apply.loadbalance_plot %}{{ last_apply.loadbalance_plot.as_dict().members|length }}{% else %}0{% endif %}" status_level="{{ STATUS_RESOURCE.get(last_apply.status).level }}" status_bg_color="{{ STATUS_RESOURCE.get(last_apply.status).bg_color }}" status_value="{{ STATUS_RESOURCE.get(last_apply.status).value }}" value="{{ pro.id }}"{% if last_apply.status < STATUS_RESOURCE.CONFIRMPAYED %} disabled="disabled"{% endif %}{% if pro.id == pro_id|int %} selected="selected"{% endif %}>{{ pro.name }}</option>
+        <option res_apply_id="{{ last_apply.id }}" disk_backup="{{ last_apply.disk_backup }}" disk_backup_members="{% if last_apply.backups_plot %}{{ last_apply.backups_plot.as_dict().plot|length }}{% else %}0{% endif %}" status="{{ last_apply.status }}" loadbalance="{{ last_apply.loadbalance }}" loadbalance_members="{% if last_apply.loadbalance_plot %}{{ last_apply.loadbalance_plot.as_dict().members|length }}{% else %}0{% endif %}" status_level="{{ STATUS_RESOURCE.get(last_apply.status).level }}" status_bg_color="{{ STATUS_RESOURCE.get(last_apply.status).bg_color }}" status_value="{{ STATUS_RESOURCE.get(last_apply.status).value }}" value="{{ pro.id }}"{% if pro.id == pro_id|int %} selected="selected"{% else %}{% if last_apply.status < STATUS_RESOURCE.CONFIRMPAYED %} disabled="disabled"{% endif %}{% endif %}>{{ pro.name }}</option>
         {% else %}
         <option res_apply_id="0" disk_backup="0" disk_backup_members="0" status="0" loadbalance="0" loadbalance_members="0" status_level="warning" status_bg_color="yellow" status_value="未申请" value="{{ pro.id }}"{% if pro.id == pro_id|int %} selected="selected"{% endif %}>{{ pro.name }}</option>
         {% endif %}
@@ -41,13 +41,22 @@
       templateResult: formatPro,
       templateSelection: formatPro
   });
-  function update_resource_apply(_this){
-    $('#res_apply_id').val($(_this).find('option[value='+$(_this).val()+']').attr('res_apply_id'));
-    $('#res_apply_id').attr("disk_backup", $(_this).find('option[value='+$(_this).val()+']').attr('disk_backup'));
-    $('#res_apply_id').attr("disk_backup_members", $(_this).find('option[value='+$(_this).val()+']').attr('disk_backup_members'));
-    $('#res_apply_id').attr("loadbalance", $(_this).find('option[value='+$(_this).val()+']').attr('loadbalance'));
-    $('#res_apply_id').attr("loadbalance_members", $(_this).find('option[value='+$(_this).val()+']').attr('loadbalance_members'));
+  function update_resource_apply(_this, _parent){
+    if( _parent){
+      var res_apply_id = $(_parent).find('#res_apply_id');
+    }else{
+      var res_apply_id = $('#res_apply_id');
+    }
+    res_apply_id.val($(_this).find('option[value='+$(_this).val()+']').attr('res_apply_id'));
+    res_apply_id.attr("disk_backup", $(_this).find('option[value='+$(_this).val()+']').attr('disk_backup'));
+    res_apply_id.attr("disk_backup_members", $(_this).find('option[value='+$(_this).val()+']').attr('disk_backup_members'));
+    res_apply_id.attr("loadbalance", $(_this).find('option[value='+$(_this).val()+']').attr('loadbalance'));
+    res_apply_id.attr("loadbalance_members", $(_this).find('option[value='+$(_this).val()+']').attr('loadbalance_members'));
     ({{ onchange }});
+  }
+  function init_resource_apply(_parent){
+    var _this = $(_parent).find("#pro_id");
+    update_resource_apply(_this, $(_parent));
   }
 </script>
 {% endmacro %}

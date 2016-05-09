@@ -27,18 +27,22 @@
             {% set use_ssl = handler.args.get("use_ssl", "-1")|string %}
             {% set status = handler.args.get("status", "0")|int %}
           {% else %}
-            {% set publish_id = pro_publish.id if pro_publish else "" %}
-            {% set pro_id = pro_publish.pro_id if pro_publish else "" %}
-            {% set domain = pro_publish.domain if pro_publish else "" %}
-            {% set domain_port = pro_publish.domain_port if pro_publish else "" %}
-            {% set network_address = pro_publish.network_address if pro_publish else "" %}
-            {% set network_port = pro_publish.network_port if pro_publish else "" %}
-            {% set use_ssl = pro_publish.use_ssl|string if pro_publish else "" %}
-            {% set status = pro_publish.status|int if pro_publish else "" %}
+            {% if handler.kwargs["name"] == "guide_step_3" %}
+              {% set pro_id = pro_id %}
+            {% else %}
+              {% set pro_id = pro_publish.pro_id if pro_publish else "" %}
+              {% set publish_id = pro_publish.id if pro_publish else "" %}
+              {% set domain = pro_publish.domain if pro_publish else "" %}
+              {% set domain_port = pro_publish.domain_port if pro_publish else "" %}
+              {% set network_address = pro_publish.network_address if pro_publish else "" %}
+              {% set network_port = pro_publish.network_port if pro_publish else "" %}
+              {% set use_ssl = pro_publish.use_ssl|string if pro_publish else "" %}
+              {% set status = pro_publish.status|int if pro_publish else "" %}
+            {% endif %}
           {% endif %}
           <input type="hidden" name="publish_id" value="{{ publish_id }}" />
 
-          {% if pro_publish_res.return_code == 0 %}
+          {% if pro_publish_res and pro_publish_res.return_code == 0 %}
             {% set pro_publish = pro_publish_res.data %}
             {% if pro_publish.status == STATUS_PRO_TABLES.REFUSED %}
             <div class="form-group has-warning">
@@ -65,13 +69,13 @@
               <label for="loadbalance" class="col-sm-2 control-label">SSL卸载</label>
               <div class="radio col-sm-offset-2 col-sm-10">
                   <label>
-                  <input type="radio" name="use_ssl" id="use_ssl" value="1"{% if use_ssl|int == 1 %} checked="checked"{% endif %}>
+                  <input type="radio" name="use_ssl" id="use_ssl" value="1"{% if use_ssl and use_ssl|int == 1 %} checked="checked"{% endif %}>
                     需要
                   </label>
               </div>
               <div class="radio col-sm-offset-2 col-sm-10">
                   <label>
-                    <input type="radio" name="use_ssl" id="use_ssl" value="0"{% if use_ssl|int == 0 %} checked="checked"{% endif %}>
+                    <input type="radio" name="use_ssl" id="use_ssl" value="0"{% if use_ssl and use_ssl|int == 0 %} checked="checked"{% endif %}>
                     不需要
                   </label>
               </div>
@@ -94,6 +98,11 @@
         </form>
 
 <script type="text/javascript">
+  {% if pro_id and pro_id > 0 %}
+  $(function(){
+    init_resource_apply($("#form_publish"));
+  })
+  {% endif %}
   function do_form_publish(){
     generate_ajax_post({
         form: "#form_publish",

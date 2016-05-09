@@ -153,7 +153,7 @@ class ProResourceApplyService(BaseService):
             return valid_res
         pro_id = self.params.get("pro_id")
         if not pro_id:
-            return self.failure(ERROR.pro_name_empty_err)
+            return self.failure(ERROR.pro_id_empty_err)
         pro_info = self.db.query(
             Pro_Info    
         ).filter(

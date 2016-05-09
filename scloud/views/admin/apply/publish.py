@@ -42,8 +42,8 @@ class PublishIndexHandler(ApplyHandler):
 
 @url("/apply/publish/detail", name="apply.publish.detail", active="apply.publish")
 class PublishDetailHandler(ApplyHandler):
-    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
     u'互联网发布详情'
+    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
     @check_perms('pro_info.view')
     @unblock
     def get(self):

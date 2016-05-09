@@ -170,22 +170,23 @@ class GuideStep3Handler(GuideStepGetHandler):
         svc = ProjectService(self)
         pro_list_res = svc.get_project_list()
         logger.info(pro_list_res)
-        svc = ProUserService(self, {"pro_id": kwargs["pro_id"]})
-        pro_users_res = svc.get_list()
-        pro_user_res = svc.get_info()
-        svc = ApplyPublish(self, {"pro_id": kwargs["pro_id"]})
-        publish_res = svc.get_publish()
-        svc = ApplyLoadBalance(self, {"pro_id": kwargs["pro_id"]})
-        loadbalance_res = svc.get_loadbalance()
-        svc = ApplyBackups(self, {"pro_id": kwargs["pro_id"]})
-        backups_res = svc.get_backups()
+        # svc = ProUserService(self, {"pro_id": kwargs["pro_id"]})
+        # pro_users_res = svc.get_list()
+        # pro_user_res = svc.get_info()
+        # svc = ApplyPublish(self, {"pro_id": kwargs["pro_id"]})
+        # pro_publish_res = svc.get_publish()
+        # svc = ApplyLoadBalance(self, {"pro_id": kwargs["pro_id"]})
+        # pro_loadbalance_res = svc.get_loadbalance()
+        # svc = ApplyBackups(self, {"pro_id": kwargs["pro_id"]})
+        # backups_res = svc.get_backups()
         data.update(
             pro_list_res=pro_list_res,
-            pro_users_res=pro_users_res,
-            pro_user_res=pro_user_res,
-            publish_res=publish_res,
-            loadbalance_res=loadbalance_res,
-            backups_res=backups_res,
+            pro_id=kwargs["pro_id"]
+            # pro_users_res=pro_users_res,
+            # pro_user_res=pro_user_res,
+            # pro_publish_res=pro_publish_res,
+            # pro_loadbalance_res=pro_loadbalance_res,
+            # backups_res=backups_res,
         )
         if len(applies) > 0:
             last_apply = applies[-1]

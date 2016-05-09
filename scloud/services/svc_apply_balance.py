@@ -72,6 +72,8 @@ class ApplyLoadBalance(BaseService):
             Pro_Balance
         ).filter(
             conditions
+        ).order_by(
+            Pro_Balance.id.desc()
         ).all()
         return self.success(data=pro_balance_list)
 

@@ -55,7 +55,7 @@
     <div class="col-sm-{{ col2 }}">
       <select id="{{ name }}" name="{{ name }}" style="{{ style  }}">
         {% for option in options %}
-        <option value="{{ ST.get(option.value_en|upper) }}"{% if value|int == ST.get(option.value_en|upper) %} selected="selected"{% endif %}>{{ option.value }}</option>
+        <option value="{{ ST.get(option.value_en|upper) }}"{% if value and value|int == ST.get(option.value_en|upper) %} selected="selected"{% endif %}>{{ option.value }}</option>
         {% endfor %}
       </select>
       {% if res and res.return_code in check_codes %}

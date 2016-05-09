@@ -78,7 +78,7 @@ class EventService(BaseService):
             Pro_Event
         ).filter(
             conditions
-        ).order_by(Pro_Event.priority.desc(), Pro_Event.status.desc(), Pro_Event.id.desc()).all()
+        ).order_by(Pro_Event.id.desc()).all()
         # logger.info([i.as_dict() for i in pro_users])
         return self.success(data=pro_users)
 

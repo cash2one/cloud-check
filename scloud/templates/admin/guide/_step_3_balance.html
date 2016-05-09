@@ -6,12 +6,30 @@
     {{ handler.xsrf_form_html() }}
     {% set loadbalance_plot = pro_loadbalance_res.data if pro_loadbalance_res else {} %}
     
-    {% set plot = handler.args.get("plot", "") %}
-    {% set health = handler.args.get("health", "") %}
-    {% set url = handler.args.get("url", "") %}
-    {% set keyword = handler.args.get("keyword", "") %}
-    {% set desc = handler.args.get("desc", "") %}
-    {% set pro_id = handler.args.get("pro_id", "") %}
+    {% if handler.request.method == "POST" %}
+      {% set plot = handler.args.get("plot", "") %}
+      {% set health = handler.args.get("health", "") %}
+      {% set url = handler.args.get("url", "") %}
+      {% set keyword = handler.args.get("keyword", "") %}
+      {% set desc = handler.args.get("desc", "") %}
+      {% set pro_id = handler.args.get("pro_id", "") %}
+    {% else %}
+      {% if handler.kwargs["name"] == "guide_step_3" %}
+        {% set pro_id = pro_id %}
+        {% set plot = "" %}
+        {% set health = "" %}
+        {% set url = "" %}
+        {% set keyword = "" %}
+        {% set desc = "" %}
+      {% else %}
+        {% set pro_id = loadbalance_plot.pro_id if loadbalance_plot else "" %}
+        {% set plot = loadbalance_plot.plot if loadbalance_plot else "" %}
+        {% set health = loadbalance_plot.health if loadbalance_plot else "" %}
+        {% set url = loadbalance_plot.url if loadbalance_plot else "" %}
+        {% set keyword = loadbalance_plot.keyword if loadbalance_plot else "" %}
+        {% set desc = loadbalance_plot.desc if loadbalance_plot else "" %}
+      {% endif %}
+    {% endif %}
       <div class="box-body">
         {{ pro_macro.get_pro_info_select(pro_res=pro_loadbalance_res, pro_id=pro_id) }}
         <!-- form input -->
@@ -87,20 +105,25 @@
   </div>
 
 <script type="text/javascript">
+  {% if pro_id and pro_id > 0 %}
+  $(function(){
+    init_resource_apply($("#form_loadbalance"));
+  })
+  {% endif %}
   var max_loop = 0;
   var loop = 0;
   var members = 0;
   var loadbalance_members = 0;
   function set_member_tip(){
-    max_loop = parseInt($("#res_apply_id").attr("loadbalance"));
-    loadbalance_members = parseInt($("#res_apply_id").attr("loadbalance_members"));
+    max_loop = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance"));
+    loadbalance_members = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance_members"));
     // var remainder = max_loop - loadbalance_members - loop;
     var remainder = max_loop - loop;
     $("#members_add_tip").html("还可以添加"+ remainder +"个成员(已添加"+loadbalance_members+"个成员)");
   }
   function add_member(){
-    max_loop = parseInt($("#res_apply_id").attr("loadbalance"));
-    loadbalance_members = parseInt($("#res_apply_id").attr("loadbalance_members"));
+    max_loop = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance"));
+    loadbalance_members = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance_members"));
     if (!max_loop){
       $("#members_add_tip").html("请先选择项目");
       return false 

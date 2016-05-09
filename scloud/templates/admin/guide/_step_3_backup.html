@@ -6,7 +6,13 @@
     <!-- form start -->
     <form id="form_backup" data-pjax action="{{ reverse_url('apply.backup.add') }}" class="form-horizontal" method="POST">
     {{ handler.xsrf_form_html() }}
+    {% if handler.request.method == "POST" %}
     {% set pro_id = handler.args.get("pro_id", "") %}
+    {% else %}
+    {% if handler.kwargs["name"] == "guide_step_3" %}
+    {% set pro_id = pro_id %}
+    {% endif %}
+    {% endif %}
     
       <div class="box-body">
         {{ pro_macro.get_pro_info_select(pro_res=pro_backup_res, pro_id=pro_id) }}
@@ -58,16 +64,21 @@
   </div>
   
   <script type="text/javascript">
+  {% if pro_id and pro_id > 0 %}
+  $(function(){
+    init_resource_apply($("#form_backup"));
+  })
+  {% endif %}
   var bmax_loop = 0;
   var bloop = 0;
   var backups = 0;
   function set_backup_tip(){
-    bmax_loop = $("#res_apply_id").attr("disk_backup")
+    bmax_loop = $("#form_backup").find("#res_apply_id").attr("disk_backup")
     var remainder = bmax_loop - bloop;
     $("#backups_add_tip").html("还可以添加"+ remainder +"个磁盘")
   }
   function add_backup(){
-    bmax_loop = $("#res_apply_id").attr("disk_backup");
+    bmax_loop = $("#form_backup").find("#res_apply_id").attr("disk_backup");
     if (!bmax_loop){
       $("#backups_add_tip").html("请先选择所属项目")
       return false 

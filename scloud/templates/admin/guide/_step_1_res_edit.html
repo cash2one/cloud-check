@@ -226,6 +226,11 @@
   </div>
 </form>
   <script type="text/javascript">
+  {% if pro_id and pro_id > 0 %}
+  $(function(){
+    init_resource_apply($("#resource_form"));
+  })
+  {% endif %}
   $('.fa-calendar').datepicker({ format: 'yyyy-mm-dd 00:00:00', autoclose: true});
   function load_env(){
     console.log("load_env");

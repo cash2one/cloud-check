@@ -28,6 +28,7 @@
                       <th style="width:10%">操作</th>
                     </tr>
                     {% for publish in page.object_list %}
+                    {% set ST = STATUS_PRO_TABLES.get(publish.status) %}
                     <tr>
                       <td>
                       {% if publish.status in [STATUS_PRO_TABLES.CHECKED, STATUS_PRO_TABLES.REFUSED] %}
@@ -39,6 +40,12 @@
                       <td>{{ publish.domain }}:{{ publish.domain_port }}</td>
                       <td>{{ publish.network_address }}:{{ publish.network_port }}</td>
                       <td><span class="label label-{{ STATUS_PRO_TABLES.get(publish.status).level }}">{{ STATUS_PRO_TABLES.get(publish.status).value }}, {{ STATUS_PRO_TABLES.get(publish.status).todo_value }}</span>
+                      {% if publish.status == STATUS_PRO_TABLES.REFUSED %}
+                      <a href="javascript:;" data-toggle="popover" title="查看原因" data-content="<span class='label label-{{ STATUS_PRO_TABLES.get(publish.status).level }}''>{{ STATUS_PRO_TABLES.get(publish.status).value }}, {{ STATUS_PRO_TABLES.get(publish.status).todo_value }}</span><br>拒绝申请原因：{{ publish.reason }} <a data-pjax href='{{ reverse_url('apply.publish.detail') }}?id={{ publish.id }}' data-toggle='tooltip' data-placement='top' title='进入查看'><i class='fa fa-link'></i></a>" data-toggle='tooltip' data-placement='top'>
+                        <i class="fa fa-circle text-{{ STATUS_PRO_TABLES.get(publish.status).level }}"></i>
+                      </a>
+                      {% endif %}
+
                       {% if publish.status == STATUS_PRO_TABLES.CHECKED %}
                       <a class="btn btn-warning btn-xs" href="javascript:;" style="color:#FFFFFF" onclick="pro_table_do_confirm({_this:this, pro_table:'pro_publish', ids:[{{ publish.id }}]})"> 确认</a>
                       {% endif %}
@@ -64,6 +71,27 @@
             </div>
           </div><!-- /.row -->
         </section><!-- /.content -->
+        <script type="text/javascript">
+        $(function(){
+          $("body").find('[data-toggle="popover"]').each(function(){
+              $(this).click(function(e){
+                  // $('.popover').remove();
+                  $('body').find('[data-toggle="popover"]').popover('hide');
+                  e.preventDefault();
+                  return false;
+              });
+              $(this).popover({
+                  animation: true,
+                  trigger : 'click',
+                  placement: 'auto bottom',
+                  html: true
+              });
+          });
+          $("body").click(function(){
+              $('body').find('[data-toggle="popover"]').popover('hide');
+          });
+        });
+        </script>
         <script type="text/javascript">
         function do_del_pro_publish(id, name){
           confirmBox({
