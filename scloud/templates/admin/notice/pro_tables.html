@@ -27,7 +27,7 @@
       {% if pro_publish_list|length > 0 %}
       <li>
       {% if imchecker %}
-        <a data-pjax href="{{ reverse_url('apply.publish') }}?pro_table=pro_publish">
+        <a data-pjax href="{{ reverse_url('pro_table_check_list') }}?pro_table=pro_publish">
           <i class="fa fa-internet-explorer text-green"></i> {{ pro_publish_list|length }} 新申请的互联网发布内容已提交，请受理
         </a>
       {% else %}

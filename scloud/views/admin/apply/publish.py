@@ -69,6 +69,8 @@ class PublishAddHandler(ApplyHandler):
         # pro_id = self.args.get("pro_id")
         # user_id = self.args.get("user_id", 0)
         data = self.get_pro_data()
+        action_url = self.reverse_url(self.kwargs["name"])
+        data.update(action_url=action_url)
         if self.kwargs["name"] == "apply.publish.edit":
             svc = ApplyPublish(self)
             # pro_users_res = svc.get_list()

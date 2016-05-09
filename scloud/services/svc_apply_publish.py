@@ -106,7 +106,8 @@ class ApplyPublish(BaseService):
             ).filter(
                 Pro_Publish.id == publish_id
             ).first()
-        do_publish_info = Pro_Publish()
+        else:
+            do_publish_info = Pro_Publish()
         do_publish_info.pro_id = pro_id
         do_publish_info.domain = domain
         do_publish_info.domain_port = domain_port

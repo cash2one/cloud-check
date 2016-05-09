@@ -11,7 +11,7 @@
 {% for pro_table in page.object_list %}
 <tr>
   <td><input type="checkbox" value="{{ pro_table.id }}"></td>
-  <td class="mailbox-star"><a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url("pro_event_detail", pro_table.id) }}')">{{ pro_table.id }}</a></td>
+  <td class="mailbox-star"><a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url("pro_event_detail", pro_table.id) }}')">EVT{{ "%04d" % pro_table.id }}</a></td>
   <td class="mailbox-subject">{{ pro_table.title }}</td>
   <td class="mailbox-date">{{ pro_table.create_time }}</td>
   <td class="mailbox-date">{{ pro_table.update_time }}</td>

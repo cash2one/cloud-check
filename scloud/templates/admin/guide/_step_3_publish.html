@@ -1,9 +1,11 @@
 {% import "admin/base/base_macros.html" as base with context %}
 {% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
 
-
+        {% if not action_url %}
+          {% set action_url = reverse_url('apply.publish.add') %}
+        {% endif %}
         <!-- form start -->
-        <form id="form_publish" data-pjax action="{{ reverse_url('apply.publish.add') }}" class="form-horizontal" method="POST">
+        <form id="form_publish" data-pjax action="{{ action_url }}" class="form-horizontal" method="POST">
         {{ handler.xsrf_form_html() }}
           <div class="box-body">
           {% if pro_publish_res %}
@@ -39,12 +41,13 @@
           {% if pro_publish_res.return_code == 0 %}
             {% set pro_publish = pro_publish_res.data %}
             {% if pro_publish.status == STATUS_PRO_TABLES.REFUSED %}
-            <div class="form-group">
+            <div class="form-group has-warning">
               <label for="status" class="col-sm-3 control-label">申请状态</label>
               <div class="col-sm-9">
                 <p class="form-control-static">
-                  {{ pro_publish.reason }}
+                  <span class="label label-{{ STATUS_PRO_TABLES.get(pro_publish.status).level }}">{{ STATUS_PRO_TABLES.get(pro_publish.status).value }}</span>
                 </p>
+                <label for="status" class="control-label">{{ pro_publish.reason }}</label>
               </div>
             </div>
             {% endif %}

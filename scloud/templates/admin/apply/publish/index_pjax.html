@@ -47,6 +47,7 @@
                       <td>
                         <div class="input-group-btn">
                           <a data-pjax href="{{ reverse_url('apply.publish.detail') }}?id={{ publish.id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</a>
+                          <a data-pjax href="{{ reverse_url('apply.publish.edit') }}?id={{ publish.id }}" class="btn btn-xs btn-info"><i class="fa fa-edit"></i> 编辑</a>
                           <button class="btn btn-xs btn-danger" id="form_del_pro_publish_{{ publish.id }}_btn" onclick="do_del_pro_publish('{{ publish.id }}', '{{ publish.domain }}:{{ publish.domain_port }}')"><i class="fa fa-trash"></i> 删除</button>
                           <form id="form_del_pro_publish_{{ publish.id }}" action="{{ reverse_url('apply.publish.del') }}">
                           {{ handler.xsrf_form_html() }}
