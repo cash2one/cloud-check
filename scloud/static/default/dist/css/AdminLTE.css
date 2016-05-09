@@ -3192,12 +3192,13 @@ table.text-center th {
 }
 .login-page,
 .register-page {
-  background: #d2d6de;
+  background: #3C8DBC;
+  /*background: #d2d6de;*/
 }
 .login-box,
 .register-box {
-  width: 360px;
-  margin: 7% auto;
+  width: 430px;
+  margin: 5% auto;
 }
 @media (max-width: 768px) {
   .login-box,
@@ -4842,7 +4843,7 @@ table.text-center th {
     z-index: 3;
     cursor: pointer;
     position: absolute;
-    width: 100px;
+    width: 92px;
 }
 
 #captcha {

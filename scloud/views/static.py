@@ -16,7 +16,7 @@ class CaptchaHandler(Handler):
                           WIDTH=121,
                           HEIGHT=45,
                           PADDING=35,
-                          BG_RGBA=(255,255,255),
+                          BG_RGBA=(210, 214, 222),
                           FL_RGBA=(0, 0, 0),
                           CHAR="ABCDEFGHJKLMNPQRSTUVWXY345789")
         text, buf = captcha.gen()

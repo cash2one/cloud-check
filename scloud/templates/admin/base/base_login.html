@@ -37,9 +37,10 @@
     <script src="{{ handler.static_url('js/echo-strap-0.0.1.js') }}"></script>
   </head>
   <body class="hold-transition login-page">
+
     <div class="login-box">
       <div class="login-logo">
-        <a href="{{ reverse_url('index') }}"><b>{{ CONF('APP_CN') }}</b>SCLOUD</a>
+        <a href="{{ reverse_url('index') }}"><span class="logo-lg"><img src="{{ handler.static_url('images/logo.png') }}" style="width: 67px;padding-bottom: 10px;"></span> <b>{{ CONF('APP_CN') }}</b> SCLOUD</a>
         </br>
         <small>{{ CONF('SUB_APP_CN') }}</small>
       </div><!-- /.login-logo -->
