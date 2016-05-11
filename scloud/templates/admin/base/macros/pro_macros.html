@@ -116,3 +116,55 @@
   });
 </script>
 {% endmacro %}
+
+{% macro select_pro_resource_internet_ip(pro_resource_apply=None) -%}
+
+  {% import "admin/base/base_macros.html" as base with context %}
+
+  {% if env_resource_value_res and env_resource_value_res.return_code == 0 %}
+  {% set env_resource_value = env_resource_value_res.data %}
+  {% else %}
+  {% set env_resource_value = {} %}
+  {% endif %}
+
+  {% if env_internet_ip_types_res and env_internet_ip_types_res.return_code == 0 %}
+  {% set internet_ip_options = env_internet_ip_types_res.data %}
+  {% else %}
+  {% set internet_ip_options = [] %}
+  {% endif %}
+
+  {% if handler.request.method == "POST" %}
+  {% set internet_ip_value = handler.args.get("internet_ip", "") %}
+  {% set internet_ip_ssl_value = handler.args.get("internet_ip_ssl", "0") %}
+  {% else %}
+    {% if pro_resource_apply %}
+      {% set internet_ip_value = pro_resource_apply.internet_ip %}
+      {% set internet_ip_ssl_value = pro_resource_apply.internet_ip_ssl %}
+    {% else %}
+      {% set internet_ip_value = env_resource_value.internet_ip %}
+      {% set internet_ip_ssl_value = env_resource_value.internet_ip_ssl %}
+    {% endif %}
+  {% endif %}
+
+  <select class="form-control" id="internet_ip" name="internet_ip">
+  <option value="0"> -- 选择 ({{ internet_ip_value }}) -- </option>
+  {% for _internet_ip in internet_ip_options %}
+  <option value="{{ _internet_ip.value }}"{% if _internet_ip.value|string == internet_ip_value|string %} selected{% endif %}>{{ _internet_ip.desc }}</option>
+  {% endfor %}
+  </select>
+  <div class="input-group-unit">
+      <div class="radio pull-left">
+        <label>
+          <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="1"{% if internet_ip_ssl_value|string == "1" %} checked="checked"{% endif %}>
+          需要SSL卸载
+        </label>
+      </div>
+      <div class="radio pull-left">
+        <label>
+          <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="0"{% if internet_ip_ssl_value|string == "0" %} checked="checked"{% endif %}>
+          不需要SSL卸载
+        </label>
+      </div>
+  </div>
+
+{%- endmacro %}

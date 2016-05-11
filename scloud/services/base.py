@@ -6,6 +6,8 @@ from scloud.shortcuts import env
 from scloud.config import CONF, logger
 from scloud.utils.error_code import ERROR
 from scloud.config import logger, thrownException
+from voluptuous import MultipleInvalid
+
 
 class BaseService(object):
     def __init__(self, handler, params=None):
@@ -48,7 +50,8 @@ class BaseService(object):
     def failures(self, failure_list, data=None):
         result = ObjectDict()
         result.return_code = ERROR.database_save_err.errcode
-        result.return_message = u",".join(["(%s)%s" % (f.return_code, f.return_message) for f in failure_list])
+        # result.return_message = u",".join(["(%s)%s" % (f.return_code, f.return_message) for f in failure_list])
+        result.return_message = u"\n,".join([f for f in failure_list])
         result.return_messages = failure_list
         result.data = data
         return result
@@ -65,3 +68,12 @@ class BaseService(object):
         })
         template_string = tmpl.render(**kwargs)
         return template_string
+
+    def check_schema(self, schema):
+        try:
+            check_result = schema(self.params)
+            return self.success()
+        except MultipleInvalid as e:
+            # logger.error(u"\t %s" % e.errors)
+            ziped_errors = [(i.path[0], i) for i in e.errors]
+            return self.failures(ziped_errors)

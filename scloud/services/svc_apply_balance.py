@@ -88,12 +88,12 @@ class ApplyLoadBalance(BaseService):
             plot_messages = []
             port = mem['port']
             if not port:
-                plot_messages.append(self.failure(ERROR.pro_balance_member_port_empty_err))
-                g_plot_messages.append(self.failure(ERROR.pro_balance_member_port_empty_err))
+                plot_messages.append(self.failure(ERROR.pro_balance_member_port_empty_err).return_message)
+                g_plot_messages.append(self.failure(ERROR.pro_balance_member_port_empty_err).return_message)
             address = mem['address']
             if not address:
-                plot_messages.append(self.failure(ERROR.pro_balance_member_address_empty_err))
-                g_plot_messages.append(self.failure(ERROR.pro_balance_member_address_empty_err))
+                plot_messages.append(self.failure(ERROR.pro_balance_member_address_empty_err).return_message)
+                g_plot_messages.append(self.failure(ERROR.pro_balance_member_address_empty_err).return_message)
             mem["failures"] = plot_messages
         plot = self.params.get("plot", 0)
         health = self.params.get("health", 0)

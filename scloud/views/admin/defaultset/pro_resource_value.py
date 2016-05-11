@@ -22,6 +22,7 @@ from scloud.utils.error import SystemError
 from scloud.views.admin.defaultset.env_info import BaseEnvHandler
 from scloud.models.environment import Env_Resource_Value
 
+
 class Base_Env_Resource_Value_Handler(BaseEnvHandler):
     def get_index_page(self, **kwargs):
         data = super(Base_Env_Resource_Value_Handler, self).get_index_page()

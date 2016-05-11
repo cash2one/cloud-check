@@ -158,9 +158,13 @@ class ResourceLoadEnvHandler(AuthHandler):
         svc = ProjectService(self)
         env_resource_value_res = svc.load_env_resource_values()
         env_internet_ip_types_res = svc.load_env_internet_ip_types()
+        svc = ProResourceApplyService(self, self.args)
+        pro_resource_apply_res = svc.get_resource()
+        pro_resource_apply = pro_resource_apply_res.data if pro_resource_apply_res.return_code == 0 else None
         data = dict(
             env_internet_ip_types_res = env_internet_ip_types_res,
             env_resource_value_res = env_resource_value_res,
+            pro_resource_apply = pro_resource_apply,
         )
         env_internet_ip_types_tmpl = self.render_to_string("admin/apply/resource/_env_internet_ip_types.html", **data)
         return simplejson.dumps(self.success(data=dict(

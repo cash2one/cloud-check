@@ -19,6 +19,7 @@ from scloud.services.svc_act import ActHistoryService
 from scloud.utils.unblock import unblock
 from scloud.utils.error import SystemError
 
+
 class BaseEnvHandler(AuthHandler):
     def get_index_page(self):
         svc = EnvService(self)
@@ -29,7 +30,7 @@ class BaseEnvHandler(AuthHandler):
             "page": page
         }
         return data
-        
+
 
 @url("/defaultset/env_info", name="defaultset.env_info", active="defaultset.env_info")
 class Env_Info_Handler(BaseEnvHandler):

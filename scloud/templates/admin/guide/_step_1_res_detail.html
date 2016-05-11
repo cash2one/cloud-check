@@ -48,7 +48,7 @@
       {% else %}
       <tr>
         <td>{{ column.info.name or column.name }}:</td>
-        <td>{{ getattr(pro_resource_apply, column.name)|default('<span class="label label-danger">未设置</span>', True) }} {{ column.info.unit }}</td>
+        <td>{{ getattr(pro_resource_apply, column.name)|default('<span class="label label-danger">未设置</span>', True) }} {% if getattr(pro_resource_apply, column.name) %} {{ column.info.unit }}{% endif %}</td>
       </tr>
       {% endif %}
     {% endif %}

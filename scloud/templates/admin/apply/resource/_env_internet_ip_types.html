@@ -15,7 +15,7 @@
 
 {% if handler.request.method == "POST" %}
 {% set internet_ip_value = handler.args.get("internet_ip", "") %}
-{% set internet_ip_ssl_value = handler.args.get("internet_ip_ssl", "") %}
+{% set internet_ip_ssl_value = handler.args.get("internet_ip_ssl", "0") %}
 {% else %}
   {% if pro_resource_apply %}
     {% set internet_ip_value = pro_resource_apply.internet_ip %}
@@ -25,7 +25,6 @@
     {% set internet_ip_ssl_value = env_resource_value.internet_ip_ssl %}
   {% endif %}
 {% endif %}
-
 <select class="form-control" id="internet_ip" name="internet_ip">
 <option value="0"> -- 选择 ({{ internet_ip_value }}) -- </option>
 {% for _internet_ip in internet_ip_options %}

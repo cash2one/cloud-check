@@ -85,20 +85,20 @@ class ApplyBackups(BaseService):
             backup_time = plot_mem['backup_time']
             plot_messages = []
             if not disk:
-                plot_messages.append(self.failure(ERROR.pro_backups_disk_empty_err))
-                g_plot_messages.append(self.failure(ERROR.pro_backups_disk_empty_err))
+                plot_messages.append(self.failure(ERROR.pro_backups_disk_empty_err).return_message)
+                g_plot_messages.append(self.failure(ERROR.pro_backups_disk_empty_err).return_message)
                 # return self.failure(ERROR.pro_backups_disk_empty_err)
             if not plot:
-                plot_messages.append(self.failure(ERROR.pro_backups_plot_empty_err))
-                g_plot_messages.append(self.failure(ERROR.pro_backups_plot_empty_err))
+                plot_messages.append(self.failure(ERROR.pro_backups_plot_empty_err).return_message)
+                g_plot_messages.append(self.failure(ERROR.pro_backups_plot_empty_err).return_message)
                 # return self.failure(ERROR.pro_backups_plot_empty_err)
             if plot in [u"月", u"周"] and not interval:
-                plot_messages.append(self.failure(ERROR.pro_backups_interval_empty_err))
-                g_plot_messages.append(self.failure(ERROR.pro_backups_interval_empty_err))
+                plot_messages.append(self.failure(ERROR.pro_backups_interval_empty_err).return_message)
+                g_plot_messages.append(self.failure(ERROR.pro_backups_interval_empty_err).return_message)
                 # return self.failure(ERROR.pro_backups_interval_empty_err)
             if not backup_time:
-                plot_messages.append(self.failure(ERROR.pro_backups_backup_time_empty_err))
-                g_plot_messages.append(self.failure(ERROR.pro_backups_backup_time_empty_err))
+                plot_messages.append(self.failure(ERROR.pro_backups_backup_time_empty_err).return_message)
+                g_plot_messages.append(self.failure(ERROR.pro_backups_backup_time_empty_err).return_message)
                 # return self.failure(ERROR.pro_backups_backup_time_empty_err)
             plot_mem["failures"] = plot_messages
         logger.info(plot_s)

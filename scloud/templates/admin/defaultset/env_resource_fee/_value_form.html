@@ -8,6 +8,25 @@
             <button class="btn btn-info btn-sm" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
           </div><!-- /. tools -->
         </div><!-- /.box-header -->
+        {% if handler.request.method == "POST" %}
+          {% set computer = handler.args.get("computer", "") or 0 %}
+          {% set cpu = handler.args.get("cpu", "") or 0 %}
+          {% set memory = handler.args.get("memory", "") or 0 %}
+          {% set disk = handler.args.get("disk", "") or 0 %}
+          {% set disk_backup = handler.args.get("disk_backup", "") or 0 %}
+          {% set out_ip = handler.args.get("out_ip", "") or 0 %}
+          {% set snapshot = handler.args.get("snapshot", "") or 0 %}
+          {% set loadbalance = handler.args.get("loadbalance", "") or 0 %}
+        {% else %}
+          {% set computer = resource_fee.computer %}
+          {% set cpu = resource_fee.cpu %}
+          {% set memory = resource_fee.memory %}
+          {% set disk = resource_fee.disk %}
+          {% set disk_backup = resource_fee.disk_backup %}
+          {% set out_ip = resource_fee.out_ip %}
+          {% set snapshot = resource_fee.snapshot %}
+          {% set loadbalance = resource_fee.loadbalance %}
+        {% endif %}
         <!-- form start -->
         <form data-pjax id="env_resource_fee_form" class="form-horizontal" action="{{ reverse_url('defaultset.env_resource_fee.edit', env_res.data.id) }}">
           {{ handler.xsrf_form_html() }}
@@ -16,7 +35,7 @@
           {{ base.form_input(
                 Env_Resource_Fee.computer.info.name,
                 "computer",
-                value=resource_fee.computer,
+                value=computer,
                 res=env_res,
                 check_codes=[ERR.RES_COMPUTER_INVALID_ERR],
                 label_col=4,
@@ -24,7 +43,7 @@
           {{ base.form_input(
                 Env_Resource_Fee.cpu.info.name,
                 "cpu",
-                value=resource_fee.cpu,
+                value=cpu,
                 res=env_res,
                 check_codes=[ERR.RES_CPU_INVALID_ERR],
                 label_col=4,
@@ -32,7 +51,7 @@
           {{ base.form_input(
                 Env_Resource_Fee.memory.info.name,
                 "memory",
-                value=resource_fee.memory,
+                value=memory,
                 res=env_res,
                 check_codes=[ERR.RES_MEMORY_INVALID_ERR],
                 label_col=4,
@@ -40,7 +59,7 @@
           {{ base.form_input(
                 Env_Resource_Fee.disk.info.name,
                 "disk",
-                value=resource_fee.disk,
+                value=disk,
                 res=env_res,
                 check_codes=[ERR.RES_DISK_INVALID_ERR],
                 label_col=4,
@@ -48,7 +67,7 @@
           {{ base.form_input(
                 Env_Resource_Fee.disk_backup.info.name,
                 "disk_backup",
-                value=resource_fee.disk_backup,
+                value=disk_backup,
                 res=env_res,
                 check_codes=[ERR.RES_DISK_BACKUP_INVALID_ERR],
                 label_col=4,
@@ -56,14 +75,14 @@
           {{ base.form_input(
                 Env_Resource_Fee.out_ip.info.name,
                 "out_ip",
-                value=resource_fee.out_ip,
+                value=out_ip,
                 res=env_res,
                 check_codes=[ERR.RES_OUT_IP_INVALID_ERR],
                 label_col=4,
                 unit=Env_Resource_Fee.out_ip.info.unit) }}
           {{ base.form_input(Env_Resource_Fee.snapshot.info.name,
                 "snapshot",
-                value=resource_fee.snapshot,
+                value=snapshot,
                 res=env_res,
                 check_codes=[ERR.RES_SNAPSHOT_INVALID_ERR],
                 label_col=4,
@@ -71,7 +90,7 @@
           {{ base.form_input(
                 Env_Resource_Fee.loadbalance.info.name,
                 "loadbalance",
-                value=resource_fee.loadbalance,
+                value=loadbalance,
                 res=env_res,
                 check_codes=[ERR.RES_LOADBALANCE_INVALID_ERR],
                 label_col=4,

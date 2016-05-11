@@ -16,7 +16,9 @@ from scloud.async_services.svc_mail import sendMail
 from scloud.async_services.svc_act import task_post_pro_res_apply_history
 from scloud.const import admin_emails, STATUS_RESOURCE
 from scloud.models.environment import Env_Resource_Fee
-
+from voluptuous import (Schema, Required, Error,
+    Invalid, ALLOW_EXTRA, MultipleInvalid, TypeInvalid, ValueInvalid,
+    All, Length, Range)
 
 mail_format = u"项目名[%(pro_name)s]-项目编号[%(pro_id)s]-%(user_name)s %(resource_status)s资源申请"
 
@@ -24,6 +26,46 @@ mail_title_format = u"%(user_name)s %(action)s[%(pro_name)s-%(res_desc)s]%(todo_
 
 
 class ProResourceApplyService(BaseService):
+
+    def validate_num(self, value):
+        if str(value).strip() == '':
+            value = 0
+        if not isinstance(value, int):
+            try:
+                value = int(value)
+            except ValueError:
+                raise Invalid(u"必须为数字")
+        if value < 0:
+            raise ValueInvalid(u'必须为大于等于0的数字')
+        return value
+
+    def validate_num_more_than_1(self, value):
+        if str(value).strip() == '':
+            value = 0
+        if not isinstance(value, int):
+            try:
+                value = int(value)
+            except ValueError:
+                raise Invalid(u"必须为数字")
+        if value < 0:
+            raise ValueInvalid(u'必须为大于等于0的数字')
+        return value
+
+    def get_param_schema(self):
+        param_schema = Schema({
+            "computer": self.validate_num_more_than_1,
+            "cpu": self.validate_num_more_than_1,
+            "memory": self.validate_num_more_than_1,
+            'disk': self.validate_num,
+            'disk_backup': self.validate_num,
+            'out_ip': self.validate_num,
+            'snapshot': self.validate_num,
+            'loadbalance': self.validate_num,
+            'internet_ip': self.validate_num,
+            'internet_ip_ssl': self.validate_num,
+            'period': self.validate_num,
+        }, extra=ALLOW_EXTRA)
+        return param_schema
 
     @thrownException
     def get_list(self):
@@ -53,70 +95,85 @@ class ProResourceApplyService(BaseService):
         return self.success(data=resource_res)
 
     @thrownException
-    def check_form_valid(self):
+    def check_form_valid(self, param_schema):
         try:
-            self.computer = int(self.params.get("computer", 0) or 0)
-        except:
-            return self.failure(ERROR.res_computer_invalid_err)
-        try:
-            self.cpu = int(self.params.get("cpu", 0) or 0)
-        except:
-            return self.failure(ERROR.res_cpu_invalid_err)
-        try:
-            self.memory = int(self.params.get("memory", 0) or 0)
-        except:
-            return self.failure(ERROR.res_memory_invalid_err)
-        try:
-            self.disk = int(self.params.get("disk", 0) or 0)
-        except:
-            return self.failure(ERROR.res_disk_invalid_err)
-        try:
-            self.disk_backup = int(self.params.get("disk_backup", 0) or 0)
-        except:
-            return self.failure(ERROR.res_disk_backup_invalid_err)
-        try:
-            self.out_ip = int(self.params.get("out_ip", 0) or 0)
-        except:
-            return self.failure(ERROR.res_out_ip_invalid_err)
-        try:
-            self.snapshot = int(self.params.get("snapshot", 0) or 0)
-        except:
-            return self.failure(ERROR.res_snapshot_invalid_err)
-        try:
-            self.loadbalance = int(self.params.get("loadbalance", 0) or 0)
-        except:
-            return self.failure(ERROR.res_loadbalance_invalid_err)
-        try:
-            self.internet_ip = int(self.params.get("internet_ip", -1) or -1)
-        except:
-            return self.failure(ERROR.res_internet_ip_invalid_err)
-        try:
-            self.internet_ip_ssl = int(self.params.get("internet_ip_ssl", -1) or -1)
-        except:
-            return self.failure(ERROR.res_internet_ip_ssl_invalid_err)
-        try:
-            if self.params.get("period", "").strip() == "":
-                return self.failure(ERROR.res_period_empty_err)
-            self.period = int(self.params.get("period"))
-        except:
-            return self.failure(ERROR.res_period_invalid_err)
-        try:
-            start_date = self.params.get("start_date", "")
-            if start_date == "":
-                self.start_date = ""
-            else:
-                self.start_date = datetime.strptime(self.params.get("start_date"), "%Y-%m-%d %H:%M:%S")
-        except:
-            return self.failure(ERROR.res_start_date_invalid_err)
-        try:
-            self.unit_fee = "{:,.2f}".format(float(self.params.get("unit_fee") or 0))
-        except:
-            return self.failure(ERROR.res_unit_fee_invalid_err)
-        try:
-            self.total_fee = "{:,.2f}".format(float(self.params.get("total_fee") or 0))
-        except:
-            return self.failure(ERROR.res_total_fee_invalid_err)
-        return self.success()
+            check_result = param_schema(self.params)
+            logger.info(check_result)
+            return self.success(check_result)
+        except MultipleInvalid as e:
+            logger.error(u"\t %s" % e.errors)
+            ziped_errors = [(i.path[0], i) for i in e.errors]
+            messages = []
+            for path, err in ziped_errors:
+                messages.append("%s %s" % (self.failure(getattr(ERROR, "res_%s_invalid_err" % path)).return_message, "'%s'%s" % (path, err.msg)))
+            # raise Exception(u"{}".format(",".join(messages)))
+            return self.failures(messages)
+
+    # @thrownException
+    # def check_form_valid(self):
+    #     try:
+    #         self.computer = int(self.params.get("computer", 0) or 0)
+    #     except:
+    #         return self.failure(ERROR.res_computer_invalid_err)
+    #     try:
+    #         self.cpu = int(self.params.get("cpu", 0) or 0)
+    #     except:
+    #         return self.failure(ERROR.res_cpu_invalid_err)
+    #     try:
+    #         self.memory = int(self.params.get("memory", 0) or 0)
+    #     except:
+    #         return self.failure(ERROR.res_memory_invalid_err)
+    #     try:
+    #         self.disk = int(self.params.get("disk", 0) or 0)
+    #     except:
+    #         return self.failure(ERROR.res_disk_invalid_err)
+    #     try:
+    #         self.disk_backup = int(self.params.get("disk_backup", 0) or 0)
+    #     except:
+    #         return self.failure(ERROR.res_disk_backup_invalid_err)
+    #     try:
+    #         self.out_ip = int(self.params.get("out_ip", 0) or 0)
+    #     except:
+    #         return self.failure(ERROR.res_out_ip_invalid_err)
+    #     try:
+    #         self.snapshot = int(self.params.get("snapshot", 0) or 0)
+    #     except:
+    #         return self.failure(ERROR.res_snapshot_invalid_err)
+    #     try:
+    #         self.loadbalance = int(self.params.get("loadbalance", 0) or 0)
+    #     except:
+    #         return self.failure(ERROR.res_loadbalance_invalid_err)
+    #     try:
+    #         self.internet_ip = int(self.params.get("internet_ip", -1) or -1)
+    #     except:
+    #         return self.failure(ERROR.res_internet_ip_invalid_err)
+    #     try:
+    #         self.internet_ip_ssl = int(self.params.get("internet_ip_ssl", -1) or -1)
+    #     except:
+    #         return self.failure(ERROR.res_internet_ip_ssl_invalid_err)
+    #     try:
+    #         if self.params.get("period", "").strip() == "":
+    #             return self.failure(ERROR.res_period_empty_err)
+    #         self.period = int(self.params.get("period"))
+    #     except:
+    #         return self.failure(ERROR.res_period_invalid_err)
+    #     try:
+    #         start_date = self.params.get("start_date", "")
+    #         if start_date == "":
+    #             self.start_date = ""
+    #         else:
+    #             self.start_date = datetime.strptime(self.params.get("start_date"), "%Y-%m-%d %H:%M:%S")
+    #     except:
+    #         return self.failure(ERROR.res_start_date_invalid_err)
+    #     try:
+    #         self.unit_fee = "{:,.2f}".format(float(self.params.get("unit_fee") or 0))
+    #     except:
+    #         return self.failure(ERROR.res_unit_fee_invalid_err)
+    #     try:
+    #         self.total_fee = "{:,.2f}".format(float(self.params.get("total_fee") or 0))
+    #     except:
+    #         return self.failure(ERROR.res_total_fee_invalid_err)
+    #     return self.success()
 
     def check_form_empty(self):
         if self.computer == 0:
@@ -140,14 +197,15 @@ class ProResourceApplyService(BaseService):
             return self.failure(ERROR.res_internet_ip_empty_err)
         # if self.internet_ip_ssl == -1:
         #     return self.failure(ERROR.res_internet_ip_ssl_invalid_err)
-        if self.period == 0:
+        if self.params.get('period') == 0:
             return self.failure(ERROR.res_period_empty_err)
         return self.success()
 
     @thrownException
     def generate_fee(self):
+        param_schema = self.get_param_schema()
         logger.info("------[generate_fee]------")
-        valid_res = self.check_form_valid()
+        valid_res = self.check_form_valid(param_schema)
         logger.info(valid_res)
         if valid_res.return_code < 0:
             return valid_res
@@ -178,16 +236,18 @@ class ProResourceApplyService(BaseService):
         internet_ip_fee_dict = fee_dict["internet_ip"]
         internet_ip_ssl_fee = fee_dict["internet_ip_ssl"] 
 
-        cpu = int(self.params.get("cpu"))
-        mem = int(self.params.get("memory"))
-        disk = int(self.params.get("disk"))
-        disk_backup = int(self.params.get("disk_backup"))
-        out_ip = int(self.params.get("out_ip"))
-        snapshot = int(self.params.get("snapshot"))
-        loadbalance = int(self.params.get("loadbalance"))
-        internet_ip_id = int(self.params.get("internet_ip"))
-        internet_ip_ssl = int(self.params.get("internet_ip_ssl"))
-        period = int(self.params.get("period"))
+        logger.info(valid_res.data)
+        params = valid_res.data
+        cpu = int(params.get("cpu"))
+        mem = int(params.get("memory"))
+        disk = int(params.get("disk"))
+        disk_backup = int(params.get("disk_backup"))
+        out_ip = int(params.get("out_ip"))
+        snapshot = int(params.get("snapshot"))
+        loadbalance = int(params.get("loadbalance"))
+        internet_ip_id = int(params.get("internet_ip"))
+        internet_ip_ssl = int(params.get("internet_ip_ssl"))
+        period = int(params.get("period"))
 
         _internet_ip_fee = 0 
         for i in internet_ip_fee_dict:
@@ -202,7 +262,7 @@ class ProResourceApplyService(BaseService):
             + snapshot * snapshot_fee + loadbalance * loadbalance_fee \
             + float(_internet_ip_fee) + internet_ip_ssl * internet_ip_ssl_fee
 
-        if self.period == 0:
+        if self.params.get('period') == 0:
             return self.failure(ERROR.res_period_empty_err)
         total_fee = unit_fee * period
 
@@ -214,12 +274,14 @@ class ProResourceApplyService(BaseService):
 
     @thrownException
     def do_apply(self):
-        form_valid_res = self.check_form_valid()
+        logger.info("---------[do_apply]---------")
+        param_schema = self.get_param_schema()
+        form_valid_res = self.check_form_valid(param_schema)
         if form_valid_res.return_code < 0:
             return form_valid_res
-        form_empty_res = self.check_form_empty()
-        if form_empty_res.return_code < 0:
-            return form_empty_res
+        # form_empty_res = self.check_form_empty()
+        # if form_empty_res.return_code < 0:
+        #     return form_empty_res
         pro_id = self.params.get("pro_id")
         user_id = self.params.get("user_id")
         logger.info(self.params)
@@ -249,20 +311,21 @@ class ProResourceApplyService(BaseService):
         else:
             first_apply = None
             last_apply = None
+        params = form_valid_res.data
         apply = Pro_Resource_Apply()
         apply.pro_id = pro_id
-        apply.computer = self.computer
-        apply.cpu = self.cpu
-        apply.memory = self.memory
-        apply.disk = self.disk
-        apply.disk_backup = self.disk_backup
-        apply.out_ip = self.out_ip
-        apply.snapshot = self.snapshot
-        apply.loadbalance = self.loadbalance
-        apply.internet_ip = self.internet_ip
-        apply.internet_ip_ssl = self.internet_ip_ssl
-        apply.start_date = self.start_date
-        apply.period = self.period
+        apply.computer = params.get('computer')
+        apply.cpu = params.get('cpu')
+        apply.memory = params.get('memory')
+        apply.disk = params.get('disk')
+        apply.disk_backup = params.get('disk_backup')
+        apply.out_ip = params.get('out_ip')
+        apply.snapshot = params.get('snapshot')
+        apply.loadbalance = params.get('loadbalance')
+        apply.internet_ip = params.get('internet_ip')
+        apply.internet_ip_ssl = params.get('internet_ip_ssl')
+        apply.start_date = params.get('start_date')
+        apply.period = params.get('period')
         apply.unit_fee = fee_data["unit_fee"]
         apply.total_fee = fee_data["total_fee"]
         apply.user_id = user_id
@@ -291,12 +354,14 @@ class ProResourceApplyService(BaseService):
 
     @thrownException
     def do_re_apply(self):
-        form_valid_res = self.check_form_valid()
+        logger.info("---------[do_re_apply]----------")
+        param_schema = self.get_param_schema()
+        form_valid_res = self.check_form_valid(param_schema)
         if form_valid_res.return_code < 0:
             return form_valid_res
-        form_empty_res = self.check_form_empty()
-        if form_empty_res.return_code < 0:
-            return form_empty_res
+        # form_empty_res = self.check_form_empty()
+        # if form_empty_res.return_code < 0:
+        #     return form_empty_res
         pro_id = self.params.get("pro_id")
         res_id = self.params.get("res_id")
         user_id = self.params.get("user_id")
@@ -320,22 +385,31 @@ class ProResourceApplyService(BaseService):
         ).first()
         if not resource:
             return self.failure(ERROR.not_found_err)
-        resource.computer = self.computer
-        resource.cpu = self.cpu
-        resource.memory = self.memory
-        resource.disk = self.disk
-        resource.disk_backup = self.disk_backup
-        resource.out_ip = self.out_ip
-        resource.snapshot = self.snapshot
-        resource.loadbalance = self.loadbalance
-        resource.internet_ip = self.internet_ip
-        resource.internet_ip_ssl = self.internet_ip_ssl
-        resource.start_date = self.start_date
-        resource.period = self.period
-        resource.unit_fee = self.unit_fee
-        resource.total_fee = self.total_fee
+        generate_fee_res = self.generate_fee()
+        if generate_fee_res.return_code == 0:
+            fee_data = generate_fee_res.data
+        else:
+            fee_data = dict(unit_fee=0, total_fee=0)
+            return generate_fee_res
+        params = form_valid_res.data
+        logger.info("\t form_valid_res data: %s" % params)
+        resource.computer = params.get('computer')
+        resource.cpu = params.get('cpu')
+        resource.memory = params.get('memory')
+        resource.disk = params.get('disk')
+        resource.disk_backup = params.get('disk_backup')
+        resource.out_ip = params.get('out_ip')
+        resource.snapshot = params.get('snapshot')
+        resource.loadbalance = params.get('loadbalance')
+        resource.internet_ip = params.get('internet_ip')
+        resource.internet_ip_ssl = params.get('internet_ip_ssl')
+        resource.start_date = params.get('start_date')
+        resource.period = params.get('period')
+        resource.unit_fee = fee_data['unit_fee']
+        resource.total_fee = fee_data['total_fee']
         resource.status = STATUS_RESOURCE.APPLIED
         resource.reason = u''
+        self.db.add(resource)
         self.db.flush()
         mail_html = self.render_to_string("admin/mail/pro_resource_apply_to_admin.html", resource_apply=resource, STATUS_RESOURCE=STATUS_RESOURCE)
         mail_title = mail_title_format % {

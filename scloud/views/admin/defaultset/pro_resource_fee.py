@@ -93,5 +93,8 @@ class Add_Env_resource_fee_Handler(Base_Env_Resource_Fee_Handler):
         })
         if env_resource_fee_res.return_code == 0:
             self.add_message(u"环境[%s]相应费用修改成功！" % env_resource_fee_res.data.env.name, level="success", post_action=True)
+        else:
+            self.add_message(u"环境费用修改失败！%s(%s)" % (env_resource_fee_res.return_code, env_resource_fee_res.return_message), level="warning")
+
         tmpl = self.render_to_string("admin/defaultset/env_resource_fee/edit_pjax.html", **data)
         return simplejson.dumps(self.success(data=tmpl))

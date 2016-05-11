@@ -12,47 +12,25 @@ from scloud.utils.error_code import ERROR
 from scloud.utils.error import NotFoundError
 from scloud.const import pro_resource_apply_status_types, STATUS_RESOURCE
 from scloud.services.svc_pro_resource_apply import ProResourceApplyService
-
+from voluptuous import (Schema, Required, Error,
+    Invalid, ALLOW_EXTRA, MultipleInvalid, TypeInvalid, ValueInvalid,
+    All, Length, Range)
 
 
 class EnvResourceFeeService(ProResourceApplyService):
+    def validate_float(self, value):
+        if str(value).strip() == '':
+            value = 0
+        if not isinstance(value, float):
+            try:
+                value = float(value)
+            except ValueError:
+                raise Invalid(u"必须为数字")
+        # logger.info("value --> %s, value < 0: %s" % (value, (value < 0)))
+        if value < 0:
+            raise ValueInvalid(u'必须为大于等于0的数字')
+        return value
 
-    # @thrownException
-    # def get_list(self):
-    #     logger.info("------[get_list]------")
-    #     env_list = self.db.query(
-    #         Env_Info
-    #     ).all()
-    #     return self.success(data=env_list)
-
-    # @thrownException
-    # def add_env(self):
-    #     logger.info("------[add_env]------")
-    #     name = self.params.get("name")
-    #     desc = self.params.get("desc")
-    #     if not name:
-    #         return self.failure(ERROR.env_name_empty_err)
-    #     if not desc:
-    #         return self.failure(ERROR.env_desc_empty_err)
-    #     env = Env_Info()
-    #     env.name = name
-    #     env.desc = desc
-    #     self.db.add(env)
-    #     self.db.flush()
-    #     return self.success(data=env)
-
-    # @thrownException
-    # def get_env(self):
-    #     logger.info("------[add_env]------")
-    #     env_id = self.params.get("env_id")
-    #     env = self.db.query(
-    #         Env_Info
-    #     ).filter(
-    #         Env_Info.id == env_id
-    #     ).first()
-    #     if not env:
-    #         raise NotFoundError()
-    #     return self.success(data=env)
     @thrownException
     def get_env_resource_fee(self):
         env_id = self.params.get("env_id")
@@ -66,7 +44,18 @@ class EnvResourceFeeService(ProResourceApplyService):
     @thrownException
     def get_or_create(self):
         logger.info("------[get_or_create]------")
-        form_valid_res = self.check_form_valid()
+        param_schema = Schema({
+            "computer": self.validate_float,
+            "cpu": self.validate_float,
+            "memory": self.validate_float,
+            'disk': self.validate_float,
+            'disk_backup': self.validate_float,
+            'out_ip': self.validate_float,
+            'snapshot': self.validate_float,
+            'loadbalance': self.validate_float,
+            'internet_ip': self.validate_float,
+        }, extra=ALLOW_EXTRA)
+        form_valid_res = self.check_form_valid(param_schema)
         if form_valid_res.return_code < 0:
             return form_valid_res
         env_id = self.params.get("env_id")
@@ -79,7 +68,7 @@ class EnvResourceFeeService(ProResourceApplyService):
         snapshot = self.params.get("snapshot")
         loadbalance = self.params.get("loadbalance")
         env, created = Env_Resource_Fee.get_or_create_obj(db=self.db, env_id=env_id)
-        logger.info("&"*60)
+        logger.info("&" * 60)
         logger.info(env)
         env.computer = computer
         env.cpu = cpu
@@ -92,4 +81,3 @@ class EnvResourceFeeService(ProResourceApplyService):
         self.db.add(env)
         self.db.flush()
         return self.success(data=env)
-
