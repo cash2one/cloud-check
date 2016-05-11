@@ -58,6 +58,7 @@ class Pro_Info_Mixin(object):
         if hasattr(self, "_last_apply"):
             return self._last_apply
         applies = self.pro_resource_applies
+        logger.info(applies)
         if len(applies) > 0:
             _last_apply = applies[-1]
         else:

@@ -59,6 +59,7 @@ class Pro_Info(BaseModel, BaseModelMixin, Pro_Info_Mixin):
     user_id = Column("user_id", Integer, ForeignKey("pt_user.id"), default=0)
     checker_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
     check_time = Column(DateTime, default='0000-00-00 00:00:00')
+    is_enable = Column(Integer, default=1)
 
     user = relationship("PT_User", foreign_keys=[user_id], backref="pro_infos")
     checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_infos")
@@ -92,10 +93,11 @@ class Pro_Resource_Apply(BaseModel, BaseModelMixin, Pro_Resource_Apply_Mixin):
     user_id = Column("user_id", Integer, ForeignKey("pt_user.id"), default=0)
     checker_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
     check_time = Column(DateTime, default='0000-00-00 00:00:00')
+    is_enable = Column(Integer, default=1)
 
     user = relationship("PT_User", foreign_keys=[user_id], backref="pro_resource_applies")
     checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_resource_applies")
-    project = relationship("Pro_Info", backref=backref("pro_resource_applies", order_by="Pro_Resource_Apply.update_time"))
+    project = relationship("Pro_Info", backref=backref("pro_resource_applies", order_by="Pro_Resource_Apply.id"))
     internet_ip_obj = relationship("Env_Internet_Ip_Types", backref=backref("pro_resource_applies", order_by="Pro_Resource_Apply.update_time"))
 
 

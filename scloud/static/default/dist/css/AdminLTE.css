@@ -4855,3 +4855,44 @@ table.text-center th {
     left: 0;
     top: 0;
 }
+
+
+/**
+ * disable table tr
+ */
+table .diabled-tr {
+  width: 100%;
+  margin-top: 10px;
+  font-family: verdana,arial,sans-serif;
+  font-size:12px;
+  color:#333333;
+  border-width: 1px;
+  border-color: #666666;
+  border-collapse: collapse;
+  text-decoration: line-through;
+ }
+
+ table .diabled-tr tr.highlight td {
+  background-color: #8888ff;
+ }
+
+ table .diabled-tr tr.normal {
+  background-color: #ffffff;
+ }
+
+ table .diabled-tr th {
+  white-space: nowrap; 
+  border-width: 1px;
+  padding: 8px;
+  border-style: solid;
+  border-color: #666666;
+  background-color: #dedede;
+ }
+
+ table .diabled-tr td {
+  border-width: 1px;
+  padding: 8px;
+  border-style: solid;
+  border-color: #666666;
+  background-color: #999999;
+ }

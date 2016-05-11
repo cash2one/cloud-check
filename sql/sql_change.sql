@@ -279,6 +279,7 @@ CREATE TABLE `pro_info` (
     `check_time` INT(11) NOT NULL DEFAULT '0' COMMENT '审核时间',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `is_enable` INT(11) NOT NULL DEFAULT '1' COMMENT '是否可用',
     PRIMARY KEY (`id`)
 )
 COMMENT='项目信息表'
@@ -326,6 +327,7 @@ CREATE TABLE `pro_resource_apply` (
     `check_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '审核时间',
     `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `is_enable` INT(11) NOT NULL DEFAULT '1' COMMENT '是否可用',
     PRIMARY KEY (`id`)
 )
 COMMENT='项目资源申请表'

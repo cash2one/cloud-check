@@ -471,7 +471,9 @@ class ProResourceApplyService(BaseService):
             "user_name": resource.user.email or resource.user.mobile,
             "resource_status": "已删除",
         }
-        self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).delete()
+        resource.is_enable = False
+        self.db.add(resource)
+        # self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).delete()
         # resource.delete()
         self.db.flush()
         logger.info("\t resource is deleted")
