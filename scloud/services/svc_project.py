@@ -18,15 +18,15 @@ class ProjectService(BaseService):
 
     @thrownException
     def load_env_resource_values(self):
-        logger.info("------[get_project]------")
+        logger.info("------[load_env_resource_values]------")
         pro_id = self.params.get("pro_id", 0)
         project = self.db.query(Pro_Info).filter(Pro_Info.id == pro_id).first()
         if project:
             # res = project.as_dict()
             # logger.info("project: %s" % res)
             env = project.env
-            logger.info(env)
-            logger.info(env.env_resource_value)
+            # logger.info(env)
+            # logger.info(env.env_resource_value)
             env_resource_value = project.env.env_resource_value
             return self.success(data=env_resource_value.as_dict() if env_resource_value else {})
         else:
@@ -34,15 +34,15 @@ class ProjectService(BaseService):
 
     @thrownException
     def load_env_internet_ip_types(self):
-        logger.info("------[get_project]------")
+        logger.info("------[load_env_internet_ip_types]------")
         pro_id = self.params.get("pro_id", 0)
         project = self.db.query(Pro_Info).filter(Pro_Info.id == pro_id).first()
         if project:
             # res = project.as_dict()
             # logger.info("project: %s" % res)
             env = project.env
-            logger.info(env)
-            logger.info(env.env_resource_value)
+            # logger.info(env)
+            # logger.info(env.env_resource_value)
             internet_ip_types = project.env.env_internet_ip_types
             internet_ip_options = [{"value": i.id, "desc": i.name} for i in internet_ip_types]
             return self.success(data=internet_ip_options)

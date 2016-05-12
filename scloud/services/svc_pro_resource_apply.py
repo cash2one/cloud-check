@@ -47,7 +47,7 @@ class ProResourceApplyService(BaseService):
                 value = int(value)
             except ValueError:
                 raise Invalid(u"必须为数字")
-        if value < 0:
+        if value <= 0:
             raise ValueInvalid(u'必须为大于等于0的数字')
         return value
 
@@ -63,7 +63,7 @@ class ProResourceApplyService(BaseService):
             'loadbalance': self.validate_num,
             'internet_ip': self.validate_num,
             'internet_ip_ssl': self.validate_num,
-            'period': self.validate_num,
+            'period': self.validate_num_more_than_1,
         }, extra=ALLOW_EXTRA)
         return param_schema
 
@@ -91,7 +91,7 @@ class ProResourceApplyService(BaseService):
         res_id = self.params.get("res_id", 0)
         resource_res = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
         if not resource_res:
-            return NotFoundError()
+            return self.failure(ERROR.not_found_err)
         return self.success(data=resource_res)
 
     @thrownException

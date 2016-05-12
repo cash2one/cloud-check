@@ -189,9 +189,14 @@ class GuideGenerateFeeHandler(ApplyHandler):
             env_internet_ip_types_res = env_internet_ip_types_res,
             env_resource_value_res = env_resource_value_res,
         ))
-        # logger.info(fee_res)
+        logger.info(fee_res)
+        if fee_res.return_code == 0:
+            self.add_message(u"费用计算成功！单月费用 %s（元/月）×有效期 %s（月）=总费用 %s（元）" % (fee_res.data["unit_fee"], self.args.get('period'), fee_res.data["total_fee"]), level="success")
+        else:
+            self.add_message(u"费用计算失败！ %s(%s)" % (fee_res.return_code, fee_res.return_message), level="warning")
+        messages_tmpl = self.render_to_string("admin/base/base_messages.html")
         tmpl = self.render_to_string("admin/apply/resource/add_pjax.html", **data)
-        return simplejson.dumps(self.success(data=tmpl))
+        return simplejson.dumps(self.success(data={"tmpl": tmpl, "messages_tmpl": messages_tmpl}))
 
 
 @url("/apply/resource/delete", name="apply.resource.del", active="guide")

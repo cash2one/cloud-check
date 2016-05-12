@@ -24,6 +24,7 @@ from scloud.services.svc_apply_balance import ApplyLoadBalance
 from scloud.services.svc_apply_backups import ApplyBackups
 from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
+from scloud.models.project import Pro_Resource_Apply
 from scloud.utils.error import SystemError
 
 
@@ -39,6 +40,7 @@ class GuideStepGetHandler(AuthHandler):
             "pro_info_res": pro_info_res,
             "pro_list_res": pro_list_res,
             "STATUS_RESOURCE": STATUS_RESOURCE,
+            "Pro_Resource_Apply": Pro_Resource_Apply
         }
         return data
 

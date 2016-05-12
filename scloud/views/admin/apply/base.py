@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from scloud.handlers import AuthHandler
+from scloud.models.project import Pro_Resource_Apply
 from scloud.services.svc_project import ProjectService
 
 
@@ -15,6 +16,7 @@ class ApplyHandler(AuthHandler):
         pro_list_res = svc.get_project_list()
         data = {
             "pro_list_res": pro_list_res,
+            "Pro_Resource_Apply": Pro_Resource_Apply
         }
         if "pro_id" in kw:
             data.update({"pro_info_res": pro_info_res})

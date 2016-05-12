@@ -19,7 +19,9 @@ from scloud.async_services.svc_act import task_post_action
 from sqlalchemy.exc import SQLAlchemyError
 from scloud.utils.error_code import ERR
 from scloud.utils.error import SystemError
-from scloud.const import STATUS_RESOURCE, STATUS_PRO_TABLES, STATUS_PRIORITY, STATUS_YESNO, PLOT_LOADBALANCE, LOADBALANCE_HEALTH, PRO_USER_TYPES
+from scloud.const import (STATUS_RESOURCE, RESOURCE_BANDWIDTH,
+    STATUS_PRO_TABLES, STATUS_PRIORITY, STATUS_YESNO,
+    PLOT_LOADBALANCE, LOADBALANCE_HEALTH, PRO_USER_TYPES)
 from scloud.utils.permission import GROUP, OP
 from sqlalchemy.orm.session import SessionTransaction
 
@@ -173,6 +175,7 @@ class Handler(BaseHandler):
             "reverse_url": self.application.reverse_url,
             "ERR": ERR,
             "STATUS_RESOURCE": STATUS_RESOURCE,
+            "RESOURCE_BANDWIDTH": RESOURCE_BANDWIDTH,
             "STATUS_PRO_TABLES": STATUS_PRO_TABLES,
             "STATUS_PRIORITY": STATUS_PRIORITY,
             "STATUS_YESNO": STATUS_YESNO,

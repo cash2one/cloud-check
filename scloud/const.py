@@ -57,6 +57,23 @@ def init_status_resource():
         STATUS_RESOURCE[k] = v
 init_status_resource()
 
+# Pro_Resource_Apply
+# 互联网宽带
+pro_resource_apply_bandwidth_types = {
+    0: IndexMark(value=u"1MB", value_en="mb1", level="primary"),
+    1: IndexMark(value=u"2MB", value_en="mb2", level="default"),
+    2: IndexMark(value=u"4MB", value_en="mb4", level="info"),
+    3: IndexMark(value=u"8MB", value_en="mb8", level="success"),
+}
+
+RESOURCE_BANDWIDTH = ObjectDict()
+def init_resource_bandwidth():
+    for k, v in pro_resource_apply_bandwidth_types.items():
+        setattr(RESOURCE_BANDWIDTH, v.value_en.upper(), k)
+        setattr(RESOURCE_BANDWIDTH, v.value_en.lower(), v)
+        RESOURCE_BANDWIDTH[k] = v
+init_resource_bandwidth()
+
 # pro_publish, pro_user, pro_backup, pro_balance
 # 互联网发布、负载均衡、定期备份、权限申请状态
 pro_tables_status_types = {

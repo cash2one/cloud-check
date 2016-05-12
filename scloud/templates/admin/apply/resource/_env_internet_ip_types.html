@@ -26,7 +26,7 @@
   {% endif %}
 {% endif %}
 <select class="form-control" id="internet_ip" name="internet_ip">
-<option value="0"> -- 选择 ({{ internet_ip_value }}) -- </option>
+<option value="0"> -- 选择 -- </option>
 {% for _internet_ip in internet_ip_options %}
 <option value="{{ _internet_ip.value }}"{% if _internet_ip.value|string == internet_ip_value|string %} selected{% endif %}>{{ _internet_ip.desc }}</option>
 {% endfor %}

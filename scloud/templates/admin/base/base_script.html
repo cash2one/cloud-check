@@ -206,7 +206,7 @@ function generate_ajax_post(options){
             $("#pjax-container").html(response.data);
           }
         }
-        if (options.onSuccess) {(options.onSuccess)(response);}
+        if (options.onSuccess) { if(check_response(response)){(options.onSuccess)(response);}}
     },
     error: function(xhr, Status){
       if (Status == "timeout"){

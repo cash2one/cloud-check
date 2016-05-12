@@ -1,210 +1,243 @@
-{% import "admin/base/base_macros.html" as mbase %}
-      <div id="panel_res" class="box box-{{ apply_global_vars.level }} box-solid">
-        <div class="box-header with-border">
-          <h3 class="box-title">资源申请</h3>
-          <div class="box-tools pull-right">
-            <button class="btn btn-box-tool" data-widget="remove"><i   class="fa fa-times"></i></button>
-          </div><!-- /.box-tools -->
-        </div><!-- /.box-header -->
-        <div class="box-body">
-            {% if last_apply %}
-              {% set computer = last_apply.computer %}
-              {% set cpu = last_apply.cpu %}
-              {% set memory = last_apply.memory %}
-              {% set disk = last_apply.disk %}
-              {% set disk_backup = last_apply.disk_backup %}
-              {% set out_ip = last_apply.out_ip %}
-              {% set snapshot = last_apply.snapshot %}
-              {% set loadbalance = last_apply.loadbalance %}
-              {% set internet_ip = last_apply.internet_ip %}
-              {% set internet_ip_ssl = last_apply.internet_ip_ssl %}
-              {% set start_date = last_apply.start_date.strftime("%Y-%m-%d") if last_apply.start_date else '' %}
-              {% set unit_fee = last_apply.unit_fee %}
-              {% set period = last_apply.period %}
-              {% set total_fee = last_apply.total_fee %}
-            {% else %}
-              {% set computer = handler.args.get('computer', '') %}
-              {% set cpu = handler.args.get('cpu', '') %}
-              {% set memory = handler.args.get('memory', '') %}
-              {% set disk = handler.args.get('disk', '') %}
-              {% set disk_backup = handler.args.get('disk_backup', '') %}
-              {% set out_ip = handler.args.get('out_ip', '') %}
-              {% set snapshot = handler.args.get('snapshot', '') %}
-              {% set loadbalance = handler.args.get('loadbalance', '') %}
-              {% set internet_ip = handler.args.get('internet_ip', '') %}
-              {% set internet_ip_ssl = handler.args.get('internet_ip_ssl', '') %}
-              {% set start_date = handler.args.get('start_date', '') %}
-              {% set unit_fee = handler.args.get('unit_fee', '') %}
-              {% set period = handler.args.get('period', '') %}
-              {% set total_fee = handler.args.get('total_fee', '') %}
-            {% endif %}
 
-            {% if last_apply %}
-              {% if last_apply.status == STATUS_RESOURCE.APPLIED %}
-              {# <============ 撤销申请 =============> #}
-              {% set post_action = reverse_url('resource_revoke', last_apply.pro_id, last_apply.id) %}
-              {% elif last_apply.status in [STATUS_RESOURCE.REVOKED, STATUS_RESOURCE.REFUSED] %}
-              {% set delete_action = reverse_url('resource_delete', last_apply.pro_id, last_apply.id) %}
-              <form id="resource_delete_form" action="{{ delete_action }}" method="POST">
-                {{ handler.xsrf_form_html() }}
-                <input type="hidden" name="post_res_id" value="{{ last_apply.id }}">
-              </form>
-              {# <============ 重新提交申请 =============> #}
-              {% set post_action = reverse_url('guide_step_1.re_apply', pro_info_res.data.id, last_apply.id) %}
-              {# <============ 删除申请 =============> #}
-              {% elif last_apply.status == STATUS_RESOURCE.CHECKED %}
-              {# <============ 完成支付 =============> #}
-              {% endif %}
-            {% else %}
-              {# <============ 申请新资源 =============> #}
-              {% set post_action = reverse_url('guide_step_1', pro_info_res.data.id) %}
+    {{ handler.xsrf_form_html() }}
+    {% if pro_resource_apply and pro_resource_apply.status|int in [STATUS_RESOURCE.REFUSED] %}
+      <div class="form-group has-warning">
+        <label class="control-label col-sm-offset-2" for="inputWarning">申请被拒绝：<i class="fa fa-bell-o"></i> {{ pro_resource_apply.reason }}</label>
+      </div>
+    {% endif %}
+    {{ pro_macro.get_pro_info_select(pro_res=res, pro_id=pro_id, onchange="load_env()") }}
+    <fieldset>
+      <legend>资源配置</legend>
+          <div class="form-group{% if res and res.return_code in [ERR.RES_COMPUTER_EMPTY_ERR, ERR.RES_COMPUTER_INVALID_ERR] %} has-warning{% endif %}">
+            <label for="computer" class="col-sm-2 control-label">{{ Pro_Resource_Apply.computer.info.name }}</label>
+            <div class="col-sm-10 input-group">
+              <input type="text" class="form-control" id="computer" name="computer" placeholder="0" value="{{ computer }}">
+              <div class="input-group-unit">{{ Pro_Resource_Apply.computer.info.unit }}</div>
+              <div class="input-group-unit" style="text-align:left; width:40%">
+                <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="{{ Pro_Resource_Apply.computer.info.name }}" data-content="{{ Pro_Resource_Apply.computer.info.tip }}"><i class="fa fa-info-circle"></i></a>
+              </div>
+            </div>
+
+            {% if res and res.return_code in [ERR.RES_COMPUTER_EMPTY_ERR, ERR.RES_COMPUTER_INVALID_ERR] %}
+            <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
             {% endif %}
-          <!-- form start -->
-              <div class="box-body">
-              <form id="resource_form" data-pjax action="{{ post_action }}" class="form-horizontal" method="POST">
-              {{ handler.xsrf_form_html() }}
-              <input type="hidden" name="pro_id" value="{{ last_apply.pro_id  }}">
-                <fieldset>
-                  <legend>资源配置</legend>
-                  <div class="form-group">
-                    <label for="computer" class="col-sm-2 control-label">云主机数量</label>
-                    <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="computer" name="computer" placeholder="10" value="{{ computer }}">
-                      <div class="input-group-unit">台</div>
-                    </div>
-                  </div>
-                  {{ mbase.check_post(post_apply_res, [-100040, -100060]) }}
-                  <div class="form-group">
-                    <label for="cpu" class="col-sm-2 control-label">CPU总量</label>
-                    <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="cpu" name="cpu" placeholder="4" value="{{ cpu }}">
-                      <div class="input-group-unit">台</div>
-                    </div>
-                  </div>
-                  {{ mbase.check_post(post_apply_res, [-100041, -100061]) }}
-                  <div class="form-group">
-                    <label for="memory" class="col-sm-2 control-label">内存总量</label>
-                    <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="memory" name="memory" placeholder="8" value="{{ memory }}">
-                      <div class="input-group-unit">GB</div>
-                    </div>
-                  </div>
-                  {{ mbase.check_post(post_apply_res, [-100042, -100062]) }}
-                  <div class="form-group">
-                    <label for="disk" class="col-sm-2 control-label">云磁盘个数</label>
-                    <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="disk" name="disk" placeholder="10" value="{{ disk }}">
-                      <div class="input-group-unit">个,</div>
-                      <div class="input-group-unit">其中</div>
-                      <input type="text" class="form-control" id="disk_backup" name="disk_backup" placeholder="10" value="{{ disk_backup }}">
-                      <div class="input-group-unit">个需要云盘备份</div>
-                    </div>
-                  </div>
-                  {{ mbase.check_post(post_apply_res, [-100043, -100063, -100044, -100064]) }}
-                  <div class="form-group">
-                    <label for="ip" class="col-sm-2 control-label">外部IP数量</label>
-                    <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="out_ip" name="out_ip" placeholder="8" value="{{ out_ip }}">
-                      <div class="input-group-unit">个</div>
-                    </div>
-                  </div>
-                  {{ mbase.check_post(post_apply_res, [-100045, -100065]) }}
-                  <div class="form-group">
-                    <label for="snapshot" class="col-sm-2 control-label">快照个数</label>
-                    <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="snapshot" name="snapshot" placeholder="8" value="{{ snapshot }}">
-                      <div class="input-group-unit">个</div>
-                    </div>
-                  </div>
-                  {{ mbase.check_post(post_apply_res, [-100046, -100066]) }}
-                  <div class="form-group">
-                    <label for="loadbalance" class="col-sm-2 control-label">应用负载均衡</label>
-                    <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="loadbalance" name="loadbalance" placeholder="10" value="{{ loadbalance }}">
-                      <div class="input-group-unit">个vSERVER</div>
-                    </div>
-                  </div>
-                  {{ mbase.check_post(post_apply_res, [-100047, -100067]) }}
-                  <div class="form-group">
-                    <label for="loadbalance" class="col-sm-2 control-label">互联网IP({{ internet_ip }})</label>
-                    <div class="col-sm-6 input-group">
-                      <select multiple class="form-control" id="internet_ip" name="internet_ip">
-                        <option value="0"{% if internet_ip|string == "0" %} selected{% endif %}>无需</option>
-                        <option value="1"{% if internet_ip|string == "1" %} selected{% endif %}>双线负载均衡</option>
-                        <option value="2"{% if internet_ip|string == "2" %} selected{% endif %}>单线（软件园）</option>
-                        <option value="3"{% if internet_ip|string == "3" %} selected{% endif %}>单线（移动）</option>
-                      </select>
-                      <div class="input-group-unit">
-                        <div class="radio pull-left">
-                          <label>
-                            <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="1"{% if internet_ip_ssl|string == "1" %} checked="checked"{% endif %}>
-                            需要SSL卸载
-                          </label>
-                        </div>
-                        <div class="radio pull-left">
-                          <label>
-                            <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="0"{% if internet_ip_ssl|string == "0" %} checked="checked"{% endif %}>
-                            不需要SSL卸载
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {{ mbase.check_post(post_apply_res, [-100048, -100068, -100049, -100069]) }}
-                  <div class="form-group">
-                    <label for="start_date" class="col-sm-2 control-label">云主机启用时间</label>
-                    <div class="col-sm-6 input-group">
-                      <div class="input-group">
-                        <input type="text" class="form-control pull-right fa-calendar" id="start_date" name="start_date" value="{{ start_date }}" readonly>
-                      </div><!-- /.input group -->
-                    </div>
-                  </div>
-                  {{ mbase.check_post(post_apply_res, [-100050, -100070]) }}
-                </fieldset>
-                <fieldset>
-                  <legend>产生费用 <button type="button" id="generate_fee_btn" onclick="generate_fee()" class="btn btn-warning btn-sm">试算</button></legend>
-                  <div class="form-group">
-                    <label for="unit_fee" class="col-sm-2 control-label">本月费用</label>
-                    <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="unit_fee" name="unit_fee" placeholder="10" value="{{ unit_fee }}" readonly>
-                      <div class="input-group-unit">元/月</div>
-                      <div class="input-group-unit">X</div>
-                      <input type="text" class="form-control" id="period" name="period" placeholder="12" value="{{ period }}">
-                      <div class="input-group-unit">月</div>
-                    </div>
-                  </div>
-                  {{ mbase.check_post(post_apply_res, [-100051, -100071, -100052, -100072]) }}
-                  <div class="form-group">
-                    <label for="total_fee" class="col-sm-2 control-label">合计费用</label>
-                    <div class="col-sm-6 input-group">
-                      <input type="text" class="form-control" id="total_fee" name="total_fee" placeholder="10" value="{{ total_fee }}" readonly>
-                      <div class="input-group-unit">元</div>
-                    </div>
-                  </div>
-                  {{ mbase.check_post(post_apply_res, [-100053, -100073]) }}
-                </fieldset>
-              </form>
-              </div><!-- /.box-body -->
-              <div class="box-footer text-center">
-                {% if last_apply %}
-                  {% if last_apply.status|int == STATUS_RESOURCE.APPLIED %}
-                  <button id="do_revoke_btn" type="button" onclick="do_revoke()" class="btn btn-{{ STATUS_RESOURCE.revoked.level }}">撤销申请</button>
-                  {% elif last_apply.status|int in [STATUS_RESOURCE.REVOKED, STATUS_RESOURCE.REFUSED] %}
-                  <button id="do_re_apply_btn" type="button" onclick="do_re_apply()" class="btn btn-{{ STATUS_RESOURCE.applied.level }}">重新提交申请</button>
-                  <button id="do_delete_btn" type="button" onclick="do_delete()" class="btn btn-{{ STATUS_RESOURCE.unknown.level }}">删除申请</button>
-                  {% elif last_apply.status|int == STATUS_RESOURCE.CHECKED %}
-                  <a data-pjax href="{{ reverse_url('guide_step_2', last_apply.project.id) }}" class="btn btn-{{ STATUS_RESOURCE.payed.level }}">去支付</a>
-                  {% elif last_apply.status|int == STATUS_RESOURCE.CONFIRMPAYED %}
-                  <a data-pjax href="{{ reverse_url('guide_step_3', last_apply.project.id) }}" class="btn btn-{{ STATUS_RESOURCE.payed.level }}">去填写运行参数</a>
-                  {% endif %}
-                {% else %}
-                <button id="do_apply_btn" type="button" onclick="do_apply()" class="btn btn-{{ STATUS_RESOURCE.applied.level }}">提交申请</button>
-                {% endif %}
-              </div><!-- /.box-footer -->
-        </div><!-- /.box-body -->
-      </div><!-- /.box -->
+          </div>
+          <div class="form-group{% if res and res.return_code in [ERR.RES_CPU_EMPTY_ERR, ERR.RES_CPU_INVALID_ERR] %} has-warning{% endif %}">
+            <label for="cpu" class="col-sm-2 control-label">{{ Pro_Resource_Apply.cpu.info.name }}</label>
+            <div class="col-sm-10 input-group">
+              <input type="text" class="form-control" id="cpu" name="cpu" placeholder="0" value="{{ cpu }}">
+              <div class="input-group-unit">{{ Pro_Resource_Apply.cpu.info.unit }}</div>
+              <div class="input-group-unit" style="text-align:left; width:40%">
+                <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="{{ Pro_Resource_Apply.cpu.info.name }}" data-content="{{ Pro_Resource_Apply.cpu.info.tip }}"><i class="fa fa-info-circle"></i></a>
+              </div>
+            </div>
+          {% if res and res.return_code in [ERR.RES_CPU_EMPTY_ERR, ERR.RES_CPU_INVALID_ERR] %}
+          <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
+          {% endif %}
+          </div>
+
+          <div class="form-group{% if res and res.return_code in [ERR.RES_MEMERY_EMPTY_ERR, ERR.RES_MEMERY_INVALID_ERR] %} has-warning{% endif %}">
+            <label for="memory" class="col-sm-2 control-label">{{ Pro_Resource_Apply.memory.info.name }}</label>
+            <div class="col-sm-10 input-group">
+              <input type="text" class="form-control" id="memory" name="memory" placeholder="0" value="{{ memory }}">
+              <div class="input-group-unit">{{ Pro_Resource_Apply.memory.info.unit }}</div>
+              <div class="input-group-unit" style="text-align:left; width:40%">
+                <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="{{ Pro_Resource_Apply.memory.info.name }}" data-content="{{ Pro_Resource_Apply.memory.info.tip }}"><i class="fa fa-info-circle"></i></a>
+              </div>
+            </div>
+          {% if res and res.return_code in [ERR.RES_MEMERY_EMPTY_ERR, ERR.RES_MEMERY_INVALID_ERR] %}
+          <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
+          {% endif %}
+          </div>
+
+          <div class="form-group{% if res and res.return_code in [ERR.RES_DISK_EMPTY_ERR, ERR.RES_DISK_INVALID_ERR, ERR.RES_DISK_BACKUP_EMPTY_ERR, ERR.RES_DISK_BACKUP_INVALID_ERR] %} has-warning{% endif %}">
+            <label for="disk" class="col-sm-2 control-label">{{ Pro_Resource_Apply.disk.info.name }}</label>
+            <div class="col-sm-10 input-group">
+              <input type="text" class="form-control" id="disk" name="disk" placeholder="0" value="{{ disk }}">
+              <div class="input-group-unit">{{ Pro_Resource_Apply.disk.info.unit }},</div>
+              <div class="input-group-unit">{{ Pro_Resource_Apply.disk_amount.info.name }}</div>
+              <input type="text" class="form-control" id="disk_amount" name="disk_amount" placeholder="0" value="{{ disk_amount }}">
+              <div class="input-group-unit">{{ Pro_Resource_Apply.disk_amount.info.unit }}</div>
+              <div class="input-group-unit" style="text-align:left; width:40%">
+                <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="{{ Pro_Resource_Apply.disk.info.name }}/{{ Pro_Resource_Apply.disk_amount.info.name }}" data-content="{{ Pro_Resource_Apply.disk.info.tip }}<br>合计备份总容量：{{ Pro_Resource_Apply.disk_amount.info.tip }}"><i class="fa fa-info-circle"></i></a>
+              </div>
+            </div>
+          {% if res and res.return_code in [ERR.RES_DISK_EMPTY_ERR, ERR.RES_DISK_INVALID_ERR, ERR.RES_DISK_BACKUP_EMPTY_ERR, ERR.RES_DISK_BACKUP_INVALID_ERR] %}
+          <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
+          {% endif %}
+          </div>
+
+          <div class="form-group{% if res and res.return_code in [ERR.RES_DISK_EMPTY_ERR, ERR.RES_DISK_INVALID_ERR, ERR.RES_DISK_BACKUP_EMPTY_ERR, ERR.RES_DISK_BACKUP_INVALID_ERR] %} has-warning{% endif %}">
+            <label for="disk_backup" class="col-sm-2 control-label">{{ Pro_Resource_Apply.disk_backup.info.name }}</label>
+            <div class="col-sm-10 input-group">
+              <input type="text" class="form-control" id="disk_backup" name="disk_backup" placeholder="0" value="{{ disk_backup }}">
+              <div class="input-group-unit">{{ Pro_Resource_Apply.disk_backup.info.unit }},</div>
+              <div class="input-group-unit">{{ Pro_Resource_Apply.disk_backup_amount.info.name }}</div>
+              <input type="text" class="form-control" id="disk_backup_amount" name="disk_backup_amount" placeholder="0" value="{{ disk_backup_amount }}">
+              <div class="input-group-unit">{{ Pro_Resource_Apply.disk_backup_amount.info.unit }}</div>
+              <div class="input-group-unit" style="text-align:left; width:40%">
+                <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="{{ Pro_Resource_Apply.disk_backup.info.name }}/{{ Pro_Resource_Apply.disk_backup_amount.info.name }}" data-content="{{ Pro_Resource_Apply.disk_backup.info.tip }}<br>{{ Pro_Resource_Apply.disk_backup_amount.info.name }}:{{ Pro_Resource_Apply.disk_backup_amount.info.tip }}"><i class="fa fa-info-circle"></i></a>
+              </div>
+            </div>
+          {% if res and res.return_code in [ERR.RES_DISK_EMPTY_ERR, ERR.RES_DISK_INVALID_ERR, ERR.RES_DISK_BACKUP_EMPTY_ERR, ERR.RES_DISK_BACKUP_INVALID_ERR] %}
+          <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
+          {% endif %}
+          </div>
+
+          <div class="form-group{% if res and res.return_code in [ERR.RES_OUT_IP_EMPTY_ERR, ERR.RES_OUT_IP_INVALID_ERR] %} has-warning{% endif %}">
+            <label for="ip" class="col-sm-2 control-label">{{ Pro_Resource_Apply.out_ip.info.name }}</label>
+            <div class="col-sm-10 input-group">
+              <input type="text" class="form-control" id="out_ip" name="out_ip" placeholder="0" value="{{ out_ip }}">
+              <div class="input-group-unit">{{ Pro_Resource_Apply.out_ip.info.unit }}</div>
+              <div class="input-group-unit" style="text-align:left; width:40%">
+                <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="{{ Pro_Resource_Apply.out_ip.info.name }}" data-content="{{ Pro_Resource_Apply.out_ip.info.tip }}"><i class="fa fa-info-circle"></i></a>
+              </div>
+            </div>
+          {% if res and res.return_code in [ERR.RES_OUT_IP_EMPTY_ERR, ERR.RES_OUT_IP_INVALID_ERR] %}
+          <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
+          {% endif %}
+          </div>
+
+          <div class="form-group{% if res and res.return_code in [ERR.RES_SNAPSHOT_EMPTY_ERR, ERR.RES_SNAPSHOT_INVALID_ERR] %} has-warning{% endif %}">
+            <label for="snapshot" class="col-sm-2 control-label">{{ Pro_Resource_Apply.snapshot.info.name }}</label>
+            <div class="col-sm-10 input-group">
+              <input type="text" class="form-control" id="snapshot" name="snapshot" placeholder="0" value="{{ snapshot }}">
+              <div class="input-group-unit">{{ Pro_Resource_Apply.snapshot.info.unit }}</div>
+              <div class="input-group-unit" style="text-align:left; width:40%">
+                <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="{{ Pro_Resource_Apply.snapshot.info.name }}" data-content="{{ Pro_Resource_Apply.snapshot.info.tip }}"><i class="fa fa-info-circle"></i></a>
+              </div>
+            </div>
+          {% if res and res.return_code in [ERR.RES_SNAPSHOT_EMPTY_ERR, ERR.RES_SNAPSHOT_INVALID_ERR] %}
+          <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
+          {% endif %}
+          </div>
+
+          <div class="form-group{% if res and res.return_code in [ERR.RES_LOADBALANCE_EMPTY_ERR, ERR.RES_LOADBALANCE_INVALID_ERR] %} has-warning{% endif %}">
+            <label for="loadbalance" class="col-sm-2 control-label">{{ Pro_Resource_Apply.loadbalance.info.name }}</label>
+            <div class="col-sm-10 input-group">
+              <input type="text" class="form-control" id="loadbalance" name="loadbalance" placeholder="0" value="{{ loadbalance }}">
+              <div class="input-group-unit">{{ Pro_Resource_Apply.loadbalance.info.unit }}</div>
+              <div class="input-group-unit" style="text-align:left; width:40%">
+                <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="{{ Pro_Resource_Apply.loadbalance.info.name }}" data-content="{{ Pro_Resource_Apply.loadbalance.info.tip }}"><i class="fa fa-info-circle"></i></a>
+              </div>
+            </div>
+          {% if res and res.return_code in [ERR.RES_LOADBALANCE_EMPTY_ERR, ERR.RES_LOADBALANCE_INVALID_ERR] %}
+          <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
+          {% endif %}
+          </div>
+
+          <div class="form-group{% if res and res.return_code in [ERR.RES_INTERNET_IP_EMPTY_ERR, ERR.RES_INTERNET_IP_INVALID_ERR, ERR.RES_INTERNET_IP_SSL_EMPTY_ERR, ERR.RES_INTERNET_IP_SSL_INVALID_ERR] %} has-warning{% endif %}">
+            <label for="internet_ip" class="col-sm-2 control-label">{{ Pro_Resource_Apply.internet_ip.info.name }}</label>
+            <div class="col-sm-6 input-group">
+              {% include "admin/apply/resource/_env_internet_ip_types.html" %}
+              <div class="input-group-unit" style="text-align:left; width:40%">
+                <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="{{ Pro_Resource_Apply.internet_ip.info.name }}" data-content="{{ Pro_Resource_Apply.internet_ip.info.tip }}"><i class="fa fa-info-circle"></i></a>
+              </div>
+            </div>
+          {% if res and res.return_code in [ERR.RES_INTERNET_IP_EMPTY_ERR, ERR.RES_INTERNET_IP_INVALID_ERR, ERR.RES_INTERNET_IP_SSL_EMPTY_ERR, ERR.RES_INTERNET_IP_SSL_INVALID_ERR] %}
+          <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
+          {% endif %}
+          </div>
+
+          <div class="form-group{% if res and res.return_code in [ERR.RES_BANDWIDTH_EMPTY_ERR, ERR.RES_BANDWIDTH_INVALID_ERR] %} has-warning{% endif %}">
+            <label for="internet_ip" class="col-sm-2 control-label">{{ Pro_Resource_Apply.bandwidth.info.name }}</label>
+            <div class="col-sm-10 input-group">
+              <select id="bandwidth" name="bandwidth" class="input-group-sm input-sm" style="width: 100%; height:30px">
+                {% for ST in RESOURCE_BANDWIDTH|status_list %}
+                <option status_level="{{ ST.level }}" status_value="{{ ST.value }}" value="{{ RESOURCE_BANDWIDTH.get(ST.value_en|upper) }}"{% if pro_resource_apply and RESOURCE_BANDWIDTH.get(ST.value_en|upper) == pro_resource_apply.bandwidth|int %} selected="selected"{% endif %}>{{ ST.value }}</option>
+                {% endfor %}
+              </select>
+              <div class="input-group-unit" style="text-align:left; width:40%">
+                <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="{{ Pro_Resource_Apply.bandwidth.info.name }}" data-content="{{ Pro_Resource_Apply.bandwidth.info.tip }}"><i class="fa fa-info-circle"></i></a>
+              </div>
+            </div>
+          {% if res and res.return_code in [ERR.RES_BANDWIDTH_EMPTY_ERR, ERR.RES_BANDWIDTH_INVALID_ERR] %}
+          <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
+          {% endif %}
+          </div>
+
+          <div class="form-group{% if res and res.return_code in [ERR.RES_START_DATE_EMPTY_ERR, ERR.RES_START_DATE_INVALID_ERR] %} has-warning{% endif %}">
+            <label for="start_date" class="col-sm-2 control-label">{{ Pro_Resource_Apply.start_date.info.name }}</label>
+            <div class="col-sm-10 input-group">
+              <div class="input-group">
+                <input type="text" class="form-control pull-right fa-calendar" id="start_date" name="start_date" value="{{ start_date|default('', True) }}" readonly>
+              </div><!-- /.input group -->
+              <div class="input-group-unit" style="text-align:left; width:40%">
+                <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="{{ Pro_Resource_Apply.start_date.info.name }}" data-content="{{ Pro_Resource_Apply.start_date.info.tip }}"><i class="fa fa-info-circle"></i></a>
+              </div>
+            </div>
+          {% if res and res.return_code in [ERR.RES_START_DATE_EMPTY_ERR, ERR.RES_START_DATE_INVALID_ERR] %}
+          <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
+          {% endif %}
+          </div>
+    </fieldset>
+    <fieldset>
+      <legend>产生费用 </legend>
+          {% set res = pro_resource_apply_res or fee_res %}
+          {% if res and res.return_code == 0 %}
+          {% set unit_fee = res.data.unit_fee %}
+          {% set total_fee = res.data.total_fee %}
+          {% endif %}
+
+          <div class="form-group{% if res and res.return_code in [ERR.RES_PERIOD_EMPTY_ERR, ERR.RES_PERIOD_INVALID_ERR] %} has-warning{% endif %}">
+            <label for="unit_fee" class="col-sm-2 control-label">{{ Pro_Resource_Apply.unit_fee.info.name }}</label>
+            <div class="col-sm-6 input-group">
+              <input type="text" class="form-control" id="unit_fee" name="unit_fee" placeholder="0" value="{{ unit_fee }}" readonly>
+              <div class="input-group-unit">{{ Pro_Resource_Apply.unit_fee.info.unit }}</div>
+              <div class="input-group-unit">X</div>
+              <input type="text" class="form-control" id="period" name="period" placeholder="0" value="{{ period }}">
+              <div class="input-group-unit">{{ Pro_Resource_Apply.period.info.unit }}</div>
+            </div>
+          {% if res and res.return_code in [ERR.RES_PERIOD_EMPTY_ERR, ERR.RES_PERIOD_INVALID_ERR] %}
+          <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
+          {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="total_fee" class="col-sm-2 control-label">{{ Pro_Resource_Apply.total_fee.info.name }}</label>
+            <div class="col-sm-6 input-group">
+              <input type="text" class="form-control" id="total_fee" name="total_fee" placeholder="0" value="{{ total_fee }}" readonly>
+              <div class="input-group-unit">{{ Pro_Resource_Apply.total_fee.info.unit }}</div>
+            </div>
+          </div>
+    </fieldset>
   <script type="text/javascript">
+  $(function(){
+    $("#bandwidth").select2()
+  });
+  function generate_fee(){
+    generate_ajax_post({
+        form: "#resource_form",
+        btn: "#generate_fee_btn",
+        // method: "GET",
+        url: '{{ reverse_url("apply.resource.generate_fee") }}',
+        pjax_container: false,
+        onSuccess: function(response){
+          $("#resource_form").find("box-body").html(response.data.tmpl);
+          $("section.content").prepend(response.data.messages_tmpl);
+        }
+    })
+  }
   $('.fa-calendar').datepicker({ format: 'yyyy-mm-dd 00:00:00', autoclose: true});
+  function load_env(){
+    console.log("load_env");
+    var pro_id = $("#pro_id").val()
+    var res_apply_id = $("#res_apply_id").val()
+    $.ajax({
+        url: '{{ reverse_url("apply.resource.load_env") }}?pro_id='+pro_id+'&res_id='+res_apply_id,
+        type: "GET",
+        dataType: "JSON",
+        success: function(response){
+            if(check_response(response)){
+                $.each(response.data.env_resource_value, function(key, value){
+                    $("#"+key).val(value);
+                })
+                $("#internet_ip").parent().html(response.data.env_internet_ip_types_tmpl)
+                $("#internet_ip").select2();
+            }
+        }
+    })
+  }
   function add_res(){
     $('#panel_res').css('display', 'block').removeClass('box-info').addClass('box-warning').find('h3.box-title').text('资源申请');
     $('#submit').removeClass('btn-info').addClass('btn-warning');
@@ -216,45 +249,29 @@
   function check_form(){
     return true;
   }
-  function generate_fee(){
-    var params = $("form").serialize();
-    $("#generate_fee_btn").button("loading");
-    $.ajax({
-      url: '{{ reverse_url("generate_fee", pro_info_res.data.id) }}',
-      type: 'GET',
-      dataType: 'JSON',
-      data: params,
-      success: function(response){
-        $("#generate_fee_btn").button("reset");
-        if(check_response(response)){
-          $("#unit_fee").val(response.data.unit_fee);
-          $("#total_fee").val(response.data.total_fee);
-        }
-      },
-      error: function(xhr, textStatus){
-        if (textStatus == 'timeout'){
-          generate_fee()
-        }
-      },
-      timeout: 3000,
-    })
-  }
+
   function do_apply(){
     generate_ajax_post({
       form: "#resource_form",
       button: "#do_apply_btn",
+      pjax_container: false,
       onSuccess: function(response){
-        // do_notice_checker();
+        $("section.content").prepend(response.data.messages_tmpl);
+        $("#resource_form").parent().html(response.data.tmpl);
       },
       onTimeout: function(){ do_apply(); }
     })
   }
   function do_re_apply(){
+    $("#pro_id").val($("#pro_id option[selected]").val())
+    $("#res_apply_id").val($("#pro_id option[selected]").attr("res_apply_id"))
     generate_ajax_post({
       form: "#resource_form",
       button: "#do_re_apply_btn",
+      pjax_container: false,
       onSuccess: function(response){
-        // do_notice_checker();
+        $("section.content").prepend(response.data.messages_tmpl);
+        $("#resource_form").parent().html(response.data.tmpl);
       },
       onTimeout: function(){ do_re_apply(); }
     })
@@ -274,10 +291,31 @@
     generate_ajax_post({
       form: "#resource_form",
       button: "#do_revoke_btn",
+      pjax_container: false,
       onSuccess: function(response){
-        // do_notice_checker();
+        $("section.content").prepend(response.data.messages_tmpl);
+        $("#resource_form").parent().html(response.data.tmpl);
       },
       onTimeout: function(){ do_revoke(); }
     })
   }
+  $(function(){
+    $("body").find('[data-toggle="popover"]').each(function(){
+        $(this).click(function(e){
+            // $('.popover').remove();
+            $('body').find('[data-toggle="popover"]').popover('hide');
+            e.preventDefault();
+            return false;
+        });
+        $(this).popover({
+            animation: true,
+            trigger : 'click',
+            placement: 'auto left',
+            html: true
+        });
+    });
+    $("body").click(function(){
+        $('body').find('[data-toggle="popover"]').popover('hide');
+    });
+  });
   </script>
