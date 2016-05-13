@@ -13,7 +13,9 @@
           {% set cpu = handler.args.get("cpu", "") or 0 %}
           {% set memory = handler.args.get("memory", "") or 0 %}
           {% set disk = handler.args.get("disk", "") or 0 %}
+          {% set disk_amount = handler.args.get("disk_amount", "") or 0 %}
           {% set disk_backup = handler.args.get("disk_backup", "") or 0 %}
+          {% set disk_backup_amount = handler.args.get("disk_backup_amount", "") or 0 %}
           {% set out_ip = handler.args.get("out_ip", "") or 0 %}
           {% set snapshot = handler.args.get("snapshot", "") or 0 %}
           {% set loadbalance = handler.args.get("loadbalance", "") or 0 %}
@@ -22,7 +24,9 @@
           {% set cpu = resource_fee.cpu %}
           {% set memory = resource_fee.memory %}
           {% set disk = resource_fee.disk %}
+          {% set disk_amount = resource_fee.disk_amount %}
           {% set disk_backup = resource_fee.disk_backup %}
+          {% set disk_backup_amount = resource_fee.disk_backup_amount %}
           {% set out_ip = resource_fee.out_ip %}
           {% set snapshot = resource_fee.snapshot %}
           {% set loadbalance = resource_fee.loadbalance %}
@@ -65,6 +69,14 @@
                 label_col=4,
                 unit=Env_Resource_Fee.disk.info.unit) }}
           {{ base.form_input(
+                Env_Resource_Fee.disk_amount.info.name,
+                "disk_amount",
+                value=disk_amount,
+                res=env_res,
+                check_codes=[ERR.RES_DISK_AMOUNT_INVALID_ERR],
+                label_col=4,
+                unit=Env_Resource_Fee.disk_amount.info.unit) }}
+          {{ base.form_input(
                 Env_Resource_Fee.disk_backup.info.name,
                 "disk_backup",
                 value=disk_backup,
@@ -72,6 +84,14 @@
                 check_codes=[ERR.RES_DISK_BACKUP_INVALID_ERR],
                 label_col=4,
                 unit=Env_Resource_Fee.disk_backup.info.unit) }}
+          {{ base.form_input(
+                Env_Resource_Fee.disk_backup_amount.info.name,
+                "disk_backup_amount",
+                value=disk_backup_amount,
+                res=env_res,
+                check_codes=[ERR.RES_DISK_BACKUP_AMOUNT_INVALID_ERR],
+                label_col=4,
+                unit=Env_Resource_Fee.disk_backup_amount.info.unit) }}
           {{ base.form_input(
                 Env_Resource_Fee.out_ip.info.name,
                 "out_ip",

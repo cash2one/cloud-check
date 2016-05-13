@@ -1,4 +1,48 @@
-
+{% import "admin/base/base_macros.html" as mbase with context %}
+{% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
+{% set res = pro_resource_apply_res or fee_res %}
+{#% if pro_resource_apply_res and pro_resource_apply_res.return_code == 0 %}
+{% set pro_resource_apply = pro_resource_apply_res.data %}
+{% else %}
+{% set pro_resource_apply = pro_info_res.data.last_apply %}
+{% endif %#}
+{% if handler.request.method == "POST" %}
+    {% set pro_id = handler.args.get('pro_id', '') %}
+    {% set computer = handler.args.get('computer', '') %}
+    {% set cpu = handler.args.get('cpu', '') %}
+    {% set memory = handler.args.get('memory', '') %}
+    {% set disk = handler.args.get('disk', '') %}
+    {% set disk_amount = handler.args.get('disk_amount', '') %}
+    {% set disk_backup = handler.args.get('disk_backup', '') %}
+    {% set disk_backup_amount = handler.args.get('disk_backup_amount', '') %}
+    {% set out_ip = handler.args.get('out_ip', '') %}
+    {% set snapshot = handler.args.get('snapshot', '') %}
+    {% set loadbalance = handler.args.get('loadbalance', '') %}
+    {% set internet_ip = handler.args.get('internet_ip', '') %}
+    {% set internet_ip_ssl = handler.args.get('internet_ip_ssl', '') %}
+    {% set start_date = handler.args.get('start_date', '') %}
+    {% set unit_fee = handler.args.get('unit_fee', '') %}
+    {% set period = handler.args.get('period', '') %}
+    {% set total_fee = handler.args.get('total_fee', '') %}
+{% else %}
+    {% set pro_id = pro_resource_apply.pro_id if pro_resource_apply else '' %}
+    {% set computer = pro_resource_apply.computer if pro_resource_apply else '' %}
+    {% set cpu = pro_resource_apply.cpu if pro_resource_apply else '' %}
+    {% set memory = pro_resource_apply.memory if pro_resource_apply else '' %}
+    {% set disk = pro_resource_apply.disk if pro_resource_apply else '' %}
+    {% set disk_amount = pro_resource_apply.disk_amount if pro_resource_apply else '' %}
+    {% set disk_backup = pro_resource_apply.disk_backup if pro_resource_apply else '' %}
+    {% set disk_backup_amount = pro_resource_apply.disk_backup_amount if pro_resource_apply else '' %}
+    {% set out_ip = pro_resource_apply.out_ip if pro_resource_apply else '' %}
+    {% set snapshot = pro_resource_apply.snapshot if pro_resource_apply else '' %}
+    {% set loadbalance = pro_resource_apply.loadbalance if pro_resource_apply else '' %}
+    {% set internet_ip = pro_resource_apply.internet_ip if pro_resource_apply else '' %}
+    {% set internet_ip_ssl = pro_resource_apply.internet_ip_ssl if pro_resource_apply else '' %}
+    {% set start_date = pro_resource_apply.start_date if pro_resource_apply else '' %}
+    {% set unit_fee = pro_resource_apply.unit_fee if pro_resource_apply else '' %}
+    {% set period = pro_resource_apply.period if pro_resource_apply else '' %}
+    {% set total_fee = pro_resource_apply.total_fee if pro_resource_apply else '' %}
+{% endif %}
     {{ handler.xsrf_form_html() }}
     {% if pro_resource_apply and pro_resource_apply.status|int in [STATUS_RESOURCE.REFUSED] %}
       <div class="form-group has-warning">
@@ -213,7 +257,7 @@
         url: '{{ reverse_url("apply.resource.generate_fee") }}',
         pjax_container: false,
         onSuccess: function(response){
-          $("#resource_form").find("box-body").html(response.data.tmpl);
+          $("#resource_form").find("div.box-body").html(response.data.tmpl);
           $("section.content").prepend(response.data.messages_tmpl);
         }
     })

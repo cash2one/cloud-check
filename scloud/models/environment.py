@@ -35,11 +35,13 @@ class Env_Resource_Fee(BaseModel, BaseModelMixin):
         "internet_ip"
     ]
     env_id = Column(Integer, ForeignKey('env_info.id', ondelete="CASCADE"), nullable=False, default=0)
-    computer = Column(Float, default=0.00, nullable=False, info={"name": u"默认云主机费用(个)", "unit": u"元"})
+    computer = Column(Float, default=0.00, nullable=False, info={"name": u"默认云主机费用（个）", "unit": u"元"})
     cpu = Column(Float, default=0.00, nullable=False, info={"name": u"默认CPU费用（个）", "unit": u"元"})
     memory = Column(Float, default=0.00, nullable=False, info={"name": u"默认内存费用（GB）", "unit": u"元"})
     disk = Column(Float, default=0.00, nullable=False, info={"name": u"默认云磁盘费用（个）", "unit": u"元"})
+    disk_amount = Column(Float, default=0.00, nullable=False, info={"name": u"合计备份磁盘容量（GB）", "unit": u"元"})
     disk_backup = Column(Float, default=0.00, nullable=False, info={"name": u"默认云磁盘备份费用（个）", "unit": u"元"})
+    disk_backup_amount = Column(Float, default=0.00, nullable=False, info={"name": u"文件备份容量费用（GB）", "unit": u"元"})
     out_ip = Column(Float, default=0.00, nullable=False, info={"name": u"默认外部IP费用（个）", "unit": u"元"})
     snapshot = Column(Float, default=0.00, nullable=False, info={"name": u"默认快照费用（个）", "unit": u"元"})
     loadbalance = Column(Float, default=0.00, nullable=False, info={"name": u"默认负载均衡费用（个）", "unit": u"元"})

@@ -195,7 +195,8 @@ class GuideGenerateFeeHandler(ApplyHandler):
         else:
             self.add_message(u"费用计算失败！ %s(%s)" % (fee_res.return_code, fee_res.return_message), level="warning")
         messages_tmpl = self.render_to_string("admin/base/base_messages.html")
-        tmpl = self.render_to_string("admin/apply/resource/add_pjax.html", **data)
+        tmpl = self.render_to_string("admin/guide/_step_1_res_form.html", **data)
+        # tmpl = self.render_to_string("admin/apply/resource/add_pjax.html", **data)
         return simplejson.dumps(self.success(data={"tmpl": tmpl, "messages_tmpl": messages_tmpl}))
 
 

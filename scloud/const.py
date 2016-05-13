@@ -6,6 +6,7 @@ from collections import namedtuple
 from tornado.util import ObjectDict
 
 IndexMark = namedtuple("IndexMark", ["value", "value_en", "level"])
+FeeMark = namedtuple("FeeMark", ["value", "value_en", "fee", "level"])
 ApplyMark = namedtuple("IndexMark", ["value", "todo_value", "act_value", "value_en", "level", "bg_color"])
 
 # use in models
@@ -60,7 +61,7 @@ init_status_resource()
 # Pro_Resource_Apply
 # 互联网宽带
 pro_resource_apply_bandwidth_types = {
-    0: IndexMark(value=u"1MB", value_en="mb1", level="primary"),
+    # 0: IndexMark(value=u"0MB", value_en="mb0", level="primary"),
     1: IndexMark(value=u"2MB", value_en="mb2", level="default"),
     2: IndexMark(value=u"4MB", value_en="mb4", level="info"),
     3: IndexMark(value=u"8MB", value_en="mb8", level="success"),

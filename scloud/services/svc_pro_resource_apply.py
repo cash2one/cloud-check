@@ -57,7 +57,9 @@ class ProResourceApplyService(BaseService):
             "cpu": self.validate_num_more_than_1,
             "memory": self.validate_num_more_than_1,
             'disk': self.validate_num,
+            'disk_amount': self.validate_num,
             'disk_backup': self.validate_num,
+            'disk_backup_amount': self.validate_num,
             'out_ip': self.validate_num,
             'snapshot': self.validate_num,
             'loadbalance': self.validate_num,
@@ -184,8 +186,12 @@ class ProResourceApplyService(BaseService):
             return self.failure(ERROR.res_memory_empty_err)
         if self.disk == 0:
             return self.failure(ERROR.res_disk_empty_err)
+        if self.disk_amount == 0:
+            return self.failure(ERROR.res_disk_amount_empty_err)
         # if self.disk_backup == 0:
         #     return self.failure(ERROR.res_disk_backup_empty_err)
+        if self.disk_backup_amount == 0:
+            return self.failure(ERROR.res_disk_backup_amount_empty_err)
         if self.out_ip == 0:
             return self.failure(ERROR.res_out_ip_empty_err)
         if self.snapshot == 0:
@@ -195,6 +201,9 @@ class ProResourceApplyService(BaseService):
         if self.internet_ip == -1:
             logger.info(self.internet_ip)
             return self.failure(ERROR.res_internet_ip_empty_err)
+        # if self.bandwidth == -1:
+        #     logger.info(self.bandwidth)
+        #     return self.failure(ERROR.res_bandwidth_empty_err)
         # if self.internet_ip_ssl == -1:
         #     return self.failure(ERROR.res_internet_ip_ssl_invalid_err)
         if self.params.get('period') == 0:
@@ -226,10 +235,13 @@ class ProResourceApplyService(BaseService):
             Env_Resource_Fee.env_id == env_id
         ).first()
         fee_dict = env_resource_fee.as_dict()
+        computer_fee = fee_dict["computer"]
         cpu_fee = fee_dict["cpu"]
         mem_fee = fee_dict["memory"]
         disk_fee = fee_dict["disk"]
+        disk_amount_fee = fee_dict.get("disk_amount", 0)
         disk_backup_fee = fee_dict["disk_backup"]
+        disk_backup_amount_fee = fee_dict.get("disk_backup_amount", 0)
         out_ip_fee = fee_dict["out_ip"]
         snapshot_fee = fee_dict["snapshot"]
         loadbalance_fee = fee_dict["loadbalance"]
@@ -238,15 +250,19 @@ class ProResourceApplyService(BaseService):
 
         logger.info(valid_res.data)
         params = valid_res.data
+        computer = int(params.get("computer"))
         cpu = int(params.get("cpu"))
         mem = int(params.get("memory"))
         disk = int(params.get("disk"))
+        disk_amount = int(params.get("disk_amount"))
         disk_backup = int(params.get("disk_backup"))
+        disk_backup_amount = int(params.get("disk_backup_amount"))
         out_ip = int(params.get("out_ip"))
         snapshot = int(params.get("snapshot"))
         loadbalance = int(params.get("loadbalance"))
         internet_ip_id = int(params.get("internet_ip"))
         internet_ip_ssl = int(params.get("internet_ip_ssl"))
+        bandwidth = int(params.get("bandwidth"))
         period = int(params.get("period"))
 
         _internet_ip_fee = 0 
@@ -257,10 +273,31 @@ class ProResourceApplyService(BaseService):
             else:
                 continue
 
-        unit_fee = cpu_fee * cpu + mem_fee * mem + disk_fee * disk \
-            + disk_backup_fee * disk_backup + out_ip * out_ip_fee \
-            + snapshot * snapshot_fee + loadbalance * loadbalance_fee \
-            + float(_internet_ip_fee) + internet_ip_ssl * internet_ip_ssl_fee
+        # TODO 完善计算费率
+            # 云主机数量费用 \
+            # CPU数量费用
+            # 内存容量费用
+            # 云磁盘数量费用
+            # 合计云磁盘容量费用
+            # 云磁盘备份数量费用
+            # 云磁盘备份容量费用
+            # 外部IP数量费用
+            # 快照数量费用
+            # 应用负载均衡数量费用
+            # 互联网服务费用（单线、双线等）
+            # 是否需要开通SSL费用
+        unit_fee = computer_fee * computer \
+            + cpu_fee * cpu \
+            + mem_fee * mem \
+            + disk_fee * disk \
+            + disk_amount_fee * disk_amount \
+            + disk_backup_amount_fee * disk_backup_amount \
+            + disk_backup_fee * disk_backup \
+            + out_ip * out_ip_fee \
+            + snapshot * snapshot_fee \
+            + loadbalance * loadbalance_fee \
+            + float(_internet_ip_fee) \
+            + internet_ip_ssl * internet_ip_ssl_fee
 
         if self.params.get('period') == 0:
             return self.failure(ERROR.res_period_empty_err)
@@ -397,7 +434,9 @@ class ProResourceApplyService(BaseService):
         resource.cpu = params.get('cpu')
         resource.memory = params.get('memory')
         resource.disk = params.get('disk')
+        resource.disk_amount = params.get('disk_amount')
         resource.disk_backup = params.get('disk_backup')
+        resource.disk_backup_amount = params.get('disk_backup_amount')
         resource.out_ip = params.get('out_ip')
         resource.snapshot = params.get('snapshot')
         resource.loadbalance = params.get('loadbalance')
@@ -407,6 +446,7 @@ class ProResourceApplyService(BaseService):
         resource.period = params.get('period')
         resource.unit_fee = fee_data['unit_fee']
         resource.total_fee = fee_data['total_fee']
+        resource.fee_desc = u"单月费用 %s（元/月）×有效期 %s（月）=总费用 %s（元）" % (fee_data['unit_fee'], params.get('period'), fee_data['total_fee'])
         resource.status = STATUS_RESOURCE.APPLIED
         resource.reason = u''
         self.db.add(resource)

@@ -49,7 +49,9 @@ class EnvResourceFeeService(ProResourceApplyService):
             "cpu": self.validate_float,
             "memory": self.validate_float,
             'disk': self.validate_float,
+            'disk_amount': self.validate_float,
             'disk_backup': self.validate_float,
+            'disk_backup_amount': self.validate_float,
             'out_ip': self.validate_float,
             'snapshot': self.validate_float,
             'loadbalance': self.validate_float,
@@ -63,7 +65,9 @@ class EnvResourceFeeService(ProResourceApplyService):
         cpu = self.params.get("cpu")
         memory = self.params.get("memory")
         disk = self.params.get("disk")
+        disk_amount = self.params.get("disk_amount")
         disk_backup = self.params.get("disk_backup")
+        disk_backup_amount = self.params.get("disk_backup_amount")
         out_ip = self.params.get("out_ip")
         snapshot = self.params.get("snapshot")
         loadbalance = self.params.get("loadbalance")
@@ -74,7 +78,9 @@ class EnvResourceFeeService(ProResourceApplyService):
         env.cpu = cpu
         env.memory = memory
         env.disk = disk
+        env.disk_amount = disk_amount
         env.disk_backup = disk_backup
+        env.disk_backup_amount = disk_backup_amount
         env.out_ip = out_ip
         env.snapshot = snapshot
         env.loadbalance = loadbalance

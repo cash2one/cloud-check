@@ -1,5 +1,5 @@
-{% import "admin/base/base_macros.html" as mbase with context %}
-{% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
+{#% import "admin/base/base_macros.html" as mbase with context %}
+{% import "admin/base/macros/pro_macros.html" as pro_macro with context %#}
 
 {% set res = pro_resource_apply_res or fee_res %}
 {% if pro_resource_apply_res and pro_resource_apply_res.return_code == 0 %}
@@ -7,7 +7,7 @@
 {% else %}
 {% set pro_resource_apply = pro_info_res.data.last_apply %}
 {% endif %}
-{% if handler.request.method == "POST" %}
+{#% if handler.request.method == "POST" %}
     {% set pro_id = handler.args.get('pro_id', '') %}
     {% set computer = handler.args.get('computer', '') %}
     {% set cpu = handler.args.get('cpu', '') %}
@@ -39,7 +39,7 @@
     {% set unit_fee = pro_resource_apply.unit_fee %}
     {% set period = pro_resource_apply.period %}
     {% set total_fee = pro_resource_apply.total_fee %}
-{% endif %}
+{% endif %#}
 
 {% if pro_resource_apply %}
   {% if pro_resource_apply.status == STATUS_RESOURCE.APPLIED %}

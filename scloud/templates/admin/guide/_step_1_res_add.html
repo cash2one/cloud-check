@@ -1,4 +1,4 @@
-{% import "admin/base/base_macros.html" as mbase with context %}
+{#% import "admin/base/base_macros.html" as mbase with context %}
 {% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
 
 {% set pro_id = handler.args.get('pro_id', '') %}
@@ -16,7 +16,7 @@
 {% set unit_fee = handler.args.get('unit_fee', '') %}
 {% set period = handler.args.get('period', '') %}
 {% set total_fee = handler.args.get('total_fee', '') %}
-{% set res = pro_resource_apply_res or fee_res %}
+{% set res = pro_resource_apply_res or fee_res %#}
 
 <!-- form start -->
 <form id="resource_form" data-pjax action="{{ reverse_url('apply.resource.add') }}" class="form-horizontal" method="POST">
