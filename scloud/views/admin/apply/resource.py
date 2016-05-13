@@ -20,6 +20,7 @@ from scloud.services.svc_pro_resource_apply import ProResourceApplyService
 from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
 from scloud.utils.error import SystemError
+from scloud.utils.error_code import ERROR
 from .base import ApplyHandler
 
 
@@ -193,7 +194,15 @@ class GuideGenerateFeeHandler(ApplyHandler):
         if fee_res.return_code == 0:
             self.add_message(u"费用计算成功！单月费用 %s（元/月）×有效期 %s（月）=总费用 %s（元）" % (fee_res.data["unit_fee"], self.args.get('period'), fee_res.data["total_fee"]), level="success")
         else:
-            self.add_message(u"费用计算失败！ %s(%s)" % (fee_res.return_code, fee_res.return_message), level="warning")
+
+            if fee_res.return_code == ERROR.database_save_err.errcode:
+                return_messages = fee_res.return_messages
+                self.add_message(u"费用计算失败！", level="warning")
+                for msg in return_messages:
+                    self.add_message(u"%s" % msg, level="warning")
+            else:
+                self.add_message(u"费用计算失败！ %s(%s)" % (fee_res.return_code, fee_res.return_message), level="warning")
+
         messages_tmpl = self.render_to_string("admin/base/base_messages.html")
         tmpl = self.render_to_string("admin/guide/_step_1_res_form.html", **data)
         # tmpl = self.render_to_string("admin/apply/resource/add_pjax.html", **data)

@@ -27,6 +27,18 @@ mail_title_format = u"%(user_name)s %(action)s[%(pro_name)s-%(res_desc)s]%(todo_
 
 class ProResourceApplyService(BaseService):
 
+    def validate_pro_info(self, value):
+        if str(value).strip() == '':
+            value = 0
+        if not isinstance(value, int):
+            try:
+                value = int(value)
+            except ValueError:
+                raise Invalid(u"必须为数字")
+        if value <= 0:
+            raise Invalid(ERROR.pro_id_empty_err.errvalue)
+        return value
+
     def validate_num(self, value):
         if str(value).strip() == '':
             value = 0
@@ -53,6 +65,7 @@ class ProResourceApplyService(BaseService):
 
     def get_param_schema(self):
         param_schema = Schema({
+            "pro_id": self.validate_pro_info,
             "computer": self.validate_num_more_than_1,
             "cpu": self.validate_num_more_than_1,
             "memory": self.validate_num_more_than_1,
@@ -107,7 +120,12 @@ class ProResourceApplyService(BaseService):
             ziped_errors = [(i.path[0], i) for i in e.errors]
             messages = []
             for path, err in ziped_errors:
-                messages.append("%s %s" % (self.failure(getattr(ERROR, "res_%s_invalid_err" % path)).return_message, "'%s'%s" % (path, err.msg)))
+                if hasattr(ERROR, "res_%s_invalid_err" % path):
+                    msg = "%s %s" % (getattr(ERROR, "res_%s_invalid_err" % path).errvalue, "'%s'%s" % (path, err.msg))
+                else:
+                    msg = err.msg
+                messages.append(msg)
+                # messages.append("%s %s" % (self.failure(getattr(ERROR, "res_%s_invalid_err" % path)).return_message, "'%s'%s" % (path, err.msg)))
             # raise Exception(u"{}".format(",".join(messages)))
             return self.failures(messages)
 
@@ -224,7 +242,7 @@ class ProResourceApplyService(BaseService):
         pro_info = self.db.query(
             Pro_Info    
         ).filter(
-            Pro_Info.id == pro_id          
+            Pro_Info.id == pro_id
         ).first()
         if not pro_info:
             return self.failure(ERROR.pro_name_empty_err)

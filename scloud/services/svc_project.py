@@ -24,7 +24,7 @@ class ProjectService(BaseService):
         if project:
             # res = project.as_dict()
             # logger.info("project: %s" % res)
-            env = project.env
+            # env = project.env
             # logger.info(env)
             # logger.info(env.env_resource_value)
             env_resource_value = project.env.env_resource_value
@@ -40,7 +40,7 @@ class ProjectService(BaseService):
         if project:
             # res = project.as_dict()
             # logger.info("project: %s" % res)
-            env = project.env
+            # env = project.env
             # logger.info(env)
             # logger.info(env.env_resource_value)
             internet_ip_types = project.env.env_internet_ip_types
@@ -53,13 +53,16 @@ class ProjectService(BaseService):
     def get_project(self):
         logger.info("------[get_project]------")
         pro_id = self.params.get("pro_id", 0)
+        if not pro_id:
+            return self.failure(ERROR.pro_id_empty_err)
         project = self.db.query(Pro_Info).filter(Pro_Info.id == pro_id).first()
         if project:
             # res = project.as_dict()
             # logger.info("project: %s" % res)
             return self.success(data=project)
         else:
-            return NotFoundError()
+            return self.failure(ERROR.not_found_err)
+            # return NotFoundError()
 
     @thrownException
     def get_project_list(self):
