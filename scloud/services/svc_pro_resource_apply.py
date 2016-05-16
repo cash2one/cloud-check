@@ -77,6 +77,7 @@ class ProResourceApplyService(BaseService):
             'snapshot': self.validate_num,
             'loadbalance': self.validate_num,
             'internet_ip': self.validate_num,
+            'bandwidth': self.validate_num,
             'internet_ip_ssl': self.validate_num,
             'period': self.validate_num_more_than_1,
         }, extra=ALLOW_EXTRA)
@@ -378,6 +379,7 @@ class ProResourceApplyService(BaseService):
         apply.snapshot = params.get('snapshot')
         apply.loadbalance = params.get('loadbalance')
         apply.internet_ip = params.get('internet_ip')
+        apply.bandwidth = params.get('bandwidth')
         apply.internet_ip_ssl = params.get('internet_ip_ssl')
         apply.start_date = params.get('start_date')
         apply.period = params.get('period')
@@ -459,6 +461,7 @@ class ProResourceApplyService(BaseService):
         resource.snapshot = params.get('snapshot')
         resource.loadbalance = params.get('loadbalance')
         resource.internet_ip = params.get('internet_ip')
+        resource.bandwidth = params.get('bandwidth')
         resource.internet_ip_ssl = params.get('internet_ip_ssl')
         resource.start_date = params.get('start_date')
         resource.period = params.get('period')

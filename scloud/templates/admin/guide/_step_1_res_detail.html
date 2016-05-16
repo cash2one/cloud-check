@@ -29,6 +29,12 @@
         <a data-pjax href="{{ reverse_url('apply.resource.edit') }}?res_id={{ pro_resource_apply.id }}&pro_id={{ pro_resource_apply.pro_id }}"><i class="fa fa-edit"></i> 编辑</a>
         </td>
       </tr>
+      {% elif column.name == "bandwidth" %}
+      {% set BANDWIDTH = RESOURCE_BANDWIDTH.get(pro_resource_apply.bandwidth) %}
+      <tr>
+        <td>{{ column.info.name or column.name }}:</td>
+        <td><span class="label label-{{ BANDWIDTH.level }}">{{ BANDWIDTH.value }}</span>
+      </tr>
       {% elif column.name == "internet_ip" %}
       <tr>
         <td>{{ column.info.name or column.name }}:</td>
