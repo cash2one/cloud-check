@@ -22,7 +22,13 @@
                         {% for ip in page.object_list %}
                         <tr>
                           <td><input type="checkbox" id="env_internet_ip_id" name="env_internet_ip_id" value="{{ ip.id }}" onclick="change_check()"></td>
-                          <td class="mailbox-subject"><a data-pjax href="{{ reverse_url('defaultset.env_internet_ip.edit', env_res.data.id, ip.id) }}" ><i class="fa fa-edit"></i>  <b>{{ ip.name }}</b> ({{ "{:,.2f}".format(ip.fee) }}元)</a></td>
+                          <td class="mailbox-subject"><a data-pjax href="{{ reverse_url('defaultset.env_internet_ip.edit', env_res.data.id, ip.id) }}" ><i class="fa fa-edit"></i>  <b>{{ ip.name }}</b> 
+                          {% for internet_bandwidth in ip.bandwidths %}
+                          (
+                          {{ RESOURCE_BANDWIDTH.get(internet_bandwidth.bandwidth_id).value }} - {{ "{:,.2f}元".format(internet_bandwidth.fee) }}
+                          ),
+                          {% endfor %}
+                          </a></td>
                           <td class="mailbox-attachment"></td>
                           <td class="mailbox-date">{{ ip.update_time }}</td>
                         </tr>

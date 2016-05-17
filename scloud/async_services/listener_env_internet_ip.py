@@ -5,6 +5,7 @@ from scloud.config import logger
 from scloud.models.environment import (
     Env_Info,
     Env_Internet_Ip_Types,
+    Env_Internet_Bandwidth,
     Env_Resource_Fee,
     Env_Resource_Value
 )
@@ -16,12 +17,23 @@ def get_or_create_env_resource_fee(mapper, connect, target):
         env_internet_ip_types = connect.execute(Env_Internet_Ip_Types.__table__.select().where(
             Env_Internet_Ip_Types.__table__.c.env_id == target.env_id
         ))
-        env_internet_ip_types = [{"id": i.id, "name": i.name, "fee": "%.2f" % i.fee} for i in env_internet_ip_types]
+        _env_internet_ip_types = []
+        for internet_ip_type in env_internet_ip_types:
+            _json_obj = dict(id=internet_ip_type.id, name=internet_ip_type.name)
+            bandwidth_list = connect.execute(
+                Env_Internet_Bandwidth.__table__.select().where(
+                    Env_Internet_Bandwidth.__table__.c.internet_ip_type_id == internet_ip_type.id
+                )
+            )
+            _bandwidth_obj = {bw.bandwidth_id: bw.fee for bw in bandwidth_list}
+            _json_obj.update(fee=_bandwidth_obj)
+            _env_internet_ip_types.append(_json_obj)
+        # env_internet_ip_types = [{"id": i.id, "name": i.name, "fee": "%.2f" % i.fee} for i in env_internet_ip_types]
         result = connect.execute(
             Env_Resource_Fee.__table__.update().where(
                 Env_Resource_Fee.env_id == target.env_id
             ).values(
-                internet_ip = simplejson.dumps(env_internet_ip_types)
+                internet_ip = simplejson.dumps(_env_internet_ip_types)
             )
         )
         logger.info(result.rowcount)

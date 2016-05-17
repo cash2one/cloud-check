@@ -38,6 +38,7 @@ act_actions = {
 pro_resource_apply_status_types = {
     # 未申请状态，可修改，可删除，可提交
     None:ApplyMark(value=u"未申请", todo_value="待提交", act_value=u"申请", value_en="unknown", level="warning", bg_color="yellow"),
+    -3:ApplyMark(value=u"已删除", todo_value="", act_value=u"", value_en="refused", level="danger", bg_color="red"),
     -2:ApplyMark(value=u"审核未通过", todo_value="待修改", act_value=u"拒绝", value_en="refused", level="danger", bg_color="red"),
     -1:ApplyMark(value=u"已撤销", todo_value="待提交", act_value=u"撤销", value_en="revoked", level="warning", bg_color="yellow"),
     # 已提交状态，等待审核、等待缴费
@@ -63,8 +64,9 @@ init_status_resource()
 pro_resource_apply_bandwidth_types = {
     # 0: IndexMark(value=u"0MB", value_en="mb0", level="primary"),
     1: IndexMark(value=u"2MB", value_en="mb2", level="default"),
-    2: IndexMark(value=u"4MB", value_en="mb4", level="info"),
-    3: IndexMark(value=u"8MB", value_en="mb8", level="success"),
+    2: IndexMark(value=u"4MB", value_en="mb4", level="primary"),
+    3: IndexMark(value=u"8MB", value_en="mb8", level="info"),
+    4: IndexMark(value=u"16MB", value_en="mb16", level="success"),
 }
 
 RESOURCE_BANDWIDTH = ObjectDict()
@@ -167,4 +169,6 @@ def init_pro_user_types():
         PRO_USER_TYPES[k] = v
 init_pro_user_types()
 
-admin_emails = ["zhangpeng1@infohold.com.cn"]
+from scloud.config import CONF
+admin_emails = CONF("admin_emails")
+# admin_emails = ["zhangpeng1@infohold.com.cn"]

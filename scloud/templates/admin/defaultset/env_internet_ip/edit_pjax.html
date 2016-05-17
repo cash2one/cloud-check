@@ -29,14 +29,36 @@
                           res=env_internet_ip_res,
                           check_codes=[ERR.ENV_INTERNET_IP_NAME_EMPTY_ERR, ERR.ENV_INTERNET_IP_NAME_DUPLICATE_ERR]
                         ) }}
-                    {{ base.form_input(
+                    {% if env_internet_ip_res.return_code == 0 and env_internet_ip_res.data.bandwidths|length > 0 %}
+                      {% set bandwidth_list = env_internet_ip_res.data.bandwidths %}
+                      {% for internet_bandwidth in bandwidth_list %}
+                      {{ base.form_input(
+                            "%s (元/月)" % RESOURCE_BANDWIDTH.get(internet_bandwidth.bandwidth_id).value,
+                            RESOURCE_BANDWIDTH.get(internet_bandwidth.bandwidth_id).value_en,
+                            value="{:,.2f}".format(internet_bandwidth.fee),
+                            res=env_internet_ip_res,
+                            check_codes=[ERR.ENV_INTERNET_IP_FEE_INVALID_ERR]
+                          ) }}
+                      {% endfor %}
+                    {% else %}
+                      {% for BW in RESOURCE_BANDWIDTH|status_list %}
+                      {{ base.form_input(
+                            "%s (元/月)" % BW.value,
+                            BW.value_en,
+                            value="{:,.2f}".format(handler.args.get(BW.value_en, "0.00")|float),
+                            res=env_internet_ip_res,
+                            check_codes=[ERR.ENV_INTERNET_IP_FEE_INVALID_ERR]
+                          ) }}
+                      {% endfor %}
+                    {% endif %}
+                    {#{ base.form_input(
                           Env_Internet_Ip_Types.fee.info.name,
                           "fee",
                           value=fee_value,
                           res=env_internet_ip_res,
                           check_codes=[ERR.ENV_INTERNET_IP_FEE_INVALID_ERR],
                           unit="元"
-                        ) }}
+                        ) }#}
                     {{ base.form_textarea(
                           Env_Internet_Ip_Types.desc.info.name,
                           "desc",

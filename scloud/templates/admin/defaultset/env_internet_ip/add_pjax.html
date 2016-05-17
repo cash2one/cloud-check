@@ -27,13 +27,22 @@
                           res=env_internet_ip_res,
                           check_codes=[ERR.ENV_INTERNET_IP_NAME_EMPTY_ERR, ERR.ENV_INTERNET_IP_NAME_DUPLICATE_ERR]
                         ) }}
+                    {% for BW in RESOURCE_BANDWIDTH|status_list %}
                     {{ base.form_input(
+                          "%s (元/月)" % BW.value,
+                          BW.value_en,
+                          value="{:,.2f}".format(handler.args.get(BW.value_en, "0.00")|float),
+                          res=env_internet_ip_res,
+                          check_codes=[ERR.ENV_INTERNET_IP_FEE_INVALID_ERR]
+                        ) }}
+                    {% endfor %}
+                    {#{ base.form_input(
                           Env_Internet_Ip_Types.fee.info.name,
                           "fee",
                           value=fee_value,
                           res=env_internet_ip_res,
                           check_codes=[ERR.ENV_INTERNET_IP_FEE_INVALID_ERR]
-                        ) }}
+                        ) }#}
                     {{ base.form_textarea(
                           Env_Internet_Ip_Types.desc.info.name,
                           "desc",

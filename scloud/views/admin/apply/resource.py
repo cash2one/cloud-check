@@ -17,6 +17,7 @@ from tornado import gen
 from scloud.utils.permission import check_perms
 from scloud.services.svc_project import ProjectService
 from scloud.services.svc_pro_resource_apply import ProResourceApplyService
+from scloud.services.svc_env_internet_ip import EnvInternetIpService
 from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
 from scloud.utils.error import SystemError
@@ -174,6 +175,24 @@ class ResourceLoadEnvHandler(AuthHandler):
         )))
 
 
+@url("/apply/resource/load_bandwidth", name="apply.resource.load_bandwidth")
+class ProBackupDetailHandler(ApplyHandler):
+    u'加载互联网宽带'
+    @unblock
+    def get(self, **kwargs):
+        svc = EnvInternetIpService(self)
+        internet_bandwidths_res = svc.get_internet_bandwidths()
+        if internet_bandwidths_res.return_code == 0:
+            internet_bandwidths = internet_bandwidths_res.data
+        else:
+            internet_bandwidths = []
+        data = self.get_pro_data()
+        data.update({
+            "internet_bandwidths": internet_bandwidths,
+        })
+        # logger.info(pro_backup_res.data)
+        return self.render_to_string("admin/apply/resource/_env_internet_bandwidth.html", **data)
+
 @url("/apply/resource/generate_fee", name="apply.resource.generate_fee", active="apply.resource")
 class GuideGenerateFeeHandler(ApplyHandler):
     "资源申请费用试算"
@@ -181,12 +200,15 @@ class GuideGenerateFeeHandler(ApplyHandler):
     def post(self, **kwargs):
         data = self.get_pro_data()
         svc = ProResourceApplyService(self, self.args)
+        pro_resource_apply_res = svc.get_resource()
+        logger.info("[pro_resource_apply_res] %s" % pro_resource_apply_res)
         fee_res = svc.generate_fee()
         svc = ProjectService(self)
         env_resource_value_res = svc.load_env_resource_values()
         env_internet_ip_types_res = svc.load_env_internet_ip_types()
         data.update(dict(
             fee_res = fee_res,
+            pro_resource_apply_res = pro_resource_apply_res,
             env_internet_ip_types_res = env_internet_ip_types_res,
             env_resource_value_res = env_resource_value_res,
         ))

@@ -105,6 +105,9 @@ class ProResourceApplyService(BaseService):
     @thrownException
     def get_resource(self):
         res_id = self.params.get("res_id", 0)
+        res_apply_id = self.params.get("res_apply_id", 0)
+        if not res_id:
+            res_id = res_apply_id
         resource_res = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
         if not resource_res:
             return self.failure(ERROR.not_found_err)
@@ -265,6 +268,7 @@ class ProResourceApplyService(BaseService):
         snapshot_fee = fee_dict["snapshot"]
         loadbalance_fee = fee_dict["loadbalance"]
         internet_ip_fee_dict = fee_dict["internet_ip"]
+        # bandwidth = fee_dict["bandwidth"]
         internet_ip_ssl_fee = fee_dict["internet_ip_ssl"] 
 
         logger.info(valid_res.data)
@@ -287,7 +291,9 @@ class ProResourceApplyService(BaseService):
         _internet_ip_fee = 0 
         for i in internet_ip_fee_dict:
             if i["id"] == internet_ip_id:
-                _internet_ip_fee = i["fee"]
+                # _internet_ip_fee = i["fee"]
+                bandwidth_fee_dict = i["fee"]
+                _internet_ip_fee = bandwidth_fee_dict.get(str(bandwidth))
                 break
             else:
                 continue
@@ -533,6 +539,7 @@ class ProResourceApplyService(BaseService):
             "resource_status": "已删除",
         }
         resource.is_enable = False
+        # resource.status = STATUS_RESOURCE.DELETED
         self.db.add(resource)
         # self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).delete()
         # resource.delete()

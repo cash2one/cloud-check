@@ -407,6 +407,22 @@ COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 AUTO_INCREMENT=0;
 
+CREATE TABLE `env_internet_bandwidth` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `internet_ip_type_id` INT(11) NOT NULL DEFAULT '0' COMMENT '带宽所属互联网ip类型',
+    `bandwidth_id` INT(11) NOT NULL DEFAULT '0' COMMENT '带宽类型',
+    `fee` float(11,2) NOT NULL DEFAULT '0.00' COMMENT '相关费用',
+    `create_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `internet_ip_type_id` (`internet_ip_type_id`),
+    CONSTRAINT `env_internet_bandwidth_ibfk_1` FOREIGN KEY (`internet_ip_type_id`) REFERENCES `env_internet_ip_types` (`id`) ON DELETE CASCADE
+)
+COMMENT='外网IP带宽'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=0;
+
 CREATE TABLE `act_history` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
     `record_id` INT(11) NOT NULL DEFAULT '0' COMMENT '数据编码',

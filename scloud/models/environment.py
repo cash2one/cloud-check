@@ -28,6 +28,19 @@ class Env_Internet_Ip_Types(BaseModel, BaseModelMixin):
                        ))
 
 
+class Env_Internet_Bandwidth(BaseModel, BaseModelMixin):
+    u"""互联网IP分类"""
+    __tablename__ = "env_internet_bandwidth"
+    internet_ip_type_id = Column(Integer, ForeignKey('env_internet_ip_types.id', ondelete="CASCADE"), default=0, nullable=False, index=True)
+    bandwidth_id = Column(Integer, default=0, nullable=False, info={"name": u"互联网IP带宽", "placeholder": u"如单线、双线等"})
+    fee = Column(Float(11,2), default=0.00, nullable=False, info={"name": u"相关费用（元）"})
+    internet_ip_type = relationship("Env_Internet_Ip_Types", backref=backref("bandwidths",
+                           order_by="Env_Internet_Bandwidth.bandwidth_id",
+                           cascade="all,delete,delete-orphan",
+                           passive_deletes=True
+                        ))
+
+
 class Env_Resource_Fee(BaseModel, BaseModelMixin):
     u"""环境资源费用配置"""
     __tablename__ = "env_resource_fee"
