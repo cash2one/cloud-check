@@ -6,7 +6,7 @@
 {% else %}
 {% set pro_resource_apply = pro_info_res.data.last_apply %}
 {% endif %#}
-{% if handler.request.method == "POST" %}
+{% if handler.request.method == "POST" or handler.kwargs["name"] == "apply.resource.add" %}
     {% set pro_id = handler.args.get('pro_id', '') %}
     {% set computer = handler.args.get('computer', '') %}
     {% set cpu = handler.args.get('cpu', '') %}
@@ -25,23 +25,33 @@
     {% set period = handler.args.get('period', '') %}
     {% set total_fee = handler.args.get('total_fee', '') %}
 {% else %}
-    {% set pro_id = pro_resource_apply.pro_id if pro_resource_apply else '' %}
-    {% set computer = pro_resource_apply.computer if pro_resource_apply else '' %}
-    {% set cpu = pro_resource_apply.cpu if pro_resource_apply else '' %}
-    {% set memory = pro_resource_apply.memory if pro_resource_apply else '' %}
-    {% set disk = pro_resource_apply.disk if pro_resource_apply else '' %}
-    {% set disk_amount = pro_resource_apply.disk_amount if pro_resource_apply else '' %}
-    {% set disk_backup = pro_resource_apply.disk_backup if pro_resource_apply else '' %}
-    {% set disk_backup_amount = pro_resource_apply.disk_backup_amount if pro_resource_apply else '' %}
-    {% set out_ip = pro_resource_apply.out_ip if pro_resource_apply else '' %}
-    {% set snapshot = pro_resource_apply.snapshot if pro_resource_apply else '' %}
-    {% set loadbalance = pro_resource_apply.loadbalance if pro_resource_apply else '' %}
-    {% set internet_ip = pro_resource_apply.internet_ip if pro_resource_apply else '' %}
-    {% set internet_ip_ssl = pro_resource_apply.internet_ip_ssl if pro_resource_apply else '' %}
-    {% set start_date = pro_resource_apply.start_date if pro_resource_apply else '' %}
-    {% set unit_fee = pro_resource_apply.unit_fee if pro_resource_apply else '' %}
-    {% set period = pro_resource_apply.period if pro_resource_apply else '' %}
-    {% set total_fee = pro_resource_apply.total_fee if pro_resource_apply else '' %}
+      {% if pro_resource_apply_res and pro_resource_apply_res.return_code == 0 %}
+        {% set pro_resource_apply = pro_resource_apply_res.data %}
+      {% else %}
+        {% set pro_resource_apply = pro_info_res.data.last_apply %}
+      {% endif %}
+      {% if handler.kwargs["name"] == "guide_step_1" %}
+        {% set pro_info = pro_info_res.data %}
+        {% set pro_id = pro_info.id if pro_info else '' %}
+      {% else %}
+        {% set pro_id = pro_resource_apply.pro_id if pro_resource_apply else '' %}
+      {% endif %}
+      {% set computer = pro_resource_apply.computer if pro_resource_apply else '' %}
+      {% set cpu = pro_resource_apply.cpu if pro_resource_apply else '' %}
+      {% set memory = pro_resource_apply.memory if pro_resource_apply else '' %}
+      {% set disk = pro_resource_apply.disk if pro_resource_apply else '' %}
+      {% set disk_amount = pro_resource_apply.disk_amount if pro_resource_apply else '' %}
+      {% set disk_backup = pro_resource_apply.disk_backup if pro_resource_apply else '' %}
+      {% set disk_backup_amount = pro_resource_apply.disk_backup_amount if pro_resource_apply else '' %}
+      {% set out_ip = pro_resource_apply.out_ip if pro_resource_apply else '' %}
+      {% set snapshot = pro_resource_apply.snapshot if pro_resource_apply else '' %}
+      {% set loadbalance = pro_resource_apply.loadbalance if pro_resource_apply else '' %}
+      {% set internet_ip = pro_resource_apply.internet_ip if pro_resource_apply else '' %}
+      {% set internet_ip_ssl = pro_resource_apply.internet_ip_ssl if pro_resource_apply else '' %}
+      {% set start_date = pro_resource_apply.start_date if pro_resource_apply else '' %}
+      {% set unit_fee = pro_resource_apply.unit_fee if pro_resource_apply else '' %}
+      {% set period = pro_resource_apply.period if pro_resource_apply else '' %}
+      {% set total_fee = pro_resource_apply.total_fee if pro_resource_apply else '' %}
 {% endif %}
     {{ handler.xsrf_form_html() }}
     {% if pro_resource_apply and pro_resource_apply.status|int in [STATUS_RESOURCE.REFUSED] %}
@@ -285,6 +295,7 @@
                     $("#"+key).val(value);
                 })
                 $("#internet_ip").parent().html(response.data.env_internet_ip_types_tmpl)
+                $("#bandwidth").parent().html(response.data.env_internet_bandwidth_tmpl)
                 $("#internet_ip").select2();
             }
         }

@@ -3,7 +3,7 @@
 import scloud
 #from torweb.urls import url
 from scloud.shortcuts import url
-from scloud.config import logger, thrownException
+from scloud.config import logger, thrownException, logThrown
 from scloud.const import pro_resource_apply_status_types, STATUS_RESOURCE
 from scloud.handlers import Handler, AuthHandler
 import requests
@@ -23,6 +23,7 @@ from scloud.utils.unblock import unblock
 from scloud.utils.error import SystemError
 from scloud.utils.error_code import ERROR
 from .base import ApplyHandler
+from scloud.async_services.publish_task import publish_notice_checker
 
 
 class GuideStepGetHandler(AuthHandler):
@@ -139,6 +140,7 @@ class DoProResourceApplyHandler(ApplyHandler):
         data.update(pro_info_data)
         if pro_resource_apply_res.return_code == 0:
             self.add_message(u"申请项目[%s-%s]%s资源成功！" % (pro_resource_apply_res.data.project.name, pro_resource_apply_res.data.desc, post_action), level="success", post_action=True)
+            publish_notice_checker.delay(self.current_user.id)
             if self.kwargs["name"] == "apply.resource.pay":
                 tmpl = self.render_to_string("admin/guide/_step_2_pay_detail.html", **data)
             else:
@@ -154,24 +156,45 @@ class DoProResourceApplyHandler(ApplyHandler):
 
 
 @url("/apply/resource/load_env", name="apply.resource.load_env", active="apply.resource")
-class ResourceLoadEnvHandler(AuthHandler):
+class ResourceLoadEnvHandler(ApplyHandler):
     @unblock
     def get(self, **kwargs):
+        data = self.get_pro_data()
         svc = ProjectService(self)
         env_resource_value_res = svc.load_env_resource_values()
         env_internet_ip_types_res = svc.load_env_internet_ip_types()
         svc = ProResourceApplyService(self, self.args)
         pro_resource_apply_res = svc.get_resource()
         pro_resource_apply = pro_resource_apply_res.data if pro_resource_apply_res.return_code == 0 else None
-        data = dict(
+        internet_ip_options = env_internet_ip_types_res.data if env_internet_ip_types_res.return_code == 0 else []
+        internet_ip_value = 0
+        if pro_resource_apply:
+            internet_ip_value = pro_resource_apply.internet_ip
+        else:
+            if env_resource_value_res.return_code == 0:
+                internet_ip_value = env_resource_value_res.data["internet_ip"]
+        try:
+            # internet_bandwidths = []
+            # for i in internet_ip_options:
+            #     logger.info("internet_ip: %s, value: %s" % (i["value"], internet_ip_value))
+
+            internet_bandwidths = {internet_ip_value: i["bandwidths"] for i in internet_ip_options if int(i["value"]) == int(internet_ip_value)}[internet_ip_value]
+            # logger.info(internet_bandwidths)
+        except:
+            logThrown()
+            internet_bandwidths = []
+        data.update(dict(
             env_internet_ip_types_res = env_internet_ip_types_res,
             env_resource_value_res = env_resource_value_res,
             pro_resource_apply = pro_resource_apply,
-        )
+            internet_bandwidths = internet_bandwidths
+        ))
         env_internet_ip_types_tmpl = self.render_to_string("admin/apply/resource/_env_internet_ip_types.html", **data)
+        env_internet_bandwidth_tmpl = self.render_to_string("admin/apply/resource/_env_internet_bandwidth.html", **data)
         return simplejson.dumps(self.success(data=dict(
             env_resource_value = env_resource_value_res.data,
-            env_internet_ip_types_tmpl = env_internet_ip_types_tmpl
+            env_internet_ip_types_tmpl = env_internet_ip_types_tmpl,
+            env_internet_bandwidth_tmpl = env_internet_bandwidth_tmpl
         )))
 
 
@@ -255,6 +278,7 @@ class ProResourceDeleteHandler(ApplyHandler):
         # data = self.get_pro_info_res(kwargs["pro_id"])
         if delete_res.return_code == 0:
             self.add_message("云资源[%s-%s]记录删除成功！"% (delete_res.data.project.name, delete_res.data.desc), level="success")
+            publish_notice_checker.delay(self.current_user.id)
         else:
             self.add_message("云资源记录删除失败！(%s)%s"% (delete_res.return_code, delete_res.return_message), level="warning")
         # logger.info("\t [data]: %s" % data )

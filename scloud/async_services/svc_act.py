@@ -52,21 +52,21 @@ def task_post_pro_res_apply_history(status=0, content=u"", pro_id=0, res_apply_i
         svc.db.add(act)
         svc.db.flush()
 
-    if checker_id:
-        # 通知普通用户
-        this_id = checker_id
-        user_id = user_id
-        action = "on_notice_user"
-        request_result = publish_notice_user(user_id)
-    else:
-        # 通知审核员
-        this_id = user_id
-        user_id = checker_id
-        action = "on_notice_checker"
-        request_result = publish_notice_checker(this_id)
-    logger.info("#"*30+" [user %s notice tasks] " % user_id+"#"*30)
-    logger.info("[action]: %s, [user_id]: %s" % (action, user_id))
-    # request_result = publish_notice_tasks(action, user_id, this_id)
-    logger.info(request_result)
-    logger.info("#"*30+" [user %s notice tasks] " % user_id+"#"*30)
+    # if checker_id:
+    #     # 通知普通用户
+    #     this_id = checker_id
+    #     user_id = user_id
+    #     action = "on_notice_user"
+    #     request_result = publish_notice_user(user_id)
+    # else:
+    #     # 通知审核员
+    #     this_id = user_id
+    #     user_id = checker_id
+    #     action = "on_notice_checker"
+    #     request_result = publish_notice_checker(this_id)
+    # logger.info("#"*30+" [user %s notice tasks] " % user_id+"#"*30)
+    # logger.info("[action]: %s, [user_id]: %s" % (action, user_id))
+    # # request_result = publish_notice_tasks(action, user_id, this_id)
+    # logger.info(request_result)
+    # logger.info("#"*30+" [user %s notice tasks] " % user_id+"#"*30)
 

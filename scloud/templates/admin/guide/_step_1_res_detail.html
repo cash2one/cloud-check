@@ -51,6 +51,15 @@
         {% endif %}
         </td>
       </tr>
+      {% elif column.name == "reason" %}
+        {% if pro_resource_apply.reason %}
+          <tr>
+            <td>{{ column.info.name or column.name }}:</td>
+            <td>
+            <span class="label label-danger">{{ pro_resource_apply.reason }}</span>
+            </td>
+          </tr>
+        {% endif %}
       {% else %}
       <tr>
         <td>{{ column.info.name or column.name }}:</td>

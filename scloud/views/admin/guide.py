@@ -101,7 +101,7 @@ class GuideStep1Handler(GuideStepGetHandler):
         pro_info_res = data["pro_info_res"]
         if pro_info_res.return_code == 0:
             pro_info = pro_info_res["data"]
-            res_apply_id = pro_info.last_apply.id
+            res_apply_id = pro_info.last_apply.id if pro_info.last_apply else 0
         else:
             res_apply_id = 0
         kwargs["res_apply_id"] = res_apply_id

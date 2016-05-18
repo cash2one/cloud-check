@@ -14,6 +14,7 @@ from scloud.utils.error_code import ERROR
 from scloud.utils.error import NotFoundError
 from scloud.async_services.svc_mail import sendMail
 from scloud.async_services.svc_act import task_post_pro_res_apply_history
+from scloud.async_services.publish_task import publish_notice_user
 from scloud.const import admin_emails, STATUS_RESOURCE
 from scloud.models.environment import Env_Resource_Fee
 from voluptuous import (Schema, Required, Error,
@@ -88,7 +89,7 @@ class ProResourceApplyService(BaseService):
         search = self.params.get("search")
         status = self.params.get("status")
         conditions = and_()
-        conditions.append(Pro_Resource_Apply.is_enable == 1)
+        # conditions.append(Pro_Resource_Apply.is_enable == 1)
         conditions.append(Pro_Resource_Apply.user_id == self.handler.current_user.id)
         if search:
             conditions.append(Pro_Info.name.like('%' + search + '%'))
@@ -348,7 +349,8 @@ class ProResourceApplyService(BaseService):
         # if form_empty_res.return_code < 0:
         #     return form_empty_res
         pro_id = self.params.get("pro_id")
-        user_id = self.params.get("user_id")
+        # user_id = self.params.get("user_id")
+        user_id = self.handler.current_user.id
         logger.info(self.params)
         if not pro_id:
             return self.failure(ERROR.not_found_err)
@@ -394,6 +396,7 @@ class ProResourceApplyService(BaseService):
         apply.period = params.get('period')
         apply.unit_fee = fee_data["unit_fee"]
         apply.total_fee = fee_data["total_fee"]
+        apply.fee_desc = u"单月费用 %s（元/月）×有效期 %s（月）=总费用 %s（元）" % (fee_data['unit_fee'], params.get('period'), fee_data['total_fee'])
         apply.user_id = user_id
         apply.status = STATUS_RESOURCE.APPLIED
         apply.reason = u''
@@ -430,7 +433,8 @@ class ProResourceApplyService(BaseService):
         #     return form_empty_res
         pro_id = self.params.get("pro_id")
         res_id = self.params.get("res_id")
-        user_id = self.params.get("user_id")
+        # user_id = self.params.get("user_id")
+        user_id = self.handler.current_user.id
         if not pro_id:
             return self.failure(ERROR.not_found_err)
         if not res_id:
@@ -498,7 +502,8 @@ class ProResourceApplyService(BaseService):
     @thrownException
     def do_revoke(self):
         res_id = self.params.get("res_id", 0)
-        user_id = self.params.get("user_id", 0)
+        # user_id = self.params.get("user_id", 0)
+        user_id = self.handler.current_user.id
         resource = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
         if not resource:
             return self.failure(ERROR.not_found_err)
@@ -526,7 +531,8 @@ class ProResourceApplyService(BaseService):
     def do_delete(self):
         res_id = self.params.get("res_id", 0)
         logger.info("\t res_id : %s" % res_id)
-        user_id = self.params.get("user_id", 0)
+        # user_id = self.params.get("user_id", 0)
+        user_id = self.handler.current_user.id
         resource = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
         if not resource:
             return self.failure(ERROR.not_found_err)
@@ -559,6 +565,7 @@ class ProResourceApplyService(BaseService):
         logger.info("\t [ DO PAY ]")
         res_id = self.params.get("res_id", 0)
         user_id = self.params.get("user_id", 0)
+        user_id = self.handler.current_user.id
         resource_query = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id)
         logger.info("\t [QUERY] : %s" % resource_query)
         resource = resource_query.first()
@@ -747,6 +754,7 @@ class ProResourceCheckService(BaseService):
             email_list.append((email, mail_html))
             tip_messages.append(_get_message(msg=mail_title))
             task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=resource.user_id, checker_id=checker_id)
+            publish_notice_user.delay(resource.user_id)
 
         email_dict = {}
         for email, mail_content in email_list:

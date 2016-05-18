@@ -38,7 +38,7 @@ act_actions = {
 pro_resource_apply_status_types = {
     # 未申请状态，可修改，可删除，可提交
     None:ApplyMark(value=u"未申请", todo_value="待提交", act_value=u"申请", value_en="unknown", level="warning", bg_color="yellow"),
-    -3:ApplyMark(value=u"已删除", todo_value="", act_value=u"", value_en="refused", level="danger", bg_color="red"),
+    # -3:ApplyMark(value=u"已删除", todo_value="", act_value=u"", value_en="refused", level="danger", bg_color="red"),
     -2:ApplyMark(value=u"审核未通过", todo_value="待修改", act_value=u"拒绝", value_en="refused", level="danger", bg_color="red"),
     -1:ApplyMark(value=u"已撤销", todo_value="待提交", act_value=u"撤销", value_en="revoked", level="warning", bg_color="yellow"),
     # 已提交状态，等待审核、等待缴费
