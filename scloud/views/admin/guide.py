@@ -98,6 +98,24 @@ class GuideStep1Handler(GuideStepGetHandler):
     @unblock
     def get(self, **kwargs):
         data = self.get_pro_info_res(kwargs["pro_id"])
+        pro_info_res = data["pro_info_res"]
+        if pro_info_res.return_code == 0:
+            pro_info = pro_info_res["data"]
+            res_apply_id = pro_info.last_apply.id
+        else:
+            res_apply_id = 0
+        kwargs["res_apply_id"] = res_apply_id
+        svc = ProResourceApplyService(self, kwargs)
+        pro_resource_apply_res = svc.get_resource()
+        logger.info("[pro_resource_apply_res] %s" % pro_resource_apply_res)
+        svc = ProjectService(self)
+        env_resource_value_res = svc.load_env_resource_values()
+        env_internet_ip_types_res = svc.load_env_internet_ip_types()
+        data.update(dict(
+            pro_resource_apply_res = pro_resource_apply_res,
+            env_internet_ip_types_res = env_internet_ip_types_res,
+            env_resource_value_res = env_resource_value_res,
+        ))
         return self.render_to_string("admin/guide/step1.html", **data)
 
     @check_perms('pro_resource_apply.insert, pro_resource_apply.update')
