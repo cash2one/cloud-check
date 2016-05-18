@@ -41,9 +41,7 @@ class EnvResourceFeeService(ProResourceApplyService):
         ).first()
         return self.success(data=env)
 
-    @thrownException
-    def get_or_create(self):
-        logger.info("------[get_or_create]------")
+    def get_param_schema(self):
         param_schema = Schema({
             "computer": self.validate_float,
             "cpu": self.validate_float,
@@ -57,6 +55,12 @@ class EnvResourceFeeService(ProResourceApplyService):
             'loadbalance': self.validate_float,
             'internet_ip': self.validate_float,
         }, extra=ALLOW_EXTRA)
+        return param_schema
+
+    @thrownException
+    def get_or_create(self):
+        logger.info("------[get_or_create]------")
+        param_schema = self.get_param_schema()
         form_valid_res = self.check_form_valid(param_schema)
         if form_valid_res.return_code < 0:
             return form_valid_res

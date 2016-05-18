@@ -12,47 +12,30 @@ from scloud.utils.error_code import ERROR
 from scloud.utils.error import NotFoundError
 from scloud.const import pro_resource_apply_status_types, STATUS_RESOURCE
 from scloud.services.svc_pro_resource_apply import ProResourceApplyService
-
+from voluptuous import Schema, ALLOW_EXTRA
 
 
 class EnvResourceValueService(ProResourceApplyService):
 
-    # @thrownException
-    # def get_list(self):
-    #     logger.info("------[get_list]------")
-    #     env_list = self.db.query(
-    #         Env_Info
-    #     ).all()
-    #     return self.success(data=env_list)
+    def get_param_schema(self):
+        param_schema = Schema({
+            "computer": self.validate_num_more_than_1,
+            "cpu": self.validate_num_more_than_1,
+            "memory": self.validate_num_more_than_1,
+            'disk': self.validate_num,
+            'disk_amount': self.validate_num,
+            'disk_backup': self.validate_num,
+            'disk_backup_amount': self.validate_num,
+            'out_ip': self.validate_num,
+            'snapshot': self.validate_num,
+            'loadbalance': self.validate_num,
+            'internet_ip': self.validate_num,
+            # 'bandwidth': self.validate_num,
+            'internet_ip_ssl': self.validate_num,
+            'period': self.validate_num_more_than_1,
+        }, extra=ALLOW_EXTRA)
+        return param_schema
 
-    # @thrownException
-    # def add_env(self):
-    #     logger.info("------[add_env]------")
-    #     name = self.params.get("name")
-    #     desc = self.params.get("desc")
-    #     if not name:
-    #         return self.failure(ERROR.env_name_empty_err)
-    #     if not desc:
-    #         return self.failure(ERROR.env_desc_empty_err)
-    #     env = Env_Info()
-    #     env.name = name
-    #     env.desc = desc
-    #     self.db.add(env)
-    #     self.db.flush()
-    #     return self.success(data=env)
-
-    # @thrownException
-    # def get_env(self):
-    #     logger.info("------[add_env]------")
-    #     env_id = self.params.get("env_id")
-    #     env = self.db.query(
-    #         Env_Info
-    #     ).filter(
-    #         Env_Info.id == env_id
-    #     ).first()
-    #     if not env:
-    #         raise NotFoundError()
-    #     return self.success(data=env)
     @thrownException
     def get_env_resource_value(self):
         env_id = self.params.get("env_id")
@@ -66,7 +49,8 @@ class EnvResourceValueService(ProResourceApplyService):
     @thrownException
     def get_or_create(self):
         logger.info("------[get_or_create]------")
-        form_valid_res = self.check_form_valid()
+        param_schema = self.get_param_schema()
+        form_valid_res = self.check_form_valid(param_schema)
         if form_valid_res.return_code < 0:
             return form_valid_res
         env_id = self.params.get("env_id")

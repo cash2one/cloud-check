@@ -125,7 +125,9 @@ class ProResourceApplyService(BaseService):
             messages = []
             for path, err in ziped_errors:
                 if hasattr(ERROR, "res_%s_invalid_err" % path):
-                    msg = "%s %s" % (getattr(ERROR, "res_%s_invalid_err" % path).errvalue, "'%s'%s" % (path, err.msg))
+                    column = getattr(Pro_Resource_Apply, path)
+                    column_info = column.info["name"]
+                    msg = "%s %s" % (getattr(ERROR, "res_%s_invalid_err" % path).errvalue, "'%s'%s" % (column_info, err.msg))
                 else:
                     msg = err.msg
                 messages.append(msg)
