@@ -186,20 +186,13 @@
           <div class="form-group{% if res and res.return_code in [ERR.RES_BANDWIDTH_EMPTY_ERR, ERR.RES_BANDWIDTH_INVALID_ERR] %} has-warning{% endif %}">
             <label for="internet_ip" class="col-sm-2 control-label">{{ Pro_Resource_Apply.bandwidth.info.name }}</label>
             <div class="col-sm-10 input-group">
-              {% if pro_resource_apply_res.return_code == 0 %}
+              {% if pro_resource_apply_res and pro_resource_apply_res.return_code == 0 %}
                 {% set pro_resource_apply = pro_resource_apply_res.data %}
                 {% set internet_bandwidths = pro_resource_apply.internet_ip_obj.bandwidths %}
                 {% include "admin/apply/resource/_env_internet_bandwidth.html" with context %}
+              {% else %}
+                {% include "admin/apply/resource/_env_internet_bandwidth.html" with context %}
               {% endif %}
-              {#
-              <select id="bandwidth" name="bandwidth" class="input-group-sm input-sm" style="width: 100%; height:30px">
-                <option value="0">-- 请选择是否发布互联网服务 --</option>
-                
-              </select>
-              <div class="input-group-unit" style="text-align:left; width:40%">
-                <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="{{ Pro_Resource_Apply.bandwidth.info.name }}" data-content="{{ Pro_Resource_Apply.bandwidth.info.tip }}"><i class="fa fa-info-circle"></i></a>
-              </div>
-              #}
             </div>
           {% if res and res.return_code in [ERR.RES_BANDWIDTH_EMPTY_ERR, ERR.RES_BANDWIDTH_INVALID_ERR] %}
           <label class="control-label col-sm-offset-2" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
