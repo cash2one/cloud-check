@@ -59,7 +59,7 @@
       check_codes=[ERR.EMAIL_EMPTY_ERR, ERR.EMAIL_FORMAT_ERR, ERR.EMAIL_DUPLICATE_ERR]) }}
     {{ base.form_status_select("是否有效", "is_enable", value=is_enable, options=STATUS_YESNO|status_list(reverse=True), ST=STATUS_YESNO, res=pro_user_res) }}
     {{ base.form_status_select("用户类型", "user_type", value=is_enable, options=PRO_USER_TYPES|status_list(reverse=True), ST=PRO_USER_TYPES, res=pro_user_res) }}
-    {{ base.form_textarea("访问权限", "desc", value=desc, res=pro_user_res, right_col=6, placeholder="IP地址:端口") }}
+    {{ base.form_textarea("访问权限", "desc", value=desc, res=pro_user_res, placeholder="IP地址:端口", data_content="权限用户访问服务器权限说明，多个ip端口之间换行<br>例如：<br>127.0.0.1:8080<br>127.0.0.1:8081") }}
 <!--             <div class="form-group">
       <div class="radio col-sm-offset-2 col-sm-10">
           <label>
@@ -107,19 +107,23 @@
     $("#content").wysihtml5();
   });
 
-// var textholder = "第一行文本提示";
-// var textholder_list = [textholder, textholder];
-// var placeholder = textholder_list.join("\n");
-// $('textarea').val(placeholder);
-// $('textarea').focus(function() {
-//     if ($(this).val() == placeholder) {
-//         $(this).val('');
-//     }
-// });
-
-// $('textarea').blur(function() {
-//     if ($(this).val() == '') {
-//         $(this).val(placeholder);
-//     }
-// });
+  $(function(){
+    $("body").find('[data-toggle="popover"]').each(function(){
+        $(this).click(function(e){
+            // $('.popover').remove();
+            $('body').find('[data-toggle="popover"]').popover('hide');
+            e.preventDefault();
+            return false;
+        });
+        $(this).popover({
+            animation: true,
+            trigger : 'click',
+            placement: 'auto left',
+            html: true
+        });
+    });
+    $("body").click(function(){
+        $('body').find('[data-toggle="popover"]').popover('hide');
+    });
+  });
 </script>
