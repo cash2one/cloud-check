@@ -10,8 +10,14 @@
 <tr>
   <td><input type="checkbox" id="{{ pro_table.id }}" value="{{ pro_table.project.name }}"></td>
   <td class="mailbox-star"><a href="javascript:;"><i class="fa fa-star text-yellow"></i></a></td>
-  <td class="mailbox-subject"><b><a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url('pro_users_detail', pro_table.project.id) }}')">{{ pro_table.project.name }} <i class="fa fa-eye"></i></a></b></td>
-  <td class="mailbox-subject">{{ pro_table.username }}</td>
+  <td class="mailbox-subject"><b><a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url('pro_users_detail', pro_table.project.id) }}')">
+  {{ pro_table.project.name }}
+   <i class="fa fa-users"></i></a></b></td>
+  <td class="mailbox-subject">
+<a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url('pro_user_detail', pro_table.project.id, pro_table.id) }}')">
+  {{ pro_table.username }}
+<i class="fa fa-user"></i></a>
+  </td>
   <td class="mailbox-name">{{ pro_table.project.user.email or pro_table.project.user.mobile }}</a></td>
   <td class="mailbox-date">{{ pro_table.update_time }}</td>
 </tr>

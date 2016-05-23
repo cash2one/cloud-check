@@ -91,6 +91,22 @@ class ProUsersDetailHandler(AuthHandler):
             "pro_table": "pro_user",
         }
         # logger.info(pro_users_res.data)
+        return self.render_to_string("admin/check/_event_pro_users_detail.html", **data)
+
+
+@url("/pro/(?P<pro_id>\d+)/pro_user/(?P<pro_user_id>\d+)/detail", name="pro_user_detail", active="pro_table_check_list")
+class ProUserDetailHandler(AuthHandler):
+    u'互联网发布申请内容明细'
+    @check_perms('pro_resource_apply.check')
+    @unblock
+    def get(self, **kwargs):
+        svc = ProUserService(self, {"id": kwargs["pro_user_id"]})
+        pro_user_res = svc.get_info()
+        data = {
+            "pro_user_res": pro_user_res,
+            "pro_table": "pro_user",
+        }
+        # logger.info(pro_users_res.data)
         return self.render_to_string("admin/check/_event_pro_user_detail.html", **data)
 
 

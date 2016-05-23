@@ -59,6 +59,7 @@ class ProUserDetailHandler(ApplyHandler):
 
 #@url("/apply/pro_(?P<pro_id>\d+)/user/add", name="apply.user.add", active="apply.user.add")
 @url("/apply/user/add", name="apply.user.add", active="apply.user.add")
+@url("/apply/user/edit", name="apply.user.edit", active="apply.user.edit")
 class GuideHandler(ApplyHandler):
     u'权限申请'
     @check_perms('pro_info.view')

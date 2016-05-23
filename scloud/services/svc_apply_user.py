@@ -10,7 +10,7 @@ from scloud.config import logger, thrownException
 from sqlalchemy import and_
 from scloud.utils.error_code import ERROR
 # from scloud.utils.error import NotFoundError
-from scloud.const import STATUS_PRO_TABLES
+from scloud.const import STATUS_PRO_TABLES, STATUS_PRO_TABLES
 from scloud.models.project import Pro_User 
 from scloud.models.pt_user import PT_User
 
@@ -52,6 +52,8 @@ class ProUserService(BaseService):
         pro_user.is_enable = is_enable
         pro_user.user_type = user_type
         pro_user.desc = desc
+        pro_user.status = STATUS_PRO_TABLES.APPLIED
+        pro_user.reason = u''
         pro_user.use_vpn = use_vpn
         pro_user.user_id = self.handler.current_user.id
         self.db.add(pro_user)

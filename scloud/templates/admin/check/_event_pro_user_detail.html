@@ -12,40 +12,13 @@
   <div class="table-responsive mailbox-messages">
     <table class="table table-hover table-striped" id="pro_table_check_list_table">
       <tbody>
-        <th></th>
-        <th class="mailbox-name">申请用户</th>
-        <th class="mailbox-attachment">申请用户邮箱</th>
-        <th class="mailbox-attachment">是否使用VPN</th>
-        <th class="mailbox-attachment">申请状态</th>
-        <th class="mailbox-date">申请时间</th>
-        {% set pro_users = pro_users_res.data %}
-        {% for pro_user in pro_users %}
-        <tr>
-          <td>
-            {% if pro_user.status == STATUS_PRO_TABLES.APPLIED %}
-            <input type="checkbox" id="{{ pro_user.id }}" value="{{ pro_user.project.name }}" checked="checked">
-            {% endif %}
-          </td>
-          <td class="mailbox-subject">{{ pro_user.username }}</td>
-          <td class="mailbox-subject">{{ pro_user.email }}</td>
-          <td class="mailbox-subject">
-            {% if pro_user.use_vpn|int == 1 %}
-            <span class="label label-info">是</span>
-            {% else %}
-            <span class="label label-warning">否</span>
-            {% endif %}
-          </td>
-          <td class="mailbox-subject">
-            <span class="label label-{{ STATUS_PRO_TABLES.get(pro_user.status).level }}">{{ STATUS_PRO_TABLES.get(pro_user.status).value }}</span>
-          </td>
-          {% if pro_table.status == STATUS_PRO_TABLES.REFUSED %}
-          <td class="mailbox-subject">
-            {{ pro_table.reason }}
-          </td>
-          {% endif %}
-          <td class="mailbox-subject">{{ pro_user.create_time|getGoodTime }}</td>
-        </tr>
-        {% endfor %}
+        {% set pro_user = pro_user_res.data %}
+        <tr style="display:none"><td>
+        {% if pro_user.status == STATUS_PRO_TABLES.APPLIED %}
+          <input type="checkbox" id="{{ pro_user.id }}" value="{{ pro_user.project.name }}" checked="checked">
+        </td></tr>
+        {% endif %}
+        {% include "admin/guide/_step_3_user_detail.html" %}
       </tbody>
     </table><!-- /.table -->
   </div><!-- /.mail-box-messages -->

@@ -28,7 +28,12 @@
 }*/
 </style>
 <!-- form start -->
-<form data-pjax id="pro_user_form" class="form-horizontal" action="{{ reverse_url('apply.user.add') }}">
+{% if handler.kwargs["name"] == "apply.user.edit" %}
+  {% set action = reverse_url(handler.kwargs["name"]) %}
+{% else %}
+  {% set action = reverse_url("apply.user.add") %}
+{% endif %}
+<form data-pjax id="pro_user_form" class="form-horizontal" action="{{ action }}">
   {{ handler.xsrf_form_html() }}
   {% if handler.request.method == "POST" %}
       {% set pro_id = handler.args.get("pro_id", "") %}
@@ -41,6 +46,15 @@
   {% else %}
       {% if handler.kwargs["name"] == "guide_step_3" %}
         {% set pro_id = pro_id %}
+      {% elif handler.kwargs["name"] == "apply.user.edit" %}
+        {% set pro_user = pro_user_res.data %}
+        {% set pro_id = pro_user.pro_id %}
+        {% set username = pro_user.username %}
+        {% set email = pro_user.email %}
+        {% set is_enable = pro_user.is_enable %}
+        {% set user_type = pro_user.user_type %}
+        {% set desc = pro_user.desc %}
+        {% set use_vpn = pro_user.use_vpn %}
       {% else %}
         {% set pro_id = handler.args.get("pro_id", "") %}
         {% set username = handler.args.get("username", "") %}
@@ -52,7 +66,15 @@
       {% endif %}
   {% endif %}
   <!-- <input type="hidden" id="res_apply_id" name="res_apply_id" value="{{ res_apply_id }}"/> -->
+  {% if pro_user and pro_user.reason %}
+  <div class="form-group has-warning">
+        <label class="control-label col-sm-offset-2" for="inputWarning">申请被拒绝：<i class="fa fa-bell-o"></i> {{ pro_user.reason }}</label>
+      </div>
+  {% endif %}
   <div class="box-body">
+    {% if pro_user %}
+    <input type="hidden" name="user_id" value="{{ pro_user.id }}" />
+    {% endif %}
     {{ pro_macro.get_pro_info_select(pro_res=pro_user_res, pro_id=pro_id) }}
     {{ base.form_input("用户名", "username", right_col=6, value=username, res=pro_user_res, check_codes=[ERR.USERNAME_EMPTY_ERR, ERR.USERNAME_DUPLICATE_ERR]) }}
     {{ base.form_input("邮箱", "email", right_col=6, res=pro_user_res, value=email,
