@@ -25,6 +25,8 @@ class ProUserService(BaseService):
             return self.failure(ERROR.pro_name_empty_err)
         username = self.params.get("username")
         email = self.params.get("email")
+        user_type = self.params.get("user_type", 0)
+        desc = self.params.get("desc")
         is_enable = int(self.params.get("is_enable", 1))
         use_vpn = int(self.params.get("use_vpn", 0))
         if not pro_id:
@@ -48,6 +50,8 @@ class ProUserService(BaseService):
         pro_user.username = username
         pro_user.email = email
         pro_user.is_enable = is_enable
+        pro_user.user_type = user_type
+        pro_user.desc = desc
         pro_user.use_vpn = use_vpn
         pro_user.user_id = self.handler.current_user.id
         self.db.add(pro_user)

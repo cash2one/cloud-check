@@ -65,7 +65,7 @@
   </div>
 {%- endmacro %}
 
-{% macro form_textarea(label, name, value="", label_col=2, right_col=None, res=None, check_codes=[]) -%}
+{% macro form_textarea(label, name, placeholder=None, value="", label_col=2, right_col=None, res=None, check_codes=[]) -%}
   {% if right_col %}
     {% set col2 = right_col %}
   {% else %}
@@ -74,7 +74,7 @@
   <div class="form-group{% if res and res.return_code in check_codes %} has-warning{% endif %}">
     <label for="inputPassword3" class="col-sm-{{ label_col }} control-label">{{ label }}</label>
     <div class="col-sm-{{ col2 }}">
-    <textarea class="form-control" id="{{ name }}"name="{{ name }}" placeholder="请输入{{ label }}">{{ value }}</textarea>
+    <textarea class="form-control" id="{{ name }}"name="{{ name }}" placeholder="{% if placeholder %}{{ placeholder }}{% else %}请输入{{ label }}{% endif %}">{{ value }}</textarea>
     {% if res and res.return_code in check_codes %}
     <label class="control-label" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>
     {% endif %}

@@ -113,6 +113,8 @@ class Pro_User(BaseModel, BaseModelMixin):
     email = Column(Unicode, default=u'', info=u"邮箱")
     username = Column(Unicode, default=u'', info=u"用户名") 
     is_enable = Column(Integer, default=1, info=u"是否可用")
+    user_type = Column(Integer, default=0, info=u"用户类型")
+    desc = Column(Unicode, default=u'', info=u"权限描述") 
     use_vpn = Column(Integer, default=0, info=u"是否需要开通VPN远程访问")
     user_id = Column("user_id", Integer, ForeignKey("pt_user.id"), default=0)
     checker_id = Column(Integer, ForeignKey("pt_user.id"), default=0)

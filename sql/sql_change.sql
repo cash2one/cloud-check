@@ -56,6 +56,8 @@ CREATE TABLE `pro_user` (
     `email` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '邮箱',
     `username` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '用户名',
     `is_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1' COMMENT '是否可用',
+    `user_type` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '用户类型：0-远程控制服务器，1-dashboard',
+    `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '权限描述',
     `use_vpn` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '是否需要开通VPN远程访问',
     `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
     `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核者ID',

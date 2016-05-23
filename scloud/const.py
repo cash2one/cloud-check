@@ -52,12 +52,12 @@ pro_resource_apply_status_types = {
 }
 
 STATUS_RESOURCE = ObjectDict()
-def init_status_resource():
-    for k, v in pro_resource_apply_status_types.items():
-        setattr(STATUS_RESOURCE, v.value_en.upper(), k)
-        setattr(STATUS_RESOURCE, v.value_en.lower(), v)
-        STATUS_RESOURCE[k] = v
-init_status_resource()
+# def init_status_resource():
+#     for k, v in pro_resource_apply_status_types.items():
+#         setattr(STATUS_RESOURCE, v.value_en.upper(), k)
+#         setattr(STATUS_RESOURCE, v.value_en.lower(), v)
+#         STATUS_RESOURCE[k] = v
+# init_status_resource()
 
 # Pro_Resource_Apply
 # 互联网宽带
@@ -70,12 +70,12 @@ pro_resource_apply_bandwidth_types = {
 }
 
 RESOURCE_BANDWIDTH = ObjectDict()
-def init_resource_bandwidth():
-    for k, v in pro_resource_apply_bandwidth_types.items():
-        setattr(RESOURCE_BANDWIDTH, v.value_en.upper(), k)
-        setattr(RESOURCE_BANDWIDTH, v.value_en.lower(), v)
-        RESOURCE_BANDWIDTH[k] = v
-init_resource_bandwidth()
+# def init_resource_bandwidth():
+#     for k, v in pro_resource_apply_bandwidth_types.items():
+#         setattr(RESOURCE_BANDWIDTH, v.value_en.upper(), k)
+#         setattr(RESOURCE_BANDWIDTH, v.value_en.lower(), v)
+#         RESOURCE_BANDWIDTH[k] = v
+# init_resource_bandwidth()
 
 # pro_publish, pro_user, pro_backup, pro_balance
 # 互联网发布、负载均衡、定期备份、权限申请状态
@@ -88,12 +88,7 @@ pro_tables_status_types = {
     2: ApplyMark(value=u"已确认", todo_value="已完成", act_value=u"确认", value_en="confirmed", level="success", bg_color="light-blue"),
 }
 STATUS_PRO_TABLES = ObjectDict()
-def init_status_pro_tables():
-    for k, v in pro_tables_status_types.items():
-        setattr(STATUS_PRO_TABLES, v.value_en.upper(), k)
-        setattr(STATUS_PRO_TABLES, v.value_en.lower(), v)
-        STATUS_PRO_TABLES[k] = v
-init_status_pro_tables()
+
 
 # 互联网发布、负载均衡、定期备份、权限申请状态
 priority_status_types = {
@@ -104,12 +99,7 @@ priority_status_types = {
     3: IndexMark(value=u"紧急", value_en="urgent", level="danger"),
 }
 STATUS_PRIORITY = ObjectDict()
-def init_status_priority():
-    for k, v in priority_status_types.items():
-        setattr(STATUS_PRIORITY, v.value_en.upper(), k)
-        setattr(STATUS_PRIORITY, v.value_en.lower(), v)
-        STATUS_PRIORITY[k] = v
-init_status_priority()
+
 
 # 互联网发布、负载均衡、定期备份、权限申请状态
 loadbalance_plot_types = {
@@ -120,12 +110,7 @@ loadbalance_plot_types = {
     3: IndexMark(value=u"其他", value_en="other", level="danger"),
 }
 PLOT_LOADBALANCE = ObjectDict()
-def init_loadbalance_plot():
-    for k, v in loadbalance_plot_types.items():
-        setattr(PLOT_LOADBALANCE, v.value_en.upper(), k)
-        setattr(PLOT_LOADBALANCE, v.value_en.lower(), v)
-        PLOT_LOADBALANCE[k] = v
-init_loadbalance_plot()
+
 
 # 互联网发布、负载均衡、定期备份、权限申请状态
 loadbalance_health_types = {
@@ -136,12 +121,7 @@ loadbalance_health_types = {
     3: IndexMark(value=u"其他", value_en="other", level="danger"),
 }
 LOADBALANCE_HEALTH = ObjectDict()
-def init_loadbalance_health():
-    for k, v in loadbalance_health_types.items():
-        setattr(LOADBALANCE_HEALTH, v.value_en.upper(), k)
-        setattr(LOADBALANCE_HEALTH, v.value_en.lower(), v)
-        LOADBALANCE_HEALTH[k] = v
-init_loadbalance_health()
+
 
 # 是否
 yesno_status_types = {
@@ -149,12 +129,7 @@ yesno_status_types = {
     0: IndexMark(value=u"否", value_en="no", level="warning"),
 }
 STATUS_YESNO = ObjectDict()
-def init_status_yesno():
-    for k, v in yesno_status_types.items():
-        setattr(STATUS_YESNO, v.value_en.upper(), k)
-        setattr(STATUS_YESNO, v.value_en.lower(), v)
-        STATUS_YESNO[k] = v
-init_status_yesno()
+
 
 # （Pro_User）用户类型
 pro_user_types = {
@@ -162,12 +137,29 @@ pro_user_types = {
     0: IndexMark(value=u"远程控制服务器", value_en="service", level="info"),
 }
 PRO_USER_TYPES = ObjectDict()
-def init_pro_user_types():
-    for k, v in pro_user_types.items():
-        setattr(PRO_USER_TYPES, v.value_en.upper(), k)
-        setattr(PRO_USER_TYPES, v.value_en.lower(), v)
-        PRO_USER_TYPES[k] = v
-init_pro_user_types()
+
+
+# 是否使用VPN
+# pro_user_vpn_types = {
+#     1: IndexMark(value=u"dashboard", value_en="yes", level="success"),
+#     0: IndexMark(value=u"远程控制服务器", value_en="service", level="info"),
+# }
+# PRO_USER_VPN_TYPES = ObjectDict()
+
+
+def init_status_object(_dict, object_dict):
+    for k, v in _dict.items():
+        setattr(object_dict, v.value_en.upper(), k)
+        setattr(object_dict, v.value_en.lower(), v)
+        object_dict[k] = v
+init_status_object(pro_user_types, PRO_USER_TYPES)
+init_status_object(yesno_status_types, STATUS_YESNO)
+init_status_object(loadbalance_health_types, LOADBALANCE_HEALTH)
+init_status_object(loadbalance_plot_types, PLOT_LOADBALANCE)
+init_status_object(pro_tables_status_types, STATUS_PRO_TABLES)
+init_status_object(pro_resource_apply_bandwidth_types, RESOURCE_BANDWIDTH)
+init_status_object(pro_resource_apply_status_types, STATUS_RESOURCE)
+
 
 from scloud.config import CONF
 admin_emails = CONF("admin_emails")

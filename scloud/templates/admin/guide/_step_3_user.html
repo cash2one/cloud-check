@@ -1,56 +1,90 @@
 {% import "admin/base/base_macros.html" as base with context %}
 {% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
 
-        <!-- form start -->
-        <form data-pjax id="pro_user_form" class="form-horizontal" action="{{ reverse_url('apply.user.add') }}">
-          {{ handler.xsrf_form_html() }}
-          {% if handler.request.method == "POST" %}
-              {% set pro_id = handler.args.get("pro_id", "") %}
-              {% set username = handler.args.get("username", "") %}
-              {% set email = handler.args.get("email", "") %}
-              {% set is_enable = handler.args.get("is_enable", "1") %}
-              {% set use_vpn = handler.args.get("use_vpn", "") %}
-          {% else %}
-              {% if handler.kwargs["name"] == "guide_step_3" %}
-                {% set pro_id = pro_id %}
-              {% else %}
-                {% set pro_id = handler.args.get("pro_id", "") %}
-                {% set username = handler.args.get("username", "") %}
-                {% set email = handler.args.get("email", "") %}
-                {% set is_enable = handler.args.get("is_enable", "1") %}
-                {% set use_vpn = handler.args.get("use_vpn", "") %}
-              {% endif %}
-          {% endif %}
-          <!-- <input type="hidden" id="res_apply_id" name="res_apply_id" value="{{ res_apply_id }}"/> -->
-          <div class="box-body">
-            {{ pro_macro.get_pro_info_select(pro_res=pro_user_res, pro_id=pro_id) }}
-            {{ base.form_input("用户名", "username", right_col=6, value=username, res=pro_user_res, check_codes=[ERR.USERNAME_EMPTY_ERR, ERR.USERNAME_DUPLICATE_ERR]) }}
-            {{ base.form_input("邮箱", "email", right_col=6, res=pro_user_res, value=email,
-              check_codes=[ERR.EMAIL_EMPTY_ERR, ERR.EMAIL_FORMAT_ERR, ERR.EMAIL_DUPLICATE_ERR]) }}
-            {{ base.form_status_select("是否有效", "is_enable", value=is_enable, options=STATUS_YESNO|status_list(reverse=True), ST=STATUS_YESNO, res=pro_user_res) }}
-            {{ base.form_status_select("用户类型", "user_type", value=is_enable, options=PRO_USER_TYPES|status_list(reverse=True), ST=PRO_USER_TYPES, res=pro_user_res) }}
-            <div class="form-group">
-              <div class="radio col-sm-offset-2 col-sm-10">
-                  <label>
-                  <input type="radio" name="use_vpn" id="use_vpn" value="1"{% if use_vpn and use_vpn|int == 1 %} checked="checked"{% endif %}>
-                    需要为此用户开通(dashboard)VPN远程访问，并接受用户安全协议。<a href="#">查看协议</a>
-                  </label>
-              </div>
-              <div class="radio col-sm-offset-2 col-sm-10">
-                  <label>
-                  <input type="radio" name="use_vpn" id="use_vpn" value="0"{% if use_vpn and use_vpn|int == 0 %} checked="checked"{% endif %}>
-                    不需开通VPN，管理员于操作间使用资源
-                  </label>
-              </div>
-            </div>
-          </div><!-- /.box-body -->
-          <div class="box-footer text-center">
-            <button type="button" id="pro_user_form_btn" onclick="do_add_pro_user()" class="btn btn-info">提 交</button>
-          </div><!-- /.box-footer -->
-        </form>
-      
 
+<style type="text/css">
+/* WebKit browsers */
+/*textarea::-webkit-input-placeholder:after {
+    display: block;
+    content: "第二行文本提示 \A 第三行文本提示 \A";
+}*/
+
+/* Mozilla Firefox 4 to 18 */
+/*textarea:-moz-placeholder:after {
+    display: block;
+    content: "第二行文本提示 \A 第三行文本提示 \A";
+}*/
+
+/* Mozilla Firefox 19+ */
+/*textarea::-moz-placeholder:after {
+    display: block;
+    content: "第二行文本提示 \A 第三行文本提示 \A";
+}*/
+
+/* Internet Explorer 10+ */
+/*textarea:-ms-input-placeholder:after {
+    display: block;
+    content: "第二行文本提示 \A 第三行文本提示 \A";
+}*/
+</style>
+<!-- form start -->
+<form data-pjax id="pro_user_form" class="form-horizontal" action="{{ reverse_url('apply.user.add') }}">
+  {{ handler.xsrf_form_html() }}
+  {% if handler.request.method == "POST" %}
+      {% set pro_id = handler.args.get("pro_id", "") %}
+      {% set username = handler.args.get("username", "") %}
+      {% set email = handler.args.get("email", "") %}
+      {% set is_enable = handler.args.get("is_enable", "1") %}
+      {% set user_type = handler.args.get("user_type", "1") %}
+      {% set desc = handler.args.get("desc", "") %}
+      {% set use_vpn = handler.args.get("use_vpn", "") %}
+  {% else %}
+      {% if handler.kwargs["name"] == "guide_step_3" %}
+        {% set pro_id = pro_id %}
+      {% else %}
+        {% set pro_id = handler.args.get("pro_id", "") %}
+        {% set username = handler.args.get("username", "") %}
+        {% set email = handler.args.get("email", "") %}
+        {% set is_enable = handler.args.get("is_enable", "1") %}
+        {% set user_type = handler.args.get("user_type", "1") %}
+        {% set desc = handler.args.get("desc", "") %}
+        {% set use_vpn = handler.args.get("use_vpn", "") %}
+      {% endif %}
+  {% endif %}
+  <!-- <input type="hidden" id="res_apply_id" name="res_apply_id" value="{{ res_apply_id }}"/> -->
+  <div class="box-body">
+    {{ pro_macro.get_pro_info_select(pro_res=pro_user_res, pro_id=pro_id) }}
+    {{ base.form_input("用户名", "username", right_col=6, value=username, res=pro_user_res, check_codes=[ERR.USERNAME_EMPTY_ERR, ERR.USERNAME_DUPLICATE_ERR]) }}
+    {{ base.form_input("邮箱", "email", right_col=6, res=pro_user_res, value=email,
+      check_codes=[ERR.EMAIL_EMPTY_ERR, ERR.EMAIL_FORMAT_ERR, ERR.EMAIL_DUPLICATE_ERR]) }}
+    {{ base.form_status_select("是否有效", "is_enable", value=is_enable, options=STATUS_YESNO|status_list(reverse=True), ST=STATUS_YESNO, res=pro_user_res) }}
+    {{ base.form_status_select("用户类型", "user_type", value=is_enable, options=PRO_USER_TYPES|status_list(reverse=True), ST=PRO_USER_TYPES, res=pro_user_res) }}
+    {{ base.form_textarea("访问权限", "desc", value=desc, res=pro_user_res, right_col=6, placeholder="IP地址:端口") }}
+<!--             <div class="form-group">
+      <div class="radio col-sm-offset-2 col-sm-10">
+          <label>
+          <input type="radio" name="use_vpn" id="use_vpn" value="1"{% if use_vpn and use_vpn|int == 1 %} checked="checked"{% endif %}>
+            需要为此用户开通(dashboard)VPN远程访问，并接受用户安全协议。<a href="#">查看协议</a>
+          </label>
+      </div>
+      <div class="radio col-sm-offset-2 col-sm-10">
+          <label>
+          <input type="radio" name="use_vpn" id="use_vpn" value="0"{% if use_vpn and use_vpn|int == 0 %} checked="checked"{% endif %}>
+            不需开通VPN，管理员于操作间使用资源
+          </label>
+      </div>
+    </div>
+-->          </div><!-- /.box-body -->
+  <div class="box-footer text-center">
+    <button type="button" id="pro_user_form_btn" onclick="do_add_pro_user()" class="btn btn-info">提 交</button>
+  </div><!-- /.box-footer -->
+</form>
+      
 <script type="text/javascript">
+  $(function(){
+    $("#user_type").select2();
+    $("#is_enable").select2();
+  });
   {% if pro_id and pro_id > 0 %}
   $(function(){
     init_resource_apply($("#pro_user_form"));
@@ -72,4 +106,20 @@
     //Add text editor
     $("#content").wysihtml5();
   });
+
+// var textholder = "第一行文本提示";
+// var textholder_list = [textholder, textholder];
+// var placeholder = textholder_list.join("\n");
+// $('textarea').val(placeholder);
+// $('textarea').focus(function() {
+//     if ($(this).val() == placeholder) {
+//         $(this).val('');
+//     }
+// });
+
+// $('textarea').blur(function() {
+//     if ($(this).val() == '') {
+//         $(this).val(placeholder);
+//     }
+// });
 </script>
