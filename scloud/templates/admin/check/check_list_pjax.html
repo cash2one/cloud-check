@@ -105,7 +105,7 @@
                 <tr>
                   <td><input type="checkbox" id="{{ resource.id }}" value="{{ resource.project.name }}"></td>
                   <td class="mailbox-name">
-                    <a data-pjax href="{{ reverse_url('resource_check_detail', resource.id) }}">APY{{ "%04d" % resource.id }}</a>
+                    <a data-pjax href="{{ reverse_url('resource_check_detail', resource.id) }}">APY{{ "%04d" % resource.id }} <i class="fa fa-eye"></i></a>
                   </td>
 <!--                   <td class="mailbox-star"><a href="javascript:;"><i class="fa fa-star text-yellow"></i></a></td> -->              
                   <td class="mailbox-subject">

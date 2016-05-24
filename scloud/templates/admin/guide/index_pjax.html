@@ -7,16 +7,23 @@
           <div class="row">
             {% for pro in result.data %}
             {% set apply_global_vars = pro.get_apply_global_vars() %}
+            {% set last_apply = pro.last_apply %}
             <div class="col-md-3 col-sm-6 col-xs-12">
               <div class="info-box bg-{{ apply_global_vars.bg_color }}">
                 <span class="info-box-icon"><i class="fa fa-cube"></i></span>
                 <div class="info-box-content">
-                <span class="info-box-text"><a data-pjax style="color: #FFFFFF" href="{{ reverse_url('guide_step_1', pro.id) }}">{{ pro.name }}</a>[{{ apply_global_vars.status_desc }}]</span>
+                <span class="info-box-text"><a data-pjax style="color: #FFFFFF" href="{{ reverse_url('guide_step_1', pro.id) }}">{{ pro.name }}</a>
+                [
+                {{ apply_global_vars.status_desc }}
+                ]
+                </span>
                   <span class="info-box-number">
                   {% if apply_global_vars.apply_status < 0 %}
                   <a data-pjax style="color: #FFFFFF" href="{{ reverse_url('guide_step_1', pro.id) }}">{{ apply_global_vars.todo_status_desc }}</a>
-                  {% elif apply_global_vars.apply_status >= 0 %}
+                  {% elif apply_global_vars.apply_status >= 0 and apply_global_vars.apply_status <= STATUS_RESOURCE.CHECKED %}
                   <a data-pjax style="color: #FFFFFF" href="{{ reverse_url('guide_step_2', pro.id) }}">{{ apply_global_vars.todo_status_desc }}</a>
+                  {% else %}
+                  <a data-pjax style="color: #FFFFFF" href="{{ reverse_url('guide_step_3', pro.id) }}">{{ apply_global_vars.todo_status_desc }}</a>
                   {% endif %}
                   </span>
                   <div class="progress">

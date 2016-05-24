@@ -11,6 +11,8 @@
     {% else %}
     {% if handler.kwargs["name"] == "guide_step_3" %}
     {% set pro_id = pro_id %}
+    {% else %}
+      {% set pro_id = handler.args.get("pro_id", "") %}
     {% endif %}
     {% endif %}
     
@@ -96,22 +98,25 @@
     var html = $("#backup_block").html();
     $("#backup_add_button").before(html);
     init_timepicker();
+    // $("select").select2();
   }
   function do_form_backup(){
     var disks = $("#form_backup").find("div[name=disk_backup_plot]");
     var params = [];
     for(var i in disks.toArray()){
       var backup = {};
-      var div = $(disks[i]);
-      var name = $(div).find("input[name=disk]").val();
-      var plot = $(div).find("select[name=backup_plot]").val();
-      var interval = $(div).find("select[name=backup_interval]").val();
-      var time = $(div).find("input[name=backup_time]").val();
-      backup["disk"] = name;
-      backup["plot"] = plot;
-      backup["interval"] = interval;
-      backup["backup_time"] = time;
-      params.push(backup);
+      if (parseInt(i)>=0) {
+        var div = $(disks[i]);
+        var name = $(div).find("input[name=disk]").val();
+        var plot = $(div).find("select[name=backup_plot]").val();
+        var interval = $(div).find("select[name=backup_interval]").val();
+        var time = $(div).find("input[name=backup_time]").val();
+        backup["disk"] = name;
+        backup["plot"] = plot;
+        backup["interval"] = interval;
+        backup["backup_time"] = time;
+        params.push(backup);
+      }
     }
     $("#backups").val(JSON.stringify(params))
     generate_ajax_post({
@@ -121,11 +126,13 @@
         onSuccess: function(response){
             $("section.content").prepend(response.data.messages_tmpl);
             $("#form_backup").parent().html(response.data.tmpl);
+            // $("select[name=backup_plot]").select2();
         },
         onTimeout: function(){ do_form_backup();}
     })
   }
   function change_interval(_this){
+    // return true;
     var plot = $(_this).val()
     var interval_title = $(_this).parent().parent().parent().find("div[name=interval_title]");
     var backup_interval = interval_title.find("select[name=backup_interval]");
@@ -155,6 +162,7 @@
     backup_interval.html($("#month_options").html())
   }
   $(function(){
+    // $("select[name=backup_plot]").select2();
     init_timepicker();
   });
   function init_timepicker(){

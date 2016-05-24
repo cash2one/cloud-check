@@ -36,7 +36,7 @@
     var $state = $("<span>" + state.text + " <span class='badge bg-"+status_bg_color+"'>"+status_value+"</span> " + disabled_text + "</span>");
     return $state;
   }
-  $("select").select2();
+  // $("select").select2();
   $("select[name=pro_id]").select2({
       templateResult: formatPro,
       templateSelection: formatPro

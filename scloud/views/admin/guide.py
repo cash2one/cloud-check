@@ -159,6 +159,7 @@ class GuideStep2Handler(GuideStepGetHandler):
         logger.info("\t [data]: %s" % data)
         return self.render_to_string("admin/guide/step2.html", **data)
 
+
 @url("/guide/pro/(?P<pro_id>\d+)/payed", name="guide_step_2_payed")
 class GuideStep2PayedHandler(GuideStepGetHandler):
     u'资源申请/变更 步骤2 完成支付'

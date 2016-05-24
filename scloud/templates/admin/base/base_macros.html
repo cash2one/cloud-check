@@ -255,8 +255,8 @@
         <div class="input-group col-sm-7">
           <div class="input-group-addon">每</div>
           <select class="form-control" name="backup_plot" onchange="change_interval(this)">
-            
-          <option value="天" type="day"{% if member and member.plot == "天" %} selected="selected"{% endif %}>天</option>
+          <!-- <select class="form-control" name="backup_plot"> -->
+            <option value="天" type="day"{% if member and member.plot == "天" %} selected="selected"{% endif %}>天</option>
             <option value="周" type="week"{% if member and member.plot == "周" %} selected="selected"{% endif %}>周</option>
             <option value="月" type="month"{% if member and member.plot == "月" %} selected="selected"{% endif %}>月</option>
           </select>
