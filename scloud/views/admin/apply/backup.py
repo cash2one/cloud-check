@@ -72,7 +72,7 @@ class BackupAddHandler(ApplyHandler):
         if self.kwargs["name"] == "apply.backup.edit":
             svc = ApplyBackups(self)
             # pro_users_res = svc.get_list()
-            pro_backup_res = svc.get_backup()
+            pro_backup_res = svc.get_info()
             data.update(pro_backup_res=pro_backup_res)
         return self.render_to_string("admin/apply/backup/add.html", **data)
 

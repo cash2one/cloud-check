@@ -2,18 +2,27 @@
 {% import "admin/base/base_macros.html" as base %}
 {% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
     
-
+    {% if handler.kwargs["name"] == "apply.backup.edit" %}
+      {% set action = reverse_url("apply.backup.edit") %}
+    {% else %}
+      {% set action = reverse_url("apply.backup.add") %}
+    {% endif %}
     <!-- form start -->
-    <form id="form_backup" data-pjax action="{{ reverse_url('apply.backup.add') }}" class="form-horizontal" method="POST">
+    <form id="form_backup" data-pjax action="{{ action }}" class="form-horizontal" method="POST">
     {{ handler.xsrf_form_html() }}
     {% if handler.request.method == "POST" %}
-    {% set pro_id = handler.args.get("pro_id", "") %}
-    {% else %}
-    {% if handler.kwargs["name"] == "guide_step_3" %}
-    {% set pro_id = pro_id %}
-    {% else %}
       {% set pro_id = handler.args.get("pro_id", "") %}
-    {% endif %}
+    {% else %}
+      {% if handler.kwargs["name"] == "guide_step_3" %}
+        {% set pro_id = pro_id %}
+      {% else %}
+        {% if handler.kwargs["name"] == "apply.backup.edit" %}
+          {% set pro_backup = pro_backup_res.data %}
+          {% set pro_id = pro_backup.pro_id %}
+        {% else %}
+          {% set pro_id = handler.args.get("pro_id", "") %}
+        {% endif %}
+      {% endif %}
     {% endif %}
     
       <div class="box-body">
