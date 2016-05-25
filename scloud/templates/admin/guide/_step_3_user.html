@@ -75,12 +75,18 @@
     {% if pro_user %}
     <input type="hidden" name="user_id" value="{{ pro_user.id }}" />
     {% endif %}
+
     {{ pro_macro.get_pro_info_select(pro_res=pro_user_res, pro_id=pro_id) }}
+
     {{ base.form_input("用户名", "username", right_col=6, value=username, res=pro_user_res, check_codes=[ERR.USERNAME_EMPTY_ERR, ERR.USERNAME_DUPLICATE_ERR]) }}
+
     {{ base.form_input("邮箱", "email", right_col=6, res=pro_user_res, value=email,
       check_codes=[ERR.EMAIL_EMPTY_ERR, ERR.EMAIL_FORMAT_ERR, ERR.EMAIL_DUPLICATE_ERR]) }}
+
     {{ base.form_status_select("是否有效", "is_enable", value=is_enable, options=STATUS_YESNO|status_list(reverse=True), ST=STATUS_YESNO, res=pro_user_res) }}
-    {{ base.form_status_select("用户类型", "user_type", value=is_enable, options=PRO_USER_TYPES|status_list(reverse=True), ST=PRO_USER_TYPES, res=pro_user_res) }}
+
+    {{ base.form_status_select("用户类型", "user_type", value=user_type, options=PRO_USER_TYPES|status_list(reverse=True), ST=PRO_USER_TYPES, res=pro_user_res) }}
+
     {{ base.form_textarea("访问权限", "desc", value=desc, res=pro_user_res, placeholder="IP地址:端口", data_content="权限用户访问服务器权限说明，多个ip端口之间换行<br>例如：<br>127.0.0.1:8080<br>127.0.0.1:8081") }}
 <!--             <div class="form-group">
       <div class="radio col-sm-offset-2 col-sm-10">
@@ -106,12 +112,36 @@
   $(function(){
     $("#user_type").select2();
     $("#is_enable").select2();
+    $("#user_type").change(function(){
+      console.log($(this).val())
+      var user_type = $(this).val();
+      if (parseInt(user_type) == 1){
+        $("#desc").attr("readonly", "readonly");
+      }else{
+        $("#desc").removeAttr('readonly');
+      }
+    })
   });
+
+  {# 初始化访问权限 #}
+  {% if user_type|is_number and user_type|int == PRO_USER_TYPES.DASHBOARD %}
+    $(function(){
+      $("#desc").attr("readonly", "readonly");
+    })
+  {% endif %}
+  {% if not handler.kwargs["name"] == "apply.user.edit" %}
+    $(function(){
+      $("#desc").attr("readonly", "readonly");
+    })
+  {% endif %}
+
+  {# 初始化项目 #}
   {% if pro_id and pro_id > 0 %}
   $(function(){
     init_resource_apply($("#pro_user_form"));
   })
   {% endif %}
+
   function do_add_pro_user(){
     generate_ajax_post({
         form: "#pro_user_form",
@@ -124,28 +154,5 @@
         onTimeout: function(){ do_add_pro_user();}
     })
   }
-  $(function () {
-    //Add text editor
-    $("#content").wysihtml5();
-  });
-
-  $(function(){
-    $("body").find('[data-toggle="popover"]').each(function(){
-        $(this).click(function(e){
-            // $('.popover').remove();
-            $('body').find('[data-toggle="popover"]').popover('hide');
-            e.preventDefault();
-            return false;
-        });
-        $(this).popover({
-            animation: true,
-            trigger : 'click',
-            placement: 'auto left',
-            html: true
-        });
-    });
-    $("body").click(function(){
-        $('body').find('[data-toggle="popover"]').popover('hide');
-    });
-  });
 </script>
+{% include "admin/base/scripts/popover.html" %}

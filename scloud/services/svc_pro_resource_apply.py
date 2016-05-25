@@ -89,7 +89,7 @@ class ProResourceApplyService(BaseService):
         search = self.params.get("search")
         status = self.params.get("status")
         conditions = and_()
-        # conditions.append(Pro_Resource_Apply.is_enable == 1)
+        conditions.append(Pro_Resource_Apply.is_enable == 1)
         conditions.append(Pro_Resource_Apply.user_id == self.handler.current_user.id)
         if search:
             conditions.append(Pro_Info.name.like('%' + search + '%'))

@@ -71,25 +71,25 @@
           </div><!-- /.row -->
         </section><!-- /.content -->
         <script type="text/javascript">
-        $(function(){
-          $("body").find('[data-toggle="popover"]').each(function(){
-              $(this).click(function(e){
-                  // $('.popover').remove();
-                  $('body').find('[data-toggle="popover"]').popover('hide');
-                  e.preventDefault();
-                  return false;
-              });
-              $(this).popover({
-                  animation: true,
-                  trigger : 'click',
-                  placement: 'auto bottom',
-                  html: true
-              });
-          });
-          $("body").click(function(){
-              $('body').find('[data-toggle="popover"]').popover('hide');
-          });
-        });
+        // $(function(){
+        //   $("body").find('[data-toggle="popover"]').each(function(){
+        //       $(this).click(function(e){
+        //           // $('.popover').remove();
+        //           $('body').find('[data-toggle="popover"]').popover('hide');
+        //           e.preventDefault();
+        //           return false;
+        //       });
+        //       $(this).popover({
+        //           animation: true,
+        //           trigger : 'click',
+        //           placement: 'auto bottom',
+        //           html: true
+        //       });
+        //   });
+        //   $("body").click(function(){
+        //       $('body').find('[data-toggle="popover"]').popover('hide');
+        //   });
+        // });
         </script>
         <script type="text/javascript">
         function do_del_pro_publish(id, name){
@@ -107,3 +107,4 @@
           })
         }
         </script>
+{% include "admin/base/scripts/popover.html" %}

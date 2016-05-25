@@ -1,8 +1,9 @@
 <tr>
   <th></th>
   <th class="mailbox-star"></th>
-  <th class="mailbox-subject">申请项目</th>
+  <th class="mailbox-subject">所属项目</th>
   <th class="mailbox-attachment">申请权限用户</th>
+  <th class="mailbox-attachment">用户类型</th>
   <th class="mailbox-name">申请用户</th>
   <th class="mailbox-date">申请时间</th>
 </tr>
@@ -14,9 +15,14 @@
   {{ pro_table.project.name }}
    <i class="fa fa-users"></i></a></b></td>
   <td class="mailbox-subject">
-<a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url('pro_user_detail', pro_table.project.id, pro_table.id) }}')">
-  {{ pro_table.username }}
-<i class="fa fa-user"></i></a>
+    <a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url('pro_user_detail', pro_table.project.id, pro_table.id) }}')">
+      {{ pro_table.username }}
+    <i class="fa fa-user"></i></a>
+  </td>
+  <td class="mailbox-subject">
+    <a href="javascript:;" data-toggle="popover" title="所属项目" data-content="用户类型：{{ PRO_USER_TYPES.get(pro_table.user_type).value }}<br>{% if pro_table.user_type == PRO_USER_TYPES.SERVICE %}权限描述：<br>{{ pro_table.desc.replace('\n', '<br>') }}{% endif %}">
+    <span class="label label-{{ PRO_USER_TYPES.get(pro_table.user_type).level }}">{{ PRO_USER_TYPES.get(pro_table.user_type).value }}</span>
+    </a>
   </td>
   <td class="mailbox-name">{{ pro_table.project.user.email or pro_table.project.user.mobile }}</a></td>
   <td class="mailbox-date">{{ pro_table.update_time }}</td>

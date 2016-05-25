@@ -67,3 +67,6 @@ class Filters(object):
         if reverse:
             values = values[::-1]
         return values
+
+    def filter_is_number(self, value):
+        return str(value).isdigit()

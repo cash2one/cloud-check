@@ -22,6 +22,7 @@
                     <tr>
                       <th>用户编号</th>
                       <th style="width: 20%">权限用户</th>
+                      <th>用户类型</th>
                       <th>所属项目</th>
                       <th>状态</th>
                       <th>是否可用</th>
@@ -37,6 +38,11 @@
                       USR{{ "%04d" % user.id }}
                       </td>
                       <td>{{ user.username }}</td>
+                      <td>
+                        <a href="javascript:;" data-toggle="popover" title="所属项目" data-content="用户类型：{{ PRO_USER_TYPES.get(user.user_type).value }}<br>{% if user.user_type == PRO_USER_TYPES.SERVICE %}权限描述：<br>{{ user.desc.replace('\n', '<br>') }}{% endif %}">
+                          <span class="label label-{{ PRO_USER_TYPES.get(user.user_type).level }}">{{ PRO_USER_TYPES.get(user.user_type).value }}</span>
+                        </a>
+                      </td>
                       <td>{{ user.project.name }}</td>
                       <td><span class="label label-{{ STATUS_PRO_TABLES.get(user.status).level }}">{{ STATUS_PRO_TABLES.get(user.status).value }}, {{ STATUS_PRO_TABLES.get(user.status).todo_value }}</span>
                       {% if user.status == STATUS_PRO_TABLES.CHECKED %}
@@ -82,3 +88,4 @@
           })
         }
         </script>
+{% include "admin/base/scripts/popover.html" %}

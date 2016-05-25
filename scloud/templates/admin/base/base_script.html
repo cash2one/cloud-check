@@ -242,25 +242,25 @@ function refresh_captcha(){
 /**
  * 初始化提示框
  */
-$(function(){
-  $("body").find('[data-toggle="popover"]').each(function(){
-      $(this).click(function(e){
-          // $('.popover').remove();
-          $('body').find('[data-toggle="popover"]').popover('hide');
-          e.preventDefault();
-          return false;
-      });
-      $(this).popover({
-          animation: true,
-          trigger : 'click',
-          placement: 'auto bottom',
-          html: true
-      });
-  });
-  $("body").click(function(){
-      $('body').find('[data-toggle="popover"]').popover('hide');
-  });
-});
+// $(function(){
+//   $("body").find('[data-toggle="popover"]').each(function(){
+//       $(this).click(function(e){
+//           // $('.popover').remove();
+//           $('body').find('[data-toggle="popover"]').popover('hide');
+//           e.preventDefault();
+//           return false;
+//       });
+//       $(this).popover({
+//           animation: true,
+//           trigger : 'click',
+//           placement: 'auto bottom',
+//           html: true
+//       });
+//   });
+//   $("body").click(function(){
+//       $('body').find('[data-toggle="popover"]').popover('hide');
+//   });
+// });
 </script>
 {% include "admin/base/scripts/ws_pubsub.html" %}
 {% include "admin/base/scripts/pro_table_do_confirm.html" %}
