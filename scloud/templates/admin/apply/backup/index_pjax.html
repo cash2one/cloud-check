@@ -36,7 +36,13 @@
                       </td>
                       <td>{{ backup.as_dict().plot|length }}</td>
                       <td>{{ backup.project.name }}</td>
-                      <td><span class="label label-{{ STATUS_PRO_TABLES.get(backup.status).level }}">{{ STATUS_PRO_TABLES.get(backup.status).value }}</span>
+                      <td>
+                      <a href="javascript:;" data-toggle="popover" title="所属项目" data-content="{{ STATUS_PRO_TABLES.get(backup.status).value }}{% if backup.reason %}
+                      ：{{ backup.reason }}
+                      <a data-pjax href='{{ reverse_url('apply.backup.edit') }}?id={{ backup.id }}'\><i class='fa fa-edit'></i> 修改</a>
+                      {% endif %}">
+                      <span class="label label-{{ STATUS_PRO_TABLES.get(backup.status).level }}">{{ STATUS_PRO_TABLES.get(backup.status).value }}</span>
+                      </a>
                       {% if backup.status == STATUS_PRO_TABLES.CHECKED %}
                       <a class="btn btn-warning btn-xs" href="javascript:;" style="color:#FFFFFF" onclick="pro_table_do_confirm({_this:this, pro_table:'pro_backup', ids:[{{ backup.id }}]})"> 确认</a>
                       {% endif %}

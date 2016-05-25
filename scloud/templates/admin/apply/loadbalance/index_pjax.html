@@ -36,7 +36,14 @@
                       BAL{{ "%04d" % loadbalance.id }}
                       </td>
                       <td>{{ loadbalance.project.name }}</td>
-                      <td><span class="label label-{{ STATUS_PRO_TABLES.get(loadbalance.status).level }}">{{ STATUS_PRO_TABLES.get(loadbalance.status).value }}</span>
+                      <td>
+                      <a href="javascript:;" data-toggle="popover" title="所属项目" data-content="{{ STATUS_PRO_TABLES.get(loadbalance.status).value }}{% if loadbalance.reason %}
+                      ：{{ loadbalance.reason }}
+                      <a data-pjax href='{{ reverse_url('apply.loadbalance.edit') }}?id={{ loadbalance.id }}'\><i class='fa fa-edit'></i> 修改</a>
+                      {% endif %}">
+                      <span class="label label-{{ STATUS_PRO_TABLES.get(loadbalance.status).level }}">{{ STATUS_PRO_TABLES.get(loadbalance.status).value }}</span>
+                      </a>
+
                       {% if loadbalance.status == STATUS_PRO_TABLES.CHECKED %}
                       <a class="btn btn-warning btn-xs" href="javascript:;" style="color:#FFFFFF" onclick="pro_table_do_confirm({_this:this, pro_table:'pro_balance', ids:[{{ loadbalance.id }}]})"> 确认</a>
                       {% endif %}
@@ -47,6 +54,7 @@
                       <td>
                         <div class="input-group-btn">
                           <a data-pjax href="{{ reverse_url('apply.loadbalance.detail') }}?id={{ loadbalance.id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</a>
+                          <a data-pjax href="{{ reverse_url('apply.loadbalance.edit') }}?id={{ loadbalance.id }}" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i> 编辑</a>
                           <button class="btn btn-xs btn-danger" id="form_del_pro_loadbalance_{{ loadbalance.id }}_btn" onclick="do_del_pro_loadbalance('{{ loadbalance.id }}', '{{ loadbalance.project.name }}')"><i class="fa fa-trash"></i> 删除</button>
                           <form id="form_del_pro_loadbalance_{{ loadbalance.id }}" action="{{ reverse_url('apply.loadbalance.del') }}">
                           {{ handler.xsrf_form_html() }}
@@ -78,4 +86,23 @@
               }
           })
         }
+        $(function(){
+          $("body").find('[data-toggle="popover"]').each(function(){
+              $(this).click(function(e){
+                  // $('.popover').remove();
+                  $('body').find('[data-toggle="popover"]').popover('hide');
+                  e.preventDefault();
+                  return false;
+              });
+              $(this).popover({
+                  animation: true,
+                  trigger : 'click',
+                  placement: 'auto bottom',
+                  html: true
+              });
+          });
+          $("body").click(function(){
+              $('body').find('[data-toggle="popover"]').popover('hide');
+          });
+        });
         </script>

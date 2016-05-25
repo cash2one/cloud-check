@@ -31,6 +31,11 @@
       {% endif %}
     {% endif %}
       <div class="box-body">
+        {% if loadbalance_plot and loadbalance_plot.status|int in [STATUS_PRO_TABLES.REFUSED] %}
+        <div class="form-group has-warning">
+          <label class="control-label col-sm-offset-2" for="inputWarning">申请被拒绝：<i class="fa fa-bell-o"></i> {{ loadbalance_plot.reason }}</label>
+        </div>
+        {% endif %}
         {{ pro_macro.get_pro_info_select(pro_res=pro_loadbalance_res, pro_id=pro_id) }}
         <!-- form input -->
         <input type="hidden" id="members" name="members" value="">
@@ -174,24 +179,5 @@
   $(function () {
     //Add text editor
     $("#content").wysihtml5();
-  });
-  $(function(){
-    $("body").find('[data-toggle="popover"]').each(function(){
-        $(this).click(function(e){
-            // $('.popover').remove();
-            $('body').find('[data-toggle="popover"]').popover('hide');
-            e.preventDefault();
-            return false;
-        });
-        $(this).popover({
-            animation: true,
-            trigger : 'click',
-            placement: 'auto left',
-            html: true
-        });
-    });
-    $("body").click(function(){
-        $('body').find('[data-toggle="popover"]').popover('hide');
-    });
   });
 </script>

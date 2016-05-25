@@ -72,7 +72,7 @@ class PublishAddHandler(ApplyHandler):
         if self.kwargs["name"] == "apply.loadbalance.edit":
             svc = ApplyLoadBalance(self)
             # pro_users_res = svc.get_list()
-            pro_loadbalance_res = svc.get_loadbalance()
+            pro_loadbalance_res = svc.get_info()
             data.update(pro_loadbalance_res=pro_loadbalance_res)
         return self.render_to_string("admin/apply/loadbalance/add.html", **data)
 

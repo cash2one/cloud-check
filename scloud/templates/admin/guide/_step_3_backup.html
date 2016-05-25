@@ -26,6 +26,11 @@
     {% endif %}
     
       <div class="box-body">
+        {% if pro_backup and pro_backup.status|int in [STATUS_PRO_TABLES.REFUSED] %}
+        <div class="form-group has-warning">
+          <label class="control-label col-sm-offset-2" for="inputWarning">申请被拒绝：<i class="fa fa-bell-o"></i> {{ pro_backup.reason }}</label>
+        </div>
+        {% endif %}
         {{ pro_macro.get_pro_info_select(pro_res=pro_backup_res, pro_id=pro_id) }}
         {% if pro_backup_res %}
           {% set backup_plot = pro_backup_res.data %}
