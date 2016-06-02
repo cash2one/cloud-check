@@ -43,6 +43,7 @@ class ApplyBackups(BaseService):
 
     @thrownException
     def get_list(self):
+        id = self.params.get("id")
         pro_id = self.params.get("pro_id")
         search = self.params.get("search", "")
         status = self.params.get("status", -3)
@@ -56,6 +57,8 @@ class ApplyBackups(BaseService):
             ).first()
             if pt_user and not pt_user.imchecker:
                 conditions.append(Pro_Backup.user_id == user_id)
+        if id:
+            conditions.append(Pro_Backup.id == id)
         if pro_id:
             conditions.append(Pro_Backup.pro_id == pro_id)
         if search:

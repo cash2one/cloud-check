@@ -1,0 +1,52 @@
+<!-- Map box -->
+<div class="box box-solid bg-light-blue-gradient">
+  <div class="box-header">
+    <!-- tools box -->
+    <div class="pull-right box-tools">
+      <!-- <button class="btn btn-primary btn-sm daterange pull-right" data-toggle="tooltip" title="Date range"><i class="fa fa-calendar"></i></button> -->
+      {% if pro_resource_apply_res.return_code == 0 %}
+      {% set pro_resource_apply = pro_resource_apply_res.data %}
+      <a data-pjax class="btn btn-primary btn-sm pull-right" data-toggle="tooltip" title="查看明细" style="margin-right: 5px;" href="{{ reverse_url('apply.resource.detail') }}?res_id={{ pro_resource_apply.id }}"><i class="fa fa-eye"></i></a>
+      {% endif %}
+      <button class="btn btn-primary btn-sm pull-right" data-widget="collapse" data-toggle="tooltip" title="Collapse" style="margin-right: 5px;"><i class="fa fa-minus"></i></button>
+    </div><!-- /. tools -->
+
+    <i class="fa fa-database"></i>
+    <h3 class="box-title">
+      {% if pro_resource_apply_res.return_code == 0 %}
+        {% set pro_resource_apply = pro_resource_apply_res.data %}
+        APY{{ "%04d" % pro_resource_apply.id }} - {{ pro_resource_apply.desc }}明细
+      {% else %}
+      资源申请明细
+      {% endif %}
+    </h3>
+  </div>
+  <div class="box-footer no-border" style="max-height: 200px; overflow: auto">
+  <div style="border-right: 1px solid #f4f4f4" class="col-xs-12 text-center">
+    <div class="knob-label">
+      {% if pro_resource_apply_res.return_code == 0 %}
+      {% include "admin/guide/_step_1_res_detail.html" %}
+      {% else %}
+      {{ pro_resource_apply_res.return_message }}
+      {% endif %}      
+    </div>
+  </div><!-- ./col -->
+  </div>
+  <div class="box-footer no-border">
+    <div class="row">
+      <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
+        <div id="sparkline-1"></div>
+        <div class="knob-label">Visitors</div>
+      </div><!-- ./col -->
+      <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
+        <div id="sparkline-2"></div>
+        <div class="knob-label">Online</div>
+      </div><!-- ./col -->
+      <div class="col-xs-4 text-center">
+        <div id="sparkline-3"></div>
+        <div class="knob-label">Exists</div>
+      </div><!-- ./col -->
+    </div><!-- /.row -->
+  </div>
+</div>
+<!-- /.box -->

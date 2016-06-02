@@ -18,11 +18,11 @@
                 <span class="info-box-icon"><i class="fa fa-cube"></i></span>
                 <div class="info-box-content">
                 <span class="info-box-text"><!--a data-pjax style="color: #FFFFFF" href="{{ reverse_url('guide_step_1', pro.id) }}">{{ pro.name }}</a-->
-                <a style="color: #FFFFFF" href="javascript:;" data-toggle="popover" title="所属项目" data-placement="bottom" data-content="
-                项目名称：{{ pro.name }}<a data-pjax href='javascript:;'><i class='fa fa-link'></i>查看明细</a><br>
+                <a style="color: #FFFFFF" href="javascript:;" data-toggle="popover" title="项目明细" data-placement="bottom" data-content="
+                项目名称：{{ pro.name }}<a data-pjax href='{{ reverse_url('apply.project.detail') }}?pro_id={{ pro.id }}'><i class='fa fa-link'></i><!--查看明细--></a><br>
                 项目申请次数：{{ pro.pro_resource_applies|length }}
                 {% if last_apply %}
-                <a data-pjax href='{{ reverse_url('apply.resource') }}?pro_id={{ pro.id }}'><i class='fa fa-link'></i>查看明细</a>
+                <a data-pjax href='{{ reverse_url('apply.resource') }}?pro_id={{ pro.id }}'><i class='fa fa-link'></i><!--查看明细--></a>
                 {% else %}
                 <a data-pjax href='{{ reverse_url('apply.resource.add') }}'><i class='fa fa-plus'></i>去申请</a>
                 {% endif %}
@@ -32,28 +32,28 @@
                 资源申请状态：<span class='badge bg-{{ apply_global_vars.bg_color }}'>{{ apply_global_vars.status_desc }}, {{ apply_global_vars.todo_status_desc }}</span><br>
                 用户权限：已申请{{ pro.pro_users|length }}个
                 {% if pro.pro_users|length > 0 %}
-                <a data-pjax href='{{ reverse_url('apply.user') }}?pro_id={{ pro.id }}'><i class='fa fa-link'></i>查看明细</a>
+                <a data-pjax href='{{ reverse_url('apply.user') }}?pro_id={{ pro.id }}'><i class='fa fa-link'></i><!--查看明细--></a>
                 {% else %}
                 <a data-pjax href='{{ reverse_url('apply.user.add') }}{% if last_apply and last_apply.status > STATUS_RESOURCE.CHECKED %}?pro_id={{ pro.id }}{% endif %}'><i class='fa fa-plus'></i>去申请</a>
                 {% endif %}
                 <br>
                 互联网发布：已申请{{ pro.pro_publish_list|length }}个
                 {% if pro.pro_publish_list|length > 0 %}
-                <a data-pjax href='{{ reverse_url('apply.publish') }}?pro_id={{ pro.id }}'><i class='fa fa-link'></i>查看明细</a>
+                <a data-pjax href='{{ reverse_url('apply.publish') }}?pro_id={{ pro.id }}'><i class='fa fa-link'></i><!--查看明细--></a>
                 {% else %}
                 <a data-pjax href='{{ reverse_url('apply.publish.add') }}{% if last_apply and last_apply.status > STATUS_RESOURCE.CHECKED %}?pro_id={{ pro.id }}{% endif %}'><i class='fa fa-plus'></i>去申请</a>
                 {% endif %}
                 <br>
                 负载均衡：已申请{{ pro.pro_balance_list|length }}个
                 {% if pro.pro_balance_list|length > 0 %}
-                <a data-pjax href='{{ reverse_url('apply.loadbalance') }}?pro_id={{ pro.id }}'><i class='fa fa-link'></i>查看明细</a>
+                <a data-pjax href='{{ reverse_url('apply.loadbalance') }}?pro_id={{ pro.id }}'><i class='fa fa-link'></i><!--查看明细--></a>
                 {% else %}
                 <a data-pjax href='{{ reverse_url('apply.loadbalance.add') }}{% if last_apply and last_apply.status > STATUS_RESOURCE.CHECKED %}?pro_id={{ pro.id }}{% endif %}'><i class='fa fa-plus'></i>去申请</a>
                 {% endif %}
                 <br>
                 定期备份：已申请{{ pro.pro_backup_list|length }}个
                 {% if pro.pro_backup_list|length > 0 %}
-                <a data-pjax href='{{ reverse_url('apply.backup') }}?pro_id={{ pro.id }}'><i class='fa fa-link'></i>查看明细</a>
+                <a data-pjax href='{{ reverse_url('apply.backup') }}?pro_id={{ pro.id }}'><i class='fa fa-link'></i><!--查看明细--></a>
                 {% else %}
                 <a data-pjax href='{{ reverse_url('apply.backup.add') }}{% if last_apply and last_apply.status > STATUS_RESOURCE.CHECKED %}?pro_id={{ pro.id }}{% endif %}'><i class='fa fa-plus'></i>去申请</a>
                 {% endif %}

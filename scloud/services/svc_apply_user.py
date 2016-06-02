@@ -62,9 +62,10 @@ class ProUserService(BaseService):
 
     @thrownException
     def get_list(self):
-        pro_id = int(self.params.get("pro_id", 0))
+        pro_id = self.params.get("pro_id", 0)
         search = self.params.get("search", '')
         status = self.params.get("status", '')
+        id = self.params.get("id")
         conditions = and_()
         user_id = self.params.get("user_id")
         if user_id:
@@ -75,8 +76,10 @@ class ProUserService(BaseService):
             ).first()
             if pt_user and not pt_user.imchecker:
                 conditions.append(Pro_User.user_id == user_id)
+        if id:
+            conditions.append(Pro_User.id == int(id))
         if pro_id:
-            conditions.append(Pro_User.pro_id == pro_id)
+            conditions.append(Pro_User.pro_id == int(pro_id))
         if search:
             conditions.append(Pro_User.username.like('%' + search + '%'))
         if status:

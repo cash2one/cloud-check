@@ -40,6 +40,7 @@ class ApplyPublish(BaseService):
         pro_id = self.params.get("pro_id")
         search = self.params.get("search", "")
         status = self.params.get("status", -3)
+        id = self.params.get("id")
         conditions = and_()
         user_id = self.params.get("user_id")
         if user_id:
@@ -50,6 +51,8 @@ class ApplyPublish(BaseService):
             ).first()
             if pt_user and not pt_user.imchecker:
                 conditions.append(Pro_Publish.user_id == user_id)
+        if id:
+            conditions.append(Pro_Publish.id == id)
         if pro_id:
             conditions.append(Pro_Publish.pro_id == pro_id)
         if search:

@@ -28,10 +28,10 @@ from scloud.pubs.base import r
 class TaskPublish(BaseService):
 
     @thrownException
-    def publish_tasks(self, user_id, action="on_task", do_publish=True):
+    def publish_tasks(self, user_id, pro_id=None, action="on_task", do_publish=True):
         logger.info("------[publish_tasks]------")
 
-        user_svc = PtUserService(self, {"user_id": user_id})
+        user_svc = PtUserService(self, {"user_id": user_id, "pro_id": pro_id})
         pt_user_res = user_svc.get_info()
         logger.info(pt_user_res)
         if "pro_resource_apply.check" in pt_user_res.data.get_current_perms():
@@ -39,7 +39,7 @@ class TaskPublish(BaseService):
         else:
             imchecker = False
         # 获取任务列表
-        svc = ActHistoryService(self, {"user_id": user_id})
+        svc = ActHistoryService(self, {"user_id": user_id, "pro_id": pro_id})
         tasks_res = svc.get_res_tasks()
         data = {
             "tasks_res": tasks_res,
@@ -49,7 +49,7 @@ class TaskPublish(BaseService):
         }
 
         # 获取用户申请列表
-        svc = ProUserService(self, {"user_id": user_id})
+        svc = ProUserService(self, {"user_id": user_id, "pro_id": pro_id})
         pro_user_list_res = svc.get_list()
         if imchecker:
             pro_user_list = [i for i in pro_user_list_res.data[::-1] if i.status == STATUS_PRO_TABLES.APPLIED]
@@ -63,7 +63,7 @@ class TaskPublish(BaseService):
         # logger.info(pro_user_list)
 
         # 获取互联网发布申请列表
-        svc = ApplyPublish(self, {"user_id": user_id})
+        svc = ApplyPublish(self, {"user_id": user_id, "pro_id": pro_id})
         pro_publish_list_res = svc.get_list()
         # logger.info(pro_publish_list_res.data)
         if imchecker:
@@ -77,7 +77,7 @@ class TaskPublish(BaseService):
         })
 
         # 获取负载均衡申请列表
-        svc = ApplyLoadBalance(self, {"user_id": user_id})
+        svc = ApplyLoadBalance(self, {"user_id": user_id, "pro_id": pro_id})
         pro_balance_list_res = svc.get_list()
         # logger.info(pro_balance_list_res.data)
         if imchecker:
@@ -91,7 +91,7 @@ class TaskPublish(BaseService):
         })
 
         # 获取定期备份申请列表
-        svc = ApplyBackups(self, {"user_id": user_id})
+        svc = ApplyBackups(self, {"user_id": user_id, "pro_id": pro_id})
         pro_backup_list_res = svc.get_list()
         # logger.info(pro_backup_list_res.data)
         if imchecker:
@@ -105,7 +105,7 @@ class TaskPublish(BaseService):
         })
 
         # 获取定期备份申请列表
-        svc = EventService(self, {"user_id": user_id})
+        svc = EventService(self, {"user_id": user_id, "pro_id": pro_id})
         pro_event_list_res = svc.get_list()
         # logger.info(pro_event_list_res.data)
         if imchecker:

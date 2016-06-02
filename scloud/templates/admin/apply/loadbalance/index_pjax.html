@@ -13,7 +13,7 @@
                     {{ macro_index_page_search.search('apply.loadbalance', 'apply.loadbalance.add', '负载均衡') }}
                   </h3>
                   <div class="box-tools">
-                    <a data-pjax href="{{ reverse_url('apply.loadbalance') }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
+                    <a data-pjax href="" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
                   </div>
                 </div><!-- /.box-header -->
                 <div class="box-body">
@@ -53,7 +53,7 @@
                       <td>{{ loadbalance.create_time|getGoodTime }}</td>
                       <td>
                         <div class="input-group-btn">
-                          <a data-pjax href="{{ reverse_url('apply.loadbalance.detail') }}?id={{ loadbalance.id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</a>
+                          <a data-pjax href="{{ reverse_url('apply.loadbalance.detail') }}?id={{ loadbalance.id }}&pro_id={{ loadbalance.pro_id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</a>
                           <a data-pjax href="{{ reverse_url('apply.loadbalance.edit') }}?id={{ loadbalance.id }}" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i> 编辑</a>
                           <button class="btn btn-xs btn-danger" id="form_del_pro_loadbalance_{{ loadbalance.id }}_btn" onclick="do_del_pro_loadbalance('{{ loadbalance.id }}', '{{ loadbalance.project.name }}')"><i class="fa fa-trash"></i> 删除</button>
                           <form id="form_del_pro_loadbalance_{{ loadbalance.id }}" action="{{ reverse_url('apply.loadbalance.del') }}">

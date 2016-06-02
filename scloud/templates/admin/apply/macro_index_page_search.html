@@ -2,6 +2,14 @@
 {% macro search(reverse_url_form="", reverse_url_add="", name="", ST="STATUS_PRO_TABLES",input_placeholder="关键字") -%}
 
 <form data-pjax class="form-inline" action="{{ reverse_url(reverse_url_form) }}" method="GET">
+  {#% if handler.args.get("pro_id") %}
+  <div class="form-group">
+    <label class="sr-only"></label>
+    <p class="form-control-static input-group-sm">
+      <a data-pjax href="{{ reverse_url('apply.project.detail') }}?pro_id={{ handler.args.get("pro_id") }}" class="btn btn-warning  btn-flat"><i class="fa fa-reply"></i> 返回 [<i class="fa fa-cube"></i>项目详情]</a>
+    </p>
+  </div>
+  {% endif %#}
   <div class="form-group">
     <label class="sr-only">Email</label>
     <p class="form-control-static input-group-sm">

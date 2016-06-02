@@ -29,6 +29,18 @@ from .base import ApplyHandler
 @url("/apply/backup/index", name="apply.backup", active="apply.backup")
 class BackupIndexHandler(ApplyHandler):
     u'定期备份'
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+            ]
+        else:
+            _bread_list = []
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -42,8 +54,23 @@ class BackupIndexHandler(ApplyHandler):
 
 @url("/apply/backup/detail", name="apply.backup.detail", active="apply.backup")
 class BackupDetailHandler(ApplyHandler):
-    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
     u'定期备份详情'
+    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+                {"urlspec": url.handlers_dict.get('apply.backup'), "url": self.session.get("from_url"), "icon": "hdd-o"},
+            ]
+        else:
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('apply.backup'), "url": self.session.get("from_url"), "icon": "hdd-o"},
+            ]
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -63,6 +90,21 @@ class BackupDetailHandler(ApplyHandler):
 @url("/apply/backup/edit", name="apply.backup.edit", active="apply.backup")
 class BackupAddHandler(ApplyHandler):
     u'定期备份申请'
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+                {"urlspec": url.handlers_dict.get('apply.backup'), "url": self.session.get("from_url"), "icon": "hdd-o"},
+            ]
+        else:
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('apply.backup'), "url": self.session.get("from_url"), "icon": "hdd-o"},
+            ]
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):

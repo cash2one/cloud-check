@@ -29,6 +29,18 @@ from .base import ApplyHandler
 @url("/apply/publish/index", name="apply.publish", active="apply.publish")
 class PublishIndexHandler(ApplyHandler):
     u'互联网发布'
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+            ]
+        else:
+            _bread_list = []
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -44,6 +56,21 @@ class PublishIndexHandler(ApplyHandler):
 class PublishDetailHandler(ApplyHandler):
     u'互联网发布详情'
     SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+                {"urlspec": url.handlers_dict.get('apply.publish'), "url": self.session.get("from_url"), "icon": "internet-explorer"},
+            ]
+        else:
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('apply.publish'), "url": self.session.get("from_url"), "icon": "internet-explorer"},
+            ]
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -63,6 +90,21 @@ class PublishDetailHandler(ApplyHandler):
 @url("/apply/publish/edit", name="apply.publish.edit", active="apply.publish")
 class PublishAddHandler(ApplyHandler):
     u'互联网发布申请'
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+                {"urlspec": url.handlers_dict.get('apply.publish'), "url": self.session.get("from_url"), "icon": "internet-explore"},
+            ]
+        else:
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('apply.publish'), "url": self.session.get("from_url"), "icon": "internet-explore"},
+            ]
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):

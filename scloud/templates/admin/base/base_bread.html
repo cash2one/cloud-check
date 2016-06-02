@@ -1,10 +1,30 @@
 <!-- Content Header (Page header) -->
+{% set bread_list = handler.bread_list %}
 <section class="content-header">
   <h1>
+    {% if bread_list|length > 0 %}
+        {% set bread = bread_list[-1] %}
+        {% set urlspec = bread.urlspec %}
+        {% if bread.url %}
+            {% set url = bread.url %}
+        {% else %}
+            {% set url = reverse_url(urlspec.name) %}
+        {% endif %}
+        <a data-pjax href="{{ url }}" class="text-green"><i class="fa fa-reply"></i> 返回 [<i class="fa fa-{{ bread.icon }}"></i>{{ bread.urlspec.handler_class.__doc__ }}]</a>
+    {% endif %}
     {{ handler }}
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
-    <li class="active">{{ handler }}</li>
+    <li><a href="javascript:;"><i class="fa fa-home"></i> Home</a></li>
+    {% for bread in bread_list %}
+    {% set urlspec = bread.urlspec %}
+    {% if bread.url %}
+        {% set url = bread.url %}
+    {% else %}
+        {% set url = reverse_url(urlspec.name) %}
+    {% endif %}
+    <li><a data-pjax href="{{ url }}" class="text-{{ env_colors[loop.index0%(env_colors|length)] }}"><i class="fa fa-{{ bread.icon }}"></i> {{ urlspec.handler_class.__doc__ }}</a></li>
+    {% endfor %}
+    <li class="active"><a data-pjax href=""><i class="fa fa-refresh"></i> {{ handler }}</a></li>
   </ol>
 </section>

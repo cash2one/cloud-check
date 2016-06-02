@@ -1,0 +1,54 @@
+
+{% import "admin/base/macros/paginator.html" as paginator with context %}
+<!-- TO DO List -->
+<div class="box box-primary">
+    <div class="box-header">
+      <i class="ion ion-clipboard"></i>
+      <h3 class="box-title">To Do List</h3>
+      <div class="box-tools pull-right">
+        {{ paginator.get_paginator(page, page_name='todo_page', class_name='pagination pagination-sm inline') }}
+      </div>
+    </div><!-- /.box-header -->
+    <div class="box-body">
+      <ul class="todo-list">
+        {% if page.paginator.count > 0 %}
+          {% for todo in page.object_list %}
+            <li>
+              <!-- drag handle -->
+              <span class="handle">
+                <i class="fa fa-ellipsis-v"></i>
+                <i class="fa fa-ellipsis-v"></i>
+              </span>
+              <!-- checkbox -->
+              <!-- <input type="checkbox" value="" name=""> -->
+              <!-- todo text -->
+              <span class="text">
+              {% if todo.__class__.__name__ == 'Act_Pro_History' %}
+              {% set url_name = 'resource' %}
+              {% set pro_id = todo.pro_id %}
+              {% set id = todo.res_apply_id %}
+              APY{{ "%04d" % todo.res_apply_id }} {{ todo.res_apply.desc }}
+              {% else %}
+              {% set url_name = todo.__class__.__name__[4:]|lower %}
+              {% set pro_id = todo.pro_id %}
+              {% set id = todo.id %}
+              {{ todo.__class__.__doc__ }}
+              {% endif %}
+              {{ STATUS_PRO_TABLES.get(todo.status).todo_value }}</span>
+              <!-- Emphasis label -->
+              <small class="label label-{{ todo.update_time|getGoodTimeLevel }}"><i class="fa fa-clock-o"></i> {{ todo.update_time|getGoodTime }}</small>
+              <!-- General tools such as edit or delete-->
+              <div class="tools">
+                <a data-pjax href="{{ reverse_url('apply.'+url_name) }}?id={{ id }}&pro_id={{ pro_id }}"><i class="fa fa-hand-o-right" style="color: #DD4B39"></i></a>
+                <!-- <i class="fa fa-trash-o"></i> -->
+              </div>
+            </li>
+          {% endfor %}
+        {% else %}
+          <div style="border-right: 1px solid #f4f4f4" class="col-xs-12 text-center">
+            <div class="knob-label">没有待处理任务</div>
+          </div><!-- ./col -->
+        {% endif %}
+      </ul>
+    </div><!-- /.box-body -->
+</div><!-- /.box -->

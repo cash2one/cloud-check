@@ -54,7 +54,8 @@ class EventService(BaseService):
 
     @thrownException
     def get_list(self):
-        pro_id = int(self.params.get("pro_id", 0))
+        id = self.params.get("id")
+        pro_id = self.params.get("pro_id", 0)
         search = self.params.get("search", "")
         status = self.params.get("status", -3)
 
@@ -68,8 +69,10 @@ class EventService(BaseService):
             ).first()
             if pt_user and not pt_user.imchecker:
                 conditions.append(Pro_Event.user_id == user_id)
+        if id:
+            conditions.append(Pro_Event.id == int(id))
         if pro_id:
-            conditions.append(Pro_Event.pro_id == pro_id)
+            conditions.append(Pro_Event.pro_id == int(pro_id))
         if search:
             conditions.append(Pro_Event.title.like('%' + search + '%'))
         if status > -3:

@@ -13,7 +13,7 @@
                     {{ macro_index_page_search.search('apply.user', 'apply.user.add', '权限用户') }}
                   </h3>
                   <div class="box-tools">
-                    <a data-pjax href="{{ reverse_url('apply.user') }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
+                    <a data-pjax href="" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
                   </div>
                 </div><!-- /.box-header -->
                 <div class="box-body">
@@ -54,7 +54,7 @@
                       <td>{{ user.create_time|getGoodTime }}</td>
                       <td>
                         <div class="input-group-btn">
-                          <a data-pjax href="{{ reverse_url('apply.user.detail') }}?id={{ user.id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</a>
+                          <a data-pjax href="{{ reverse_url('apply.user.detail') }}?id={{ user.id }}&pro_id={{ user.pro_id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</a>
                           <a data-pjax href="{{ reverse_url('apply.user.edit') }}?id={{ user.id }}" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i> 编辑</a>
                           <button class="btn btn-xs btn-danger" id="form_del_pro_user_{{ user.id }}_btn" onclick="do_del_pro_user('{{ user.id }}', '{{ user.username }}')"><i class="fa fa-trash"></i> 删除</button>
                           <form id="form_del_pro_user_{{ user.id }}" action="{{ reverse_url('apply.user.del') }}">

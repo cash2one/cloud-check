@@ -1,0 +1,226 @@
+
+{% include "admin/base/base_bread.html" %}
+{% set pro_info = project_res.data %}
+
+        <!-- Main content -->
+        <section class="content">
+          <!-- Small boxes (Stat box) -->
+          <div class="row">
+            <div class="col-lg-3 col-xs-6">
+              <!-- small box -->
+              <div class="small-box bg-aqua">
+                <div class="inner">
+                  <h3>{{ pro_info.pro_users|length }}</h3>
+                  <p>权限申请</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-person-add"></i>
+                </div>
+                <a data-pjax href="{{ reverse_url('apply.user') }}?pro_id={{ pro_info.id }}" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
+              </div>
+            </div><!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+              <!-- small box -->
+              <div class="small-box bg-green">
+                <div class="inner">
+                  <h3>{{ pro_info.pro_publish_list|length }}</h3>
+                  <p>互联网发布</p>
+                </div>
+                <div class="icon">
+                  <i class="fa fa-internet-explorer"></i>
+                </div>
+                <a data-pjax href="{{ reverse_url('apply.publish') }}?pro_id={{ pro_info.id }}" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
+              </div>
+            </div><!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+              <!-- small box -->
+              <div class="small-box bg-yellow">
+                <div class="inner">
+                  <h3>{{ pro_info.pro_balance_list|length }}</h3>
+                  <p>负载均衡</p>
+                </div>
+                <div class="icon">
+                  <i class="fa fa-balance-scale"></i>
+                </div>
+                <a data-pjax href="{{ reverse_url('apply.balance') }}?pro_id={{ pro_info.id }}" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
+              </div>
+            </div><!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+              <!-- small box -->
+              <div class="small-box bg-red">
+                <div class="inner">
+                  <h3>{{ pro_info.pro_backup_list|length }}</h3>
+                  <p>定期备份</p>
+                </div>
+                <div class="icon">
+                  <i class="fa fa-hdd-o"></i>
+                </div>
+                <a data-pjax href="{{ reverse_url('apply.backup') }}?pro_id={{ pro_info.id }}" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
+              </div>
+            </div><!-- ./col -->
+          </div><!-- /.row -->
+          <!-- Main row -->
+          <div class="row">
+            <!-- Left col -->
+            <section class="col-lg-7 connectedSortable">
+              <!-- Widget: user widget style 1 -->
+              <div class="box box-widget widget-user-2">
+                <!-- Add the bg color to the header using any of the bg-* classes -->
+                <div class="widget-user-header bg-yellow">
+                  <div class="widget-user-image">
+<!--                     <img class="img-circle" src="../dist/img/user7-128x128.jpg" alt="User Avatar">
+ -->
+                  <i class="fa fa-cube" style="font-size: 60px;float:left;height:auto; width:65px;"></i>
+<!--                     <div class="small-box">
+                     <div class="icon">
+                      <i class="fa fa-cube"></i>
+                     </div>
+                    </div>
+ -->                  </div><!-- /.widget-user-image -->
+                  <h3 class="widget-user-username">{{ pro_info.name }}</h3>
+                  <h5 class="widget-user-desc">创建时间：{{ pro_info.create_time|getGoodTime }}</h5>
+                </div>
+                <div class="box-body">
+                    {{ pro_info.desc }}
+                </div>
+                <div class="box-footer no-padding">
+                  <ul class="nav nav-stacked">
+                  {% for apply in pro_info.pro_resource_applies[::-1] %}
+                    <li><a data-pjax href="{{ reverse_url('apply.resource') }}?id={{ apply.id }}&pro_id={{ apply.pro_id }}">APY{{ "%04d" % apply.id }}-{{ apply.desc }} <span class="pull-right badge bg-{{ STATUS_RESOURCE.get(apply.status).bg_color }}">{{ STATUS_RESOURCE.get(apply.status).value }}, {{ STATUS_RESOURCE.get(apply.status).todo_value }}</span></a></li>
+                  {% endfor %}
+                  </ul>
+                </div>
+              </div><!-- /.widget-user -->
+
+
+              <!-- TO DO List -->
+              <div id="todo_list">
+                <div class="box box-primary">
+                    <div class="box-header">
+                      <i class="ion ion-clipboard"></i>
+                      <h3 class="box-title">To Do List</h3>
+                      <div class="box-tools pull-right">
+                        <ul class="pagination pagination-sm inline">
+                          <li><a href="#">&laquo;</a></li>
+                          <li><a href="#">1</a></li>
+                          <li><a href="#">&raquo;</a></li>
+                        </ul>
+                      </div>
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+                      <ul class="todo-list">
+                        <div style="border-right: 1px solid #f4f4f4" class="col-xs-12 text-center">
+                          <div class="knob-label">数据加载中...</div>
+                        </div><!-- ./col -->
+                      </ul>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+              </div>
+
+            </section><!-- /.Left col -->
+            <!-- right col (We are only adding the ID to make the widgets sortable)-->
+            <section class="col-lg-5 connectedSortable">
+
+              <div id="pro_resource_apply_detail">
+              <!-- Map box -->
+              <div class="box box-solid bg-light-blue-gradient">
+                <div class="box-header">
+                  <!-- tools box -->
+                  <div class="pull-right box-tools">
+                    <button class="btn btn-primary btn-sm daterange pull-right" data-toggle="tooltip" title="Date range"><i class="fa fa-eye"></i></button>
+                    <button class="btn btn-primary btn-sm pull-right" data-widget="collapse" data-toggle="tooltip" title="Collapse" style="margin-right: 5px;"><i class="fa fa-minus"></i></button>
+                  </div><!-- /. tools -->
+
+                  <i class="fa fa-database"></i>
+                  <h3 class="box-title">
+                    资源申请明细
+                  </h3>
+                </div>
+                <div class="box-footer no-border" style="max-height: 200px; overflow: auto">
+                  <div style="border-right: 1px solid #f4f4f4" class="col-xs-12 text-center">
+                    <div class="knob-label">数据加载中...</div>
+                  </div><!-- ./col -->
+                </div>
+                <div class="box-footer no-border">
+                  <div class="row">
+                    <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
+                      <div id="sparkline-1"></div>
+                      <div class="knob-label">Visitors</div>
+                    </div><!-- ./col -->
+                    <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
+                      <div id="sparkline-2"></div>
+                      <div class="knob-label">Online</div>
+                    </div><!-- ./col -->
+                    <div class="col-xs-4 text-center">
+                      <div id="sparkline-3"></div>
+                      <div class="knob-label">Exists</div>
+                    </div><!-- ./col -->
+                  </div><!-- /.row -->
+                </div>
+              </div>
+              <!-- /.box -->
+              </div>
+
+              <div id="pro_events">
+              <!-- Calendar -->
+              <div class="box box-solid bg-green-gradient">
+                <div class="box-header">
+                  <i class="fa fa-files-o"></i>
+                  <h3 class="box-title">事件列表</h3>
+                  <!-- tools box -->
+                  <div class="pull-right box-tools">
+                    <!-- button with a dropdown -->
+                    <div class="btn-group">
+                      <button class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bars"></i></button>
+                      <ul class="dropdown-menu pull-right" role="menu">
+                        <li><a href="#">添加事件</a></li>
+                        <!-- <li><a href="#">Clear events</a></li> -->
+                        <li class="divider"></li>
+                        <li><a href="#">查看事件</a></li>
+                      </ul>
+                    </div>
+                    <button class="btn btn-success btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    <button class="btn btn-success btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+                  </div><!-- /. tools -->
+                </div><!-- /.box-header -->
+                <div class="box-body no-padding">
+                  <!--The calendar -->
+                  <div id="calendar" style="width: 100%"></div>
+                </div><!-- /.box-body -->
+                <div class="box-footer no-border">
+                  <div class="row">
+                    <div style="border-right: 1px solid #f4f4f4" class="col-xs-12 text-center">
+                    <div class="knob-label">数据加载中...</div>
+                  </div><!-- ./col -->
+                  </div><!-- /.row -->
+                </div>
+              </div><!-- /.box -->
+              </div>
+
+            </section><!-- right col -->
+          </div><!-- /.row (main row) -->
+
+        </section><!-- /.content -->
+        <form id="ajax_form" action="{{ handler.request.full_url() }}" method="DO_AJAX">
+        {{ handler.xsrf_form_html() }}
+        <input type="hidden" name="pro_id" value="{{ pro_info.id }}"/>
+        </form>
+        <script type="text/javascript">
+        $(function(){
+            generate_ajax_post({
+                form: "#ajax_form",
+                pjax_container: false,
+                onSuccess: function(response){
+                    console.log(response);
+                    $("#todo_list").html(response.data.tmpl_todo_list);
+                    $("#pro_resource_apply_detail").html(response.data.tmpl_pro_resource_apply_detail);
+                    $("#pro_events").html(response.data.tmpl_pro_events);
+                }
+            });
+            console.log("generate_ajax_post")
+        })
+        </script>
+        <script type="text/javascript">
+        // $.getScript("{{ handler.static_url('default/dist/js/pages/dashboard.js') }}");
+        // $.getScript("{{ handler.static_url('default/dist/js/demo.js') }}");
+        </script>

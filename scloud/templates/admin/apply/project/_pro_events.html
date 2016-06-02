@@ -1,0 +1,67 @@
+<!-- Calendar -->
+<div class="box box-solid bg-green-gradient">
+    <div class="box-header">
+      <i class="fa fa-files-o"></i>
+      <h3 class="box-title">事件列表</h3>
+      <!-- tools box -->
+      <div class="pull-right box-tools">
+        <!-- button with a dropdown -->
+        <div class="btn-group">
+          <button class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bars"></i></button>
+          <ul class="dropdown-menu pull-right" role="menu">
+            <li><a data-pjax href="{{ reverse_url('event.add') }}">添加事件</a></li>
+            <!-- <li><a href="#">Clear events</a></li> -->
+            <li class="divider"></li>
+            {% if project_res.return_code == 0 %}
+            {% set pro_id = project_res.data.id %}
+            {% else %}
+            {% set pro_id = '' %}
+            {% endif %}
+            <li><a data-pjax href="{{ reverse_url('event.index') }}?pro_id={{ pro_id }}">查看事件</a></li>
+          </ul>
+        </div>
+        <button class="btn btn-success btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        <button class="btn btn-success btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+      </div><!-- /. tools -->
+    </div><!-- /.box-header -->
+    <div class="box-body no-padding">
+      <!--The calendar -->
+      <div id="calendar" style="width: 100%"></div>
+    </div><!-- /.box-body -->
+    <div class="box-footer text-black">
+      <div class="row">
+      {% set pro_events = pro_events_res.data %}
+      {% if pro_events|length > 0 %}
+          {% for event in pro_events %}
+            <div class="col-sm-6">
+              <!-- Progress bars -->
+              {% set percent = "{}%".format((((event.status+2)/5)*100)|int) %}
+              {% set cycle = loop.cycle(0, 1) %}
+              {% if cycle == 0 %}
+              <div class="clearfix">
+                <span class="pull-left">EVT{{ "%04d" % event.id }}</span>
+                <small class="pull-right">{{ percent }}{{ STATUS_PRO_TABLES.get(event.status).value }}</small>
+              </div>
+              <div class="progress xs">
+                <div class="progress-bar progress-bar-green" style="width: {{ percent }};"></div>
+              </div>
+              {% endif %}
+              {% if cycle == 1 %}
+              <div class="clearfix">
+                <span class="pull-left">EVT{{ "%04d" % event.id }}</span>
+                <small class="pull-right">{{ percent }}{{ STATUS_PRO_TABLES.get(event.status).value }}</small>
+              </div>
+              <div class="progress xs">
+                <div class="progress-bar progress-bar-green" style="width: {{ percent }};"></div>
+              </div>
+              {% endif %}
+            </div><!-- /.col -->
+          {% endfor %}
+      {% else %}
+      <div style="border-right: 1px solid #f4f4f4" class="col-xs-12 text-center">
+        <div class="knob-label">未申请事件</div>
+      </div><!-- ./col -->
+      {% endif %}
+      </div><!-- /.row -->
+    </div>
+</div><!-- /.box -->

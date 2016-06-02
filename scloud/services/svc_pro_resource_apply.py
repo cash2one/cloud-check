@@ -88,6 +88,8 @@ class ProResourceApplyService(BaseService):
     def get_list(self):
         search = self.params.get("search")
         status = self.params.get("status")
+        id = self.params.get("id")
+        pro_id = self.params.get("pro_id")
         conditions = and_()
         conditions.append(Pro_Resource_Apply.is_enable == 1)
         conditions.append(Pro_Resource_Apply.user_id == self.handler.current_user.id)
@@ -95,6 +97,10 @@ class ProResourceApplyService(BaseService):
             conditions.append(Pro_Info.name.like('%' + search + '%'))
         if status:
             conditions.append(Pro_Resource_Apply.status == status)
+        if id:
+            conditions.append(Pro_Resource_Apply.id == id)
+        if pro_id:
+            conditions.append(Pro_Resource_Apply.pro_id == pro_id)
         resources_res = self.db.query(
             Pro_Resource_Apply
         ).join(

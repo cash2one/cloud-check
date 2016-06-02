@@ -27,8 +27,21 @@ from .base import ApplyHandler
 
 
 @url("/apply/loadbalance/index", name="apply.loadbalance", active="apply.loadbalance")
+@url("/apply/balance/index", name="apply.balance", active="apply.loadbalance")
 class PublishIndexHandler(ApplyHandler):
     u'负载均衡'
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+            ]
+        else:
+            _bread_list = []
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -42,8 +55,23 @@ class PublishIndexHandler(ApplyHandler):
 
 @url("/apply/loadbalance/detail", name="apply.loadbalance.detail", active="apply.loadbalance")
 class PublishDetailHandler(ApplyHandler):
-    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
     u'负载均衡详情'
+    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
+    
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+                {"urlspec": url.handlers_dict.get('apply.loadbalance'), "url": self.session.get("from_url"), "icon": "balance-scale"},
+            ]
+        else:
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('apply.loadbalance'), "url": self.session.get("from_url"), "icon": "balance-scale"},
+            ]
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -58,11 +86,25 @@ class PublishDetailHandler(ApplyHandler):
         return self.render_to_string("admin/apply/loadbalance/detail.html", **data)
 
 
-#@url("/apply/pro_(?P<pro_id>\d+)/user/add", name="apply.user.add", active="apply.user.add")
 @url("/apply/loadbalance/add", name="apply.loadbalance.add", active="apply.loadbalance")
 @url("/apply/loadbalance/edit", name="apply.loadbalance.edit", active="apply.loadbalance")
 class PublishAddHandler(ApplyHandler):
     u'负载均衡申请'
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+                {"urlspec": url.handlers_dict.get('apply.loadbalance'), "url": self.session.get("from_url"), "icon": "balance-scale"},
+            ]
+        else:
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('apply.loadbalance'), "url": self.session.get("from_url"), "icon": "balance-scale"},
+            ]
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):

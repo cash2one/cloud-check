@@ -43,6 +43,18 @@ class GuideStepGetHandler(AuthHandler):
 @url("/apply/resource/index", name="apply.resource", active="apply.resource")
 class ProResourceApplyIndexHandler(GuideStepGetHandler):
     u'资源申请'
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+            ]
+        else:
+            _bread_list = []
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -62,8 +74,23 @@ class ProResourceApplyIndexHandler(GuideStepGetHandler):
 
 @url("/apply/resource/detail", name="apply.resource.detail", active="apply.resource")
 class ProResourceDetailHandler(GuideStepGetHandler):
-    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
     u'资源申请详情'
+    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+                {"urlspec": url.handlers_dict.get('apply.resource'), "url": self.session.get("from_url"), "icon": "database"},
+            ]
+        else:
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('apply.resource'), "url": self.session.get("from_url"), "icon": "database"},
+            ]
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -84,6 +111,21 @@ class ProResourceDetailHandler(GuideStepGetHandler):
 @url("/apply/resource/pay", name="apply.resource.pay", active="apply.resource")
 class DoProResourceApplyHandler(ApplyHandler):
     u'资源申请'
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+                {"urlspec": url.handlers_dict.get('apply.resource'), "url": self.session.get("from_url"), "icon": "database"},
+            ]
+        else:
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('apply.resource'), "url": self.session.get("from_url"), "icon": "database"},
+            ]
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -290,6 +332,21 @@ class ProResourceDeleteHandler(ApplyHandler):
 @url("/apply/resource/pay_history", name="apply.resource.pay_history", active="apply.resource")
 class ProResourcePayHistoryHandler(ApplyHandler):
     u"""资源申请支付历史"""
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+                {"urlspec": url.handlers_dict.get('apply.resource'), "url": self.session.get("from_url"), "icon": "database"},
+            ]
+        else:
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('apply.resource'), "url": self.session.get("from_url"), "icon": "database"},
+            ]
+        return _bread_list
+
     @check_perms('pro_resource_apply.view')
     @unblock
     def get(self):

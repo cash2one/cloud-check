@@ -27,7 +27,19 @@ from .base import ApplyHandler
 
 @url("/apply/user/index", name="apply.user", active="apply.user")
 class GuideHandler(ApplyHandler):
-    u'权限申请'
+    u'权限用户'
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+            ]
+        else:
+            _bread_list = []
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -41,8 +53,23 @@ class GuideHandler(ApplyHandler):
 
 @url("/apply/user/detail", name="apply.user.detail", active="apply.user.index")
 class ProUserDetailHandler(ApplyHandler):
-    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
     u'权限用户详情'
+    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+                {"urlspec": url.handlers_dict.get('apply.user'), "url": self.session.get("from_url"), "icon": "users"},
+            ]
+        else:
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('apply.user'), "url": self.session.get("from_url"), "icon": "users"},
+            ]
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -57,11 +84,25 @@ class ProUserDetailHandler(ApplyHandler):
         return self.render_to_string("admin/apply/user/detail.html", **data)
 
 
-#@url("/apply/pro_(?P<pro_id>\d+)/user/add", name="apply.user.add", active="apply.user.add")
 @url("/apply/user/add", name="apply.user.add", active="apply.user.add")
 @url("/apply/user/edit", name="apply.user.edit", active="apply.user.edit")
 class GuideHandler(ApplyHandler):
     u'权限申请'
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+                {"urlspec": url.handlers_dict.get('apply.user'), "url": self.session.get("from_url"), "icon": "users"},
+            ]
+        else:
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('apply.user'), "url": self.session.get("from_url"), "icon": "users"},
+            ]
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):

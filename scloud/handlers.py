@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # created: zhangpeng <zhangpeng1@infohold.com.cn>
 
+import re
 import time
 import urllib
 import urlparse
@@ -21,9 +22,11 @@ from scloud.utils.error_code import ERR
 from scloud.utils.error import SystemError
 from scloud.const import (STATUS_RESOURCE, RESOURCE_BANDWIDTH,
     STATUS_PRO_TABLES, STATUS_PRIORITY, STATUS_YESNO,
-    PLOT_LOADBALANCE, LOADBALANCE_HEALTH, PRO_USER_TYPES)
+    PLOT_LOADBALANCE, LOADBALANCE_HEALTH, PRO_USER_TYPES,
+    env_colors)
 from scloud.utils.permission import GROUP, OP
 from sqlalchemy.orm.session import SessionTransaction
+from scloud.views.handlers_mixin import HandlersMixin
 
 
 def check_exception(method):
@@ -59,7 +62,7 @@ class HandlerMeta(type):
         return type.__new__(mcs, name, bases, dct)
 
 
-class Handler(BaseHandler):
+class Handler(BaseHandler, HandlersMixin):
     __metaclass__ = HandlerMeta
 
     def __str__(self):
@@ -70,7 +73,8 @@ class Handler(BaseHandler):
         self.svc = DataBaseService()
         self.svc.__enter__()
         self.db = self.svc.db
-        logger.warning("<" + "="*25 + " [initialize] " + "="*25 + ">")
+        logger.warning("<" + "=" * 25 + " [initialize] " + "=" * 25 + ">")
+        self.handler_return_url()
 
     def init_messages(self):
         if "messages" not in self.session:
@@ -164,7 +168,10 @@ class Handler(BaseHandler):
             self.set_header("active", self.kwargs.get("active", ""))
             template = "%s_pjax.html" % template.split(".html")[0]
         tmpl = env.get_template(template)
-        s = "&".join(["%s=%s" % (k, v) for k, v in self.args.items() if k not in ["page", "_pjax"]])
+        s = "&".join(
+            ["%s=%s" % (k, v) for k, v in self.args.items() \
+            if k not in ["page", "_pjax", "_xsrf"]]
+        )
         kwargs.update({
             "CONF": CONF,
             "getattr": getattr,
@@ -174,6 +181,7 @@ class Handler(BaseHandler):
             "request": self.request,
             "reverse_url": self.application.reverse_url,
             "ERR": ERR,
+            "env_colors": env_colors,
             "STATUS_RESOURCE": STATUS_RESOURCE,
             "RESOURCE_BANDWIDTH": RESOURCE_BANDWIDTH,
             "STATUS_PRO_TABLES": STATUS_PRO_TABLES,
@@ -194,11 +202,14 @@ class Handler(BaseHandler):
         template_string = self.render_to_string(template, **kwargs)
         self.write(template_string.strip())
 
-    def getPage(self, objects, numsPerpage=8, total_count=0):
+    def getPage(self, objects, numsPerpage=8, total_count=0, page_name='page'):
         try:
-            page_num = int(self.args.get('page', '1'))
+            page_num = int(self.args.get(page_name, '1'))
         except ValueError:
             page_num = 1
+        logger.info("[page_name]: %s" % page_name)
+        logger.info("[page_name %s]: [page_num]: %s" % (page_name, self.args.get(page_name, '1')))
+        logger.info("[page_num]: %s" % page_num)
         try:
             _total_count = total_count or objects.count()
         except Exception as e:

@@ -58,6 +58,7 @@ class ActHistoryService(BaseService):
     @thrownException
     def get_res_tasks(self):
         logger.info("------[get_res_tasks]------")
+        pro_id = self.params.get("pro_id", None)
         user_id = self.params.get("user_id", None)
         if not user_id:
             user_id = self.handler.current_user.id
@@ -75,6 +76,8 @@ class ActHistoryService(BaseService):
             current_perms = user.get_current_perms()
             logger.info("current_perms: %s" % current_perms)
             conditions = and_()
+            if pro_id:
+                conditions.append(Pro_Resource_Apply.pro_id == pro_id)
             or_conditions = or_()
             # 如果是管理员用户，查看所有项目申请提交的任务状态
             # 如果是普通用户，查看自己资源审批的任务状态

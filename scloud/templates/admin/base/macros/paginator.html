@@ -1,0 +1,103 @@
+{% macro get_paginator(page, page_name='page', class_name='pagination') %}
+
+{% set s = s|filter_s(".*([&]?"+page_name+"=[\d]+[&]?).*") %}
+  <ul class="{{ class_name }}">
+    <li class="disabled"><a data-pjax href="javascript:;">共&#160;{{ page.paginator.count }}&#160;{{ page.paginator.unit_name }}记录</a></li>
+  </ul>
+  {% if page.paginator.count > 0 %}
+  <ul class="{{ class_name }}">
+  
+  {#% if page.paginator.num_pages > 1 %#}
+  {% if page.previous_page_number() %}
+  <li><a data-pjax href="?{{ s }}{{ page_name }}={{ page.previous_page_number() }}">&laquo;</a></li>
+  {% else %}
+  <li class="disabled"><a data-pjax href="javascript:;">&laquo;</a></li>
+  {% endif %}
+
+  {% if page.paginator.num_pages <= 10 %}
+        {% for i in page.paginator.page_range %}
+          {% if page.number != i %}
+          <li><a data-pjax href="?{{ s }}{{ page_name }}={{ i }}">{{ i }}</a></li>
+          {% else %}
+          <li class="active"><a data-pjax href="javascript:;">{{ i }} <span class="sr-only">(current)</span></a></li>
+          {% endif %}
+        {% endfor %}
+  {% else %}
+        {% if page.number < 5 or page.number > page.paginator.num_pages-4 %}
+          {% for i in range(1,6) %}
+              {% if page.number != i %}
+              <li><a data-pjax href="?{{ s }}{{ page_name }}={{ i }}">{{ i }}</a></li>
+              {% else %}
+              <li class="active"><a data-pjax href="javascript:;">{{ i }} <span class="sr-only">(current)</span></a></li>
+              {% endif %}
+          {% endfor %}
+          <li class="disabled"><a data-pjax href="javascript:;">...</a></li>
+          {% for i in range(page.paginator.num_pages-4,page.paginator.num_pages+1) %}
+              {% if page.number != i %}
+              <li><a data-pjax href="?{{ s }}{{ page_name }}={{ i }}">{{ i }}</a></li>
+              {% else %}
+              <li class="active"><a data-pjax href="javascript:;">{{ i }} <span class="sr-only">(current)</span></a></li>
+              {% endif %}
+          {% endfor %}
+        {% elif page.number == 5 %}
+          {% for i in range(1,7) %}
+              {% if page.number != i %}
+              <li><a data-pjax href="?{{ s }}{{ page_name }}={{ i }}">{{ i }}</a></li>
+              {% else %}
+              <li class="active"><a data-pjax href="javascript:;">{{ i }} <span class="sr-only">(current)</span></a></li>
+              {% endif %}
+          {% endfor %}
+          <li class="disabled"><a data-pjax href="javascript:;">...</a></li>
+          {% for i in range(page.paginator.num_pages,page.paginator.num_pages+1) %}
+              {% if page.number != i %}
+              <li><a data-pjax href="?{{ s }}{{ page_name }}={{ i }}">{{ i }}</a></li>
+              {% else %}
+              <li class="active"><a data-pjax href="javascript:;">{{ i }} <span class="sr-only">(current)</span></a></li>
+              {% endif %}
+          {% endfor %}
+        {% elif page.number == page.paginator.num_pages-4 %}
+          {% for i in range(1,2) %}
+              {% if page.number != i %}
+              <li><a data-pjax href="?{{ s }}{{ page_name }}={{ i }}">{{ i }}</a></li>
+              {% else %}
+              <li class="active"><a data-pjax href="javascript:;">{{ i }} <span class="sr-only">(current)</span></a></li>
+              {% endif %}
+          {% endfor %}
+          <li class="disabled"><a data-pjax href="javascript:;">...</a></li>
+          {% for i in range(page.paginator.num_pages-5,page.paginator.num_pages+1) %}
+              {% if page.number != i %}
+              <li><a data-pjax href="?{{ s }}{{ page_name }}={{ i }}">{{ i }}</a></li>
+              {% else %}
+              <li class="active"><a data-pjax href="javascript:;">{{ i }} <span class="sr-only">(current)</span></a></li>
+              {% endif %}
+          {% endfor %}
+        {% else %}
+          {% for i in range(1,2) %}
+              <li><a data-pjax href="?{{ s }}{{ page_name }}={{ i }}">{{ i }}</a></li>
+          {% endfor %}
+          <li class="disabled"><a data-pjax href="javascript:;">...</a></li>
+          {% for i in range(page.number-4,page.number+5) %}
+              {% if page.number != i %}
+              <li><a data-pjax href="?{{ s }}{{ page_name }}={{ i }}">{{ i }}</a></li>
+              {% else %}
+              <li class="active"><a data-pjax href="javascript:;">{{ i }} <span class="sr-only">(current)</span></a></li>
+              {% endif %}
+          {% endfor %}
+          <li class="disabled"><a data-pjax href="javascript;">...</a></li>
+          {% for i in range(page.paginator.num_pages,page.paginator.num_pages+1) %}
+              <li><a data-pjax href="?{{ s }}{{ page_name }}={{ i }}">{{ i }}</a></li>
+          {% endfor %}
+        {% endif %}
+  {% endif %}
+
+  {% if page.next_page_number() <= page.paginator.num_pages %}
+  <li><a data-pjax href="?{{ s }}{{ page_name }}={{ page.next_page_number() }}">&raquo;</a></li>
+  {% else %}
+  <li class="disabled"><a data-pjax href="javascript:;">&raquo;</a></li>
+  {% endif %}
+  {#% endif %#}
+
+  </ul>
+  {% endif %}
+
+{% endmacro %}

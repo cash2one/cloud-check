@@ -33,6 +33,8 @@ act_actions = {
     3: IndexMark(value=u"删除%s数据", value_en="", level="danger"),
 }
 
+env_colors = ["red", "yellow", "blue"]
+
 # Pro_Resource_Apply
 # 资源申请状态
 pro_resource_apply_status_types = {
