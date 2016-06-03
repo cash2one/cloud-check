@@ -5,12 +5,11 @@
 import simplejson
 from scloud.shortcuts import url
 from scloud.config import logger
-from scloud.const import STATUS_PRO_TABLES
+# from scloud.const import STATUS_PRO_TABLES
 from scloud.handlers import AuthHandler
 from scloud.utils.permission import check_perms
 from scloud.services.svc_project import ProjectService
 from scloud.services.svc_pro_event import EventService
-from scloud.services.svc_pro_resource_apply import ProResourceApplyService
 from scloud.async_services.publish_task import publish_notice_checker, publish_notice_user
 from scloud.utils.unblock import unblock
 from scloud.utils.error import SystemError
@@ -25,11 +24,12 @@ class GuideStepGetHandler(AuthHandler):
             raise pro_info_res
         data = {
             "pro_info_res": pro_info_res,
-            "STATUS_RESOURCE": STATUS_RESOURCE,
+            # "STATUS_RESOURCE": STATUS_RESOURCE,
         }
         return data
 
 
+@url("/apply/event/index", name="apply.event", active="event.index")
 @url("/event/index", name="event.index", active="event.index")
 class EventIndexHandler(GuideStepGetHandler):
     u'事件列表'
