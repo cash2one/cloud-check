@@ -201,7 +201,7 @@
           </div><!-- /.row (main row) -->
 
         </section><!-- /.content -->
-        <form id="ajax_form" action="{{ handler.request.full_url() }}" method="XGET">
+        <form id="ajax_form" action="{{ reverse_url('apply.project.detail.xget') }}?pro_id={{ handler.args.get('xget') }}" method="XGET">
         {{ handler.xsrf_form_html() }}
         <input type="hidden" name="pro_id" value="{{ pro_info.id }}"/>
         </form>
@@ -217,7 +217,7 @@
                     $("#pro_events").html(response.data.tmpl_pro_events);
                 }
             });
-            console.log("generate_ajax_post")
+            console.log("generate_ajax_post");
         })
         </script>
         <script type="text/javascript">

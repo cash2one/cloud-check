@@ -19,7 +19,12 @@
     <td>所属环境:</td>
     <td>
       {% set env = pro_resource_apply.project.env %}
-    <span class="badge bg-{{ env_colors[env.id%(env_colors|length)] }}">{{ env.name }}</span></td>
+      {% if env %}
+    <span class="badge bg-{{ env_colors[env.id%(env_colors|length)] }}">{{ env.name }}</span>
+      {% else %}
+    <span class="badge bg-red }}">未设置</span>
+      {% endif %}
+    </td>
   </tr>
   {% for column in pro_resource_apply.__table__.columns %}
     {% if column.info.name %}

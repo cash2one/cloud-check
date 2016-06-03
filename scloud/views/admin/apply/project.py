@@ -17,6 +17,7 @@ from scloud.services.svc_pro_event import EventService
 
 
 @url("/apply/project/detail", name="apply.project.detail", active="apply.project")
+@url("/apply/project/detail/xget", name="apply.project.detail", active="apply.project")
 class PublishDetailHandler(ApplyHandler):
     u'项目详情'
     SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("XGET",)
@@ -96,3 +97,4 @@ class PublishDetailHandler(ApplyHandler):
             tmpl_pro_events=tmpl_pro_events,
         )
         return simplejson.dumps(self.success(data=data))
+        # return self.write_jsonp(self.success(data=data))
