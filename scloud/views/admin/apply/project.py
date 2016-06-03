@@ -18,7 +18,7 @@ from scloud.services.svc_pro_event import EventService
 @url("/apply/project/detail", name="apply.project.detail", active="apply.project")
 class PublishDetailHandler(ApplyHandler):
     u'项目详情'
-    SUPPORTED_METHODS = ApplyHandler.SUPPORTED_METHODS + ("DO_AJAX", )
+    SUPPORTED_METHODS = ApplyHandler.SUPPORTED_METHODS + ("LJAX", )
 
     @property
     def bread_list(self):
@@ -40,7 +40,7 @@ class PublishDetailHandler(ApplyHandler):
 
     @check_perms('pro_info.view')
     @unblock
-    def do_ajax(self):
+    def ljax(self):
         task_svc = TaskPublish(self)
         tasks_res = task_svc.publish_tasks(user_id=self.current_user.id, pro_id=self.args.get("pro_id"), do_publish=False)
         if tasks_res.return_code == 0:
