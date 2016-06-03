@@ -17,7 +17,7 @@ from scloud.services.svc_pro_event import EventService
 
 
 @url("/apply/project/detail", name="apply.project.detail", active="apply.project")
-@url("/apply/project/detail/xget", name="apply.project.detail", active="apply.project")
+@url("/apply/project/detail/xget", name="apply.project.detail.xget", active="apply.project")
 class PublishDetailHandler(ApplyHandler):
     u'项目详情'
     SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("XGET",)

@@ -201,12 +201,16 @@
           </div><!-- /.row (main row) -->
 
         </section><!-- /.content -->
-        <form id="ajax_form" action="{{ reverse_url('apply.project.detail.xget') }}?pro_id={{ handler.args.get('xget') }}" method="XGET">
+        <form id="ajax_form" action="{{ reverse_url('apply.project.detail.xget') }}?pro_id={{ handler.args.get('pro_id') }}" method="XGET">
         {{ handler.xsrf_form_html() }}
         <input type="hidden" name="pro_id" value="{{ pro_info.id }}"/>
         </form>
         <script type="text/javascript">
         $(function(){
+          initXGet();
+        })
+        function initXGet(){
+
             generate_ajax_post({
                 form: "#ajax_form",
                 pjax_container: false,
@@ -215,10 +219,11 @@
                     $("#todo_list").html(response.data.tmpl_todo_list);
                     $("#pro_resource_apply_detail").html(response.data.tmpl_pro_resource_apply_detail);
                     $("#pro_events").html(response.data.tmpl_pro_events);
-                }
+                },
+                onTimeout: function(){ initXGet(); }
             });
+        }
             console.log("generate_ajax_post");
-        })
         </script>
         <script type="text/javascript">
         // $.getScript("{{ handler.static_url('default/dist/js/pages/dashboard.js') }}");
