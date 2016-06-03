@@ -217,7 +217,7 @@
           </div><!-- /.row (main row) -->
 
         </section><!-- /.content -->
-        <form id="ajax_form" action="{{ handler.request.full_url() }}" method="GET">
+        <form id="ajax_form" action="{{ reverse_url('apply.project.detail.xget') }}?pro_id={{ pro_info.id }}" method="GET">
         {{ handler.xsrf_form_html() }}
         <!-- <input type="hidden" name="pro_id" value="{{ pro_info.id }}"/> -->
         </form>
