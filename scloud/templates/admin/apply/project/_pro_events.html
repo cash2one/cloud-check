@@ -39,7 +39,7 @@
               {% set cycle = loop.cycle(0, 1) %}
               {% if cycle == 0 %}
               <div class="clearfix">
-                <span class="pull-left">EVT{{ "%04d" % event.id }}</span>
+                <span class="pull-left"><a data-pjax href="{{ reverse_url('apply.event') }}?id={{ event.id }}&pro_id={{ event.pro_id }}">EVT{{ "%04d" % event.id }}</a></span>
                 <small class="pull-right">{{ percent }}{{ STATUS_PRO_TABLES.get(event.status).value }}</small>
               </div>
               <div class="progress xs">
@@ -48,7 +48,7 @@
               {% endif %}
               {% if cycle == 1 %}
               <div class="clearfix">
-                <span class="pull-left">EVT{{ "%04d" % event.id }}</span>
+                <span class="pull-left"><a data-pjax href="{{ reverse_url('apply.event') }}?id={{ event.id }}&pro_id={{ event.pro_id }}">EVT{{ "%04d" % event.id }}</a></span>
                 <small class="pull-right">{{ percent }}{{ STATUS_PRO_TABLES.get(event.status).value }}</small>
               </div>
               <div class="progress xs">

@@ -33,6 +33,18 @@ class GuideStepGetHandler(AuthHandler):
 @url("/event/index", name="event.index", active="event.index")
 class EventIndexHandler(GuideStepGetHandler):
     u'事件列表'
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+            ]
+        else:
+            _bread_list = []
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -53,8 +65,23 @@ class EventIndexHandler(GuideStepGetHandler):
 
 @url("/event/detail", name="event.detail", active="event.index")
 class EventDetailHandler(GuideStepGetHandler):
-    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
     u'事件详情'
+    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
+
+    @property
+    def bread_list(self):
+        if self.args.get("pro_id"):
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"},
+                {"urlspec": url.handlers_dict.get('apply.project.detail'), "url": "%s?pro_id=%s" % (self.reverse_url('apply.project.detail'), self.args.get("pro_id")), "icon": "cube"},
+                {"urlspec": url.handlers_dict.get('apply.event'), "url": self.session.get("from_url"), "icon": "files-o"},
+            ]
+        else:
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('apply.event'), "url": self.session.get("from_url"), "icon": "files-o"},
+            ]
+        return _bread_list
+
     @check_perms('pro_info.view')
     @unblock
     def get(self):
@@ -100,7 +127,6 @@ class EventDetailHandler(GuideStepGetHandler):
             publish_notice_checker.delay(self.current_user.id)
         tmpl = self.render_to_string(template, **data)
         return simplejson.dumps(self.success(data=tmpl))
-
 
 
 @url("/event/add", name="event.add", active="event.index")

@@ -20,7 +20,7 @@
                     </div> -->
                   </h3>
                   <div class="box-tools">
-                    <a data-pjax href="{{ reverse_url('event.index') }}" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
+                    <a data-pjax href="" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></a>
                   </div>
                 </div><!-- /.box-header -->
                 <div class="box-body">
@@ -53,7 +53,7 @@
                       <td>{{ event.create_time|getGoodTime }}</td>
                       <td>
                         <div class="input-group-btn">
-                          <a data-pjax href="{{ reverse_url('event.detail') }}?id={{ event.id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</a>
+                          <a data-pjax href="{{ reverse_url('event.detail') }}?id={{ event.id }}&pro_id={{ event.pro_id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> 查看</a>
                           <button class="btn btn-xs btn-danger" id="form_del_pro_event_{{ event.id }}_btn" onclick="do_del_pro_event('{{ event.id }}', '{{ event.title }}')"><i class="fa fa-trash"></i> 删除</button>
                           <form id="form_del_pro_event_{{ event.id }}" action="{{ reverse_url('apply.event.del') }}">
                           {{ handler.xsrf_form_html() }}
