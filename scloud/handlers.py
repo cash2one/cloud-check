@@ -14,37 +14,20 @@ from tornado.util import ObjectDict
 from torweb.handlers import BaseHandler
 from torweb.paginator import Paginator, InvalidPage
 from scloud.shortcuts import env
-from scloud.config import CONF, logger, logThrown
+from scloud.config import CONF, logger
 from scloud.models.base import DataBaseService
 from scloud.async_services.svc_act import task_post_action
-from sqlalchemy.exc import SQLAlchemyError
+# from sqlalchemy.exc import SQLAlchemyError
 from scloud.utils.error_code import ERR
-from scloud.utils.error import SystemError
+# from scloud.utils.error import SystemError
 from scloud.const import (STATUS_RESOURCE, RESOURCE_BANDWIDTH,
     STATUS_PRO_TABLES, STATUS_PRIORITY, STATUS_YESNO,
     PLOT_LOADBALANCE, LOADBALANCE_HEALTH, PRO_USER_TYPES,
     env_colors)
 from scloud.utils.permission import GROUP, OP
-from sqlalchemy.orm.session import SessionTransaction
-from scloud.views.handlers_mixin import HandlersMixin
+# from sqlalchemy.orm.session import SessionTransaction
+from scloud.views.handlers_mixin import HandlersMixin, check_xget
 
-
-def check_exception(method):
-    @functools.wraps(method)
-    def wrapper(self, *args, **kwargs):
-        logger.info("-"*60)
-        logger.error("self.method: %s" % self.request.method)
-        logger.info("self.args: %s" % self.args)
-        if self.request.method == "POST":
-            logger.info("-"*60)
-            logger.info(self.args)
-            if "_xsrf" not in self.args:
-                logger.error("_xsrf error")
-                raise SystemError(ERROR.xsrf_err.errcode, ERROR.xsrf_err.errvalue)
-            logger.info("-"*60)
-        logger.info("-"*60)
-        return method(self, *args, **kwargs)
-    return wrapper
 
 class HandlerMeta(type):
     """
@@ -57,7 +40,7 @@ class HandlerMeta(type):
             if method in dct:
                 # 检查url地址中的不合法参数，防跨域调用js
                 # 检查函数运行时错误，遇到错误直接抛出
-                # dct[method] = check_exception(dct[method])
+                dct[method] = check_xget(dct[method])
                 pass
         return type.__new__(mcs, name, bases, dct)
 

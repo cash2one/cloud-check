@@ -217,9 +217,9 @@
           </div><!-- /.row (main row) -->
 
         </section><!-- /.content -->
-        <form id="ajax_form" action="{{ reverse_url('apply.project.detail.xget') }}?pro_id={{ handler.args.get('pro_id') }}" method="XGET">
+        <form id="ajax_form" action="{{ handler.request.full_url() }}" method="GET">
         {{ handler.xsrf_form_html() }}
-        <input type="hidden" name="pro_id" value="{{ pro_info.id }}"/>
+        <!-- <input type="hidden" name="pro_id" value="{{ pro_info.id }}"/> -->
         </form>
         <script type="text/javascript">
         $(function(){
@@ -229,6 +229,7 @@
             generate_ajax_post({
                 form: "#ajax_form",
                 pjax_container: false,
+                headers: {"XGET": true},
                 onSuccess: function(response){
                     console.log(response);
                     $("#todo_list").html(response.data.tmpl_todo_list);

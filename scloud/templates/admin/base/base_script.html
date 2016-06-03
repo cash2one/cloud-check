@@ -179,6 +179,7 @@ function generate_ajax_post(options){
   var method = options.method || $(form).attr("method") || "POST";
   var pjax_container = $chk(options.pjax_container) != false ? true:false;
   console.log("pjax_container: "+pjax_container)
+  var headers = options.headers || {};
 
   if (button){
     $(button).button("loading");
@@ -198,6 +199,10 @@ function generate_ajax_post(options){
     dataType: "JSON",
     data: params,
     timeout: 3000,
+    headers: headers,
+    // beforeSend: function(xhr, settings){
+    //   xhr.setRequestHeader("XGET", true);
+    // },
     success: function(response){
       hide_loading();
       $(button).button("reset");

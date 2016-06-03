@@ -2,7 +2,30 @@
 
 import re
 # import urlparse
+import functools
 from scloud.config import logger
+
+
+def check_xget(method):
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        logger.info("-" * 60)
+        logger.error("self.method: %s" % self.request.method)
+        logger.info("self.args: %s" % self.args)
+        logger.info("self.request.headers: %s" % self.request.headers)
+        _xget = self.request.headers.get("XGET")
+        logger.info(_xget)
+        # self.pjax = self.request.headers.get("X-PJAX")
+        logger.info(method)
+        if _xget:
+            # from code import interact
+            # interact(local=locals())
+            return self.xget(*args, **kwargs)
+            # raise Exception('method {} not found'.format(_xmethod.lower()))
+            # return eval(_xmethod.lower())(self, *args, **kwargs)
+        else:
+            return method(self, *args, **kwargs)
+    return wrapper
 
 
 class HandlersMixin(object):

@@ -23,6 +23,7 @@ from scloud.utils.error import SystemError
 
 @url("/user/profile", name="user_profile", active="user_profile")
 class ProfileHandler(AuthHandler):
+    u'个人设置'
     def get_index_page(self, **kwargs):
         svc = ActHistoryService(self, kwargs)
         act_histories_res = svc.get_list()
