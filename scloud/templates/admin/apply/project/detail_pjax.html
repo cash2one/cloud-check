@@ -201,7 +201,7 @@
           </div><!-- /.row (main row) -->
 
         </section><!-- /.content -->
-        <form id="ajax_form" action="{{ handler.request.full_url() }}" method="LJAX">
+        <form id="ajax_form" action="{{ handler.request.full_url() }}" method="XGET">
         {{ handler.xsrf_form_html() }}
         <input type="hidden" name="pro_id" value="{{ pro_info.id }}"/>
         </form>
