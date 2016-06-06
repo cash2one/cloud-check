@@ -26,7 +26,7 @@ from scloud.const import (STATUS_RESOURCE, RESOURCE_BANDWIDTH,
     env_colors)
 from scloud.utils.permission import GROUP, OP
 # from sqlalchemy.orm.session import SessionTransaction
-from scloud.views.handlers_mixin import HandlersMixin, check_xget
+from scloud.views.handlers_mixin import HandlersMixin
 
 
 class HandlerMeta(type):
@@ -40,7 +40,7 @@ class HandlerMeta(type):
             if method in dct:
                 # 检查url地址中的不合法参数，防跨域调用js
                 # 检查函数运行时错误，遇到错误直接抛出
-                dct[method] = check_xget(dct[method])
+                # dct[method] = check_xget(dct[method])
                 pass
         return type.__new__(mcs, name, bases, dct)
 

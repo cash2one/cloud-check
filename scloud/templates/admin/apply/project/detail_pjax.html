@@ -1,116 +1,107 @@
 
 {% include "admin/base/base_bread.html" %}
-{% set pro_info = project_res.data %}
+{#% set pro_info = project_res.data %#}
 
         <!-- Main content -->
         <section class="content">
           <!-- Small boxes (Stat box) -->
           <div class="row">
-            <div class="col-lg-3 col-xs-6">
-              <!-- small box -->
-              <div class="small-box bg-aqua">
-                <div class="inner">
-                  <h3>{{ pro_info.pro_users|length }}
-                  {% if pro_info.last_apply and pro_info.last_apply.status >= STATUS_RESOURCE.CHECKED %}
-                  <sup><a data-pjax style="color: #FFFFFF" title="添加权限用户" href="{{ reverse_url('apply.user.add') }}?pro_id={{ pro_info.id }}"><i class="fa fa-plus" style="font-size: 16px"></i></a></sup>
-                  {% endif %}
-                  </h3>
-                  <p>权限申请</p>
+            <div id="tmpl_pro_table_detail">
+              <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-aqua">
+                  <div class="inner">
+                    <!-- <h3>加载数据中...</h3> -->
+                    <p>加载数据中...</p></br>
+                    <p>权限申请</p>
+                  </div>
+                  <div class="icon">
+                    <i class="ion ion-person"></i>
+                  </div>
+                  <a data-pjax href="javascript:;" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
-                <div class="icon">
-                  <i class="ion ion-person"></i>
+              </div><!-- ./col -->
+              <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-green">
+                  <div class="inner">
+                    <!-- <h3>加载数据中...</h3> -->
+                    <p>加载数据中...</p></br>
+                    <p>互联网发布</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fa fa-internet-explorer"></i>
+                  </div>
+                  <a data-pjax href="javascript:;" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
-                <a data-pjax href="{{ reverse_url('apply.user') }}?pro_id={{ pro_info.id }}" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
-              </div>
-            </div><!-- ./col -->
-            <div class="col-lg-3 col-xs-6">
-              <!-- small box -->
-              <div class="small-box bg-green">
-                <div class="inner">
-                  <h3>{{ pro_info.pro_publish_list|length }}
-                  {% if pro_info.last_apply and pro_info.last_apply.status >= STATUS_RESOURCE.CHECKED %}
-                  <sup><a data-pjax style="color: #FFFFFF" title="添加互联网发布" href="{{ reverse_url('apply.publish.add') }}?pro_id={{ pro_info.id }}"><i class="fa fa-plus" style="font-size: 16px"></i></a></sup>
-                  {% endif %}
-                  </h3>
-                  <p>互联网发布</p>
+              </div><!-- ./col -->
+              <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-yellow">
+                  <div class="inner">
+                    <!-- <h3>加载数据中...</h3> -->
+                    <p>加载数据中...</p></br>
+                    <p>负载均衡</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fa fa-balance-scale"></i>
+                  </div>
+                  <a data-pjax href="javascript:;" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
-                <div class="icon">
-                  <i class="fa fa-internet-explorer"></i>
+              </div><!-- ./col -->
+              <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-red">
+                  <div class="inner">
+                    <!-- <h3>加载数据中...</h3> -->
+                    <p>加载数据中...</p></br>
+                    <p>定期备份</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fa fa-hdd-o"></i>
+                  </div>
+                  <a data-pjax href="javascript:;" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
-                <a data-pjax href="{{ reverse_url('apply.publish') }}?pro_id={{ pro_info.id }}" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
-              </div>
-            </div><!-- ./col -->
-            <div class="col-lg-3 col-xs-6">
-              <!-- small box -->
-              <div class="small-box bg-yellow">
-                <div class="inner">
-                  <h3>{{ pro_info.pro_balance_list|length }}
-                  {% if pro_info.last_apply and pro_info.last_apply.status >= STATUS_RESOURCE.CHECKED %}
-                  <sup><a data-pjax style="color: #FFFFFF" title="添加负载均衡" href="{{ reverse_url('apply.loadbalance.add') }}?pro_id={{ pro_info.id }}"><i class="fa fa-plus" style="font-size: 16px"></i></a></sup>
-                  {% endif %}
-                  </h3>
-                  <p>负载均衡</p>
-                </div>
-                <div class="icon">
-                  <i class="fa fa-balance-scale"></i>
-                </div>
-                <a data-pjax href="{{ reverse_url('apply.balance') }}?pro_id={{ pro_info.id }}" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
-              </div>
-            </div><!-- ./col -->
-            <div class="col-lg-3 col-xs-6">
-              <!-- small box -->
-              <div class="small-box bg-red">
-                <div class="inner">
-                  <h3>{{ pro_info.pro_backup_list|length }}
-                  {% if pro_info.last_apply and pro_info.last_apply.status >= STATUS_RESOURCE.CHECKED %}
-                  <sup><a data-pjax style="color: #FFFFFF" title="添加定期备份" href="{{ reverse_url('apply.backup.add') }}?pro_id={{ pro_info.id }}"><i class="fa fa-plus" style="font-size: 16px"></i></a></sup>
-                  {% endif %}
-                  </h3>
-                  <p>定期备份</p>
-                </div>
-                <div class="icon">
-                  <i class="fa fa-hdd-o"></i>
-                </div>
-                <a data-pjax href="{{ reverse_url('apply.backup') }}?pro_id={{ pro_info.id }}" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
-              </div>
-            </div><!-- ./col -->
+              </div><!-- ./col -->
+            </div>
           </div><!-- /.row -->
           <!-- Main row -->
           <div class="row">
             <!-- Left col -->
             <section class="col-lg-7 connectedSortable">
-              <!-- Widget: user widget style 1 -->
-              <div class="box box-widget widget-user-2">
-                <!-- Add the bg color to the header using any of the bg-* classes -->
-                <div class="widget-user-header bg-yellow">
-                  <div class="widget-user-image">
-<!--                     <img class="img-circle" src="../dist/img/user7-128x128.jpg" alt="User Avatar">
- -->
-                  <i class="fa fa-cube" style="font-size: 60px;float:left;height:auto; width:65px;"></i>
-<!--                     <div class="small-box">
-                     <div class="icon">
-                      <i class="fa fa-cube"></i>
-                     </div>
-                    </div>
- -->                  </div><!-- /.widget-user-image -->
-                  <h3 class="widget-user-username">{{ pro_info.name }}</h3>
-                  <h5 class="widget-user-desc">创建时间：{{ pro_info.create_time|getGoodTime }}</h5>
-                </div>
-                <div class="box-body">
-                    {{ pro_info.desc }}
-                </div>
-                <div class="box-footer no-padding">
-                  <ul class="nav nav-stacked">
-                  {% for apply in pro_info.pro_resource_applies[::-1] %}
-                    <li><a data-pjax href="{{ reverse_url('apply.resource') }}?id={{ apply.id }}&pro_id={{ apply.pro_id }}">APY{{ "%04d" % apply.id }}-{{ apply.desc }} <span class="pull-right badge bg-{{ STATUS_RESOURCE.get(apply.status).bg_color }}">{{ STATUS_RESOURCE.get(apply.status).value }}, {{ STATUS_RESOURCE.get(apply.status).todo_value }}</span></a></li>
-                  {% endfor %}
-                  </ul>
-                </div>
-              </div><!-- /.widget-user -->
-
+              <div id="tmpl_pro_info_detail">
+                <!-- Widget: user widget style 1 -->
+                <div class="box box-widget widget-user-2">
+                  <!-- Add the bg color to the header using any of the bg-* classes -->
+                  <div class="widget-user-header bg-yellow">
+                    <div class="widget-user-image">
+  <!--                     <img class="img-circle" src="../dist/img/user7-128x128.jpg" alt="User Avatar">
+   -->
+                    <i class="fa fa-cube" style="font-size: 60px;float:left;height:auto; width:65px;"></i>
+  <!--                     <div class="small-box">
+                       <div class="icon">
+                        <i class="fa fa-cube"></i>
+                       </div>
+                      </div>
+   -->                  </div><!-- /.widget-user-image -->
+                    <h3 class="widget-user-username">数据加载中...</h3>
+                    <h5 class="widget-user-desc">创建时间：数据加载中...</h5>
+                  </div>
+                  <div class="box-body">
+                      数据加载中...
+                  </div>
+                  <div class="box-footer no-padding">
+                    <ul class="nav nav-stacked">
+                      <div style="border-right: 1px solid #f4f4f4" class="col-xs-12 text-center">
+                        <div class="knob-label">数据加载中...</div>
+                      </div><!-- ./col -->
+                    </ul>
+                  </div>
+                </div><!-- /.widget-user -->
+              </div>
 
               <!-- TO DO List -->
-              <div id="todo_list">
+              <div id="tmpl_todo_list">
                 <div class="box box-primary">
                     <div class="box-header">
                       <i class="ion ion-clipboard"></i>
@@ -137,7 +128,7 @@
             <!-- right col (We are only adding the ID to make the widgets sortable)-->
             <section class="col-lg-5 connectedSortable">
 
-              <div id="pro_resource_apply_detail">
+              <div id="tmpl_pro_resource_apply_detail">
               <!-- Map box -->
               <div class="box box-solid bg-light-blue-gradient">
                 <div class="box-header">
@@ -177,7 +168,7 @@
               <!-- /.box -->
               </div>
 
-              <div id="pro_events">
+              <div id="tmpl_pro_events">
               <!-- Calendar -->
               <div class="box box-solid bg-green-gradient">
                 <div class="box-header">
@@ -217,9 +208,8 @@
           </div><!-- /.row (main row) -->
 
         </section><!-- /.content -->
-        <form id="ajax_form" action="{{ reverse_url('apply.project.detail.xget') }}?pro_id={{ pro_info.id }}" method="GET">
+        <form id="ajax_form" action="{{ reverse_url('apply.project.detail.xget') }}?{{ handler.request.query }}" method="XGET">
         {{ handler.xsrf_form_html() }}
-        <!-- <input type="hidden" name="pro_id" value="{{ pro_info.id }}"/> -->
         </form>
         <script type="text/javascript">
         $(function(){
@@ -229,12 +219,14 @@
             generate_ajax_post({
                 form: "#ajax_form",
                 pjax_container: false,
-                headers: {"XGET": true},
+                // headers: {"XGET": true},
                 onSuccess: function(response){
                     console.log(response);
-                    $("#todo_list").html(response.data.tmpl_todo_list);
-                    $("#pro_resource_apply_detail").html(response.data.tmpl_pro_resource_apply_detail);
-                    $("#pro_events").html(response.data.tmpl_pro_events);
+                    $("#tmpl_pro_table_detail").html(response.data.tmpl_pro_table_detail);
+                    $("#tmpl_pro_info_detail").html(response.data.tmpl_pro_info_detail);
+                    $("#tmpl_todo_list").html(response.data.tmpl_todo_list);
+                    $("#tmpl_pro_resource_apply_detail").html(response.data.tmpl_pro_resource_apply_detail);
+                    $("#tmpl_pro_events").html(response.data.tmpl_pro_events);
                 },
                 onTimeout: function(){ initXGet(); }
             });

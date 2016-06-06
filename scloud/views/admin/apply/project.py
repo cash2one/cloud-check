@@ -32,11 +32,11 @@ class PublishDetailHandler(ApplyHandler):
     @check_perms('pro_info.view')
     @unblock
     def get(self):
-        svc = ProjectService(self)
-        project_res = svc.get_project()
-        logger.info("[project_res]: %s" % project_res)
+        # svc = ProjectService(self)
+        # project_res = svc.get_project()
+        # logger.info("[project_res]: %s" % project_res)
         data = {
-            "project_res": project_res,
+            # "project_res": project_res,
         }
         return self.render_to_string("admin/apply/project/detail.html", **data)
 
@@ -68,6 +68,8 @@ class PublishDetailHandler(ApplyHandler):
 
         svc = ProjectService(self)
         project_res = svc.get_project()
+        tmpl_pro_info_detail = self.render_to_string("admin/apply/project/_pro_info_detail.html", project_res=project_res)
+        tmpl_pro_table_detail = self.render_to_string("admin/apply/project/_pro_table_detail.html", project_res=project_res)
         if project_res.return_code == 0:
             pro_info = project_res.data
             last_apply = pro_info.last_apply
@@ -92,6 +94,8 @@ class PublishDetailHandler(ApplyHandler):
         tmpl_pro_events = self.render_to_string("admin/apply/project/_pro_events.html", pro_events_res=pro_events_res, project_res=project_res)
 
         data = dict(
+            tmpl_pro_table_detail=tmpl_pro_table_detail,
+            tmpl_pro_info_detail=tmpl_pro_info_detail,
             tmpl_todo_list=tmpl_todo_list,
             tmpl_pro_resource_apply_detail=tmpl_pro_resource_apply_detail,
             tmpl_pro_events=tmpl_pro_events,

@@ -1,0 +1,69 @@
+{% set pro_info = project_res.data %}
+<div class="col-lg-3 col-xs-6">
+  <!-- small box -->
+  <div class="small-box bg-aqua">
+    <div class="inner">
+      <h3>{{ pro_info.pro_users|length }}
+      {% if pro_info.last_apply and pro_info.last_apply.status >= STATUS_RESOURCE.CHECKED %}
+      <sup><a data-pjax style="color: #FFFFFF" title="添加权限用户" href="{{ reverse_url('apply.user.add') }}?pro_id={{ pro_info.id }}"><i class="fa fa-plus" style="font-size: 16px"></i></a></sup>
+      {% endif %}
+      </h3>
+      <p>权限申请</p>
+    </div>
+    <div class="icon">
+      <i class="ion ion-person"></i>
+    </div>
+    <a data-pjax href="{{ reverse_url('apply.user') }}?pro_id={{ pro_info.id }}" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
+  </div>
+</div><!-- ./col -->
+<div class="col-lg-3 col-xs-6">
+  <!-- small box -->
+  <div class="small-box bg-green">
+    <div class="inner">
+      <h3>{{ pro_info.pro_publish_list|length }}
+      {% if pro_info.last_apply and pro_info.last_apply.status >= STATUS_RESOURCE.CHECKED %}
+      <sup><a data-pjax style="color: #FFFFFF" title="添加互联网发布" href="{{ reverse_url('apply.publish.add') }}?pro_id={{ pro_info.id }}"><i class="fa fa-plus" style="font-size: 16px"></i></a></sup>
+      {% endif %}
+      </h3>
+      <p>互联网发布</p>
+    </div>
+    <div class="icon">
+      <i class="fa fa-internet-explorer"></i>
+    </div>
+    <a data-pjax href="{{ reverse_url('apply.publish') }}?pro_id={{ pro_info.id }}" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
+  </div>
+</div><!-- ./col -->
+<div class="col-lg-3 col-xs-6">
+  <!-- small box -->
+  <div class="small-box bg-yellow">
+    <div class="inner">
+      <h3>{{ pro_info.pro_balance_list|length }}
+      {% if pro_info.last_apply and pro_info.last_apply.status >= STATUS_RESOURCE.CHECKED %}
+      <sup><a data-pjax style="color: #FFFFFF" title="添加负载均衡" href="{{ reverse_url('apply.loadbalance.add') }}?pro_id={{ pro_info.id }}"><i class="fa fa-plus" style="font-size: 16px"></i></a></sup>
+      {% endif %}
+      </h3>
+      <p>负载均衡</p>
+    </div>
+    <div class="icon">
+      <i class="fa fa-balance-scale"></i>
+    </div>
+    <a data-pjax href="{{ reverse_url('apply.balance') }}?pro_id={{ pro_info.id }}" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
+  </div>
+</div><!-- ./col -->
+<div class="col-lg-3 col-xs-6">
+  <!-- small box -->
+  <div class="small-box bg-red">
+    <div class="inner">
+      <h3>{{ pro_info.pro_backup_list|length }}
+      {% if pro_info.last_apply and pro_info.last_apply.status >= STATUS_RESOURCE.CHECKED %}
+      <sup><a data-pjax style="color: #FFFFFF" title="添加定期备份" href="{{ reverse_url('apply.backup.add') }}?pro_id={{ pro_info.id }}"><i class="fa fa-plus" style="font-size: 16px"></i></a></sup>
+      {% endif %}
+      </h3>
+      <p>定期备份</p>
+    </div>
+    <div class="icon">
+      <i class="fa fa-hdd-o"></i>
+    </div>
+    <a data-pjax href="{{ reverse_url('apply.backup') }}?pro_id={{ pro_info.id }}" class="small-box-footer">详 情 <i class="fa fa-arrow-circle-right"></i></a>
+  </div>
+</div><!-- ./col -->

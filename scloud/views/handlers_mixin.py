@@ -12,6 +12,8 @@ def check_xget(method):
         logger.info("-" * 60)
         logger.error("self.method: %s" % self.request.method)
         logger.info("self.args: %s" % self.args)
+        logger.info("query string: %s" % dir(self.request.query))
+        logger.info("query string: %s" % (self.request.query,))
         logger.info("self.request.headers: %s" % self.request.headers)
         _xget = self.request.headers.get("XGET")
         logger.info(_xget)

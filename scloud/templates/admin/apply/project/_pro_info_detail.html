@@ -1,0 +1,28 @@
+{% set pro_info = project_res.data %}
+<!-- Widget: user widget style 1 -->
+<div class="box box-widget widget-user-2">
+    <!-- Add the bg color to the header using any of the bg-* classes -->
+    <div class="widget-user-header bg-yellow">
+      <div class="widget-user-image">
+      <i class="fa fa-cube" style="font-size: 60px;float:left;height:auto; width:65px;"></i>
+      </div><!-- /.widget-user-image -->
+      {% if project_res.return_code == 0 %}
+      <h3 class="widget-user-username">{{ pro_info.name }}</h3>
+      <h5 class="widget-user-desc">创建时间：{{ pro_info.create_time|getGoodTime }}</h5>
+      {% else %}
+      <h3 class="widget-user-username">{{ project_res.return_message }}</h3>
+      {% endif %}
+    </div>
+    <div class="box-body">
+        {{ pro_info.desc }}
+    </div>
+    <div class="box-footer no-padding">
+      <ul class="nav nav-stacked">
+      {% if project_res.return_code == 0 %}
+      {% for apply in pro_info.pro_resource_applies[::-1] %}
+        <li><a data-pjax href="{{ reverse_url('apply.resource') }}?id={{ apply.id }}&pro_id={{ apply.pro_id }}">APY{{ "%04d" % apply.id }}-{{ apply.desc }} <span class="pull-right badge bg-{{ STATUS_RESOURCE.get(apply.status).bg_color }}">{{ STATUS_RESOURCE.get(apply.status).value }}, {{ STATUS_RESOURCE.get(apply.status).todo_value }}</span></a></li>
+      {% endfor %}
+      {% endif %}
+      </ul>
+    </div>
+</div><!-- /.widget-user -->
