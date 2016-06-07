@@ -220,7 +220,8 @@ def authenticated(method):
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
         if not self.current_user:
-            if self.request.method in ("GET", "HEAD", "POST",):
+            logger.info("[authenticated]: %s" % self.current_user)
+            if self.request.method in ("GET", "HEAD", "POST", "CHECK", "XGET"):
                 url = self.get_login_url()
                 if "?" not in url:
                     if urlparse.urlsplit(url).scheme:
@@ -252,7 +253,7 @@ class AuthHandlerMeta(HandlerMeta):
     """
      asynchronous handler meta class
     """
-    __ASYNC_HANDLER = ('post', 'get', 'head')  # 必须加逗号
+    __ASYNC_HANDLER = ('post', 'get', 'head', 'check', 'xget')  # 必须加逗号
 
     def __new__(mcs, name, bases, dct):
         HandlerMeta.__new__(mcs, name, bases, dct)
@@ -264,6 +265,7 @@ class AuthHandlerMeta(HandlerMeta):
 
 class AuthHandler(Handler):
     __metaclass__ = AuthHandlerMeta
+    SUPPORTED_METHODS = Handler.SUPPORTED_METHODS + ("CHECK", "XGET")
 
     # def __init__(self, application, request, **kwargs):
     # super(AuthHandler, self).__init__(application, request, **kwargs)

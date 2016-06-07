@@ -1,0 +1,43 @@
+{% if page.paginator.count > 0 %}
+  {% for todo in page.object_list %}
+    {% if todo.__class__.__name__ == 'Act_Pro_History' %}
+        {% set ST = STATUS_RESOURCE.get(todo.status) %}
+      {% set url_name = 'resource' %}
+      {% set pro_id = todo.pro_id %}
+      {% set id = todo.res_apply_id %}
+      {% set table_doc = "APY%04d %s" % (todo.res_apply_id, todo.res_apply.desc) %}
+      {% set action_url = "{}?res_status={}".format(reverse_url("resource_check_list"), todo.status) %}
+    {% else %}
+        {% set ST = STATUS_PRO_TABLES.get(todo.status) %}
+      {% set url_name = todo.__class__.__name__[4:]|lower %}
+      {% set pro_id = todo.pro_id %}
+      {% set id = todo.id %}
+      {% set table_doc = todo.__class__.__doc__ %}
+      {% set checked = True %}
+      {% set action_url = "{}?pro_table={}".format(reverse_url('pro_table_check_list'), todo.__class__.__name__|lower) %}
+    {% endif %}
+      {# {{ STATUS_PRO_TABLES.get(todo.status).todo_value }} #}
+    <!-- Post -->
+    <div class="post">
+      <div class="user-block">
+        <img class="img-circle img-bordered-sm" src="{{ handler.static_url('default/dist/img/user2-160x160.jpg') }}" alt="user image">
+        <span class='username'>
+          <!-- <a href="#">Jonathan Burke Jr.</a> -->
+          {% set user = todo.user %}
+          <a href="javascript:;">用户：{{ user.email or user.mobile or user.username or "匿名用户" }}</a>
+          <!-- <a href='#' class='pull-right btn-box-tool'><i class='fa fa-times'></i></a> -->
+        </span>
+        <span class='description'><span class='label label-{{ ST.level }}'>{{ ST.value }}</span> - {{ todo.update_time|getGoodTime }}</span>
+      </div><!-- /.user-block -->
+      <p>
+        {{ "{} 申请的{}内容{}，请受理".format(user.email, table_doc, ST.value) }}
+      <a data-pjax class="pull-right btn-box-tool" href="{{ action_url }}"><i class="fa fa-hand-o-right" style="color: #DD4B39"></i> 去处理</a>
+      </p>
+    </div><!-- /.post -->
+  {% endfor %}
+{% else %}
+  <div style="border-right: 1px solid #f4f4f4" class="col-xs-12 text-center">
+    <div class="knob-label">没有待处理任务</div>
+  </div><!-- ./col -->
+{% endif %}
+{% include "admin/base/base_paginator.html" %}

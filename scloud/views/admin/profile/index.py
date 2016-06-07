@@ -22,8 +22,11 @@ from scloud.utils.error import SystemError
 
 
 @url("/user/profile", name="user_profile", active="user_profile")
+@url("/user/profile/xget", name="user_profile_xget", active="user_profile")
 class ProfileHandler(AuthHandler):
     u'个人设置'
+    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("XGET",)
+
     def get_index_page(self, **kwargs):
         svc = ActHistoryService(self, kwargs)
         act_histories_res = svc.get_list()
@@ -47,6 +50,39 @@ class ProfileHandler(AuthHandler):
     def get(self):
         data = self.get_index_page()
         return self.render_to_string("admin/profile/profile/index.html", **data)
+
+    # @check_perms('pro_info.view')
+    @unblock
+    def xget(self):
+        task_svc = TaskPublish(self)
+        tasks_res = task_svc.publish_tasks(user_id=self.current_user.id, pro_id=self.args.get("pro_id"), do_publish=False)
+        if tasks_res.return_code == 0:
+            # tasks = tasks_res.data
+            pro_backup_list = tasks_res.data["pro_backup_list"]
+            pro_balance_list = tasks_res.data["pro_balance_list"]
+            pro_event_list = tasks_res.data["pro_event_list"]
+            pro_publish_list = tasks_res.data["pro_publish_list"]
+            pro_user_list = tasks_res.data["pro_user_list"]
+            task_list = tasks_res.data["task_list"]
+            todo_list = pro_backup_list\
+                + pro_balance_list\
+                + pro_event_list\
+                + pro_publish_list\
+                + pro_user_list\
+                + task_list
+            todo_list.sort(key=lambda x: x.update_time)
+            todo_list.reverse()
+        else:
+            todo_list = []
+        page = self.getPage(todo_list, numsPerpage=4, page_name='page')
+        if self.current_user.imchecker:
+            tmpl_todo_list = self.render_to_string("admin/profile/profile/_profile_checker_todo_list.html", page=page)
+        else:
+            tmpl_todo_list = self.render_to_string("admin/profile/profile/_profile_user_todo_list.html", page=page)
+        data = dict(
+            tmpl_todo_list=tmpl_todo_list,
+        )
+        return simplejson.dumps(self.success(data=data))
 
     @unblock
     def post(self):

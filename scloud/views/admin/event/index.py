@@ -66,7 +66,6 @@ class EventIndexHandler(GuideStepGetHandler):
 @url("/event/detail", name="event.detail", active="event.index")
 class EventDetailHandler(GuideStepGetHandler):
     u'事件详情'
-    SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("CHECK", )
 
     @property
     def bread_list(self):

@@ -157,18 +157,20 @@ def check_perms(perms):
                         raise PermissionDefinedError(perm)
                     # logger.info(self.get_current_user())
                     # logger.info(self.current_user)
-                    current_perms = self.current_user.current_perms
-                    # logger.info("--------------[current_perms]--------------")
-                    # logger.info(self.current_user.current_perms)
-                    try:
-                        current_keycode = current_perms[perm]
-                    except KeyError:
-                        raise PermissionError(perm)
-                    if keycode == current_keycode:
-                        return method(self, *args, **kwargs)
-                    else:
-                        raise PermissionError(perm)
-                    logger.info("%s check pass!" % perm)
+                    if self.current_user:
+                        current_perms = self.current_user.current_perms
+
+                        # logger.info("--------------[current_perms]--------------")
+                        # logger.info(self.current_user.current_perms)
+                        try:
+                            current_keycode = current_perms[perm]
+                        except KeyError:
+                            raise PermissionError(perm)
+                        if keycode == current_keycode:
+                            return method(self, *args, **kwargs)
+                        else:
+                            raise PermissionError(perm)
+                        logger.info("%s check pass!" % perm)
                     return method(self, *args, **kwargs)
                 except PermissionDefinedError as e:
                     headers = self.request.headers
