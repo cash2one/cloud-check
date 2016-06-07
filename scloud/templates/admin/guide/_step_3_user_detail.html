@@ -3,6 +3,12 @@
 {% set pro_user = pro_user_res.data %}
 <div class="box-body">
   <div class="form-group">
+    <label for="username" class="col-sm-3 control-label">申请编号</label>
+    <div class="col-sm-9">
+      <p class="form-control-static">USR{{ "%04d" % pro_user.id }}</p>
+    </div>
+  </div>
+  <div class="form-group">
     <label for="pro_id" class="col-sm-3 control-label">所属项目</label>
     <div class="col-sm-9">
       <p class="form-control-static">

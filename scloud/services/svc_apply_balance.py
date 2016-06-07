@@ -82,6 +82,7 @@ class ApplyLoadBalance(BaseService):
 
     @thrownException
     def do_loadbalance(self):
+        id = self.params.get("id")
         pro_id = self.params.get("pro_id")
         res_apply_id = self.params.get("res_apply_id")
         member = self.params.get("members", "")
@@ -103,7 +104,12 @@ class ApplyLoadBalance(BaseService):
         url = self.params.get("url")
         keyword = self.params.get("keyword")
         desc = self.params.get("desc", "")
-        do_balance_info, created = Pro_Balance.get_or_create_obj(self.db, pro_id=pro_id, res_apply_id=res_apply_id)
+        if id:
+            do_balance_info = self.db.query(Pro_Balance).filter(Pro_Balance.id == id).first()
+            if not do_balance_info:
+                return self.failure(ERROR.not_found_err)
+        else:
+            do_balance_info, created = Pro_Balance.get_or_create_obj(self.db, pro_id=pro_id, res_apply_id=res_apply_id)
         do_balance_info.plot = plot
         do_balance_info.health = health
         do_balance_info.url = url
@@ -112,6 +118,7 @@ class ApplyLoadBalance(BaseService):
         do_balance_info.user_id = self.handler.current_user.id
         if len(g_plot_messages) == 0:
             do_balance_info.status = 0
+            do_balance_info.reason = ""
             do_balance_info.members = member
             self.db.add(do_balance_info)
             self.db.flush()

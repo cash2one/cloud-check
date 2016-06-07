@@ -1,9 +1,16 @@
 {% import "admin/base/base_macros.html" as base with context %}
 {% import "admin/base/macros/pro_macros.html" as pro_macro with context %}
 
+  {% if handler.kwargs["name"] == "apply.loadbalance.edit" %}
+    {% set action = reverse_url('apply.loadbalance.edit') %}
+  {% else %}
+    {% set action = reverse_url('apply.loadbalance.add') %}
+  {% endif %}
         <!-- form start -->
-    <form id="form_loadbalance" data-pjax action="{{ reverse_url('apply.loadbalance.add' )}}" class="form-horizontal" method="POST">
+    <form id="form_loadbalance" data-pjax action="{{ action }}" class="form-horizontal" method="POST">
     {{ handler.xsrf_form_html() }}
+
+
     {% set loadbalance_plot = pro_loadbalance_res.data if pro_loadbalance_res else {} %}
     
     {% if handler.request.method == "POST" %}
@@ -32,6 +39,9 @@
       {% endif %}
     {% endif %}
       <div class="box-body">
+        {% if handler.kwargs["name"] == "apply.loadbalance.edit" %}
+          <input type="hidden" name="id" value="{{ loadbalance_plot.id }}"/>
+        {% endif %}
         {% if loadbalance_plot and loadbalance_plot.status|int in [STATUS_PRO_TABLES.REFUSED] %}
         <div class="form-group has-warning">
           <label class="control-label col-sm-offset-2" for="inputWarning">申请被拒绝：<i class="fa fa-bell-o"></i> {{ loadbalance_plot.reason }}</label>

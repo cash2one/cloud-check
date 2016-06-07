@@ -1,6 +1,7 @@
 <tr>
   <th></th>
-  <th class="mailbox-star"></th>
+  <th class="mailbox-subject">编号</th>
+  <!-- <th class="mailbox-star"></th> -->
   <th class="mailbox-subject">所属项目</th>
   <th class="mailbox-attachment">申请权限用户</th>
   <th class="mailbox-attachment">用户类型</th>
@@ -10,7 +11,8 @@
 {% for pro_table in page.object_list %}
 <tr>
   <td><input type="checkbox" id="{{ pro_table.id }}" value="{{ pro_table.project.name }}"></td>
-  <td class="mailbox-star"><a href="javascript:;"><i class="fa fa-star text-yellow"></i></a></td>
+  <td class="mailbox-star"><a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url("pro_user_detail", pro_table.project.id, pro_table.id) }}')">USR{{ "%04d" % pro_table.id }}</a></td>
+  <!-- <td class="mailbox-star"><a href="javascript:;"><i class="fa fa-star text-yellow"></i></a></td> -->
   <td class="mailbox-subject"><b><a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url('pro_users_detail', pro_table.project.id) }}')">
   {{ pro_table.project.name }}
    <i class="fa fa-users"></i></a></b></td>
