@@ -23,6 +23,7 @@
         {% set desc = "" %}
       {% else %}
         {% set pro_id = loadbalance_plot.pro_id if loadbalance_plot else "" %}
+        {% set members = loadbalance_plot.as_dict().members if loadbalance_plot else "" %}
         {% set plot = loadbalance_plot.plot if loadbalance_plot else "" %}
         {% set health = loadbalance_plot.health if loadbalance_plot else "" %}
         {% set url = loadbalance_plot.url if loadbalance_plot else "" %}
@@ -37,17 +38,22 @@
         </div>
         {% endif %}
         {{ pro_macro.get_pro_info_select(pro_res=pro_loadbalance_res, pro_id=pro_id) }}
-        <!-- form input -->
+        
         <input type="hidden" id="members" name="members" value="">
-        <!--div class="form-group">
+        {#{ members }#}
+        {% for member in members %}
+        <!-- form input -->
+        <div class="form-group">
           <label for="disk" class="col-sm-2 control-label">成员A</label>
           <div class="col-sm-6 input-group">
             <div class="input-group-unit">IP</div>
-            <input type="text" class="form-control" name="address" placeholder="10">
+            <input type="text" class="form-control" name="address" placeholder="127.0.0.1" value="{{ member.address }}">
             <div class="input-group-unit">PORT</div>
-            <input type="text" class="form-control" name="port" placeholder="10">
+            <input type="text" class="form-control" name="port" placeholder="8080" value="{{ member.port }}">
           </div>
-        </div-->
+        </div>
+        {% endfor %}
+
         
         <div class="form-group" id="member_add_button">
           <!-- button -->
@@ -127,6 +133,7 @@
   function set_member_tip(){
     max_loop = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance"));
     loadbalance_members = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance_members"));
+    loop = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance_members"));
     // var remainder = max_loop - loadbalance_members - loop;
     var remainder = max_loop - loop;
     $("#members_add_tip").html("还可以添加"+ remainder +"个成员(已添加"+loadbalance_members+"个成员)");
@@ -134,11 +141,13 @@
   function add_member(){
     max_loop = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance"));
     loadbalance_members = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance_members"));
+    loop = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance_members"));
+    // console.log("max_loop:"+max_loop+", loadbalance_members:"+loadbalance_members);
     if (!max_loop){
       $("#members_add_tip").html("请先选择项目");
       return false 
     }
-    console.log("max_loop: "+ max_loop + ", loop: " + loop);
+    // console.log("max_loop: "+ max_loop + ", loop: " + loop);
     // if (loop >= (max_loop - loadbalance_members)){ 
     if (loop >= (max_loop)){ 
       $("#members_add_tip").html("还可以添加0个成员(已添加"+loadbalance_members+"个成员)");
@@ -155,13 +164,15 @@
     var disks = $("#form_loadbalance").find("label[for=disk]");
     var params = [];
     for(var i in disks.toArray()){
-      var loadbalance = {};
-      var div = $(disks[i]).next();
-      var address = $(div).find("input[name=address]").val();
-      var port = $(div).find("input[name=port]").val();
-      loadbalance["address"] = address;
-      loadbalance["port"] = port;
-      params.push(loadbalance);
+      if (parseInt(i)>=0) {
+        var loadbalance = {};
+        var div = $(disks[i]).next();
+        var address = $(div).find("input[name=address]").val();
+        var port = $(div).find("input[name=port]").val();
+        loadbalance["address"] = address;
+        loadbalance["port"] = port;
+        params.push(loadbalance);
+      }
     }
     $("#members").val(JSON.stringify(params))
     generate_ajax_post({

@@ -75,10 +75,12 @@ class ProfileHandler(AuthHandler):
         else:
             todo_list = []
         page = self.getPage(todo_list, numsPerpage=4, page_name='page')
+        svc = ActHistoryService(self)
+        last_apply_res = svc.get_last_apply()
         if self.current_user.imchecker:
             tmpl_todo_list = self.render_to_string("admin/profile/profile/_profile_checker_todo_list.html", page=page)
         else:
-            tmpl_todo_list = self.render_to_string("admin/profile/profile/_profile_user_todo_list.html", page=page)
+            tmpl_todo_list = self.render_to_string("admin/profile/profile/_profile_user_todo_list.html", page=page, last_apply_res=last_apply_res)
         data = dict(
             tmpl_todo_list=tmpl_todo_list,
         )

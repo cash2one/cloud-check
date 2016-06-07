@@ -47,8 +47,20 @@
     </div><!-- /.post -->
   {% endfor %}
 {% else %}
-  <div style="border-right: 1px solid #f4f4f4" class="col-xs-12 text-center">
+  <!-- <div style="border-right: 1px solid #f4f4f4" class="col-xs-12 text-center">
     <div class="knob-label">没有待处理任务</div>
-  </div><!-- ./col -->
+  </div> --><!-- ./col -->
+  <div class="post">
+  {% set last_apply = last_apply_res.data %}
+  {% if last_apply %}
+    {% if last_apply.status >= STATUS_RESOURCE.CONFIRMPAYED %}
+      您提交的申请已受理完毕，<a data-pjax href="{{ reverse_url('guide') }}">继续创建新项目</a>
+    {% else %}
+      您提交的申请已受理，请耐心等待。
+    {% endif %}
+  {% else %}
+    还没有创建项目？<a data-pjax href="{{ reverse_url('guide') }}">去创建</a>
+  {% endif %}
+  </div>
 {% endif %}
 {% include "admin/base/base_paginator.html" %}
