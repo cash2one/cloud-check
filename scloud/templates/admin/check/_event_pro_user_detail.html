@@ -13,8 +13,8 @@
     <table class="table table-hover table-striped" id="pro_table_check_list_table">
       <tbody>
         {% set pro_user = pro_user_res.data %}
-        <tr style="display:none"><td>
         {% if pro_user.status == STATUS_PRO_TABLES.APPLIED %}
+        <tr style="display:none"><td>
           <input type="checkbox" id="{{ pro_user.id }}" value="{{ pro_user.project.name }}" checked="checked">
         </td></tr>
         {% endif %}
