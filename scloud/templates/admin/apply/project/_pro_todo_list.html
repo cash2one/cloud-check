@@ -24,6 +24,7 @@
               <!-- todo text -->
               <span class="text">
               {% if todo.__class__.__name__ == 'Act_Pro_History' %}
+              {% set ST = STATUS_RESOURCE.get(todo.status) %}
               {% set url_name = 'resource' %}
               {% set pro_id = todo.pro_id %}
               {% set id = todo.res_apply_id %}
@@ -32,9 +33,11 @@
               {% set url_name = todo.__class__.__name__[4:]|lower %}
               {% set pro_id = todo.pro_id %}
               {% set id = todo.id %}
-              {{ todo.__class__.__doc__ }}
+              {{ todo.__class__.BRIEF }}{{ "%04d" % todo.id }} {{ todo.__class__.__doc__ }}
+              {% set ST = STATUS_PRO_TABLES.get(todo.status) %}
               {% endif %}
-              {{ STATUS_PRO_TABLES.get(todo.status).todo_value }}</span>
+              {{ ST.value }}, {{ ST.todo_value }}
+              </span>
               <!-- Emphasis label -->
               <small class="label label-{{ todo.update_time|getGoodTimeLevel }}"><i class="fa fa-clock-o"></i> {{ todo.update_time|getGoodTime }}</small>
               <!-- General tools such as edit or delete-->

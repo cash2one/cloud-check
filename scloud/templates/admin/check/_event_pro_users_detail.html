@@ -15,6 +15,8 @@
         <th></th>
         <th class="mailbox-name">申请用户</th>
         <th class="mailbox-attachment">申请用户邮箱</th>
+        <th class="mailbox-attachment">所属环境</th>
+        <th class="mailbox-attachment">所属项目</th>
         <th class="mailbox-attachment">是否使用VPN</th>
         <th class="mailbox-attachment">申请状态</th>
         <th class="mailbox-date">申请时间</th>
@@ -33,6 +35,18 @@
           </td>
           <td class="mailbox-subject">{{ pro_user.email }}</td>
           <td class="mailbox-subject">
+            <a data-pjax href="javascript:;">
+            <span class="badge bg-{{ env_colors[pro_user.project.env_id%(env_colors|length)]}} }}">{{ pro_user.project.env.name }}</span>
+            </a>
+          </td>
+          <td class="mailbox-subject">
+            <b>
+            <a data-pjax href="javascript:;">
+              <i class="fa fa-cube"></i> {{ pro_user.project.name }}
+            </a>
+            </b>
+          </td>
+          <td class="mailbox-subject">
             {% if pro_user.use_vpn|int == 1 %}
             <span class="label label-info">是</span>
             {% else %}
@@ -47,7 +61,7 @@
             {{ pro_table.reason }}
           </td>
           {% endif %}
-          <td class="mailbox-subject">{{ pro_user.create_time|getGoodTime }}</td>
+          <td class="mailbox-subject">{{ pro_user.update_time|getGoodTime }}</td>
         </tr>
         {% endfor %}
       </tbody>

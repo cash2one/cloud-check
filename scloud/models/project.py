@@ -50,6 +50,8 @@ def default_due_date(context):
 class Pro_Info(BaseModel, BaseModelMixin, Pro_Info_Mixin):
     u"""项目信息"""
     __tablename__ = "pro_info"
+    BRIEF = "PRO"
+
     name = Column(Unicode, default=u'')
     owner = Column(Unicode, default=u'')
     owner_email = Column(Unicode, default=u'')
@@ -69,6 +71,8 @@ class Pro_Info(BaseModel, BaseModelMixin, Pro_Info_Mixin):
 class Pro_Resource_Apply(BaseModel, BaseModelMixin, Pro_Resource_Apply_Mixin):
     u"""项目资源申请"""
     __tablename__ = "pro_resource_apply"
+    BRIEF = "APY"
+
     pro_id = Column(Integer, ForeignKey("pro_info.id"), default=0, info=u"资源申请编号")
     computer = Column(Integer, default=0, info={"name": u"云主机数量", "unit": u"个", "tip": u"云主机的最大数量"})
     cpu = Column(Integer, default=0, info={"name": u"CPU数量", "unit": u"个", "tip": u"VCPU的最大个数"})
@@ -107,6 +111,8 @@ class Pro_Resource_Apply(BaseModel, BaseModelMixin, Pro_Resource_Apply_Mixin):
 class Pro_User(BaseModel, BaseModelMixin):
     u"""权限用户"""
     __tablename__ = "pro_user"
+    BRIEF = "USR"
+
     pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
     status = Column(Integer, default=0, info=u"申请状态")
     reason = Column(Unicode, default=u'', info={"name": u"权限用户拒绝原因"})
@@ -124,10 +130,16 @@ class Pro_User(BaseModel, BaseModelMixin):
     checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_users")
     project = relationship("Pro_Info", backref=backref("pro_users", order_by="Pro_User.update_time"))
 
+    @property
+    def brief(self):
+        return "USR"
+
 
 class Pro_Publish(BaseModel, BaseModelMixin):
     u"""互联网发布"""
     __tablename__ = "pro_publish"
+    BRIEF = "PUB"
+
     pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
     status = Column(Integer, default=0, info=u"申请状态")
     reason = Column(Unicode, default=u'', info={"name": u"互联网发布拒绝原因"})
@@ -148,6 +160,7 @@ class Pro_Publish(BaseModel, BaseModelMixin):
 class Pro_Balance(BaseModel, BaseModelMixin):
     u"""负载均衡"""
     __tablename__ = "pro_balance"
+    BRIEF = "BAL"
     json_columns = [
         "members"
     ]
@@ -183,6 +196,7 @@ class Pro_Balance_Members(BaseModel, BaseModelMixin):
 class Pro_Backup(BaseModel, BaseModelMixin):
     u"""定期备份"""
     __tablename__ = "pro_backup"
+    BRIEF = "BAK"
     json_columns = [
         "plot"
     ]
@@ -204,6 +218,7 @@ class Pro_Backup(BaseModel, BaseModelMixin):
 class Pro_Event(BaseModel, BaseModelMixin):
     u"""事件工单"""
     __tablename__ = "pro_event"
+    BRIEF = "EVT"
 
     pro_id = Column("pro_id", Integer, ForeignKey("pro_info.id"), default=0, info=u"所属项目")
     res_apply_id = Column("res_apply_id", Integer, ForeignKey("pro_resource_apply.id"), default=0, info=u"所属资源申请")

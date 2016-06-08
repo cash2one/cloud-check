@@ -5,6 +5,8 @@
   <th class="mailbox-attachment">外网地址：端口</th>
   <th class="mailbox-star">内网地址：端口</th>
   <th class="mailbox-star">最后更新</th>
+  <th class="mailbox-star">所属环境</th>
+  <th class="mailbox-star">所属项目</th>
   <!-- <th class="mailbox-subject">所属项目</th> -->
   <!-- <th class="mailbox-name">申请用户</th> -->
   <th class="mailbox-date">状态</th>
@@ -24,6 +26,18 @@
   <td class="mailbox-star"><a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url("pro_publish_detail", pro_table.id) }}')">PUB{{ "%04d" % pro_table.id }}</a></td>
   <td class="mailbox-subject">{{ pro_table.domain }}:{{ pro_table.domain_port }}</td>
   <td class="mailbox-subject">{{ pro_table.network_address }}:{{ pro_table.network_port }}</td>
+  <td class="mailbox-subject">
+    <a data-pjax href="javascript:;">
+    <span class="badge bg-{{ env_colors[pro_table.project.env_id%(env_colors|length)]}} }}">{{ pro_table.project.env.name }}</span>
+    </a>
+  </td>
+  <td class="mailbox-subject">
+    <b>
+      <a data-pjax href="javascript:;">
+        <i class="fa fa-cube"></i> {{ pro_table.project.name }}
+      </a>
+    </b>
+  </td>
   <td class="mailbox-date">{{ pro_table.update_time }}</td>
   <td class="mailbox-date">
     {% set ST = STATUS_PRO_TABLES.get(pro_table.status) %}

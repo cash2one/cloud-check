@@ -1,8 +1,9 @@
 <tr>
   <th></th>
-  <th class="mailbox-star"></th>
+  <!-- <th class="mailbox-star"></th> -->
   <th class="mailbox-star">编号</th>
-  <th class="mailbox-subject">申请项目</th>
+  <th class="mailbox-subject">所属环境</th>
+  <th class="mailbox-subject">所属项目</th>
   <th class="mailbox-attachment">申请备份数量</th>
   <th class="mailbox-name">申请用户</th>
   <th class="mailbox-date">申请时间</th>
@@ -11,8 +12,20 @@
 <tr>
   <td><input type="checkbox" id="{{ pro_table.id }}" value="{{ pro_table.project.name }}"></td>
   <td class="mailbox-star"><a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url("pro_backup_detail", pro_table.id) }}')">BAK{{ "%04d" % pro_table.id }}</a></td>
-  <td class="mailbox-star"><a href="javascript:;"><i class="fa fa-star text-yellow"></i></a></td>
-  <td class="mailbox-subject"><b><a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url('pro_backup_detail', pro_table.id) }}')">{{ pro_table.project.name }} <i class="fa fa-eye"></i></a></b></td>
+  <!-- <td class="mailbox-star"><a href="javascript:;"><i class="fa fa-star text-yellow"></i></a></td> -->
+  <td class="mailbox-subject">
+    <a data-pjax href="javascript:;">
+    <span class="badge bg-{{ env_colors[pro_table.project.env_id%(env_colors|length)]}} }}">{{ pro_table.project.env.name }}</span>
+    </a>
+  </td>
+  <td class="mailbox-subject">
+    <b>
+      <a data-pjax href="javascript:;">
+        <i class="fa fa-cube"></i> {{ pro_table.project.name }}
+      </a>
+    </b>
+  </td>
+  <!-- <td class="mailbox-subject"><b><a data-pjax href="javascript:;" onclick="load_page('#pro_table_content', '{{ reverse_url('pro_backup_detail', pro_table.id) }}')">{{ pro_table.project.name }} <i class="fa fa-eye"></i></a></b></td> -->
   <td class="mailbox-subject">{{ pro_table.as_dict().plot|length }}</td>
   <td class="mailbox-name">{{ pro_table.project.user.email or pro_table.project.user.mobile }}</a></td>
   <td class="mailbox-date">{{ pro_table.update_time }}</td>

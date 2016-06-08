@@ -117,6 +117,8 @@ class BaseModelMixin(object):
 
     json_columns = []
 
+    BRIEF = ""
+
     def dump_column(self, column_name):
         value = getattr(self, column_name)
         column_value = value.encode("utf-8") if type(value) == str else value
@@ -195,3 +197,7 @@ class BaseModelMixin(object):
             logger.info(instance)
             created = True
         return instance, created
+
+    # @property
+    # def brief(self):
+    #     return ""

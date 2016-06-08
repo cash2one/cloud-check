@@ -614,16 +614,16 @@ class ProResourceApplyService(BaseService):
         resource.start_date = start_date
         # self.db.add(resource)
         self.db.flush()
-        mail_html = self.render_to_string("admin/mail/pro_resource_apply_to_admin.html", resource_apply=resource, STATUS_RESOURCE=STATUS_RESOURCE)
-        mail_title = mail_title_format % {
-            "user_name": resource.user.email or resource.user.mobile,
-            "pro_name": resource.project.name,
-            "res_desc": resource.desc,
-            "action": u"申请的",
-            "todo_action": u"资源，已设置启用时间",
-        }
-        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
-        task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=self.handler.current_user.id)
+        # mail_html = self.render_to_string("admin/mail/pro_resource_apply_to_admin.html", resource_apply=resource, STATUS_RESOURCE=STATUS_RESOURCE)
+        # mail_title = mail_title_format % {
+        #     "user_name": resource.user.email or resource.user.mobile,
+        #     "pro_name": resource.project.name,
+        #     "res_desc": resource.desc,
+        #     "action": u"申请的",
+        #     "todo_action": u"资源，已设置启用时间",
+        # }
+        # sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
+        # task_post_pro_res_apply_history.delay(status=resource.status, content=mail_title, pro_id=resource.project.id, res_apply_id=resource.id, user_id=self.handler.current_user.id)
         return self.success(data=resource)
 
 

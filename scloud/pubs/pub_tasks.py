@@ -52,9 +52,9 @@ class TaskPublish(BaseService):
         svc = ProUserService(self, {"user_id": user_id, "pro_id": pro_id})
         pro_user_list_res = svc.get_list()
         if imchecker:
-            pro_user_list = [i for i in pro_user_list_res.data[::-1] if i.status == STATUS_PRO_TABLES.APPLIED]
+            pro_user_list = [i for i in pro_user_list_res.data if i.status == STATUS_PRO_TABLES.APPLIED]
         else:
-            pro_user_list = [i for i in pro_user_list_res.data[::-1] if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
+            pro_user_list = [i for i in pro_user_list_res.data if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
         data.update({
             "pro_user_list": pro_user_list,
             "imchecker": imchecker,
@@ -67,9 +67,9 @@ class TaskPublish(BaseService):
         pro_publish_list_res = svc.get_list()
         # logger.info(pro_publish_list_res.data)
         if imchecker:
-            pro_publish_list = [i for i in pro_publish_list_res.data[::-1] if i.status == STATUS_PRO_TABLES.APPLIED]
+            pro_publish_list = [i for i in pro_publish_list_res.data if i.status == STATUS_PRO_TABLES.APPLIED]
         else:
-            pro_publish_list = [i for i in pro_publish_list_res.data[::-1] if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
+            pro_publish_list = [i for i in pro_publish_list_res.data if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
         data.update({
             "pro_publish_list": pro_publish_list,
             "imchecker": imchecker,
@@ -81,9 +81,9 @@ class TaskPublish(BaseService):
         pro_balance_list_res = svc.get_list()
         # logger.info(pro_balance_list_res.data)
         if imchecker:
-            pro_balance_list = [i for i in pro_balance_list_res.data[::-1] if i.status == STATUS_PRO_TABLES.APPLIED]
+            pro_balance_list = [i for i in pro_balance_list_res.data if i.status == STATUS_PRO_TABLES.APPLIED]
         else:
-            pro_balance_list = [i for i in pro_balance_list_res.data[::-1] if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
+            pro_balance_list = [i for i in pro_balance_list_res.data if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
         data.update({
             "pro_balance_list": pro_balance_list,
             "imchecker": imchecker,
@@ -95,9 +95,9 @@ class TaskPublish(BaseService):
         pro_backup_list_res = svc.get_list()
         # logger.info(pro_backup_list_res.data)
         if imchecker:
-            pro_backup_list = [i for i in pro_backup_list_res.data[::-1] if i.status == STATUS_PRO_TABLES.APPLIED]
+            pro_backup_list = [i for i in pro_backup_list_res.data if i.status == STATUS_PRO_TABLES.APPLIED]
         else:
-            pro_backup_list = [i for i in pro_backup_list_res.data[::-1] if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
+            pro_backup_list = [i for i in pro_backup_list_res.data if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
         data.update({
             "pro_backup_list": pro_backup_list,
             "imchecker": imchecker,
@@ -109,9 +109,9 @@ class TaskPublish(BaseService):
         pro_event_list_res = svc.get_list()
         # logger.info(pro_event_list_res.data)
         if imchecker:
-            pro_event_list = [i for i in pro_event_list_res.data[::-1] if i.status == STATUS_PRO_TABLES.APPLIED]
+            pro_event_list = [i for i in pro_event_list_res.data if i.status == STATUS_PRO_TABLES.APPLIED]
         else:
-            pro_event_list = [i for i in pro_event_list_res.data[::-1] if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
+            pro_event_list = [i for i in pro_event_list_res.data if i.status in [STATUS_PRO_TABLES.REFUSED, STATUS_PRO_TABLES.CHECKED]]
         data.update({
             "pro_event_list": pro_event_list,
             "imchecker": imchecker,

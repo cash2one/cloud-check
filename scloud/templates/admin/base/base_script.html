@@ -176,7 +176,12 @@ function generate_ajax_post(options){
   var button = options.button || "";
   var form = options.form || "form";
   var url = options.url || $(form).attr("action");
-  var method = options.method || $(form).attr("method") || "POST";
+  if (options.form){
+    var method = options.method || $(form).attr("method") || "POST";
+  }else{
+    var method = options.method || "POST";
+  }
+  console.log("method-->"+method);
   var pjax_container = $chk(options.pjax_container) != false ? true:false;
   console.log("pjax_container: "+pjax_container)
   var headers = options.headers || {};

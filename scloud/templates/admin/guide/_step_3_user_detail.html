@@ -12,9 +12,17 @@
     <label for="pro_id" class="col-sm-3 control-label">所属项目</label>
     <div class="col-sm-9">
       <p class="form-control-static">
-      {{ pro_user.project.name }}
+      <i class="fa fa-cube"></i> {{ pro_user.project.name }}
       {% set ST = STATUS_RESOURCE.get(pro_user.project.last_apply.status) %}
       <span class='badge bg-{{ ST.bg_color }}'>{{ ST.value }}</span>
+      </p>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="pro_id" class="col-sm-3 control-label">所属环境</label>
+    <div class="col-sm-9">
+      <p class="form-control-static">
+      <span class='badge bg-{{ env_colors[pro_user.project.env_id%(env_colors|length)] }}'>{{ pro_user.project.env.name }}</span>
       </p>
     </div>
   </div>

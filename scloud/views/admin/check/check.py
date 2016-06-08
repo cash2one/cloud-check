@@ -32,12 +32,13 @@ class ResourceCheckListHandler(AuthHandler):
     def get(self, **kwargs):
         # res_status = self.args.get()
         svc = ProResourceCheckService(self, kwargs)
-        resource_apply = svc.get_resource()
+        resource_apply_res = svc.get_resource()
         resource_res = svc.get_resources_by_status()
         if isinstance(resource_res, Exception):
             raise resource_res
         data = {
-            "resource_apply": resource_apply.data,
+            "resource_apply_res": resource_apply_res,
+            "resource_apply": resource_apply_res.data,
             "resource_res": resource_res,
             "getattr": getattr,
             "STATUS_RESOURCE": STATUS_RESOURCE,

@@ -28,6 +28,8 @@
         {% set url = "" %}
         {% set keyword = "" %}
         {% set desc = "" %}
+      {% elif handler.kwargs["name"] == "apply.loadbalance.add" %}
+        {% set pro_id = handler.args.get("pro_id", "") %}
       {% else %}
         {% set pro_id = loadbalance_plot.pro_id if loadbalance_plot else "" %}
         {% set members = loadbalance_plot.as_dict().members if loadbalance_plot else "" %}

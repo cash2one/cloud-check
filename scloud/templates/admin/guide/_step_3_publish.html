@@ -29,6 +29,8 @@
           {% else %}
             {% if handler.kwargs["name"] == "guide_step_3" %}
               {% set pro_id = pro_id %}
+            {% elif handler.kwargs["name"] == "apply.publish.add" %}
+              {% set pro_id = handler.args.get("pro_id", "") %}
             {% else %}
               {% set pro_id = pro_publish.pro_id if pro_publish else "" %}
               {% set publish_id = pro_publish.id if pro_publish else "" %}

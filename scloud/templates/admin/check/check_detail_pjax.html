@@ -68,59 +68,14 @@
                     {% include "admin/check/_check_detail_buttons.html" %}  
                   </div>
                   <div class="box-body no-padding">
-                    <p>{{ resource_apply.project.desc }}</p>
+                  {% set pro_resource_apply_res = resource_apply_res %}
+                  {% include "admin/guide/_step_1_res_detail.html" %}
                     <table class="table table-striped" id="resource_check_list_table">
                       <tr style="display: none">
                         <td>
                           <input type="checkbox" id="{{ resource_apply.id }}" value="{{ resource_apply.project.name }}" checked="checked"/>
                         </td>
                       </tr>
-                      <tr>
-                        <th>申请项目</th>
-                        <th>申请数量</th>
-                      </tr>
-                      <tr>
-                        <td>所属项目:</td>
-                        <td>{{ resource_apply.project.name }}
-                        {% set ST = STATUS_RESOURCE.get(resource_apply.status) %}
-                          <span class="label label-{{ ST.level }}">{{ ST.value }}, {{ ST.todo_value }}</span></td>
-                      </tr>
-                      <tr>
-                        <td>所属环境:</td>
-                        <td>{{ resource_apply.project.env.name }}</td>
-                      </tr>
-                      {% for column in resource_apply.__table__.columns %}
-                      {% if column.info.name %}
-                        {% if column.name == "status" %}
-                        <tr>
-                          <td>{{ column.info.name or column.name }}:</td>
-                          {% set ST = STATUS_RESOURCE.get(resource_apply.status) %}
-                          <td><span class="label label-{{ ST.level }}">{{ ST.value }}, {{ ST.todo_value }}</span></td>
-                        </tr>
-                        {% elif column.name == "internet_ip" %}
-                        <tr>
-                          <td>{{ column.info.name or column.name }}:</td>
-                          <td><span class="label label-info">{{ resource_apply.internet_ip_obj.name }}</span></td>
-                        </tr>
-                        {% elif column.name == "internet_ip_ssl" %}
-                        <tr>
-                          <td>{{ column.info.name or column.name }}:</td>
-                          <td>
-                          {% if resource_apply.internet_ip_ssl > 0 %}
-                          <span class="label label-info">需要SSL卸载</span>
-                          {% else %}
-                          <span class="label label-default">不需要SSL卸载</span>
-                          {% endif %}
-                          </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                          <td>{{ column.info.name or column.name }}:</td>
-                          <td>{{ getattr(resource_apply, column.name)|default('<span class="label label-danger">未设置</span>', True) }} {{ column.info.unit }}</td>
-                        </tr>
-                        {% endif %}
-                      {% endif %}
-                      {% endfor %}
                     </table>
                     <!--ul class="nav nav-pills nav-stacked">
                       <li><a href="#"><i class="fa fa-circle-o text-red"></i> Important</a></li>

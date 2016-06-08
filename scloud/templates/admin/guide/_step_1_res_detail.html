@@ -33,7 +33,9 @@
         <td>{{ column.info.name or column.name }}:</td>
         {% set ST = STATUS_RESOURCE.get(pro_resource_apply.status) %}
         <td><span class="label label-{{ ST.level }}">{{ ST.value }}, {{ ST.todo_value }}</span>
+        {% if not handler.current_user.imchecker %}
         <a data-pjax href="{{ reverse_url('apply.resource.edit') }}?res_id={{ pro_resource_apply.id }}&pro_id={{ pro_resource_apply.pro_id }}"><i class="fa fa-edit"></i> 编辑</a>
+        {% endif %}
         </td>
       </tr>
       {% elif column.name == "bandwidth" %}
@@ -59,7 +61,7 @@
         </td>
       </tr>
       {% elif column.name == "reason" %}
-        {% if pro_resource_apply.reason %}
+        {% if pro_resource_apply.reason and pro_resource_apply.status == STATUS_RESOURCE.REFUSED %}
           <tr>
             <td>{{ column.info.name or column.name }}:</td>
             <td>
