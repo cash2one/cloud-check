@@ -141,5 +141,5 @@ for attr in dir(ERROR):
         setattr(ERR, str(err.errcode), err.errvalue)
 
 if __name__ == '__main__':
-    interact(local=locals())
+    # interact(local=locals())
     print ERROR.username_err

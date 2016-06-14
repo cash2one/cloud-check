@@ -155,6 +155,7 @@ class Handler(BaseHandler, HandlersMixin):
             ["%s=%s" % (k, v) for k, v in self.args.items() \
             if k not in ["page", "_pjax", "_xsrf"]]
         )
+        logger.info(s)
         kwargs.update({
             "CONF": CONF,
             "getattr": getattr,

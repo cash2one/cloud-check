@@ -15,7 +15,7 @@ from scloud.async_services.svc_act import task_act_post
 from scloud.config import thrownException
 from scloud.async_services.listener_env_info import delete_env_info
 from scloud.async_services.listener_env_internet_ip import get_or_create_env_resource_fee
-from scloud.async_services.listener_pro_resource_apply import update_resource_due_date
+from scloud.async_services.listener_pro_resource_apply import update_resource_due_date, update_pro_info_last_apply, recover_pro_info_last_apply
 
 
 def act_post(mapper, connect, target):
@@ -67,6 +67,7 @@ def init_listener():
 
 
 def init_after_insert():
+    event.listen(Pro_Resource_Apply, 'after_insert', update_pro_info_last_apply)
     event.listen(Env_Internet_Ip_Types, 'after_insert', get_or_create_env_resource_fee)
 
 
@@ -75,6 +76,7 @@ def init_after_update():
     event.listen(Pro_Info, 'after_update', act_update)
     event.listen(Pro_Resource_Apply, 'after_update', act_update)
     event.listen(Pro_Resource_Apply, 'after_update', update_resource_due_date)
+    event.listen(Pro_Resource_Apply, 'after_update', recover_pro_info_last_apply)
     event.listen(Env_Info, 'after_update', act_update)
     event.listen(Env_Resource_Fee, 'after_update', act_update)
     event.listen(Env_Resource_Value, 'after_update', act_update)

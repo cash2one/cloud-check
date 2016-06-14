@@ -17,10 +17,21 @@
         </ul>
       </li>
       {% endif %}
+      {% if "pro_info.view" in current_perms or "pro_info.check" in current_perms %}
+      <li class="treeview">
+        <a href="#">
+          <i class="fa fa-cubes"></i> <span>项目列表</span> <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+          <li><a data-pjax name="project.list" href="{{ reverse_url('project.list') }}"><i class="fa fa-search"></i> 项目查询</a></li>
+        </ul>
+      </li>
+      {% endif %}
+      
       {#
       <li class="">
         <a href="#">
-          <i class="fa fa-dashboard"></i> <span>项目概览</span> <i class="fa fa-angle-left pull-right"></i>
+          <i class="fa fa-dashboard"></i> <span>项目概述</span> <i class="fa fa-angle-left pull-right"></i>
         </a>
         <ul class="treeview-menu">
           <li><a data-pjax name="index1" href="/index1"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>

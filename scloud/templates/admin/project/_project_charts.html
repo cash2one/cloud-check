@@ -1,0 +1,329 @@
+
+    <!-- 引入 ECharts 文件 -->
+    <script src="{{ handler.static_url('js/echarts/echarts.min.js') }}"></script>
+    <!-- 为 ECharts 准备一个具备大小（宽高）的Dom -->
+    <!-- <div id="main" style="width: 600px;height:400px;"></div> -->
+    <form id="form_projects_by_env">
+        {% for data in projects_by_env %}
+        <input type="hidden" name="{{ data[1] }}" value="{{ data[2] }}"{% if data[0]|string == handler.args.get("env", "")|string %} selected="selected"{% endif %}/>
+        {% endfor %}
+    </form>
+    <form id="form_projects_by_status">
+        {% for data in projects_by_status %}
+        {% set status = data[0] %}
+        {% set count = data[1] %}
+        <input type="hidden" name="{{ STATUS_RESOURCE.get(status).value }}" value="{{ count }}"{% if status|string == handler.args.get("status", "")|string %} selected="selected"{% endif %}/>
+        {% endfor %}
+    </form>
+
+    <div class="col-md-6">
+      <div class="box box-solid">
+        <div class="box-header">
+          <h3 class="box-title text-danger">Sparkline Pie</h3>
+          <div class="box-tools pull-right">
+            <!-- <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button> -->
+          </div>
+        </div><!-- /.box-header -->
+        <div class="box-body text-center">
+          <div class="sparkline" data-type="pie" data-offset="90" data-width="100px" data-height="100px">
+            <div style="" class="col-xs-12 text-center">
+              <div class="knob-label" id="env_chart" style="width: 500px;height:200px;">数据加载中...</div>
+            </div><!-- ./col -->
+          </div>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div><!-- /.col -->
+
+    <div class="col-md-6">
+      <div class="box box-solid">
+        <div class="box-header">
+          <h3 class="box-title text-blue">Sparkline line</h3>
+          <div class="box-tools pull-right">
+            <!-- <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button> -->
+          </div>
+        </div><!-- /.box-header -->
+        <div class="box-body text-center">
+          <div class="sparkline" data-type="line" data-spot-Radius="3" data-highlight-Spot-Color="#f39c12" data-highlight-Line-Color="#222" data-min-Spot-Color="#f56954" data-max-Spot-Color="#00a65a" data-spot-Color="#39CCCC" data-offset="90" data-width="100%" data-height="100px" data-line-Width="2" data-line-Color="#39CCCC" data-fill-Color="rgba(57, 204, 204, 0.08)">
+            <div style="" class="col-xs-12 text-center">
+              <div class="knob-label" id="status_chart" style="width: 500px;height:200px;">数据加载中...</div>
+            </div><!-- ./col -->
+          </div>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div><!-- /.col -->
+
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var envChart = echarts.init(document.getElementById('env_chart'));
+        var statusChart = echarts.init(document.getElementById('status_chart'));
+        // myChart.showLoading();
+        var env_data_values = $("#form_projects_by_env").serializeArray();
+        var data_legend = [];
+        var env_data_legend = [];
+        var env_data_legend_selected = {};
+        for (var i in env_data_values){
+            //console.log(arr[i].name)
+            env_data_legend.push(env_data_values[i].name);
+            data_legend.push(env_data_values[i].name);
+
+            var selected = $("#form_projects_by_env").find("input[name='"+env_data_values[i].name+"']").attr("selected");
+            //console.log(arr[i].name+"--"+selected);
+            if (selected){
+                env_data_values[i]["selected"] = "selected";
+            }
+
+            if (parseInt($("#form_projects_by_env").find("input[name='"+env_data_values[i].name+"']").val()) > 0){
+                env_data_legend_selected[env_data_values[i].name] = true;
+            }else{
+                env_data_legend_selected[env_data_values[i].name] = false;
+            }
+        }
+        var status_data_values = $("#form_projects_by_status").serializeArray();
+        var status_data_legend = [];
+        for (var i in status_data_values){
+            //console.log(arr[i].name)
+            status_data_legend.push(status_data_values[i].name);
+            data_legend.push(status_data_values[i].name);
+            var selected = $("#form_projects_by_status").find("input[name='"+status_data_values[i].name+"']").attr("selected");
+            //console.log(arr[i].name+"--"+selected);
+            if (selected){
+                status_data_values[i]["selected"] = "selected";
+            }
+        }
+
+        // 指定图表的配置项和数据
+        var option_env = {
+            // title: {
+            //     text: 'ECharts 入门示例'
+            // },
+            // 
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c}"
+            },
+            legend: {
+                orient: 'vertical',
+                x: 'left',
+                data: data_legend,
+                selected: env_data_legend_selected
+            },
+            // xAxis: {
+            //     data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+            // },
+            // yAxis: {},
+            
+            series: [
+                {
+                    name: '环境分布',
+                    type: 'pie',
+                    radius: '70%',
+                    // radius: [0, '30%'],
+                    // label: {
+                    //     normal: {
+                    //         position: 'inner'
+                    //     }
+                    // },
+                    // labelLine: {
+                    //     normal: {
+                    //         show: false
+                    //     }
+                    // },
+                    center: ['50%', '50%'],
+                    selectedOffset: 10,
+                    data: env_data_values
+                },
+                // {
+                //     name:'状态分布',
+                //     type:'pie',
+                //     radius: ['60%', '85%'],
+                //     label: {
+                //         normal: {
+                //             position: 'inner'
+                //         }
+                //     },
+                //     labelLine: {
+                //         normal: {
+                //             show: false
+                //         }
+                //     },
+
+                //     data: status_data_values
+                // }
+            ]
+        };
+
+        var option_status = {
+            // title: {
+            //     text: 'ECharts 入门示例'
+            // },
+            // 
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c}"
+            },
+            legend: {
+                orient: 'vertical',
+                x: 'left',
+                data: status_data_legend
+                // selected: status_data_legend_selected
+            },
+            xAxis: {
+                data: status_data_legend
+            },
+            yAxis: {
+                minInterval: 1
+            },
+            
+            series: [
+                {
+                    name:'状态分布',
+                    type:'bar',
+                    // radius: ['60%', '85%'],
+                    label: {
+                        normal: {
+                            position: 'inner'
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            show: false
+                        }
+                    },
+
+                    data: status_data_values
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        envChart.setOption(option_env);
+        envChart.on('click', function (params) {
+            // 控制台打印数据的名称
+            console.log(params.name);
+        });
+        statusChart.setOption(option_status);
+        statusChart.on('click', function (params) {
+            // 控制台打印数据的名称
+            console.log(params.name);
+        });
+    </script>
+
+
+    <!-- <div class="box box-solid">
+        <div class="box-header">
+          <h3 class="box-title text-danger">环境分布图</h3>
+          <div class="box-tools pull-right">
+            <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
+          </div>
+        </div><!-- /.box-header ->
+        <div class="box-body text-center">
+          <div id="main" style="width: 300px; height: 500px" class="text-center">
+          </div>
+        </div><!-- /.box-body ->
+      </div><!-- /.box -> -->
+    <script type="text/javascript">
+        // // 基于准备好的dom，初始化echarts实例
+        // var myChart = echarts.init(document.getElementById('main'));
+        // // myChart.showLoading();
+        // var env_data_values = $("#form_projects_by_env").serializeArray();
+        // var data_legend = [];
+        // var env_data_legend = [];
+        // var env_data_legend_selected = {};
+        // for (var i in env_data_values){
+        //     //console.log(arr[i].name)
+        //     env_data_legend.push(env_data_values[i].name);
+        //     data_legend.push(env_data_values[i].name);
+
+        //     var selected = $("#form_projects_by_env").find("input[name='"+env_data_values[i].name+"']").attr("selected");
+        //     //console.log(arr[i].name+"--"+selected);
+        //     if (selected){
+        //         env_data_values[i]["selected"] = "selected";
+        //     }
+
+        //     if (parseInt($("#form_projects_by_env").find("input[name='"+env_data_values[i].name+"']").val()) > 0){
+        //         env_data_legend_selected[env_data_values[i].name] = true;
+        //     }else{
+        //         env_data_legend_selected[env_data_values[i].name] = false;
+        //     }
+        // }
+        // var status_data_values = $("#form_projects_by_status").serializeArray();
+        // var status_data_legend = [];
+        // for (var i in status_data_values){
+        //     //console.log(arr[i].name)
+        //     status_data_legend.push(status_data_values[i].name);
+        //     data_legend.push(status_data_values[i].name);
+        //     var selected = $("#form_projects_by_status").find("input[name='"+status_data_values[i].name+"']").attr("selected");
+        //     //console.log(arr[i].name+"--"+selected);
+        //     if (selected){
+        //         status_data_values[i]["selected"] = "selected";
+        //     }
+        // }
+
+        // // 指定图表的配置项和数据
+        // var option = {
+        //     // title: {
+        //     //     text: 'ECharts 入门示例'
+        //     // },
+        //     // 
+        //     tooltip : {
+        //         trigger: 'item',
+        //         formatter: "{a} <br/>{b} : {c}"
+        //     },
+        //     legend: {
+        //         // orient: 'vertical',
+        //         x: 'left',
+        //         data: data_legend,
+        //         selected: env_data_legend_selected
+        //     },
+        //     // xAxis: {
+        //     //     data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+        //     // },
+        //     // yAxis: {},
+            
+        //     series: [
+        //         {
+        //             name: '环境分布',
+        //             type: 'pie',
+        //             radius: '40%',
+        //             // radius: [0, '30%'],
+        //             label: {
+        //                 normal: {
+        //                     position: 'inner'
+        //                 }
+        //             },
+        //             labelLine: {
+        //                 normal: {
+        //                     show: false
+        //                 }
+        //             },
+        //             center: ['50%', '50%'],
+        //             selectedOffset: 10,
+        //             data: env_data_values
+        //         },
+        //         {
+        //             name:'状态分布',
+        //             type:'pie',
+        //             radius: ['60%', '85%'],
+        //             label: {
+        //                 normal: {
+        //                     position: 'inner'
+        //                 }
+        //             },
+        //             labelLine: {
+        //                 normal: {
+        //                     show: false
+        //                 }
+        //             },
+
+        //             data: status_data_values
+        //         }
+        //     ]
+        // };
+
+        // // 使用刚指定的配置项和数据显示图表。
+        // myChart.setOption(option);
+        // myChart.on('click', function (params) {
+        //     // 控制台打印数据的名称
+        //     console.log(params.name);
+        // });
+    </script>

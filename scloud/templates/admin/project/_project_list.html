@@ -1,0 +1,33 @@
+{% import "admin/base/macros/paginator.html" as paginator %}
+<table class="table table-hover table-striped table-bordered">
+    <tr>
+      <th>编号</th>
+      <th>项目名称</th>
+      <th>所属环境</th>
+      <th>状态</th>
+      <th>是否可用</th>
+      <th>创建时间</th>
+    </tr>
+    {% for project in page.object_list %}
+    {% set resource = project.last_apply %}
+    <tr>
+      <td><a data-pjax href="{{ reverse_url('apply.project.detail') }}?pro_id={{ project.id }}&_from=project.list">PRO{{ "%04d" % project.id }}</a></td>
+      <td>{{ project.name }}</td>
+      <td>
+        {% set env = project.env %}
+        {% if env %}
+        <span class="badge bg-{{ env_colors[env.id%(env_colors|length)] }}">{{ env.name }}</span>
+        {% else %}
+        <span class="badge bg-red }}">未设置</span>
+        {% endif %}
+      </td>
+      <td><span class="label label-{{ STATUS_RESOURCE.get(resource.status).level }}">{{ STATUS_RESOURCE.get(resource.status).value }}, {{ STATUS_RESOURCE.get(resource.status).todo_value }}</span>
+      </td>
+      <td><span class="label label-{{ STATUS_YESNO.get(resource.is_enable).level }}">{{ STATUS_YESNO.get(resource.is_enable).value }}</span>
+      </td>
+      <td>{{ project.create_time|getGoodTime }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{#{ paginator.get_paginator(page) }#}
+{% include "admin/base/base_paginator.html" %}

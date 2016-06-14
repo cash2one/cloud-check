@@ -1,6 +1,8 @@
 {% macro get_paginator(page, page_name='page', class_name='pagination') %}
 
+{% if s %}
 {% set s = s|filter_s(".*([&]?"+page_name+"=[\d]+[&]?).*") %}
+{% endif %}
   <ul class="{{ class_name }}">
     <li class="disabled"><a data-pjax href="javascript:;">共&#160;{{ page.paginator.count }}&#160;{{ page.paginator.unit_name }}记录</a></li>
   </ul>

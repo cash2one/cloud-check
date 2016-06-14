@@ -24,9 +24,15 @@ class PublishDetailHandler(ApplyHandler):
 
     @property
     def bread_list(self):
-        _bread_list = [
-            {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"}
-        ]
+        _from = self.args.get("_from")
+        if _from:
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get(_from), "icon": "cubes"}
+            ]
+        else:
+            _bread_list = [
+                {"urlspec": url.handlers_dict.get('guide'), "icon": "cubes"}
+            ]
         return _bread_list
 
     @check_perms('pro_info.view')

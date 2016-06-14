@@ -148,7 +148,7 @@ def check_perms(perms):
             sys_permissions = get_sys_group_ops()
             # logger.info("--------------[sys_permissions]--------------")
             # logger.info(sys_permissions)
-            need_perms = perms.split(",")
+            need_perms = [p.strip() for p in perms.split(",")]
             for perm in need_perms:
                 try:
                     try:

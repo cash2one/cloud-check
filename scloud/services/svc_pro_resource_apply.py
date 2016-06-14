@@ -7,7 +7,7 @@ from scloud.services.base import BaseService
 from scloud.models.base import MYSQL_POOL
 from scloud.models.project import Pro_Info, Pro_Resource_Apply
 from scloud.models.environment import Env_Info
-from scloud.config import logger, thrownException
+from scloud.config import logger, logThrown, thrownException
 from sqlalchemy import and_, or_
 from sqlalchemy import func
 from scloud.utils.error_code import ERROR
@@ -321,19 +321,23 @@ class ProResourceApplyService(BaseService):
             # 应用负载均衡数量费用
             # 互联网服务费用（单线、双线等）
             # 是否需要开通SSL费用
-        unit_fee = computer_fee * computer \
-            + cpu_fee * cpu \
-            + mem_fee * mem \
-            + disk_fee * disk \
-            + disk_amount_fee * disk_amount \
-            + disk_backup_amount_fee * disk_backup_amount \
-            + disk_backup_fee * disk_backup \
-            + out_ip * out_ip_fee \
-            + snapshot * snapshot_fee \
-            + loadbalance * loadbalance_fee \
-            + float(_internet_ip_fee) \
-            + internet_ip_ssl * internet_ip_ssl_fee
+        try:
 
+            unit_fee = computer_fee * computer \
+                + cpu_fee * cpu \
+                + mem_fee * mem \
+                + disk_fee * disk \
+                + disk_amount_fee * disk_amount \
+                + disk_backup_amount_fee * disk_backup_amount \
+                + disk_backup_fee * disk_backup \
+                + out_ip * out_ip_fee \
+                + snapshot * snapshot_fee \
+                + loadbalance * loadbalance_fee \
+                + float(_internet_ip_fee) \
+                + internet_ip_ssl * internet_ip_ssl_fee
+        except:
+            unit_fee = 0
+            logThrown()
         if self.params.get('period') == 0:
             return self.failure(ERROR.res_period_empty_err)
         total_fee = unit_fee * period
@@ -537,8 +541,8 @@ class ProResourceApplyService(BaseService):
     def do_delete(self):
         res_id = self.params.get("res_id", 0)
         logger.info("\t res_id : %s" % res_id)
-        # user_id = self.params.get("user_id", 0)
-        user_id = self.handler.current_user.id
+        user_id = self.params.get("user_id", 0)
+        # user_id = self.handler.current_user.id
         resource = self.db.query(Pro_Resource_Apply).filter(Pro_Resource_Apply.id == res_id).first()
         if not resource:
             return self.failure(ERROR.not_found_err)
@@ -551,7 +555,7 @@ class ProResourceApplyService(BaseService):
             "pro_name": resource.project.name,
             "pro_id": resource.project.id,
             "user_name": resource.user.email or resource.user.mobile,
-            "resource_status": "已删除",
+            "resource_status": u"已删除",
         }
         resource.is_enable = False
         # resource.status = STATUS_RESOURCE.DELETED
@@ -560,8 +564,8 @@ class ProResourceApplyService(BaseService):
         # resource.delete()
         self.db.flush()
         logger.info("\t resource is deleted")
-        sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_content, mail_content)
-        task_post_pro_res_apply_history.delay(status=resource.status, content=mail_content, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
+        # sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_content, mail_content)
+        # task_post_pro_res_apply_history.delay(status=resource.status, content=mail_content, pro_id=resource.project.id, res_apply_id=resource.id, user_id=user_id)
         # from scloud.views.admin.ws.pubsub import r
         # r.publish("test_realtime", "notice_checker")
         return self.success(data=resource)

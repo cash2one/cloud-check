@@ -93,6 +93,8 @@ class Filters(object):
         return str(value).isdigit()
 
     def filter_filter_s(self, value, reg=''):
+        # from code import interact
+        # interact(local=locals())
         find_list = re.compile(reg).findall(value)
         logger.info(find_list)
         for key in find_list:

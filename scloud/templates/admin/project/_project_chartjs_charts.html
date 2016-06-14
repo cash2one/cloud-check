@@ -1,0 +1,163 @@
+
+<!-- ChartJS 1.0.1 -->
+<script src="{{ handler.static_url('default/plugins/chartjs/Chart.min.js') }}"></script>
+    <form id="form_projects_by_env">
+        {% for data in projects_by_env %}
+        <input type="hidden" name="{{ data[1] }}" value="{{ data[2] }}"{% if data[0]|string == handler.args.get("env", "")|string %} selected="selected"{% endif %}/>
+        {% endfor %}
+    </form>
+    <form id="form_projects_by_status">
+        {% for data in projects_by_status %}
+        {% set status = data[0] %}
+        {% set count = data[1] %}
+        <input type="hidden" name="{{ STATUS_RESOURCE.get(status).value }}" value="{{ count }}"{% if status|string == handler.args.get("status", "")|string %} selected="selected"{% endif %}/>
+        {% endfor %}
+    </form>
+
+    <div class="col-md-6">
+      <div class="box box-solid">
+        <div class="box-header">
+          <h3 class="box-title text-danger">Sparkline Pie</h3>
+          <div class="box-tools pull-right">
+            <!-- <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button> -->
+          </div>
+        </div><!-- /.box-header -->
+        <div class="box-body text-center">
+          <canvas id="pieChart" style="height:100px"></canvas>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div><!-- /.col -->
+
+    <div class="col-md-6">
+      <div class="box box-solid">
+        <div class="box-header">
+          <h3 class="box-title text-blue">Sparkline line</h3>
+          <div class="box-tools pull-right">
+            <!-- <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button> -->
+          </div>
+        </div><!-- /.box-header -->
+        <div class="box-body text-center">
+          <div class="chart">
+            <canvas id="barChart" style="height:100px"></canvas>
+          </div>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div><!-- /.col -->
+
+<script type="text/javascript">
+$(function(){
+        var colors = ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de']
+        var env_data_values = $("#form_projects_by_env").serializeArray();
+        var envPieData = [];
+        for (var i=0; i<= env_data_values.length; i++){
+            // console.log(env_data_values[i]);
+            if(env_data_values[i]){
+                _env_pie_data = {};
+                _env_pie_data["color"] = colors[i];
+                _env_pie_data["highlight"] = colors[i];
+                _env_pie_data["label"] = env_data_values[i].name;
+                _env_pie_data["value"] = env_data_values[i].value;
+                envPieData.push(_env_pie_data);
+            }
+        }
+        // console.log(envPieData);
+    //-------------
+        //- PIE CHART -
+        //-------------
+        // Get context with jQuery - using jQuery's .get() method.
+        var pieChartCanvas = $("#pieChart").get(0).getContext("2d");
+        var pieChart = new Chart(pieChartCanvas);
+        
+        var pieOptions = {
+          //Boolean - Whether we should show a stroke on each segment
+          // segmentShowStroke: true,
+          // //String - The colour of each segment stroke
+          // segmentStrokeColor: "#fff",
+          // //Number - The width of each segment stroke
+          // segmentStrokeWidth: 2,
+          // //Number - The percentage of the chart that we cut out of the middle
+          // percentageInnerCutout: 50, // This is 0 for Pie charts
+          // //Number - Amount of animation steps
+          // animationSteps: 100,
+          // //String - Animation easing effect
+          // animationEasing: "easeOutBounce",
+          // //Boolean - Whether we animate the rotation of the Doughnut
+          // animateRotate: true,
+          // //Boolean - Whether we animate scaling the Doughnut from the centre
+          // animateScale: false,
+          // //Boolean - whether to make the chart responsive to window resizing
+          // responsive: true,
+          // // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+          // maintainAspectRatio: true,
+          //String - A legend template
+          {#legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"#}
+        };
+        //Create pie or douhnut chart
+        // You can switch between pie and douhnut using the method below.
+        pieChart.Doughnut(envPieData, pieOptions);
+
+        //-------------
+        //- BAR CHART -
+        //-------------
+        var status_data_values = $("#form_projects_by_status").serializeArray();
+        var statusLabels = [];
+        var statusDatas = [];
+        for (var i=0; i<= status_data_values.length; i++){
+            if(status_data_values[i]){
+                statusLabels.push(status_data_values[i].name);
+                statusDatas.push(status_data_values[i].value);
+            }
+        }
+        var areaChartData = {
+          labels: statusLabels,
+          datasets: [
+            {
+              label: "Electronics",
+              fillColor: "rgba(210, 214, 222, 1)",
+              strokeColor: "rgba(210, 214, 222, 1)",
+              pointColor: "rgba(210, 214, 222, 1)",
+              pointStrokeColor: "#c1c7d1",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(220,220,220,1)",
+              data: statusDatas
+            }
+          ]
+        };
+        var barChartCanvas = $("#barChart").get(0).getContext("2d");
+        var barChart = new Chart(barChartCanvas);
+        var barChartData = areaChartData;
+        // barChartData.datasets[1].fillColor = "#00a65a";
+        // barChartData.datasets[1].strokeColor = "#00a65a";
+        // barChartData.datasets[1].pointColor = "#00a65a";
+        var barChartOptions = {
+          //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+          scaleBeginAtZero: true,
+          //Boolean - Whether grid lines are shown across the chart
+          scaleShowGridLines: true,
+          //String - Colour of the grid lines
+          scaleGridLineColor: "rgba(0,0,0,.05)",
+          //Number - Width of the grid lines
+          scaleGridLineWidth: 1,
+          //Boolean - Whether to show horizontal lines (except X axis)
+          scaleShowHorizontalLines: true,
+          //Boolean - Whether to show vertical lines (except Y axis)
+          scaleShowVerticalLines: true,
+          //Boolean - If there is a stroke on each bar
+          barShowStroke: true,
+          //Number - Pixel width of the bar stroke
+          barStrokeWidth: 2,
+          //Number - Spacing between each of the X value sets
+          barValueSpacing: 5,
+          //Number - Spacing between data sets within X values
+          barDatasetSpacing: 1,
+          //String - A legend template
+          {#legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].fillColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>",#}
+          //Boolean - whether to make the chart responsive
+          responsive: true,
+          maintainAspectRatio: true
+        };
+
+        barChartOptions.datasetFill = false;
+        barChart.Bar(barChartData, barChartOptions);
+})
+</script>

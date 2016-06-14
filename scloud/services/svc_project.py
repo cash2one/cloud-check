@@ -5,13 +5,14 @@ from tornado import gen
 from scloud.services.base import BaseService
 from scloud.models.base import MYSQL_POOL
 from scloud.models.pt_user import PT_User
-from scloud.models.project import Pro_Info
-from scloud.models.environment import Env_Resource_Value
+from scloud.models.project import Pro_Info, Pro_Resource_Apply
+from scloud.models.environment import Env_Resource_Value, Env_Info
 from scloud.config import logger, thrownException
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, func
 from scloud.utils.error_code import ERROR
 from scloud.utils.error import NotFoundError
 from scloud.const import pro_resource_apply_status_types
+from tornado.util import ObjectDict
 
 
 class ProjectService(BaseService):
@@ -63,7 +64,7 @@ class ProjectService(BaseService):
         ).filter(
             Pro_Info.user_id == user_id
         ).all()
-        project_list = [i.as_dict() for i in projects]
+        # project_list = [i.as_dict() for i in projects]
         # logger.info("project_list %s" % project_list)
         # self.db.commit()
         # self.db.remove()
@@ -92,3 +93,48 @@ class ProjectService(BaseService):
         self.db.add(project)
         self.db.flush()
         return self.success(data=project)
+
+    @thrownException
+    def filter_list(self):
+        conditions = and_()
+        env = self.params.get("env")
+        status = self.params.get("status")
+        if env:
+            conditions.append(Pro_Info.env_id == env)
+        if status:
+            conditions.append(Pro_Resource_Apply.status == status)
+        projects = self.db.query(
+            Pro_Info
+        ).outerjoin(
+            Pro_Resource_Apply, Pro_Info.last_apply_id == Pro_Resource_Apply.id
+        ).filter(
+            conditions
+        ).order_by(
+            Pro_Info.id.desc()
+        ).all()
+        # project_list = [i.as_dict() for i in projects]
+        # logger.info("project_list %s" % project_list)
+        # self.db.commit()
+        # self.db.remove()
+        projects_by_env = self.db.query(
+            Env_Info.id, Env_Info.name, func.count(Pro_Info.id)
+        ).outerjoin(
+            Pro_Info, Env_Info.id == Pro_Info.env_id
+        ).group_by(
+            Env_Info.id
+        ).all()
+        logger.info(projects_by_env)
+
+        projects_by_status = self.db.query(
+            Pro_Resource_Apply.status, func.count(Pro_Info.id)
+        ).outerjoin(
+            Pro_Info, Pro_Resource_Apply.id == Pro_Info.last_apply_id
+        ).group_by(
+            Pro_Resource_Apply.status
+        ).all()
+        logger.info(projects_by_status)
+        data = ObjectDict()
+        data.projects = projects
+        data.projects_by_env = projects_by_env
+        data.projects_by_status = projects_by_status
+        return self.success(data=data)

@@ -275,6 +275,7 @@ CREATE TABLE `pro_info` (
     `owner_mobile` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '项目负责人',
     `owner_email` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '项目负责人',
     `env_id` INT(11) NOT NULL DEFAULT '0' COMMENT '环境ID',
+    `last_apply_id` INT(11) NOT NULL DEFAULT '0' COMMENT '最后提交资源申请ID',
     `desc` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '项目描述',
     `user_id` INT(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
     `checker_id` INT(11) NOT NULL DEFAULT '0' COMMENT '审核者ID',

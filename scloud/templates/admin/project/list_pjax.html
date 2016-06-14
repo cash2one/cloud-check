@@ -1,0 +1,149 @@
+{% include "admin/base/base_bread.html" %}
+
+<style>
+    .filter-title{
+
+    }
+    .filter-items{
+        left: 100px;
+    }
+</style>
+<section class="content">
+
+  <div class="row" id="tmpl_project_charts">
+    <div class="col-md-6">
+      <div class="box box-solid">
+        <div class="box-header">
+          <h3 class="box-title text-danger">Sparkline Pie</h3>
+          <div class="box-tools pull-right">
+            <!-- <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button> -->
+          </div>
+        </div><!-- /.box-header -->
+        <div class="box-body text-center">
+          <div class="sparkline" data-type="pie" data-offset="90" data-width="100px" data-height="100px">
+            <div style="border-right: 1px solid #f4f4f4" class="col-xs-12 text-center">
+              <div class="knob-label">数据加载中...</div>
+            </div><!-- ./col -->
+          </div>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div><!-- /.col -->
+
+    <div class="col-md-6">
+      <div class="box box-solid">
+        <div class="box-header">
+          <h3 class="box-title text-blue">Sparkline line</h3>
+          <div class="box-tools pull-right">
+            <!-- <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button> -->
+          </div>
+        </div><!-- /.box-header -->
+        <div class="box-body text-center">
+          <div class="sparkline" data-type="line" data-spot-Radius="3" data-highlight-Spot-Color="#f39c12" data-highlight-Line-Color="#222" data-min-Spot-Color="#f56954" data-max-Spot-Color="#00a65a" data-spot-Color="#39CCCC" data-offset="90" data-width="100%" data-height="100px" data-line-Width="2" data-line-Color="#39CCCC" data-fill-Color="rgba(57, 204, 204, 0.08)">
+            <div style="border-right: 1px solid #f4f4f4" class="col-xs-12 text-center">
+              <div class="knob-label">数据加载中...</div>
+            </div><!-- ./col -->
+          </div>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div><!-- /.col -->
+  </div><!-- /.row -->
+
+<div class="row">
+<!-- Left col -->
+<section class="col-lg-12 connectedSortable">
+    <form data-pjax action="{{ reverse_url('project.list') }}" method="GET">
+        {#{ handler.xsrf_form_html() }#}
+      <div class="box box-success box-solid">
+
+            <div class="box-header with-border">
+              <h3 class="box-title">环境：</h3>
+              <input type="hidden" id="env" name="env" value="{{ handler.args.get('env', '') }}">
+              <div class="box-tools filter-items">
+                {% if handler.args.get('env', '')|string == "" %}
+                <span class="label label-warning"> 全部</span>
+                {% else %}
+                <button class="btn btn-box-tool" onclick="$('form #env').val($(this).val());$('form #status').val('')" value=""> 全部</button>
+                {% endif %}
+
+                {% set env_list = env_list_res.data %}
+                {% for env in env_list %}
+                {% if env.id|string == handler.args.get('env', '')|string %}
+                <span class="label label-warning"> {{ env.name }}</span>
+                {% else %}
+                <button class="btn btn-box-tool" onclick="$('form #env').val($(this).val());$('form #status').val('')" value="{{ env.id }}"> {{ env.name }}</button>
+                {% endif %}
+                {% endfor %}
+              </div><!-- /.box-tools -->
+            </div><!-- /.box-header -->
+
+            <div class="box-header with-border">
+              <h3 class="box-title">申请状态：</h3>
+              <input type="hidden" id="status" name="status" value="{{ handler.args.get('status', '') }}">
+              <div class="box-tools filter-items">
+                {% if handler.args.get('status', '')|string == "" %}
+                <span class="label label-warning"> 全部</span>
+                {% else %}
+                <button class="btn btn-box-tool" onclick="$('form #status').val($(this).val())" value=""> 全部</button>
+                {% endif %}
+
+                {% for ST in STATUS_RESOURCE|status_list %}
+                {% if STATUS_RESOURCE.get(ST.value_en|upper)|string == handler.args.get('status', '')|string %}
+                <span class="label label-warning"> {{ ST.value }}</span>
+                {% else %}
+                <button class="btn btn-box-tool" onclick="$('form #status').val($(this).val())" value="{{ STATUS_RESOURCE.get(ST.value_en|upper) }}"> {{ ST.value }}</button>
+                {% endif %}
+                {% endfor %}
+              </div><!-- /.box-tools -->
+            </div><!-- /.box-header -->
+
+        <div class="box-body" style="padding: 0px" id="tmpl_project_list">
+          <table class="table table-hover table-striped table-bordered">
+            <tr>
+              <th>编号</th>
+              <th>项目名称</th>
+              <th>所属环境</th>
+              <th>状态</th>
+              <th>是否可用</th>
+              <th>创建时间</th>
+            </tr>
+            <tr>
+              <td colspan="7" class="text-center">数据加载中...</td>
+            </tr>
+        </table>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </form>
+</section>
+<!--section class="col-lg-4 connectedSortable">
+  <!-div id="tmpl_project_charts">
+    <div style="border-right: 1px solid #f4f4f4" class="col-xs-12 text-center">
+        <div class="knob-label">数据加载中...</div>
+    </div>
+  </div->
+</section-->
+</div>
+</section>
+<script type="text/javascript">
+$(function(){
+    // var params = {
+    //     _xsrf: $cookie("_xsrf")
+    // }
+    // var params = $("form").serializeJSON();
+    var params = {};
+    params["_xsrf"] = $cookie("_xsrf");
+
+    $.ajax({
+        url: "{{ reverse_url('project.list.xget') }}?{{ handler.request.query }}",
+        type: 'XGET',
+        dataType: 'JSON',
+        data: params,
+        success: function(response){
+            console.log(response);
+            if(check_response(response)){
+                $("#tmpl_project_list").html(response.data.tmpl_project_list);
+                $("#tmpl_project_charts").html(response.data.tmpl_project_charts);
+            }
+        }
+    })
+})
+</script>

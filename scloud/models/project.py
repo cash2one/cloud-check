@@ -57,6 +57,7 @@ class Pro_Info(BaseModel, BaseModelMixin, Pro_Info_Mixin):
     owner_email = Column(Unicode, default=u'')
     owner_mobile = Column(Unicode, default=u'')
     env_id = Column(Integer, ForeignKey("env_info.id"), default=0)
+    last_apply_id = Column(Integer, default=0)
     desc = Column(Unicode, default=u'')
     user_id = Column("user_id", Integer, ForeignKey("pt_user.id"), default=0)
     checker_id = Column(Integer, ForeignKey("pt_user.id"), default=0)
@@ -66,6 +67,7 @@ class Pro_Info(BaseModel, BaseModelMixin, Pro_Info_Mixin):
     user = relationship("PT_User", foreign_keys=[user_id], backref="pro_infos")
     checker = relationship("PT_User", foreign_keys=[checker_id], backref="checked_pro_infos")
     env = relationship("Env_Info", backref="pro_infos")
+    # last_res_apply = relationship("Pro_Resource_Apply", backref="pro_info")
 
 
 class Pro_Resource_Apply(BaseModel, BaseModelMixin, Pro_Resource_Apply_Mixin):
