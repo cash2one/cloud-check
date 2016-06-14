@@ -224,7 +224,7 @@
           {% endif %}
           </div>
     </fieldset>
-    <fieldset>
+    <fieldset id="tmpl_step_1_res_fee_form">
       <legend>产生费用 </legend>
           {% if handler.kwargs["name"] == "apply.resource.generate_fee" %}
             {% set res = fee_res %}
@@ -275,7 +275,7 @@
         url: '{{ reverse_url("apply.resource.generate_fee") }}',
         pjax_container: false,
         onSuccess: function(response){
-          $("#resource_form").find("div.box-body").html(response.data.tmpl);
+          $("#tmpl_step_1_res_fee_form").html(response.data.tmpl);
           $("section.content").prepend(response.data.messages_tmpl);
         }
     })
@@ -285,21 +285,24 @@
     console.log("load_env");
     var pro_id = $("#pro_id").val()
     var res_apply_id = $("#res_apply_id").val()
-    $.ajax({
-        url: '{{ reverse_url("apply.resource.load_env") }}?pro_id='+pro_id+'&res_id='+res_apply_id,
-        type: "GET",
-        dataType: "JSON",
-        success: function(response){
-            if(check_response(response)){
-                $.each(response.data.env_resource_value, function(key, value){
-                    $("#"+key).val(value);
-                })
-                $("#internet_ip").parent().html(response.data.env_internet_ip_types_tmpl)
-                $("#bandwidth").parent().html(response.data.env_internet_bandwidth_tmpl)
-                $("#internet_ip").select2();
-            }
-        }
-    })
+    console.log("res_apply_id-->"+res_apply_id);
+    if (res_apply_id <= 0){
+      $.ajax({
+          url: '{{ reverse_url("apply.resource.load_env") }}?pro_id='+pro_id+'&res_id='+res_apply_id,
+          type: "GET",
+          dataType: "JSON",
+          success: function(response){
+              if(check_response(response)){
+                  $.each(response.data.env_resource_value, function(key, value){
+                      $("#"+key).val(value);
+                  })
+                  $("#internet_ip").parent().html(response.data.env_internet_ip_types_tmpl)
+                  $("#bandwidth").parent().html(response.data.env_internet_bandwidth_tmpl)
+                  $("#internet_ip").select2();
+              }
+          }
+      })
+    }
   }
   function add_res(){
     $('#panel_res').css('display', 'block').removeClass('box-info').addClass('box-warning').find('h3.box-title').text('资源申请');
