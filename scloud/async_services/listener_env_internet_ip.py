@@ -14,9 +14,11 @@ def get_or_create_env_resource_fee(mapper, connect, target):
     logger.error("\t !!![get_or_create_env_resource_fee]")
     logger.error("\t target id:%s" % target.id)
     if target.env_id != 0:
-        env_internet_ip_types = connect.execute(Env_Internet_Ip_Types.__table__.select().where(
-            Env_Internet_Ip_Types.__table__.c.env_id == target.env_id
-        ))
+        env_internet_ip_types = connect.execute(
+            Env_Internet_Ip_Types.__table__.select().where(
+                Env_Internet_Ip_Types.__table__.c.env_id == target.env_id
+            )
+        )
         _env_internet_ip_types = []
         for internet_ip_type in env_internet_ip_types:
             _json_obj = dict(id=internet_ip_type.id, name=internet_ip_type.name)
@@ -44,7 +46,7 @@ def get_or_create_env_resource_fee(mapper, connect, target):
                 insert_result = connect.execute(
                     Env_Resource_Fee.__table__.insert().values(
                         env_id = target.env_id,
-                        internet_ip = simplejson.dumps(env_internet_ip_types)
+                        internet_ip = simplejson.dumps(_env_internet_ip_types)
                     )
                 )
                 logger.info(insert_result.rowcount)
