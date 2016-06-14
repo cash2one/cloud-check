@@ -25,13 +25,15 @@
     {% set internet_ip_ssl_value = env_resource_value.internet_ip_ssl %}
   {% endif %}
 {% endif %}
+<div>
 <select class="form-control" id="internet_ip" name="internet_ip" onchange="load_bandwidth(this)">
 <option value="0"> -- 选择 -- </option>
 {% for _internet_ip in internet_ip_options %}
 <option value="{{ _internet_ip.value }}"{% if _internet_ip.value|string == internet_ip_value|string %} selected{% endif %}>{{ _internet_ip.desc }}</option>
 {% endfor %}
 </select>
-<div class="input-group-unit">
+{#
+<!--div class="input-group-unit">
     <div class="radio pull-left">
       <label>
         <input type="radio" name="internet_ip_ssl" id="internet_ip_ssl" value="1"{% if internet_ip_ssl_value|string == "1" %} checked="checked"{% endif %}>
@@ -44,8 +46,8 @@
         不需要SSL卸载
       </label>
     </div>
-</div>
-
+</div-->
+#}
 <script type="text/javascript">
 function load_bandwidth(_this){
   var url = "{{ reverse_url('apply.resource.load_bandwidth') }}?internet_ip_type_id="+$(_this).val()
@@ -53,3 +55,4 @@ function load_bandwidth(_this){
   load_page($("#bandwidth").parent(), url);
 }
 </script>
+</div>
