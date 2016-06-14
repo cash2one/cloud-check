@@ -19,7 +19,7 @@ class Env_Internet_Ip_Types(BaseModel, BaseModelMixin):
     u"""互联网IP分类"""
     __tablename__ = "env_internet_ip_types"
     env_id = Column(Integer, ForeignKey('env_info.id', ondelete="CASCADE"), default=0, nullable=False, index=True)
-    name = Column(Unicode(256), unique=True, default=u'', nullable=False, info={"name": u"互联网IP分类名称", "placeholder": u"如单线、双线等"})
+    name = Column(Unicode(256), default=u'', nullable=False, info={"name": u"互联网IP分类名称", "placeholder": u"如单线、双线等"})
     desc = Column(Unicode(512), default=u'', nullable=False, info={"name": "互联网IP分类描述"})
     fee = Column(Float(11,2), default=0.00, nullable=False, info={"name": u"相关费用（元）"})
     env = relationship("Env_Info", backref=backref("env_internet_ip_types",
