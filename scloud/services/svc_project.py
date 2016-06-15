@@ -97,6 +97,10 @@ class ProjectService(BaseService):
     @thrownException
     def filter_list(self):
         conditions = and_()
+        group_conditions = and_()
+        if "pro_info.view" in self.handler.current_user.get_current_perms():
+            conditions.append(Pro_Info.user_id == self.handler.current_user.id)
+            group_conditions.append(Pro_Info.user_id == self.handler.current_user.id)
         env = self.params.get("env")
         status = self.params.get("status")
         if env:
@@ -120,6 +124,8 @@ class ProjectService(BaseService):
             Env_Info.id, Env_Info.name, func.count(Pro_Info.id)
         ).outerjoin(
             Pro_Info, Env_Info.id == Pro_Info.env_id
+        ).filter(
+            group_conditions
         ).group_by(
             Env_Info.id
         ).all()
@@ -129,6 +135,8 @@ class ProjectService(BaseService):
             Pro_Resource_Apply.status, func.count(Pro_Info.id)
         ).outerjoin(
             Pro_Info, Pro_Resource_Apply.id == Pro_Info.last_apply_id
+        ).filter(
+            group_conditions
         ).group_by(
             Pro_Resource_Apply.status
         ).all()

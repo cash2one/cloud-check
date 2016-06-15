@@ -19,7 +19,7 @@ class PublishDetailHandler(AuthHandler):
     u'项目列表'
     SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("XGET",)
 
-    @check_perms('pro_info.view, pro_info.check')
+    @check_perms('pro_info.view, pro_info.check', _and=False)
     @unblock
     def get(self):
         svc = EnvService(self)

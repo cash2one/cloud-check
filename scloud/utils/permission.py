@@ -141,7 +141,7 @@ class PermissionError(Exception):
         return self.error
 
 
-def check_perms(perms):
+def check_perms(perms, _and=True):
     def func(method):
         def wrapper(self, *args, **kwargs):
             logger.info("perms: %s" % perms)
@@ -149,54 +149,73 @@ def check_perms(perms):
             # logger.info("--------------[sys_permissions]--------------")
             # logger.info(sys_permissions)
             need_perms = [p.strip() for p in perms.split(",")]
-            for perm in need_perms:
-                try:
+            logger.info("_and = %s" % _and)
+            logger.info("need_perms = %s" % need_perms)
+            # for perm in need_perms:
+            try:
+                for perm in need_perms:
                     try:
                         keycode = sys_permissions[perm]
                     except KeyError:
                         raise PermissionDefinedError(perm)
-                    # logger.info(self.get_current_user())
-                    # logger.info(self.current_user)
-                    if self.current_user:
-                        current_perms = self.current_user.current_perms
+                # logger.info(self.get_current_user())
+                # logger.info(self.current_user)
+                if self.current_user:
+                    current_perms = self.current_user.current_perms
 
-                        # logger.info("--------------[current_perms]--------------")
-                        # logger.info(self.current_user.current_perms)
-                        try:
-                            current_keycode = current_perms[perm]
-                        except KeyError:
+                    # logger.info("--------------[current_perms]--------------")
+                    # logger.info(self.current_user.current_perms)
+                    logger.info("---------------[checking perm]------------------")
+                    # logger.info(perm)
+                    if _and:
+                        minus_result = set(need_perms) - set(current_perms.keys())
+                        if len(minus_result) > 0:
+                            perm = minus_result[0]
                             raise PermissionError(perm)
-                        if keycode == current_keycode:
+                        else:
+                            return method(self, *args, **kwargs)
+                    else:
+                        checking_result = [i for i in current_perms.keys() if i in need_perms]
+                        if len(checking_result) > 0:
                             return method(self, *args, **kwargs)
                         else:
+                            perm = need_perms[0]
                             raise PermissionError(perm)
-                        logger.info("%s check pass!" % perm)
-                    return method(self, *args, **kwargs)
-                except PermissionDefinedError as e:
-                    headers = self.request.headers
-                    x_requested_with = headers.get("X-Requested-With", "")
-                    if self.pjax:
-                        raise gen.Return(self.render("admin/error/403.html", error_message=u"Oops, The permission %s is not defined" % perm))
-                    if x_requested_with == "XMLHttpRequest":
-                        raise gen.Return(self.write(simplejson.dumps({
-                            "return_code": -403,
-                            "return_message": u"Oops, The permission %s is not defined" % perm
-                            })))
-                    else:
-                        raise gen.Return(self.render("admin/error/403.html", error_message=u"Oops, The permission %s is not defined" % perm))
-                except PermissionError as e:
-                    logger.error(e)
-                    headers = self.request.headers
-                    x_requested_with = headers.get("X-Requested-With", "")
-                    if self.pjax:
-                        raise gen.Return(self.render("admin/error/403.html", error_message=e.__unicode__()))
-                    if x_requested_with == "XMLHttpRequest":
-                        raise gen.Return(self.write(simplejson.dumps({
-                            "return_code": -403,
-                            "return_message": u"Oops, You don't have the permission %s" % perm
-                            })))
-                    else:
-                        raise gen.Return(self.render("admin/error/403.html", error_message=u"Oops, You don't have the permission %s" % perm))
+                    # try:
+                    #     current_keycode = current_perms[perm]
+                    # except KeyError:
+                    #     raise PermissionError(perm)
+                    # if keycode == current_keycode:
+                    #     return method(self, *args, **kwargs)
+                    # else:
+                    #     raise PermissionError(perm)
+                    logger.info("%s check pass!" % need_perms)
+                return method(self, *args, **kwargs)
+            except PermissionDefinedError as e:
+                headers = self.request.headers
+                x_requested_with = headers.get("X-Requested-With", "")
+                if self.pjax:
+                    raise gen.Return(self.render("admin/error/403.html", error_message=u"Oops, The permission %s is not defined" % perm))
+                if x_requested_with == "XMLHttpRequest":
+                    raise gen.Return(self.write(simplejson.dumps({
+                        "return_code": -403,
+                        "return_message": u"Oops, The permission %s is not defined" % perm
+                        })))
+                else:
+                    raise gen.Return(self.render("admin/error/403.html", error_message=u"Oops, The permission %s is not defined" % perm))
+            except PermissionError as e:
+                logger.error(e)
+                headers = self.request.headers
+                x_requested_with = headers.get("X-Requested-With", "")
+                if self.pjax:
+                    raise gen.Return(self.render("admin/error/403.html", error_message=e.__unicode__()))
+                if x_requested_with == "XMLHttpRequest":
+                    raise gen.Return(self.write(simplejson.dumps({
+                        "return_code": -403,
+                        "return_message": u"Oops, You don't have the permission %s" % perm
+                        })))
+                else:
+                    raise gen.Return(self.render("admin/error/403.html", error_message=u"Oops, You don't have the permission %s" % perm))
             return method(self, *args, **kwargs)
         return wrapper
     return func

@@ -280,7 +280,7 @@ class AuthHandler(Handler):
         current_user = self.session.get("current_user", None)
         # logger.info("******[GET SESSION] %s" % current_user)
         if current_user:
-            logger.info("\t [current_user]: %s(%s)" % (current_user.id, current_user.username))
+            logger.info("\t [current_user]: %s(%s)-perms:(%s)" % (current_user.id, current_user.username, current_user.get_current_perms()))
         else:
             logger.info("\t [current_user]: None")
         return current_user
