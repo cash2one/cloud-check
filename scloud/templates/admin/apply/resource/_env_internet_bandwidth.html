@@ -1,10 +1,14 @@
 
 <select id="bandwidth" name="bandwidth" class="input-group-sm input-sm" style="width: 100%; height:30px">
-    {% for internet_bandwidth in internet_bandwidths %}
-    {% set bandwidth_id = internet_bandwidth.bandwidth_id %}
-    {% set BW = RESOURCE_BANDWIDTH.get(bandwidth_id) %}
-    <option status_level="{{ BW.level }}" status_value="{{ BW.value }}" value="{{ bandwidth_id }}"{% if pro_resource_apply and bandwidth_id|int == pro_resource_apply.bandwidth|int %} selected="selected"{% endif %}>{{ BW.value }} ({{ "{:,.2f}元/月".format(internet_bandwidth.fee) }})</option>
-    {% endfor %}
+    {% if internet_bandwidths|length > 0 %}
+        {% for internet_bandwidth in internet_bandwidths %}
+        {% set bandwidth_id = internet_bandwidth.bandwidth_id %}
+        {% set BW = RESOURCE_BANDWIDTH.get(bandwidth_id) %}
+        <option status_level="{{ BW.level }}" status_value="{{ BW.value }}" value="{{ bandwidth_id }}"{% if pro_resource_apply and bandwidth_id|int == pro_resource_apply.bandwidth|int %} selected="selected"{% endif %}>{{ BW.value }} ({{ "{:,.2f}元/月".format(internet_bandwidth.fee) }})</option>
+        {% endfor %}
+    {% else %}
+        <option status_level="0" status_value="0" value="0" selected="selected">不启用互联网服务</option>
+    {% endif %}
 </select>
 <div class="input-group-unit" style="text-align:left; width:40%">
 <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="{{ Pro_Resource_Apply.bandwidth.info.name }}" data-content="{{ Pro_Resource_Apply.bandwidth.info.tip }}"><i class="fa fa-info-circle"></i></a>

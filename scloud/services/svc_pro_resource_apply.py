@@ -72,7 +72,7 @@ class ProResourceApplyService(BaseService):
             "memory": self.validate_num_more_than_1,
             'disk': self.validate_num,
             'disk_amount': self.validate_num,
-            'disk_backup': self.validate_num,
+            # 'disk_backup': self.validate_num,
             'disk_backup_amount': self.validate_num,
             'out_ip': self.validate_num,
             'snapshot': self.validate_num,
@@ -201,7 +201,7 @@ class ProResourceApplyService(BaseService):
         mem_fee = fee_dict["memory"]
         disk_fee = fee_dict["disk"]
         disk_amount_fee = fee_dict.get("disk_amount", 0)
-        disk_backup_fee = fee_dict["disk_backup"]
+        # disk_backup_fee = fee_dict["disk_backup"]
         disk_backup_amount_fee = fee_dict.get("disk_backup_amount", 0)
         out_ip_fee = fee_dict["out_ip"]
         snapshot_fee = fee_dict["snapshot"]
@@ -217,7 +217,7 @@ class ProResourceApplyService(BaseService):
         mem = int(params.get("memory"))
         disk = int(params.get("disk"))
         disk_amount = int(params.get("disk_amount"))
-        disk_backup = int(params.get("disk_backup"))
+        # disk_backup = int(params.get("disk_backup"))
         disk_backup_amount = int(params.get("disk_backup_amount"))
         out_ip = int(params.get("out_ip"))
         snapshot = int(params.get("snapshot"))
@@ -258,11 +258,11 @@ class ProResourceApplyService(BaseService):
                 + disk_fee * disk \
                 + disk_amount_fee * disk_amount \
                 + disk_backup_amount_fee * disk_backup_amount \
-                + disk_backup_fee * disk_backup \
                 + out_ip * out_ip_fee \
                 + snapshot * snapshot_fee \
                 + loadbalance * loadbalance_fee \
                 + float(_internet_ip_fee)
+                # + disk_backup_fee * disk_backup \
                 # + internet_ip_ssl * internet_ip_ssl_fee
         except:
             unit_fee = 0
@@ -324,7 +324,9 @@ class ProResourceApplyService(BaseService):
         apply.cpu = params.get('cpu')
         apply.memory = params.get('memory')
         apply.disk = params.get('disk')
-        apply.disk_backup = params.get('disk_backup')
+        apply.disk_amount = params.get('disk_amount')
+        # apply.disk_backup = params.get('disk_backup')
+        apply.disk_backup_amount = params.get('disk_backup_amount')
         apply.out_ip = params.get('out_ip')
         apply.snapshot = params.get('snapshot')
         apply.loadbalance = params.get('loadbalance')
@@ -407,7 +409,7 @@ class ProResourceApplyService(BaseService):
         resource.memory = params.get('memory')
         resource.disk = params.get('disk')
         resource.disk_amount = params.get('disk_amount')
-        resource.disk_backup = params.get('disk_backup')
+        # resource.disk_backup = params.get('disk_backup')
         resource.disk_backup_amount = params.get('disk_backup_amount')
         resource.out_ip = params.get('out_ip')
         resource.snapshot = params.get('snapshot')
