@@ -45,12 +45,14 @@
                           {% elif resource.status > STATUS_RESOURCE.CHECKED %}
                           <a data-pjax href="{{ reverse_url('apply.resource.pay_history') }}?res_id={{ resource.id }}&pro_id={{ resource.pro_id }}" class="btn btn-xs btn-info"><i class="fa fa-credit-card"></i> 支付历史</a>
                           {% endif %}
+                          {% if resource.status in [STATUS_RESOURCE.REFUSED, STATUS_RESOURCE.REVOKED] %}
                           <a data-pjax href="{{ reverse_url('apply.resource.edit') }}?res_id={{ resource.id }}&pro_id={{ resource.pro_id }}" class="btn btn-xs btn-warning"{% if resource.is_enable == false %} disabled="disabled"{% endif %}><i class="fa fa-edit"></i> 编辑</a>
                           <button class="btn btn-xs btn-danger" id="form_del_pro_resource_{{ resource.id }}_btn"{% if resource.is_enable == false %} disabled="disabled"{% endif %} onclick="do_del_pro_resource('{{ resource.id }}', '{{ resource.project.name }}')"><i class="fa fa-trash"></i> 删除</button>
                           <form id="form_del_pro_resource_{{ resource.id }}" action="{{ reverse_url('apply.resource.del') }}">
                           {{ handler.xsrf_form_html() }}
                           <input type="hidden" name="res_id" value="{{ resource.id }}">
                           </form>
+                          {% endif %}
                         </div>
                       </td>
                     </tr>

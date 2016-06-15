@@ -21,20 +21,23 @@
       {% set env = pro_resource_apply.project.env %}
       {% if env %}
     <span class="badge bg-{{ env_colors[env.id%(env_colors|length)] }}">{{ env.name }}</span>
+    <a data-pjax href="{{ reverse_url('project.list') }}?env={{ env.id }}" title="查看{{ env.name }}环境项目列表"><i class="fa fa-link"></i></a>
       {% else %}
     <span class="badge bg-red }}">未设置</span>
       {% endif %}
     </td>
   </tr>
   {% for column in pro_resource_apply.__table__.columns %}
-    {% if column.info.name %}
+    {% if column.info.name and column.name not in ["disk_backup", "internet_ip_ssl"] %}
       {% if column.name == "status" %}
       <tr>
         <td>{{ column.info.name or column.name }}:</td>
         {% set ST = STATUS_RESOURCE.get(pro_resource_apply.status) %}
         <td><span class="label label-{{ ST.level }}">{{ ST.value }}, {{ ST.todo_value }}</span>
         {% if not handler.current_user.imchecker %}
-        <a data-pjax href="{{ reverse_url('apply.resource.edit') }}?res_id={{ pro_resource_apply.id }}&pro_id={{ pro_resource_apply.pro_id }}"><i class="fa fa-edit"></i> 编辑</a>
+          {% if pro_resource_apply.status in [STATUS_RESOURCE.REFUSED, STATUS_RESOURCE.REVOKED] %}
+          <a data-pjax href="{{ reverse_url('apply.resource.edit') }}?res_id={{ pro_resource_apply.id }}&pro_id={{ pro_resource_apply.pro_id }}"><i class="fa fa-edit"></i> 编辑</a>
+          {% endif %}
         {% endif %}
         </td>
       </tr>

@@ -98,7 +98,8 @@ class ProjectService(BaseService):
     def filter_list(self):
         conditions = and_()
         group_conditions = and_()
-        if "pro_info.view" in self.handler.current_user.get_current_perms():
+        # if "pro_info.view" in self.handler.current_user.get_current_perms():
+        if not self.handler.current_user.imchecker:
             conditions.append(Pro_Info.user_id == self.handler.current_user.id)
             group_conditions.append(Pro_Info.user_id == self.handler.current_user.id)
         env = self.params.get("env")
