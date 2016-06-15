@@ -79,7 +79,7 @@ class ProResourceApplyService(BaseService):
             'loadbalance': self.validate_num,
             'internet_ip': self.validate_num,
             'bandwidth': self.validate_num,
-            'internet_ip_ssl': self.validate_num,
+            # 'internet_ip_ssl': self.validate_num,
             'period': self.validate_num_more_than_1,
         }, extra=ALLOW_EXTRA)
         return param_schema
@@ -143,72 +143,6 @@ class ProResourceApplyService(BaseService):
             # raise Exception(u"{}".format(",".join(messages)))
             return self.failures(messages)
 
-    # @thrownException
-    # def check_form_valid(self):
-    #     try:
-    #         self.computer = int(self.params.get("computer", 0) or 0)
-    #     except:
-    #         return self.failure(ERROR.res_computer_invalid_err)
-    #     try:
-    #         self.cpu = int(self.params.get("cpu", 0) or 0)
-    #     except:
-    #         return self.failure(ERROR.res_cpu_invalid_err)
-    #     try:
-    #         self.memory = int(self.params.get("memory", 0) or 0)
-    #     except:
-    #         return self.failure(ERROR.res_memory_invalid_err)
-    #     try:
-    #         self.disk = int(self.params.get("disk", 0) or 0)
-    #     except:
-    #         return self.failure(ERROR.res_disk_invalid_err)
-    #     try:
-    #         self.disk_backup = int(self.params.get("disk_backup", 0) or 0)
-    #     except:
-    #         return self.failure(ERROR.res_disk_backup_invalid_err)
-    #     try:
-    #         self.out_ip = int(self.params.get("out_ip", 0) or 0)
-    #     except:
-    #         return self.failure(ERROR.res_out_ip_invalid_err)
-    #     try:
-    #         self.snapshot = int(self.params.get("snapshot", 0) or 0)
-    #     except:
-    #         return self.failure(ERROR.res_snapshot_invalid_err)
-    #     try:
-    #         self.loadbalance = int(self.params.get("loadbalance", 0) or 0)
-    #     except:
-    #         return self.failure(ERROR.res_loadbalance_invalid_err)
-    #     try:
-    #         self.internet_ip = int(self.params.get("internet_ip", -1) or -1)
-    #     except:
-    #         return self.failure(ERROR.res_internet_ip_invalid_err)
-    #     try:
-    #         self.internet_ip_ssl = int(self.params.get("internet_ip_ssl", -1) or -1)
-    #     except:
-    #         return self.failure(ERROR.res_internet_ip_ssl_invalid_err)
-    #     try:
-    #         if self.params.get("period", "").strip() == "":
-    #             return self.failure(ERROR.res_period_empty_err)
-    #         self.period = int(self.params.get("period"))
-    #     except:
-    #         return self.failure(ERROR.res_period_invalid_err)
-    #     try:
-    #         start_date = self.params.get("start_date", "")
-    #         if start_date == "":
-    #             self.start_date = ""
-    #         else:
-    #             self.start_date = datetime.strptime(self.params.get("start_date"), "%Y-%m-%d %H:%M:%S")
-    #     except:
-    #         return self.failure(ERROR.res_start_date_invalid_err)
-    #     try:
-    #         self.unit_fee = "{:,.2f}".format(float(self.params.get("unit_fee") or 0))
-    #     except:
-    #         return self.failure(ERROR.res_unit_fee_invalid_err)
-    #     try:
-    #         self.total_fee = "{:,.2f}".format(float(self.params.get("total_fee") or 0))
-    #     except:
-    #         return self.failure(ERROR.res_total_fee_invalid_err)
-    #     return self.success()
-
     def check_form_empty(self):
         if self.computer == 0:
             return self.failure(ERROR.res_computer_empty_err)
@@ -233,11 +167,6 @@ class ProResourceApplyService(BaseService):
         if self.internet_ip == -1:
             logger.info(self.internet_ip)
             return self.failure(ERROR.res_internet_ip_empty_err)
-        # if self.bandwidth == -1:
-        #     logger.info(self.bandwidth)
-        #     return self.failure(ERROR.res_bandwidth_empty_err)
-        # if self.internet_ip_ssl == -1:
-        #     return self.failure(ERROR.res_internet_ip_ssl_invalid_err)
         if self.params.get('period') == 0:
             return self.failure(ERROR.res_period_empty_err)
         return self.success()
@@ -279,7 +208,7 @@ class ProResourceApplyService(BaseService):
         loadbalance_fee = fee_dict["loadbalance"]
         internet_ip_fee_dict = fee_dict["internet_ip"]
         # bandwidth = fee_dict["bandwidth"]
-        internet_ip_ssl_fee = fee_dict["internet_ip_ssl"] 
+        # internet_ip_ssl_fee = fee_dict["internet_ip_ssl"] 
 
         logger.info(valid_res.data)
         params = valid_res.data
@@ -294,7 +223,7 @@ class ProResourceApplyService(BaseService):
         snapshot = int(params.get("snapshot"))
         loadbalance = int(params.get("loadbalance"))
         internet_ip_id = int(params.get("internet_ip"))
-        internet_ip_ssl = int(params.get("internet_ip_ssl"))
+        # internet_ip_ssl = int(params.get("internet_ip_ssl"))
         bandwidth = int(params.get("bandwidth"))
         period = int(params.get("period"))
 
@@ -333,8 +262,8 @@ class ProResourceApplyService(BaseService):
                 + out_ip * out_ip_fee \
                 + snapshot * snapshot_fee \
                 + loadbalance * loadbalance_fee \
-                + float(_internet_ip_fee) \
-                + internet_ip_ssl * internet_ip_ssl_fee
+                + float(_internet_ip_fee)
+                # + internet_ip_ssl * internet_ip_ssl_fee
         except:
             unit_fee = 0
             logThrown()
@@ -401,7 +330,7 @@ class ProResourceApplyService(BaseService):
         apply.loadbalance = params.get('loadbalance')
         apply.internet_ip = params.get('internet_ip')
         apply.bandwidth = params.get('bandwidth')
-        apply.internet_ip_ssl = params.get('internet_ip_ssl')
+        # apply.internet_ip_ssl = params.get('internet_ip_ssl')
         apply.start_date = params.get('start_date')
         apply.period = params.get('period')
         apply.unit_fee = fee_data["unit_fee"]
@@ -485,7 +414,7 @@ class ProResourceApplyService(BaseService):
         resource.loadbalance = params.get('loadbalance')
         resource.internet_ip = params.get('internet_ip')
         resource.bandwidth = params.get('bandwidth')
-        resource.internet_ip_ssl = params.get('internet_ip_ssl')
+        # resource.internet_ip_ssl = params.get('internet_ip_ssl')
         resource.start_date = params.get('start_date')
         resource.period = params.get('period')
         resource.unit_fee = fee_data['unit_fee']
