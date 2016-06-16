@@ -19,7 +19,7 @@
     <div class="col-md-6">
       <div class="box box-solid">
         <div class="box-header">
-          <h3 class="box-title text-danger">Sparkline Pie</h3>
+          <h3 class="box-title text-danger">环境分布图</h3>
           <div class="box-tools pull-right">
             <!-- <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button> -->
           </div>
@@ -37,7 +37,7 @@
     <div class="col-md-6">
       <div class="box box-solid">
         <div class="box-header">
-          <h3 class="box-title text-blue">Sparkline line</h3>
+          <h3 class="box-title text-blue">状态分布图</h3>
           <div class="box-tools pull-right">
             <!-- <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button> -->
           </div>
@@ -54,49 +54,77 @@
 
     <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
+        
+        var colors = ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'];
+
         var envChart = echarts.init(document.getElementById('env_chart'));
         var statusChart = echarts.init(document.getElementById('status_chart'));
+
+
         // myChart.showLoading();
-        var env_data_values = $("#form_projects_by_env").serializeArray();
+        var env_serialize_values = $("#form_projects_by_env").serializeArray();
         var data_legend = [];
         var env_data_legend = [];
         var env_data_legend_selected = {};
-        for (var i in env_data_values){
+        var env_data_values = [];
+        for (var i in env_serialize_values){
             //console.log(arr[i].name)
-            env_data_legend.push(env_data_values[i].name);
-            data_legend.push(env_data_values[i].name);
+            env_data_legend.push(env_serialize_values[i].name);
+            data_legend.push(env_serialize_values[i].name);
 
-            var selected = $("#form_projects_by_env").find("input[name='"+env_data_values[i].name+"']").attr("selected");
-            //console.log(arr[i].name+"--"+selected);
-            if (selected){
-                env_data_values[i]["selected"] = "selected";
-            }
+            var selected = $("#form_projects_by_env").find("input[name='"+env_serialize_values[i].name+"']").attr("selected");
 
-            if (parseInt($("#form_projects_by_env").find("input[name='"+env_data_values[i].name+"']").val()) > 0){
-                env_data_legend_selected[env_data_values[i].name] = true;
+            if (parseInt($("#form_projects_by_env").find("input[name='"+env_serialize_values[i].name+"']").val()) > 0){
+                env_data_legend_selected[env_serialize_values[i].name] = true;
             }else{
-                env_data_legend_selected[env_data_values[i].name] = false;
+                env_data_legend_selected[env_serialize_values[i].name] = false;
             }
+            env_data_values.push({
+                name: env_serialize_values[i].name,
+                value: env_serialize_values[i].value,
+                selected: selected == "selected" ? "selected": "",
+                itemStyle: {
+                    normal: {
+                        color: colors[i%colors.length]
+                    }
+                }
+            });
         }
-        var status_data_values = $("#form_projects_by_status").serializeArray();
+
+
+        var status_serialize_values = $("#form_projects_by_status").serializeArray();
         var status_data_legend = [];
-        for (var i in status_data_values){
-            //console.log(arr[i].name)
-            status_data_legend.push(status_data_values[i].name);
-            data_legend.push(status_data_values[i].name);
-            var selected = $("#form_projects_by_status").find("input[name='"+status_data_values[i].name+"']").attr("selected");
+        var status_data_values = [];
+
+        $.each(status_serialize_values, function(i){
+            console.log(i)
+            status_data_legend.push(status_serialize_values[i].name);
+            data_legend.push(status_serialize_values[i].name);
+            var selected = $("#form_projects_by_status").find("input[name='"+status_serialize_values[i].name+"']").attr("selected");
             //console.log(arr[i].name+"--"+selected);
-            if (selected){
-                status_data_values[i]["selected"] = "selected";
-            }
-        }
+            // if (selected){
+            //     status_serialize_values[i]["selected"] = "selected";
+            // }
+            // status_data_values["color"] = colors[i];
+            {% if handler.args.get("status", "") == "" %}
+            var color = colors[i%colors.length];
+            {% else %}
+            var color = selected == "selected" ? colors[i%colors.length] : "#EEEEEE";
+            {% endif %}
+            status_data_values.push({
+                name: status_serialize_values[i].name,
+                value: status_serialize_values[i].value,
+                // selected: selected == "selected" ? "selected": "",
+                itemStyle: {
+                    normal: {
+                        color: color
+                    }
+                }
+            });
+        })
 
         // 指定图表的配置项和数据
         var option_env = {
-            // title: {
-            //     text: 'ECharts 入门示例'
-            // },
-            // 
             tooltip : {
                 trigger: 'item',
                 formatter: "{a} <br/>{b} : {c}"
@@ -107,62 +135,26 @@
                 data: data_legend,
                 selected: env_data_legend_selected
             },
-            // xAxis: {
-            //     data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-            // },
-            // yAxis: {},
-            
             series: [
                 {
                     name: '环境分布',
                     type: 'pie',
                     radius: '70%',
-                    // radius: [0, '30%'],
-                    // label: {
-                    //     normal: {
-                    //         position: 'inner'
-                    //     }
-                    // },
-                    // labelLine: {
-                    //     normal: {
-                    //         show: false
-                    //     }
-                    // },
                     center: ['50%', '50%'],
                     selectedOffset: 10,
                     data: env_data_values
                 },
-                // {
-                //     name:'状态分布',
-                //     type:'pie',
-                //     radius: ['60%', '85%'],
-                //     label: {
-                //         normal: {
-                //             position: 'inner'
-                //         }
-                //     },
-                //     labelLine: {
-                //         normal: {
-                //             show: false
-                //         }
-                //     },
-
-                //     data: status_data_values
-                // }
+                
             ]
         };
 
         var option_status = {
-            // title: {
-            //     text: 'ECharts 入门示例'
-            // },
-            // 
             tooltip : {
                 trigger: 'item',
                 formatter: "{a} <br/>{b} : {c}"
             },
             legend: {
-                orient: 'vertical',
+                // orient: 'vertical',
                 x: 'left',
                 data: status_data_legend
                 // selected: status_data_legend_selected
@@ -170,26 +162,18 @@
             xAxis: {
                 data: status_data_legend
             },
-            yAxis: {
-                minInterval: 1
-            },
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '项目个数',
+                    minInterval: 1
+                }
+            ],
             
             series: [
                 {
                     name:'状态分布',
                     type:'bar',
-                    // radius: ['60%', '85%'],
-                    label: {
-                        normal: {
-                            position: 'inner'
-                        }
-                    },
-                    labelLine: {
-                        normal: {
-                            show: false
-                        }
-                    },
-
                     data: status_data_values
                 }
             ]

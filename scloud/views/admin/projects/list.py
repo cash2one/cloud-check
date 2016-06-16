@@ -46,8 +46,8 @@ class PublishDetailHandler(AuthHandler):
             projects_by_status = projects_by_status
         )
         tmpl_project_list = self.render_to_string("admin/project/_project_list.html", **data)
-        # tmpl_project_charts = self.render_to_string("admin/project/_project_charts.html", **data)
-        tmpl_project_charts = self.render_to_string("admin/project/_project_chartjs_charts.html", **data)
+        tmpl_project_charts = self.render_to_string("admin/project/_project_charts.html", **data)
+        # tmpl_project_charts = self.render_to_string("admin/project/_project_chartjs_charts.html", **data)
         return simplejson.dumps(self.success(data=dict(
             tmpl_project_list=tmpl_project_list,
             tmpl_project_charts=tmpl_project_charts,
