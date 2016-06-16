@@ -573,6 +573,14 @@ class ProResourceCheckService(BaseService):
     def get_resources_by_status(self):
         logger.info("\t ==========[ get_resources_by_status ]==========")
         conditions = and_()
+        or_conditions = or_()
+        or_conditions.append(Pro_Resource_Apply.status == STATUS_RESOURCE.APPLIED)
+        or_conditions.append(Pro_Resource_Apply.status == STATUS_RESOURCE.CHECKED)
+        or_conditions.append(Pro_Resource_Apply.status == STATUS_RESOURCE.PAYED)
+        or_conditions.append(Pro_Resource_Apply.status == STATUS_RESOURCE.CONFIRMPAYED)
+        or_conditions.append(Pro_Resource_Apply.status == STATUS_RESOURCE.STARTED)
+        or_conditions.append(Pro_Resource_Apply.status == STATUS_RESOURCE.CLOSED)
+        conditions.append(or_conditions)
         res_status = self.params.get("res_status")
         if res_status:
             conditions.append(Pro_Resource_Apply.status == res_status)
@@ -593,6 +601,8 @@ class ProResourceCheckService(BaseService):
         # 按状态查询申请数量
         status_counts = self.db.query(
             Pro_Resource_Apply.status, func.count(Pro_Resource_Apply.id)
+        ).filter(
+            or_conditions
         ).group_by(
             Pro_Resource_Apply.status
         ).all()
@@ -606,6 +616,8 @@ class ProResourceCheckService(BaseService):
             Pro_Resource_Apply, Pro_Resource_Apply.pro_id == Pro_Info.id
         ).outerjoin(
             Env_Info, Env_Info.id == Pro_Info.env_id
+        ).filter(
+            or_conditions
         ).group_by(
             Env_Info.id
         ).all()

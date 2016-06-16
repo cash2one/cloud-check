@@ -1,5 +1,5 @@
 
-{% set current_res_status = handler.args.get("res_status")|int %}
+{% set current_res_status = handler.args.get("res_status") %}
 {% set current_env_id = handler.args.get("env_id") %}
 {#% set env_colors = ["red", "yellow", "blue"] %#}
 
@@ -9,68 +9,13 @@
 <section class="content">
   {% include "admin/base/base_messages.html" %}
   <div class="row">
-    <div class="col-md-3">
-      <div class="box box-solid">
-        <div class="box-header with-border">
-          <h3 class="box-title">分类</h3>
-          <div class="box-tools">
-            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-          </div>
-        </div>
-        <div class="box-body no-padding">
-          <ul class="nav nav-pills nav-stacked">
-            <!--li class="active"><a href="#"><i class="fa fa-inbox"></i> 待审核 <span class="label label-primary pull-right">12</span></a></li-->
-            {% for res_status in STATUS_RESOURCE_RANGE %}
-            <li name="res_status_{{ res_status }}">
-            <a data-pjax 
-            href="{{ reverse_url('resource_check_list') }}?res_status={{ res_status }}">
-            <i class="fa fa-circle-o text-{{ STATUS_RESOURCE.get(res_status).level }}"></i> 
-            {{ STATUS_RESOURCE.get(res_status).todo_value }} 
-            {% set status_count = resource_res.data.status_counts.get(res_status, 0) %}
-            {% if status_count > 0 %}
-            <span class="label label-{{ STATUS_RESOURCE.get(res_status).level }} pull-right">
-            {{ status_count }}
-            </span>
-            {% endif %}
-            </a></li>
-            {% endfor %}
-          </ul>
-        </div><!-- /.box-body -->
-      </div><!-- /. box -->
-      <div class="box box-solid">
-        <div class="box-header with-border">
-          <h3 class="box-title">环境</h3>
-          <div class="box-tools">
-            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-          </div>
-        </div>
-        <div class="box-body no-padding">
-          <ul class="nav nav-pills nav-stacked">
-            {% set env_list = env_list_res.data %}
-            {% set env_counts = resource_res.data.env_counts %}
-            {% for env in env_list %}
-            <li name="env_id_{{ env.id }}"><a data-pjax href="{{ reverse_url('resource_check_list') }}?env_id={{ env.id }}"><i class="fa fa-circle-o text-{{ env_colors[env.id%3] }}"></i> {{ env.name }}
-            {% set env_count = env_counts.get(env.id, 0) %}
-            {% if env_count|int > 0 %}
-            <span class="badge bg-{{ env_colors[env.id%3] }} pull-right">
-            {{ env_count }}
-            </span>
-            {% endif %}
-            </a></li>
-            {% endfor %}
-            <!-- <li><a href="#"><i class="fa fa-circle-o text-red"></i> Important</a></li>
-            <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> Promotions</a></li>
-            <li><a href="#"><i class="fa fa-circle-o text-light-blue"></i> Social</a></li> -->
-          </ul>
-        </div><!-- /.box-body -->
-      </div><!-- /.box -->
-    </div><!-- /.col -->
+    {% include "admin/check/_check_list_sidebar.html" %}
     <div class="col-md-9">
       <div class="box box-primary">
         <div class="box-header with-border">
         <h3 class="box-title">
           {% if current_res_status %}
-            {{ STATUS_RESOURCE.get(current_res_status).todo_value }}({{ STATUS_RESOURCE.get(current_res_status).value }})
+            {{ STATUS_RESOURCE.get(current_res_status|int).todo_value }}({{ STATUS_RESOURCE.get(current_res_status|int).value }})
           {% else %}
             {% for env in env_list %}
               {% if env.id|int == current_env_id|int %}
@@ -111,6 +56,7 @@
                   <td class="mailbox-subject">
                     <a href="javascript:;" data-toggle="popover" title="所属项目" data-content="申请人：{{ resource.user.username }}<br>项目名称：{{ resource.project.name }}<br>项目描述：{{ resource.project.desc }}"><b>{{ resource.project.name }}</b> - {{ resource.desc }}</a>
                   </td>
+                  {% set env_counts = resource_res.data.env_counts %}
                   <td class="mailbox-subject">
                     <a href="javascript:;" data-toggle="popover" title="申请状态" data-content="{{ resource.project.env.name }}环境，共{{ env_counts.get(resource.project.env_id, 0) }}条记录 <a data-pjax href='{{ reverse_url('resource_check_list') }}?env_id={{ resource.project.env_id }}' data-toggle='tooltip' data-placement='top' title='进入查看'><i class='fa fa-link'></i></a>">
                       <span class="badge bg-{{ env_colors[resource.project.env_id%3] }}">

@@ -63,7 +63,7 @@
         // 基于准备好的dom，初始化echarts实例
         
         var colors = ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'];
-        var gray_colors = ["#EEEEEE", "#DDDDDD", "#CCCCCC", "#BBBBBB"];
+        var gray_colors = ["#DDDDDD", "#CCCCCC", "#BBBBBB"];
 
         var envChart = echarts.init(document.getElementById('env_chart'));
         var statusChart = echarts.init(document.getElementById('status_chart'));
@@ -89,8 +89,10 @@
             }
             {% if handler.args.get("env", "") == "" %}
             var color = colors[i%colors.length];
+            var opacity = 1;
             {% else %}
             var color = selected == "selected" ? colors[i%colors.length] : gray_colors[i%gray_colors.length];
+            var opacity = selected == "selected" ? 1: 0.6;
             {% endif %}
             env_data_values.push({
                 name: env_serialize_values[i].name,
@@ -99,7 +101,8 @@
                 selected: selected == "selected" ? "selected": "",
                 itemStyle: {
                     normal: {
-                        color: color
+                        color: color,
+                        opacity: opacity
                     }
                 }
             });
@@ -122,8 +125,10 @@
             // status_data_values["color"] = colors[i];
             {% if handler.args.get("status", "") == "" %}
             var color = colors[i%colors.length];
+            var opacity = 1;
             {% else %}
             var color = selected == "selected" ? colors[i%colors.length] : gray_colors[i%gray_colors.length];
+            var opacity = selected == "selected" ? 1: 0.6;
             {% endif %}
             status_data_values.push({
                 name: status_serialize_values[i].name,
@@ -132,7 +137,8 @@
                 // selected: selected == "selected" ? "selected": "",
                 itemStyle: {
                     normal: {
-                        color: color
+                        color: color,
+                        opacity: opacity
                     }
                 }
             });

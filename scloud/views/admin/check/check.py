@@ -34,12 +34,16 @@ class ResourceCheckListHandler(AuthHandler):
         svc = ProResourceCheckService(self, kwargs)
         resource_apply_res = svc.get_resource()
         resource_res = svc.get_resources_by_status()
+        svc = EnvService(self)
+        env_list_res = svc.get_list()
+
         if isinstance(resource_res, Exception):
             raise resource_res
         data = {
             "resource_apply_res": resource_apply_res,
             "resource_apply": resource_apply_res.data,
             "resource_res": resource_res,
+            "env_list_res": env_list_res,
             "getattr": getattr,
             "STATUS_RESOURCE": STATUS_RESOURCE,
             "STATUS_RESOURCE_RANGE": [i for i in STATUS_RESOURCE.keys() if isinstance(i, int)]

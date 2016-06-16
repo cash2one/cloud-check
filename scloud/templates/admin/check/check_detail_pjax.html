@@ -6,50 +6,7 @@
         <section class="content">
           {% include "admin/base/base_messages.html" %}
           <div class="row">
-            <div class="col-md-3">
-              <div class="box box-solid">
-                <div class="box-header with-border">
-                  <h3 class="box-title">分类</h3>
-                  <div class="box-tools">
-                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                  </div>
-                </div>
-                <div class="box-body no-padding">
-                  <ul class="nav nav-pills nav-stacked">
-                    <!--li class="active"><a href="#"><i class="fa fa-inbox"></i> 待审核 <span class="label label-primary pull-right">12</span></a></li-->
-                    {% for res_status in STATUS_RESOURCE_RANGE %}
-                    <li name="res_status_{{ res_status }}">
-                    <a data-pjax 
-                    href="{{ reverse_url('resource_check_list') }}?res_status={{ res_status }}">
-                    <i class="fa fa-circle-o text-{{ STATUS_RESOURCE.get(res_status).level }}"></i> 
-                    {{ STATUS_RESOURCE.get(res_status).todo_value }} 
-                    {% set status_count = resource_res.data.status_counts.get(res_status, 0) %}
-                    {% if status_count > 0 %}
-                    <span class="label label-{{ STATUS_RESOURCE.get(res_status).level }} pull-right">
-                    {{ status_count }}
-                    </span>
-                    {% endif %}
-                    </a></li>
-                    {% endfor %}
-                  </ul>
-                </div><!-- /.box-body -->
-              </div><!-- /. box -->
-              <div class="box box-solid">
-                <div class="box-header with-border">
-                  <h3 class="box-title">Labels</h3>
-                  <div class="box-tools">
-                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                  </div>
-                </div>
-                <div class="box-body no-padding">
-                  <ul class="nav nav-pills nav-stacked">
-                    <li><a href="#"><i class="fa fa-circle-o text-red"></i> Important</a></li>
-                    <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> Promotions</a></li>
-                    <li><a href="#"><i class="fa fa-circle-o text-light-blue"></i> Social</a></li>
-                  </ul>
-                </div><!-- /.box-body -->
-              </div><!-- /.box -->
-            </div><!-- /.col -->
+            {% include "admin/check/_check_list_sidebar.html" %}
             <div class="col-md-9">
               <div class="box box-primary">
                 <div class="box-header with-border">
