@@ -63,7 +63,7 @@
         // 基于准备好的dom，初始化echarts实例
         
         var colors = ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'];
-        var gray_color = "#EEEEEE";
+        var gray_colors = ["#EEEEEE", "#DDDDDD", "#CCCCCC", "#BBBBBB"];
 
         var envChart = echarts.init(document.getElementById('env_chart'));
         var statusChart = echarts.init(document.getElementById('status_chart'));
@@ -75,7 +75,7 @@
         var env_data_legend = [];
         var env_data_legend_selected = {};
         var env_data_values = [];
-        $.each(status_serialize_values, function(i){
+        $.each(env_serialize_values, function(i){
             //console.log(arr[i].name)
             env_data_legend.push(env_serialize_values[i].name);
             data_legend.push(env_serialize_values[i].name);
@@ -90,7 +90,7 @@
             {% if handler.args.get("env", "") == "" %}
             var color = colors[i%colors.length];
             {% else %}
-            var color = selected == "selected" ? colors[i%colors.length] : gray_color;
+            var color = selected == "selected" ? colors[i%colors.length] : gray_colors[i%gray_colors.length];
             {% endif %}
             env_data_values.push({
                 name: env_serialize_values[i].name,
@@ -123,7 +123,7 @@
             {% if handler.args.get("status", "") == "" %}
             var color = colors[i%colors.length];
             {% else %}
-            var color = selected == "selected" ? colors[i%colors.length] : gray_color;
+            var color = selected == "selected" ? colors[i%colors.length] : gray_colors[i%gray_colors.length];
             {% endif %}
             status_data_values.push({
                 name: status_serialize_values[i].name,
