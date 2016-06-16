@@ -159,6 +159,7 @@ init_status_object(yesno_status_types, STATUS_YESNO)
 init_status_object(loadbalance_health_types, LOADBALANCE_HEALTH)
 init_status_object(loadbalance_plot_types, PLOT_LOADBALANCE)
 init_status_object(pro_tables_status_types, STATUS_PRO_TABLES)
+init_status_object(priority_status_types, STATUS_PRIORITY)
 init_status_object(pro_resource_apply_bandwidth_types, RESOURCE_BANDWIDTH)
 init_status_object(pro_resource_apply_status_types, STATUS_RESOURCE)
 

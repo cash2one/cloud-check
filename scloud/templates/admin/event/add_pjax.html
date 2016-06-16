@@ -31,7 +31,7 @@
           {% endif %}
           {{ pro_macro.get_pro_info_select(pro_res=do_event_res, pro_id=pro_id)}}
             <div class="form-group select2{% if do_event_res and do_event_res.return_code in check_codes %} has-warning{% endif %}">
-              <label for="priority" class="col-sm-2 control-label">优先级</label>
+              <label for="priority" class="col-sm-2 control-label">紧急度</label>
               <div class="col-sm-4">
                 <select id="priority" name="priority" style="width: 100%;">
                   {% for p in STATUS_PRIORITY|status_list %}
@@ -69,7 +69,7 @@
   //   var $state = $("<span>" + state.text + " <span class='badge bg-"+status_bg_color+"'>"+status_value+"</span> " + disabled_text + "</span>");
   //   return $state;
   // }
-  // $("select").select2();
+  $("#priority").select2();
   // $("#pro_id").select2({
   //     templateResult: formatPro,
   //     templateSelection: formatPro

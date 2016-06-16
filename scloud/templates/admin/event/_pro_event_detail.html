@@ -1,7 +1,7 @@
 <div class="box-body no-padding">
   <div class="mailbox-read-info">
     <h3>{{ pro_event.title }}</h3>
-    <h5><span class="label label-{{ STATUS_PRIORITY.get(pro_event.priority).level }}">优先级：{{ STATUS_PRIORITY.get(pro_event.priority).value }}</span>
+    <h5><span class="label label-{{ STATUS_PRIORITY.get(pro_event.priority).level }}">紧急度：{{ STATUS_PRIORITY.get(pro_event.priority).value }}</span>
     <span class="label label-{{ STATUS_PRO_TABLES.get(pro_event.status).level }}">状态：{{ STATUS_PRO_TABLES.get(pro_event.status).value }}</span>
 
     <span class="mailbox-read-time pull-right">{{ pro_event.create_time|getGoodTime }}</span></h5>
