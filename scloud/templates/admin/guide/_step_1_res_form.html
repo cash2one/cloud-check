@@ -280,7 +280,14 @@
         }
     })
   }
-  $('.fa-calendar').datepicker({ format: 'yyyy-mm-dd 00:00:00', autoclose: true});
+  $('.fa-calendar').datepicker(
+    {
+      format: 'yyyy-mm-dd 00:00:00',
+      startDate: '+1d',
+      language: 'zh-CN',
+      autoclose: true
+    }
+  );
   {% if handler.kwargs["name"] == "apply.resource.edit" %}
   var do_load_env = false;
   {% else %}

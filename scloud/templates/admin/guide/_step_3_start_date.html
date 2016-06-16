@@ -23,7 +23,14 @@
           </div>
           <script type="text/javascript">
           $(function(){
-            $('.fa-calendar').datepicker({ format: 'yyyy-mm-dd 00:00:00', autoclose: true});
+            $('.fa-calendar').datepicker(
+              {
+                format: 'yyyy-mm-dd 00:00:00',
+                startDate: '+1d',
+                language: 'zh-CN',
+                autoclose: true
+              }
+            );
           })
           function resource_set_start(){
             generate_ajax_post({
