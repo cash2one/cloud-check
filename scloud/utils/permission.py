@@ -170,7 +170,7 @@ def check_perms(perms, _and=True):
                     if _and:
                         minus_result = set(need_perms) - set(current_perms.keys())
                         if len(minus_result) > 0:
-                            perm = minus_result[0]
+                            perm = list(minus_result)[0]
                             raise PermissionError(perm)
                         else:
                             return method(self, *args, **kwargs)

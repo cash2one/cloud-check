@@ -35,7 +35,7 @@ class PublishDetailHandler(ApplyHandler):
             ]
         return _bread_list
 
-    @check_perms('pro_info.view')
+    @check_perms('pro_info.view, pro_info.check', _and=False)
     @unblock
     def get(self):
         # svc = ProjectService(self)
@@ -46,7 +46,7 @@ class PublishDetailHandler(ApplyHandler):
         }
         return self.render_to_string("admin/apply/project/detail.html", **data)
 
-    @check_perms('pro_info.view')
+    @check_perms('pro_info.view, pro_info.check', _and=False)
     @unblock
     def xget(self):
         task_svc = TaskPublish(self)
