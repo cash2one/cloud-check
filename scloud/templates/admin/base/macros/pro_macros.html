@@ -1,5 +1,5 @@
 
-{% macro get_pro_info_select(pro_res=None, pro_id=0, onchange="function(){}") %}
+{% macro get_pro_info_select(pro_res=None, pro_id=0, onchange="function(){}", enable_unknown=False) %}
 {% set pro_list = pro_list_res.data %}
 <div name="select_pro" class="form-group select2{% if pro_res and pro_res.return_code in [ERR.PRO_ID_EMPTY_ERR, ERR.PRO_NAME_EMPTY_ERR, RES_APPLY_ID_EMPTY_ERR] %} has-warning{% endif %}">
   <label for="pro_id" class="col-sm-2 control-label">所属项目</label>
@@ -11,7 +11,7 @@
         {% if last_apply %}
         <option res_apply_id="{{ last_apply.id }}" disk_backup="{{ last_apply.disk_backup }}" disk_backup_members="{% if last_apply.backups_plot %}{{ last_apply.backups_plot.as_dict().plot|length }}{% else %}0{% endif %}" status="{{ last_apply.status }}" loadbalance="{{ last_apply.loadbalance }}" loadbalance_members="{% if last_apply.loadbalance_plot %}{{ last_apply.loadbalance_plot.as_dict().members|length }}{% else %}0{% endif %}" status_level="{{ STATUS_RESOURCE.get(last_apply.status).level }}" status_bg_color="{{ STATUS_RESOURCE.get(last_apply.status).bg_color }}" status_value="{{ STATUS_RESOURCE.get(last_apply.status).value }}" value="{{ pro.id }}"{% if pro.id == pro_id|int %} selected="selected"{% else %}{% if last_apply.status < STATUS_RESOURCE.CONFIRMPAYED %} disabled="disabled"{% endif %}{% endif %}>{{ pro.name }}</option>
         {% else %}
-        <option res_apply_id="0" disk_backup="0" disk_backup_members="0" status="0" loadbalance="0" loadbalance_members="0" status_level="warning" status_bg_color="yellow" status_value="未申请" value="{{ pro.id }}"{% if pro.id == pro_id|int %} selected="selected"{% endif %}>{{ pro.name }}</option>
+        <option res_apply_id="0" disk_backup="0" disk_backup_members="0" status="0" loadbalance="0" loadbalance_members="0" status_level="warning" status_bg_color="yellow" status_value="未申请" value="{{ pro.id }}"{% if pro.id == pro_id|int %} selected="selected"{% endif %}{% if not enable_unknown %} disabled="disabled"{% endif %}>{{ pro.name }}</option>
         {% endif %}
       {% endfor %}
     </select>

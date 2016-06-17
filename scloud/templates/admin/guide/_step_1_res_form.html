@@ -59,7 +59,7 @@
         <label class="control-label col-sm-offset-2" for="inputWarning">申请被拒绝：<i class="fa fa-bell-o"></i> {{ pro_resource_apply.reason }}</label>
       </div>
     {% endif %}
-    {{ pro_macro.get_pro_info_select(pro_res=res, pro_id=pro_id, onchange="load_env()") }}
+    {{ pro_macro.get_pro_info_select(pro_res=res, pro_id=pro_id, onchange="load_env()", enable_unknown=True) }}
     <fieldset>
       <legend>资源配置</legend>
           <div class="form-group{% if res and res.return_code in [ERR.RES_COMPUTER_EMPTY_ERR, ERR.RES_COMPUTER_INVALID_ERR] %} has-warning{% endif %}">
