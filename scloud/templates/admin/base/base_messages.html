@@ -13,6 +13,9 @@
                 {% set icon = "fa-ban" %}
             {% endif %}
             <i class="icon fa {{ icon }}"></i> {{ message.content }}
+            {% if message.url %}
+            <a data-pjax href="{{ message.url }}"><i class="fa fa-hand-o-right"></i></a>
+            {% endif %}
         </div>
         {% endfor %}
     </div>

@@ -101,8 +101,8 @@ class ApplyLoadBalance(BaseService):
             mem["failures"] = plot_messages
         plot = self.params.get("plot", 0)
         health = self.params.get("health", 0)
-        url = self.params.get("url")
-        keyword = self.params.get("keyword")
+        # url = self.params.get("url")
+        # keyword = self.params.get("keyword")
         desc = self.params.get("desc", "")
         if id:
             do_balance_info = self.db.query(Pro_Balance).filter(Pro_Balance.id == id).first()
@@ -112,8 +112,8 @@ class ApplyLoadBalance(BaseService):
             do_balance_info, created = Pro_Balance.get_or_create_obj(self.db, pro_id=pro_id, res_apply_id=res_apply_id)
         do_balance_info.plot = plot
         do_balance_info.health = health
-        do_balance_info.url = url
-        do_balance_info.keyword = keyword
+        # do_balance_info.url = url
+        # do_balance_info.keyword = keyword
         do_balance_info.desc = desc
         do_balance_info.user_id = self.handler.current_user.id
         if len(g_plot_messages) == 0:

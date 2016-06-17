@@ -88,7 +88,8 @@
         {{ base.form_status_select("策略", "plot", value=plot, options=PLOT_LOADBALANCE|status_list, ST=PLOT_LOADBALANCE, res=pro_loadbalance_res, style="width:30%") }}
         {{ base.form_status_select("健康检查", "health", value=health, options=LOADBALANCE_HEALTH|status_list, ST=LOADBALANCE_HEALTH, res=pro_loadbalance_res, style="width:30%") }}
         
-        <div class="form-group">
+        {#
+        <!-- <div class="form-group">
           <label for="loadbalance" class="col-sm-2 control-label"></label>
           <div class="col-sm-8 input-group">
             <div class="input-group-unit">
@@ -100,8 +101,9 @@
             </div>
             <input type="text" class="form-control" id="keyword" name="keyword" placeholder="10" value="{{ loadbalance_plot.keyword }}">
           </div>
-        </div>
-        {{ base.form_textarea("详细说明", "desc", value=desc, placeholder="IP地址:端口", data_content="例如：<br>127.0.0.1:8080<br>127.0.0.1:8081") }}
+        </div> -->
+        #}
+        {{ base.form_textarea("详细说明", "desc", value=desc, placeholder="IP地址:端口", data_content="多个地址端口之间请换行继续。<br>例如：<br>127.0.0.1:8080<br>127.0.0.1:8081") }}
         <!-- div class="form-group">
           <label for="desc" class="col-sm-2 control-label">详细说明</label>
           <div class="col-sm-8 input-group">
@@ -138,35 +140,38 @@
     init_resource_apply($("#form_loadbalance"));
   })
   {% endif %}
-  var max_loop = 0;
+  var max_loop = 16;
   var loop = 0;
   var members = 0;
   var loadbalance_members = 0;
   function set_member_tip(){
-    max_loop = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance"));
+    // max_loop = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance"));
+    // max_loop -= 1;
     loadbalance_members = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance_members"));
-    loop = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance_members"));
-    // var remainder = max_loop - loadbalance_members - loop;
-    var remainder = max_loop - loop;
+    // loop = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance_members"));
+    var remainder = max_loop - loadbalance_members - loop;
+    // var remainder = max_loop - loop;
     $("#members_add_tip").html("还可以添加"+ remainder +"个成员(已添加"+loadbalance_members+"个成员)");
+
   }
   function add_member(){
-    max_loop = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance"));
+    var res_apply_id = parseInt($("#form_loadbalance").find("#res_apply_id").val());
+    // max_loop -= 1;
     loadbalance_members = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance_members"));
-    loop = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance_members"));
+    // loop = parseInt($("#form_loadbalance").find("#res_apply_id").attr("loadbalance_members"));
     // console.log("max_loop:"+max_loop+", loadbalance_members:"+loadbalance_members);
-    if (!max_loop){
+    if (!res_apply_id){
       $("#members_add_tip").html("请先选择项目");
-      return false 
+      return false;
     }
     // console.log("max_loop: "+ max_loop + ", loop: " + loop);
     // if (loop >= (max_loop - loadbalance_members)){ 
-    if (loop >= (max_loop)){ 
-      $("#members_add_tip").html("还可以添加0个成员(已添加"+loadbalance_members+"个成员)");
-      return false 
-    };
     members += 1;
     loop += 1;
+    if (loop >= (max_loop)){ 
+      $("#members_add_tip").html("还可以添加0个成员(已添加"+loadbalance_members+"个成员)");
+      return false;
+    };
     set_member_tip()
     $("#member_block").find("label").text("成员"+members);
     var html = $("#member_block").html();
@@ -204,3 +209,4 @@
     $("#content").wysihtml5();
   });
 </script>
+{% include "admin/base/scripts/popover.html" %}

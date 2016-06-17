@@ -76,7 +76,7 @@
     <div class="col-sm-{{ col2 }} input-group" style="padding-left:15px">
       <textarea class="form-control" id="{{ name }}"name="{{ name }}" placeholder="{% if placeholder %}{{ placeholder }}{% else %}请输入{{ label }}{% endif %}">{{ value }}</textarea>
       <div class="input-group-unit" style="text-align:left; width:40%">
-        <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="提示" data-content="{{ data_content }}"><i class="fa fa-info-circle"></i></a>
+        <a href="javascript:;" data-toggle="popover" data-trigger="focus" title="{{ label }}提示" data-content="{{ data_content }}"><i class="fa fa-info-circle"></i></a>
       </div>
     {% if res and res.return_code in check_codes %}
     <label class="control-label" for="inputWarning"><i class="fa fa-bell-o"></i> {{ res.return_message }}</label>

@@ -65,10 +65,10 @@ class Handler(BaseHandler, HandlersMixin):
         self.messages = self.session.get("messages", [])
         self.save_session()
 
-    def add_message(self, content, level="info", post_action=False):
+    def add_message(self, content, level="info", post_action=False, url=""):
         if post_action:
             self.post_action(content=content, level=level)
-        self.session["messages"].append({"level": level, "content": content})
+        self.session["messages"].append({"level": level, "content": content, "url": url})
         self.session["messages_request"] = len(self.session["messages"])
         self.save_session()
         # logger.info(self.session)
@@ -83,6 +83,7 @@ class Handler(BaseHandler, HandlersMixin):
 
     def get_messages(self):
         self.messages = self.session["messages"]
+        logger.info(self.messages)
         self.session["messages"] = []
         self.save_session()
         return self.messages
@@ -275,6 +276,12 @@ class AuthHandler(Handler):
     def prepare(self):
         self.expire_session()
         super(AuthHandler, self).prepare()
+        if self.current_user and self.request.method == "GET":
+            if not self.current_user.username:
+                logger.error(u"\t 您还没有设置用户名，请设置用户名")
+                self.add_message(u"您还没有设置用户名，请设置用户名", level="warning", url=self.reverse_url('user_profile'))
+            if not self.current_user.email:
+                self.add_message(u"您还没有设置邮箱，请设置邮箱", level="warning", url=self.reverse_url('user_profile'))
 
     def get_current_user(self):
         current_user = self.session.get("current_user", None)
