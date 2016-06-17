@@ -41,9 +41,10 @@ class ERROR(object):
     # 创建项目
     pro_id_empty_err        = error(errcode=-100020, errvalue=u"请选择项目")
     pro_name_empty_err        = error(errcode=-100021, errvalue=u"项目名称不能为空")
-    pro_owner_empty_err       = error(errcode=-100022, errvalue=u"项目负责人不能为空")
-    pro_owner_email_empty_err = error(errcode=-100023, errvalue=u"项目负责人邮箱不能为空")
-    pro_env_empty_err         = error(errcode=-100024, errvalue=u"项目环境不能为空")
+    pro_name_duplicate_err    = error(errcode=-100022, errvalue=u"项目名称已经存在，请重新输入")
+    pro_owner_empty_err       = error(errcode=-100023, errvalue=u"项目负责人不能为空")
+    pro_owner_email_empty_err = error(errcode=-100024, errvalue=u"项目负责人邮箱不能为空")
+    pro_env_empty_err         = error(errcode=-100025, errvalue=u"项目环境不能为空")
 
     # 创建资源
     res_id_empty_err              = error(errcode=-100040, errvalue=u"请选择申请资源编号")
