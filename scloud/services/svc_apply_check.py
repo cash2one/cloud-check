@@ -47,10 +47,9 @@ class ApplyCheckService(BaseService):
             if pro_table_obj:
                 if action == STATUS_PRO_TABLES.checked.value_en:
                     pro_table_obj.status = STATUS_PRO_TABLES.CHECKED
-                    pro_table_obj.reason = u''
                 elif action == STATUS_PRO_TABLES.refused.value_en:
                     pro_table_obj.status = STATUS_PRO_TABLES.REFUSED
-                    pro_table_obj.reason = reason
+                pro_table_obj.reason = reason
                 pro_table_obj.checker_id = self.handler.current_user.id
                 pro_table_obj.check_time = datetime.now()
                 self.db.add(pro_table_obj)

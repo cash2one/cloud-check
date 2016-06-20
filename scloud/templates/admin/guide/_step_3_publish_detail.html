@@ -80,5 +80,12 @@
     </label>
   </div>
   {% endif %}
+  {% if pro_publish.status == STATUS_PRO_TABLES.CHECKED %}
+  <div class="form-group has-warning">
+    <label for="status" class="col-sm-offset-3 col-sm-9 control-label">
+        处理结果:{{ pro_publish.reason }}
+    </label>
+  </div>
+  {% endif %}
 </div>
 

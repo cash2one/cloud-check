@@ -29,7 +29,12 @@
                     </tr>
                     {% for resource in page.object_list %}
                     <tr{% if resource.is_enable == False %} class="diabled-tr"{% endif %}>
-                      <td>APY{{ "%04d" % resource.id }}</td>
+                      <td>
+                        {% if resource.status in [STATUS_RESOURCE.UNKNOWN, STATUS_RESOURCE.REVOKED, STATUS_RESOURCE.CHECKED, STATUS_RESOURCE.REFUSED] %}
+                        <i class="fa fa-circle text-{{ STATUS_RESOURCE.get(resource.status).level }}"></i>
+                        {% endif %}
+                        APY{{ "%04d" % resource.id }}
+                      </td>
                       <td>{{ resource.desc }}</td>
                       <td>{{ resource.project.name }}</td>
                       <td><span class="label label-{{ STATUS_RESOURCE.get(resource.status).level }}">{{ STATUS_RESOURCE.get(resource.status).value }}, {{ STATUS_RESOURCE.get(resource.status).todo_value }}</span>
