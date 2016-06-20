@@ -26,8 +26,9 @@ from scloud.services.svc_apply_check import ApplyCheckService
 from scloud.utils.unblock import unblock
 # from scloud.utils.error import SystemError
 # from scloud.views.admin.guide import GuideStepGetHandler
-from scloud.const import STATUS_PRO_TABLES
+from scloud.const import STATUS_PRO_TABLES, STATUS_RESOURCE
 from scloud.pubs.pub_tasks import TaskPublish
+from scloud.async_services.svc_mail import sendMail
 from scloud.async_services.publish_task import publish_notice_user, publish_tasks
 
 
@@ -42,7 +43,7 @@ class EventCheckListHandler(AuthHandler):
         g = GROUP.get(pro_table)
         page = self.getPage(_pro_table)
         groups = []
-        for keyword in ["pro_user", "pro_publish", "pro_balance", "pro_backup", "pro_event"]:
+        for keyword in ["pro_user", "pro_publish", "pro_balance", "pro_event"]:
             groups.append(GROUP.get(keyword))
         # logger.info(pub_data.data)
         data.update(
@@ -178,9 +179,15 @@ class ProTableDoCheckHandler(EventCheckListHandler):
         if check_res.return_code == 0:
             self.add_message(u"所选申请%s已处理完毕" % doc, level="success")
             pro_users = check_res.data
-            users = [u.user_id for u in pro_users]
-            for user_id in set(users):
+            users = {str(u.user_id): u.user.email for u in pro_users}
+            logger.info(users)
+            mail_title = u"%s已处理完毕" % doc
+            action = self.args.get("action")
+            mail_content = u"%s已处理完毕，%s\n处理结果：%s" % (
+                doc, STATUS_RESOURCE.get(action.lower()).value, self.args.get("reason"))
+            for user_id in users.keys():
                 publish_notice_user.delay(user_id)
+                sendMail.delay("scloud@infohold.com.cn", users.get(str(user_id)), mail_title, mail_content)
         if pro_table == "pro_event":
             ids = self.args.get("ids")
             id_list = [int(i) for i in ids.split(",") if i.strip().isdigit()]

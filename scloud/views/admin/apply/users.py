@@ -4,7 +4,7 @@ import scloud
 #from torweb.urls import url
 from scloud.shortcuts import url
 from scloud.config import logger, thrownException
-from scloud.const import pro_resource_apply_status_types, STATUS_RESOURCE
+from scloud.const import pro_resource_apply_status_types, STATUS_RESOURCE, admin_emails
 from scloud.handlers import Handler, AuthHandler
 import requests
 import urlparse
@@ -19,6 +19,7 @@ from scloud.services.svc_project import ProjectService
 from scloud.services.svc_apply_user import ProUserService 
 from scloud.services.svc_pro_resource_apply import ProResourceApplyService
 from scloud.async_services.publish_task import publish_notice_checker
+from scloud.async_services.svc_mail import sendMail
 from scloud.async_services import svc_project
 from scloud.utils.unblock import unblock
 from scloud.utils.error import SystemError
@@ -130,6 +131,12 @@ class GuideHandler(ApplyHandler):
             self.add_message(u"权限用户信息%s成功！" % message, level="success", post_action=True)
             tmpl = self.render_to_string("admin/guide/_step_3_user_detail.html", **data)
             publish_notice_checker.delay(self.current_user.id)
+            mail_title = u"%s申请的权限用户信息%s成功！待受理" % (
+                self.current_user.username or self.current_user.email,
+                message
+            )
+            mail_html = self.render_to_string("admin/mail/pro_user.html", mail_title=mail_title, **data)
+            sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
         else:
             pro_data = self.get_pro_data()
             data.update(pro_data)

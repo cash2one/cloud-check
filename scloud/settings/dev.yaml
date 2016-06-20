@@ -16,7 +16,7 @@ static_path: '/static'
 ws_host: 'ws://127.0.0.1:{websocket_port}'
 pub_host: 'http://127.0.0.1:9999'
 
-admin_emails: ["zhangpeng1@infohold"]
+admin_emails: ["zhangpeng1@infohold.com.cn"]
 
 # 是否启用页面调试
 debug_page: True
