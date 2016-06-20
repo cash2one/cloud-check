@@ -1,0 +1,30 @@
+{% extends "admin/mail/base_layout.html" %}
+{% block title %}
+互联网发布申请
+{% endblock %}
+
+{% block tip %}
+<div class="row">
+  <div class="col-sm-12">
+  <div class="callout callout-{{ STATUS_PRO_TABLES.get(pro_publish_res.data.status).level }} lead">
+    <h4>云平台管理员, 您好!</h4>
+    {{ mail_title }}
+  </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-6">
+    {% include "admin/guide/_step_3_publish_detail.html" %}
+  </div>
+</div>
+<div class="row">
+  <div class="box box-solid">
+    <div class="box-body text-center">
+      <a href="{{ CONF('DOMAIN_HOST') }}{{ reverse_url('pro_table_check_list') }}?pro_table=pro_publish" class="btn btn-primary"><i class="fa fa-eye"></i> 查看详情</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

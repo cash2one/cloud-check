@@ -276,7 +276,7 @@ class AuthHandler(Handler):
     def prepare(self):
         self.expire_session()
         super(AuthHandler, self).prepare()
-        if self.current_user and self.request.method == "GET":
+        if self.current_user and self.request.method == "GET" and not self.ajax:
             if not self.current_user.username:
                 logger.error(u"\t 您还没有设置用户名，请设置用户名")
                 self.add_message(u"您还没有设置用户名，请设置用户名", level="warning", url=self.reverse_url('user_profile'))
