@@ -1,0 +1,43 @@
+{% extends "admin/mail/base_layout.html" %}
+{% block title %}
+权限用户申请
+{% endblock %}
+
+{% set pro_table_res = {"return_code": 0, "data": pro_table_obj, "return_message": ""} %}
+{% block tip %}
+<div class="row">
+  <div class="col-sm-12">
+  <div class="callout callout-{{ STATUS_PRO_TABLES.get(pro_table_res.data.status).level }} lead">
+    <h4>云平台管理员, 您好!</h4>
+    {{ mail_title }}
+  </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+{% if pro_table == "pro_user" %}
+  {% set pro_user_res = pro_table_res %}
+  {% set url_name = "apply.user" %}
+{% elif pro_table == "pro_publish" %}
+  {% set pro_publish_res = pro_table_res %}
+  {% set url_name = "apply.publish" %}
+{% elif pro_table == "pro_balance" %}
+  {% set pro_loadbalance_res = pro_table_res %}
+  {% set url_name = "apply.balance" %}
+{% endif %}
+
+<div class="row">
+  <div class="col-sm-6">
+    {% include "admin/guide/_step_3_" + pro_table[4:] + "_detail.html" %}
+  </div>
+</div>
+<div class="row">
+  <div class="box box-solid">
+    <div class="box-body text-center">
+      <a href="{{ CONF('DOMAIN_HOST') }}{{ reverse_url(url_name) }}" class="btn btn-primary"><i class="fa fa-eye"></i> 查看详情</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

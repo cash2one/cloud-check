@@ -3,7 +3,7 @@
 import scloud
 from scloud.shortcuts import url
 from scloud.config import logger
-# from scloud.const import pro_resource_apply_status_types
+from scloud.const import admin_emails
 from scloud.handlers import AuthHandler
 # import requests
 # import urlparse
@@ -179,15 +179,23 @@ class ProTableDoCheckHandler(EventCheckListHandler):
         if check_res.return_code == 0:
             self.add_message(u"所选申请%s已处理完毕" % doc, level="success")
             pro_users = check_res.data
-            users = {str(u.user_id): u.user.email for u in pro_users}
+            users = {str(u.user_id): u for u in pro_users}
             logger.info(users)
             mail_title = u"%s已处理完毕" % doc
             action = self.args.get("action")
-            mail_content = u"%s已处理完毕，%s\n处理结果：%s" % (
-                doc, STATUS_RESOURCE.get(action.lower()).value, self.args.get("reason"))
+            # mail_content = u"%s已处理完毕，%s\n处理结果：%s" % (
+                # doc, STATUS_RESOURCE.get(action.lower()).value, self.args.get("reason"))
             for user_id in users.keys():
                 publish_notice_user.delay(user_id)
-                sendMail.delay("scloud@infohold.com.cn", users.get(str(user_id)), mail_title, mail_content)
+                mail_html = self.render_to_string("admin/mail/pro_table_check_result.html",
+                    mail_title=mail_title,
+                    pro_table=pro_table,
+                    pro_table_obj = users.get(str(user_id))
+                )
+                user_email = users.get(str(user_id)).user.email
+                logger.info("[mail to %s]" % [user_email])
+                sendMail.delay("scloud@infohold.com.cn", [user_email], mail_title, mail_html)
+                sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
         if pro_table == "pro_event":
             ids = self.args.get("ids")
             id_list = [int(i) for i in ids.split(",") if i.strip().isdigit()]
