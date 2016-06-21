@@ -181,18 +181,19 @@ class ProTableDoCheckHandler(EventCheckListHandler):
             pro_users = check_res.data
             users = {str(u.user_id): u for u in pro_users}
             logger.info(users)
-            mail_title = u"%s已处理完毕" % doc
             action = self.args.get("action")
-            # mail_content = u"%s已处理完毕，%s\n处理结果：%s" % (
-                # doc, STATUS_RESOURCE.get(action.lower()).value, self.args.get("reason"))
+            action_value = "%s, %s" % (STATUS_PRO_TABLES.get(action.lower()).value, STATUS_PRO_TABLES.get(action.lower()).todo_value)
+            mail_title = u"%s%s" % (doc, action_value)
+            mail_content = u"%s已处理完毕, 当前状态：%s。处理结果：%s" % (doc, action_value, self.args.get("reason"))
             for user_id in users.keys():
                 publish_notice_user.delay(user_id)
+                user_email = users.get(str(user_id)).user.email
                 mail_html = self.render_to_string("admin/mail/pro_table_check_result.html",
-                    mail_title=mail_title,
+                    mail_content=mail_content,
+                    user_email=user_email,
                     pro_table=pro_table,
                     pro_table_obj = users.get(str(user_id))
                 )
-                user_email = users.get(str(user_id)).user.email
                 logger.info("[mail to %s]" % [user_email])
                 sendMail.delay("scloud@infohold.com.cn", [user_email], mail_title, mail_html)
                 sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
