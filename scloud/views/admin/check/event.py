@@ -196,7 +196,7 @@ class ProTableDoCheckHandler(EventCheckListHandler):
                 )
                 logger.info("[mail to %s]" % [user_email])
                 sendMail.delay("scloud@infohold.com.cn", [user_email], mail_title, mail_html)
-                sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
+                # sendMail.delay("scloud@infohold.com.cn", admin_emails, mail_title, mail_html)
         if pro_table == "pro_event":
             ids = self.args.get("ids")
             id_list = [int(i) for i in ids.split(",") if i.strip().isdigit()]
