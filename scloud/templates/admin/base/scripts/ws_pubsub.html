@@ -49,19 +49,23 @@ function on_task(response){
     // console.log(response.action)
     $("#chatAudio")[0].play();
   }
-  $("#tasks-menu").html(response.tmpl_tasks)
-  $("#pro_tables-menu").html(response.tmpl_pro_tables)
+  if(response.tmpl_tasks){
+    $("#tasks-menu").html(response.tmpl_tasks)
+  }
+  if(response.tmpl_pro_tables){
+    $("#pro_tables-menu").html(response.tmpl_pro_tables)
+  }
   if (parseInt(response.tasks_total) > 0){
-    $(".treeview-menu a[name=resource_check_list] span").html(response.tasks_total);
-    $(".sidebar-menu a[name='apply.resource'] span.label-warning").html(response.tasks_total);
+    $(".sidebar-menu a[name=resource_check_list] span").html(response.tasks_total);
+    // $(".sidebar-menu a[name='apply.resource'] span.label-warning").html(response.tasks_total);
   }else{
-    $(".treeview-menu a[name=resource_check_list] span").html("");
-    $(".sidebar-menu a[name='apply.resource'] span.label-warning").html("");
+    $(".sidebar-menu a[name=resource_check_list] span").html("");
+    // $(".sidebar-menu a[name='apply.resource'] span.label-warning").html("");
   }
   if (parseInt(response.pro_tables_total) > 0){
-    $(".treeview-menu a[name=pro_table_check_list] span").html(response.pro_tables_total)
+    $(".sidebar-menu a[name=pro_table_check_list] span").html(response.pro_tables_total)
   }else{
-    $(".treeview-menu a[name=pro_table_check_list] span").html("")
+    $(".sidebar-menu a[name=pro_table_check_list] span").html("")
   }
   
   if (parseInt(response.pro_user_num) > 0){
@@ -109,7 +113,15 @@ function on_task(response){
     $(".sidebar-menu a[name='event.index']").attr("href", "{{ reverse_url('event.index') }}");
   }
 
-  var service_total_num = parseInt(response.pro_tables_total)+parseInt(response.tasks_total);
+  // console.log("parseInt(response.pro_tables_total)-->"+parseInt(response.pro_tables_total));
+  // console.log("parseInt(response.tasks_total)-->"+parseInt(response.tasks_total));
+  var service_total_num = 0;
+  if( !isNaN(parseInt(response.pro_tables_total)) ) {
+    service_total_num += parseInt(response.pro_tables_total);
+  }
+  if( !isNaN(parseInt(response.tasks_total)) ){
+    service_total_num += parseInt(response.tasks_total);
+  }
   if (service_total_num > 0){
     $(".sidebar-menu a[name='resource.check'] span.label").html(service_total_num);
   }else{

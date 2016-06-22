@@ -84,16 +84,30 @@
       </li-->
       {% endif %}
 
+      {% if "pro_info.check" in current_perms or "pro_user.check" in current_perms %}
       {% if "pro_info.check" in current_perms %}
-      <li class="">
+      <li>
+        <a data-pjax name="resource_check_list" href="{{ reverse_url('resource_check_list') }}">
+          <i class="fa fa-circle-o"></i> 资源审核 
+          <span class="label label-warning pull-right">0</span>
+        </a>
+      </li>
+      {% endif %}
+      {% if "pro_user.check" in current_perms %}
+      <li>
+        <a data-pjax name="pro_table_check_list" href="{{ reverse_url('pro_table_check_list') }}">
+          <i class="fa fa-circle-o"></i> 待处理任务 
+          <span class="label label-warning pull-right">0</span>
+        </a>
+      </li>
+      {% endif %}
+<!--       <li class="">
         <a href="#" name="resource.check">
           <i class="fa fa-pencil-square"></i> <span>项目审核</span> <i class="fa fa-angle-left pull-right"></i> <span class="label label-warning pull-right"></span>
         </a>
         <ul class="treeview-menu">
-          <li><a data-pjax name="resource_check_list" href="{{ reverse_url('resource_check_list') }}"><i class="fa fa-circle-o"></i> 资源审核 <span class="label label-warning pull-right">0</span></a></li>
-          <li><a data-pjax name="pro_table_check_list" href="{{ reverse_url('pro_table_check_list') }}"><i class="fa fa-circle-o"></i> 待处理任务 <span class="label label-warning pull-right">0</span></a></li>
         </ul>
-      </li>
+      </li> -->
       {% endif %}
       {% if "pt_user.view" in current_perms %}
       <li class="">

@@ -36,7 +36,7 @@ def publish_notice_checker(this_id=0):
             # 通知审核员
             if user_id == 10:
                 logger.info("notice %s success"% user_id)
-            pub_svc.publish_tasks(user_id, action)
+            pub_svc.publish_tasks(user_id, action=action)
         # 更新自己任务状态
         pub_svc.publish_tasks(this_id)
         logger.info("#"*30+" [user %s notice_checker tasks finish] "%this_id+"#"*30)
@@ -51,7 +51,7 @@ def publish_notice_user(user_id=0):
         pt_users_res = svc.get_list()
         user_ids = [u.id for u in pt_users_res.data if "pro_resource_apply.check" in u.get_current_perms()]
         pub_svc = TaskPublish(DBSvc)
-        pub_svc.publish_tasks(user_id, action)
+        pub_svc.publish_tasks(user_id, action=action)
         for this_id in user_ids:
             # 通知所有审核员
             pub_svc.publish_tasks(this_id)

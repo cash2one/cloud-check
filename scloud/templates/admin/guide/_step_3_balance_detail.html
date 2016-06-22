@@ -2,6 +2,13 @@
 
 {% set pro_balance = pro_loadbalance_res.data %}
 <div class="box-body">
+
+  <div class="form-group">
+    <label for="domain_port" class="col-sm-3 control-label text-right">申请编号：</label>
+    <div class="col-sm-9">
+      <p class="form-control-static">BAL{{ "%04d" % pro_balance.id }}</p>
+    </div>
+  </div>
   <div class="form-group">
     <label for="pro_id" class="col-sm-3 control-label text-right">所属项目：</label>
     <div class="col-sm-9">
@@ -31,7 +38,7 @@
   <div class="form-group">
     <label for="domain_port" class="col-sm-3 control-label text-right">健康检查：</label>
     <div class="col-sm-9">
-      <p class="form-control-static">{{ pro_balance.health }}</p>
+      <p class="form-control-static">{{ LOADBALANCE_HEALTH.get(pro_balance.health).value }}</p>
     </div>
   </div>
   {#
@@ -79,7 +86,9 @@
       <p class="form-control-static">
         {% set ST = STATUS_PRO_TABLES.get(pro_balance.status) %}
         <span class='label label-{{ ST.level }}'>{{ ST.value }}</span>
+        {% if not handler.current_user.imchecker %}
         <a data-pjax href="{{ reverse_url('apply.loadbalance.edit') }}?id={{ pro_balance.id }}"><i class="fa fa-edit"></i> 修改</a>
+        {% endif %}
       </p>
     </div>
   </div>

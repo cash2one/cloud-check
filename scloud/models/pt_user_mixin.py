@@ -27,7 +27,8 @@ class PT_User_Mixin(object):
     def imchecker(self):
         if hasattr(self, "_imchecker"):
             return self._imchecker
-        if "pro_info.check" in self.get_current_perms():
+        current_perms = self.get_current_perms()
+        if "pro_info.check" in current_perms or "pro_user.check" in current_perms:
             _imchecker = True
         else:
             _imchecker = False

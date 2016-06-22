@@ -64,12 +64,23 @@ class ProfileHandler(AuthHandler):
             pro_publish_list = tasks_res.data["pro_publish_list"]
             pro_user_list = tasks_res.data["pro_user_list"]
             task_list = tasks_res.data["task_list"]
-            todo_list = pro_backup_list\
-                + pro_balance_list\
-                + pro_event_list\
-                + pro_publish_list\
-                + pro_user_list\
-                + task_list
+            if self.current_user.imchecker:
+                current_perms = self.current_user.get_current_perms()
+                if "pro_info.check" in current_perms:
+                    todo_list = task_list
+                elif "pro_user.check" in current_perms:
+                    todo_list = pro_backup_list\
+                        + pro_balance_list\
+                        + pro_event_list\
+                        + pro_publish_list\
+                        + pro_user_list
+            else:
+                todo_list = pro_backup_list\
+                    + pro_balance_list\
+                    + pro_event_list\
+                    + pro_publish_list\
+                    + pro_user_list\
+                    + task_list
             todo_list.sort(key=lambda x: x.update_time)
             todo_list.reverse()
         else:

@@ -55,7 +55,7 @@ class EventCheckListHandler(AuthHandler):
         )
         return data
 
-    @check_perms('pro_resource_apply.check')
+    @check_perms('pro_publish.check, pro_user.check, pro_balance.check, pro_event.check')
     @unblock
     def get(self):
         pro_table = self.args.get("pro_table", "pro_user")
@@ -66,7 +66,7 @@ class EventCheckListHandler(AuthHandler):
 @url("/pro/pro_publish/(?P<id>\d+)/detail", name="pro_publish_detail", active="pro_table_check_list")
 class ProPublishDetailHandler(AuthHandler):
     u'互联网发布申请内容明细'
-    @check_perms('pro_resource_apply.check')
+    @check_perms('pro_publish.check, pro_user.check, pro_balance.check, pro_event.check')
     @unblock
     def get(self, **kwargs):
         svc = ApplyPublish(self, {"id": kwargs["id"]})
@@ -82,7 +82,7 @@ class ProPublishDetailHandler(AuthHandler):
 @url("/pro/(?P<pro_id>\d+)/pro_user/detail", name="pro_users_detail", active="pro_table_check_list")
 class ProUsersDetailHandler(AuthHandler):
     u'互联网发布申请内容明细'
-    @check_perms('pro_resource_apply.check')
+    @check_perms('pro_publish.check, pro_user.check, pro_balance.check, pro_event.check')
     @unblock
     def get(self, **kwargs):
         svc = ProUserService(self, {"pro_id": kwargs["pro_id"]})
@@ -98,7 +98,7 @@ class ProUsersDetailHandler(AuthHandler):
 @url("/pro/(?P<pro_id>\d+)/pro_user/(?P<pro_user_id>\d+)/detail", name="pro_user_detail", active="pro_table_check_list")
 class ProUserDetailHandler(AuthHandler):
     u'互联网发布申请内容明细'
-    @check_perms('pro_resource_apply.check')
+    @check_perms('pro_publish.check, pro_user.check, pro_balance.check, pro_event.check')
     @unblock
     def get(self, **kwargs):
         svc = ProUserService(self, {"id": kwargs["pro_user_id"]})
@@ -114,7 +114,7 @@ class ProUserDetailHandler(AuthHandler):
 @url("/pro/pro_balance/(?P<id>\d+)/detail", name="pro_balance_detail", active="pro_table_check_list")
 class ProBalanceDetailHandler(AuthHandler):
     u'互联网发布申请内容明细'
-    @check_perms('pro_resource_apply.check')
+    @check_perms('pro_publish.check, pro_user.check, pro_balance.check, pro_event.check')
     @unblock
     def get(self, **kwargs):
         svc = ApplyLoadBalance(self, {"id": kwargs["id"]})
@@ -130,7 +130,7 @@ class ProBalanceDetailHandler(AuthHandler):
 @url("/pro/pro_backup/(?P<id>\d+)/detail", name="pro_backup_detail", active="pro_table_check_list")
 class ProBackupDetailHandler(AuthHandler):
     u'互联网发布申请内容明细'
-    @check_perms('pro_resource_apply.check')
+    @check_perms('pro_publish.check, pro_user.check, pro_balance.check, pro_event.check')
     @unblock
     def get(self, **kwargs):
         svc = ApplyBackups(self, {"id": kwargs["id"]})
@@ -146,7 +146,7 @@ class ProBackupDetailHandler(AuthHandler):
 @url("/pro/pro_event/(?P<id>\d+)/detail", name="pro_event_detail", active="pro_table_check_list")
 class ProEventDetailHandler(AuthHandler):
     u'互联网发布申请内容明细'
-    @check_perms('pro_resource_apply.check')
+    @check_perms('pro_publish.check, pro_user.check, pro_balance.check, pro_event.check')
     @unblock
     def get(self, **kwargs):
         svc = EventService(self, {"id": kwargs["id"]})
@@ -165,7 +165,7 @@ class ProTableDoCheckHandler(EventCheckListHandler):
 
     SUPPORTED_METHODS = AuthHandler.SUPPORTED_METHODS + ("DO_CHECK",)
 
-    @check_perms('pro_resource_apply.check')
+    @check_perms('pro_publish.check, pro_user.check, pro_balance.check, pro_event.check')
     @unblock
     def do_check(self):
         pro_table = ApplyCheckService(self)

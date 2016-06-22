@@ -34,10 +34,12 @@ class TaskPublish(BaseService):
         user_svc = PtUserService(self, {"user_id": user_id, "pro_id": pro_id})
         pt_user_res = user_svc.get_info()
         logger.info(pt_user_res)
-        if "pro_resource_apply.check" in pt_user_res.data.get_current_perms():
-            imchecker = True
-        else:
-            imchecker = False
+        current_perms = pt_user_res.data.get_current_perms()
+        imchecker = pt_user_res.data.imchecker
+        # if "pro_resource_apply.check" in pt_user_res.data.get_current_perms():
+        #     imchecker = True
+        # else:
+        #     imchecker = False
         # 获取任务列表
         svc = ActHistoryService(self, {"user_id": user_id, "pro_id": pro_id})
         tasks_res = svc.get_res_tasks()
@@ -45,6 +47,7 @@ class TaskPublish(BaseService):
             "tasks_res": tasks_res,
             "task_list": tasks_res.data,
             "imchecker": imchecker,
+            "current_perms": current_perms,
             "STATUS_RESOURCE": STATUS_RESOURCE
         }
 
@@ -140,17 +143,48 @@ class TaskPublish(BaseService):
             "user_id": user_id,
             "action": action,
 
-            "pro_user_num": len(data["pro_user_list"]),
-            "pro_publish_num": len(data["pro_publish_list"]),
-            "pro_balance_num": len(data["pro_balance_list"]),
-            "pro_backup_num": len(data["pro_backup_list"]),
-            "pro_event_num": len(data["pro_event_list"]),
-            "tasks_total": data["tasks_total"],
-            "pro_tables_total": data["pro_tables_total"],
-            # "html": render_to_string(template, **data),
-            "tmpl_tasks": render_to_string("admin/notice/tasks.html", **data),
-            "tmpl_pro_tables": render_to_string("admin/notice/pro_tables.html", **data)
+            # "pro_user_num": len(data["pro_user_list"]),
+            # "pro_publish_num": len(data["pro_publish_list"]),
+            # "pro_balance_num": len(data["pro_balance_list"]),
+            # "pro_backup_num": len(data["pro_backup_list"]),
+            # "pro_event_num": len(data["pro_event_list"]),
+            # "tasks_total": data["tasks_total"],
+            # "pro_tables_total": data["pro_tables_total"],
+            # "tmpl_tasks": render_to_string("admin/notice/tasks.html", **data),
+            # "tmpl_pro_tables": render_to_string("admin/notice/pro_tables.html", **data)
         }
+        imchecker = data["imchecker"]
+        logger.info("[ %s: imchecker: %s ]" % (user_id, imchecker))
+        current_perms = data["current_perms"]
+        logger.info("[ %s: current_perms: %s ]" % (user_id, current_perms))
+        if imchecker:
+            if "pro_info.check" in current_perms:
+                chat.update({
+                    "tasks_total": data["tasks_total"],
+                    "tmpl_tasks": render_to_string("admin/notice/tasks.html", **data)
+                })
+            if "pro_user.check" in current_perms:
+                chat.update({
+                    "pro_user_num": len(data["pro_user_list"]),
+                    "pro_publish_num": len(data["pro_publish_list"]),
+                    "pro_balance_num": len(data["pro_balance_list"]),
+                    "pro_backup_num": len(data["pro_backup_list"]),
+                    "pro_event_num": len(data["pro_event_list"]),
+                    "pro_tables_total": data["pro_tables_total"],
+                    "tmpl_pro_tables": render_to_string("admin/notice/pro_tables.html", **data)
+                })
+        else:
+            chat.update({
+                "pro_user_num": len(data["pro_user_list"]),
+                "pro_publish_num": len(data["pro_publish_list"]),
+                "pro_balance_num": len(data["pro_balance_list"]),
+                "pro_backup_num": len(data["pro_backup_list"]),
+                "pro_event_num": len(data["pro_event_list"]),
+                "tasks_total": data["tasks_total"],
+                "pro_tables_total": data["pro_tables_total"],
+                "tmpl_tasks": render_to_string("admin/notice/tasks.html", **data),
+                "tmpl_pro_tables": render_to_string("admin/notice/pro_tables.html", **data)
+            })
         # from scloud.app import reverse_url
         # html = request.get(reverse_url("callback_%s" % template))
 

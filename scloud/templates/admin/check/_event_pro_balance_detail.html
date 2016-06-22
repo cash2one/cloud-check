@@ -12,12 +12,14 @@
     <table class="table table-hover table-striped" id="pro_table_check_list_table">
       <tbody>
         {% set pro_balance = pro_balance_res.data %}
+        {% set pro_loadbalance_res = pro_balance_res %}
         <tr style="display: none">
           <th></th>
           <td>
             <input type="checkbox" id="{{ pro_balance.id }}" value="{{ pro_balance.project.name }}" checked="checked">
           </td>
         </tr>
+        {#
         <tr>
           <th>申请编号</th>
           <td class="mailbox-subject">BAL{{ "%04d" % pro_balance.id }}</td>
@@ -81,8 +83,10 @@
           <th>申请时间</th>
           <td class="mailbox-subject">{{ pro_balance.create_time|getGoodTime }}</td>
         </tr>
+        #}
       </tbody>
     </table><!-- /.table -->
+    {% include "admin/guide/_step_3_balance_detail.html" %}
   </div><!-- /.mail-box-messages -->
 </div>
 
